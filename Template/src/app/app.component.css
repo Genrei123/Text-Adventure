@@ -1,0 +1,93 @@
+/*------------ CSS CODES FOR "Game Area" ------------*/
+.game-container {
+    display: flex;
+    justify-content: center; /* Centers the divs horizontally */
+    align-items: flex-start; /* Aligns the divs to the top */
+    height: 70vh; /* Ensures the container takes up the full height of the viewport */
+    border: 1px solid #000; /* Adds a 1px solid black border */
+}
+
+/*------------  CSS CODES FOR "tabs" ------------*/
+.misson-tab-container,
+.history-tab-container {
+    width: 20%; /* Adjust the width as needed */
+    margin: 5% 10px 0 10px; /* Adds a margin of 5% from the top */
+    border: 1px solid #000; /* Adds a 1px solid black border */
+    height:70%;
+}
+
+/*------------ CSS CODES FOR "Game Container" ------------*/
+.game-box {
+    width: 70%; /* Adjust the width as needed */
+    margin: 0 10px; /* Adds some spacing between the divs */
+    border: 1px solid #000; /* Adds a 1px solid black border */
+    height: 100%; /* Adjust the height as needed */
+    display: flex; /* Enables Flexbox */
+    flex-direction: column; /* Stacks children vertically */
+}
+
+.image-placeholder {
+    border: 1px solid #000; /* Adds a 1px solid black border */
+    width: 80%; /* Adjust the width as needed */
+    height: 60%; /* Adjust the height as needed */
+    margin: 10px auto; /* Centers horizontally and adds margin at the top */
+    display: flex; /* Enables Flexbox for centering content */
+    align-items: center; /* Centers the image vertically within the placeholder */
+    justify-content: center; /* Centers the image horizontally within the placeholder */
+}
+
+.game-img {
+    width: 100%; /* Ensures the image takes full width of the placeholder */
+    height: 100%; /* Ensures the image takes full height of the placeholder */
+    object-fit: cover; /* Ensures the image covers the placeholder while maintaining its aspect ratio */
+}
+
+.narrative-field {
+    border-top: 1px solid #000; /* Adds a border between the image and the narrative */
+    padding: 0px 10px 0px 20px; /* Adds padding inside the narrative field */
+    width: 100%; /* Ensures the narrative field takes full width of the parent */
+    height: 100%; /* Adjust the height as needed */
+    overflow-y: auto; /* Adds vertical scrollbar if the content exceeds the height */
+    box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+}
+
+/*------------ CSS CODES FOR "Chat Area" ------------*/
+.chat-action-container {
+    display: flex;
+    justify-content: center; /* Centers the divs horizontally */
+    align-items: flex-start; /* Aligns the divs to the top */
+    border: 1px solid #000; /* Adds a 1px solid black border */
+}
+
+/*------------ CSS CODES FOR "Action Text Field" ------------*/
+.textfield-container {
+    width: 50%; /* Same width as game-box to align with the content */
+    height: 10vh;
+    margin:  10px 10px;
+    border: 1px solid #000; /* Adds a 1px solid black border */
+    padding: 10px; /* Adds padding inside the textfield container */
+    box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+    text-align: center; /* Centers the text inside the container */
+    position: relative; /* Allows positioning inside the container */
+}
+
+.action-input {
+    width: 100%; /* Makes the input field take up the full width of the container */
+    padding: 10px; /* Adds padding inside the input field */
+    border: 1px solid #ccc; /* Adds a light border around the input field */
+    border-radius: 4px; /* Rounds the corners of the input field */
+    font-size: 16px; /* Increases the font size for better readability */
+    box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+}
+
+/*------------ CSS CODES FOR "Utilities Area" ------------*/
+.utility-container {
+    position: fixed; /* Fixes the container at a specific position on the screen */
+    bottom: 0; /* Positions it at the bottom of the viewport */
+    left: 0; /* Ensures it spans the full width of the screen */
+    width: 100%; /* Makes sure it spans the entire width of the screen */
+    height: 14vh; /* Sets the height of the container */
+    border: 1px solid #000; /* Adds a 1px solid black border */
+    background-color: #fff; /* Optional: Sets a background color for better visibility */
+    z-index: 1000; /* Ensures it stays on top of other elements */
+}
