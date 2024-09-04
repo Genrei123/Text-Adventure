@@ -62,10 +62,9 @@
 /*------------ CSS CODES FOR "Action Text Field" ------------*/
 .textfield-container {
     width: 50%; /* Same width as game-box to align with the content */
-    height: 10vh;
-    margin:  10px 10px;
+    height: 8vh;
     border: 1px solid #000; /* Adds a 1px solid black border */
-    padding: 10px; /* Adds padding inside the textfield container */
+    padding: 5px; /* Adds padding inside the textfield container */
     box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
     text-align: center; /* Centers the text inside the container */
     position: relative; /* Allows positioning inside the container */
@@ -73,10 +72,11 @@
 
 .action-input {
     width: 100%; /* Makes the input field take up the full width of the container */
-    padding: 10px; /* Adds padding inside the input field */
+    height: 100%;
     border: 1px solid #ccc; /* Adds a light border around the input field */
     border-radius: 4px; /* Rounds the corners of the input field */
-    font-size: 16px; /* Increases the font size for better readability */
+    padding: 10px;
+    font-size: 14px; /* Increases the font size for better readability */
     box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
 }
 
@@ -86,8 +86,26 @@
     bottom: 0; /* Positions it at the bottom of the viewport */
     left: 0; /* Ensures it spans the full width of the screen */
     width: 100%; /* Makes sure it spans the entire width of the screen */
-    height: 14vh; /* Sets the height of the container */
+    height: 20vh; /* Sets the height of the container */
     border: 1px solid #000; /* Adds a 1px solid black border */
     background-color: #fff; /* Optional: Sets a background color for better visibility */
     z-index: 1000; /* Ensures it stays on top of other elements */
+    display: flex; /* Enables Flexbox */
+    justify-content: center; /* Centers the content horizontally */
+    align-items: flex-end; /* Aligns the content to the bottom of the container */
+}
+
+.pfp-container {
+    border: 1px solid #000; /* Adds a 1px solid black border */
+    height: 100%;
+    width: 150px;
+    display: flex; /* Enables Flexbox */
+    justify-content: center; /* Centers the content horizontally */
+    align-items: center; /* Centers the content vertically */
+}
+
+.player-img {
+    width: 100%; /* Ensures the image takes full width of the placeholder */
+    height: 100%; /* Ensures the image takes full height of the placeholder */
+    object-fit: cover; /* Ensures the image covers the placeholder while maintaining its aspect ratio */
 }
