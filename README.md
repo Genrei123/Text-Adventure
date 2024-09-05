@@ -1,5 +1,7 @@
+
 # Text-Adventure
 
+## Description
 The AI-Driven Text Adventure is an innovative gaming experience that redefines 
 interactive storytelling. This project harnesses the power of artificial intelligence to create 
 dynamic and engaging text-based adventures where players interact with the game world 
@@ -12,5 +14,24 @@ create rich storylines, and adapt to diverse play styles, offering endless possi
 exploration and engagement. This project aims to elevate the text adventure genre by 
 blending traditional storytelling with cutting-edge AI technology.
 
+## Goal
+- To create an engaging narrative and story for the player
+- To leverage current AI model capabilities in game narration
 
 
+## Tech Stack
+- Angular (Frontend)
+- Node.js (Backend)
+- gpt-4o-mini (OpenAI AI Model)
+
+
+# Members
+
+Cristobal, Genrey O.  
+Acedo, Mark Relan Gercee  
+Capalac, Garvy Ren V.  
+Dalugdog, Ervhyne  
+Fungo, Gian Higino O.  
+Llanes, Kevin  
+Namias, Jhon Keneth B.  
+Valencia, Ronan 
