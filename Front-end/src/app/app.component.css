@@ -77,7 +77,6 @@
 }
 
 /* Mission Tab Texts Design */
-/* Mission Tab Texts Design */
 .misson-list ul {
     list-style-type: none; /* Remove default bullets */
     padding: 0; /* Remove padding */
@@ -85,14 +84,16 @@
 }
 
 .misson-list li {
-    display: flex; /* Align checkbox and text horizontally */
+    display: block; /* Align checkbox and text vertically */
     align-items: center; /* Center items vertically */
     margin-bottom: 10px; /* Space between items */
     font-size: 13px; /* Adjust font size if needed */
+    padding-left: 25px; /* Space to prevent text overlap */
+    position: relative; /* Allows positioning relative to the checkbox */
 }
 
 .mission-checkbox {
-    margin-right: 10px; /* Space between checkbox and text */
+    margin-right: 5px; /* Space between checkbox and text */
     cursor: default; /* Prevent cursor change on hover */
     appearance: none; /* Remove default styling */
     width: 15px; /* Fixed width */
@@ -100,7 +101,39 @@
     border: 2px solid #A6CEAA; /* Border color */
     border-radius: 3px; /* Rounded corners */
     background-color: #2D3030; /* Background color for unchecked state */
-    position: relative; /* Allows positioning of pseudo-elements */
+    display: inline-block;
+    position: absolute; /* Position relative to the list item */
+    left: 0; /* Align to the left of the list item */
+    top: 50%; /* Center vertically */
+    transform: translateY(-100%); /* Adjust vertical centering */
+}
+
+/* Style for unchecked state */
+.mission-checkbox:not(:checked) {
+    background-color: #3E3E3E; /* Background color for unchecked state */
+    border: 2px solid #998E8E; /* Border color for unchecked state */
+}
+
+/* Style the checkbox to make it look like it's checked */
+.mission-checkbox:checked {
+    background-color: #3E3E3E; /* Background color for checked state */
+    border: 2px solid #998E8E; /* Border color for checked state */
+}
+
+/* Checkmark styling */
+.mission-checkbox:checked::before {
+    content: "✔"; /* Checkmark */
+    display: block; /* Ensure checkmark takes block space */
+    width: 15px; /* Same as checkbox size */
+    height: 15px; /* Same as checkbox size */
+    text-align: center;
+    color: #d6d6d6; /* Color of the checkmark */
+    font-size: 12px; /* Font size of the checkmark */
+    line-height: 13px; /* Center the checkmark vertically */
+    position: absolute; /* Position checkmark in the center */
+    top: 0; /* Top alignment */
+    left: -2px; /* Left alignment */
+    z-index: 1; /* Ensure checkmark is on top */
 }
 
 /* Hide default checkbox appearance */
