@@ -1,0 +1,22 @@
+{
+  "name": "text-adventure-backend",
+  "version": "1.0.0",
+  "description": "text-adventure-game with OpenAI GPT model as it's engine",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Genrei123/Text-Adventure.git"
+  },
+  "author": "Software-Engineering-CS3A",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Genrei123/Text-Adventure/issues"
+  },
+  "homepage": "https://github.com/Genrei123/Text-Adventure#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
