@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Genrei123/Text-Adventure#readme",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.21.0",
+    "text-adventure-backend": "file:"
   }
 }
