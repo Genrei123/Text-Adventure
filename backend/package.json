@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "text-adventure-game with OpenAI GPT model as it's engine",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/Genrei123/Text-Adventure#readme",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.21.0",
+    "text-adventure-backend": "file:"
   }
 }
