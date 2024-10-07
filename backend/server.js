@@ -10,3 +10,7 @@ app.listen(PORT, (error) =>{
         console.log("Error occurred, server can't start", error);
     }
 );
+
+app.get('/', (req, res) => {
+    res.send("Hello World");
+});
