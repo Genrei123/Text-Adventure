@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "text-adventure-game with OpenAI GPT model as it's engine",
   "main": "server.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
