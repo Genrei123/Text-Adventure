@@ -20,8 +20,10 @@ blending traditional storytelling with cutting-edge AI technology.
 
 
 ## Tech Stack
-- Angular (Frontend)
-- Node.js (Backend)
+- React-TS 
+- Express.js
+- Node.js
+- PostgreSQL
 - gpt-4o-mini (OpenAI AI Model)
 
 
