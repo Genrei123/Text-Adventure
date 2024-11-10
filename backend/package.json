@@ -1,23 +1,40 @@
 {
-  "name": "text-adventure-backend",
+  "name": "text-adventure",
   "version": "1.0.0",
-  "description": "text-adventure-game with OpenAI GPT model as it's engine",
-  "main": "server.js",
+  "description": "\"Text-based adventure game with the use of Generative AI as it's narrator\"",
+  "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "serve": "node dist/index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Genrei123/Text-Adventure.git"
   },
-  "author": "Software-Engineering-CS3A",
+  "keywords": [
+    "\"Game\""
+  ],
+  "author": "BSCS3A-Software-Engineering",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Genrei123/Text-Adventure/issues"
   },
   "homepage": "https://github.com/Genrei123/Text-Adventure#readme",
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.0",
+    "concurrently": "^9.1.0",
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
   "dependencies": {
-    "express": "^4.21.0",
-    "text-adventure-backend": "file:"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express-jwt": "^8.4.1",
+    "jsonwebtoken": "^9.0.2"
   }
 }
