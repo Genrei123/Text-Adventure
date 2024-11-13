@@ -2,6 +2,9 @@ import cors from 'cors';
 import corsOptions from './middlware/cors';
 import cookieJwtAuth from './middlware/auth';
 import express, { Request, Response } from 'express';
+import { error } from 'console';
+
+import database from './service/database';
 
 
 const app = express();
@@ -20,5 +23,5 @@ app.get("/protected", cookieJwtAuth, (req: Request, res: Response) => {
 
 
 app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
+  console.log(database.getDatabaseName());
 });
