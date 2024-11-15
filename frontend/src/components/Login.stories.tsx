@@ -1,5 +1,5 @@
 import React from 'react';
-import { Story, Meta } from '@storybook/react/types-6-0';
+import { Meta, StoryFn } from '@storybook/react';
 import Login from './Login';
 
 export default {
@@ -7,7 +7,8 @@ export default {
   component: Login,
 } as Meta;
 
-const Template: Story = (args) => <Login {...args} />;
+const Template: StoryFn = (args) => <Login {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {};
+

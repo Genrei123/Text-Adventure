@@ -2,11 +2,11 @@ import React from 'react';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import '../App.css';
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 font-cinzel">
       <div className="bg-gray-800 p-8 rounded shadow-md w-600 max-w-lg text-white">
-        <h2 className="text-2xl font-bold mb-6 text-center font-cinzel">Gates of Realm</h2>
+        <h1 className="text-2xl font-bold mb-6 text-center font-cinzel">ENTER THE WORLD</h1>
         <form className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-white font-cinzel">Username</label>
@@ -23,6 +23,20 @@ const Login: React.FC = () => {
           </div>
           
           <div>
+            <label className="block text-sm font-medium text-white font-cinzel">Email</label>
+            <input
+              type="email"
+              className="
+                mt-1 block w-full px-3 py-2 border border-white
+                rounded-md shadow-sm focus:outline-none focus:ring-indigo-500
+                focus:border-indigo-500 sm:text-sm font-playfair bg-[#563C2D]
+                text-white placeholder-white font-playfair opacity-75
+              "
+              placeholder="Where to send your quest updates"
+            />
+          </div>
+
+          <div>
             <label className="block text-sm font-medium text-white font-cinzel">PASSWORD</label>
             <input
               type="password"
@@ -35,21 +49,31 @@ const Login: React.FC = () => {
               placeholder="Your secret Incantation"
             />
           </div>
+         
+          <div>
+            <label className="block text-sm font-medium text-white font-cinzel">Confirm Password</label>
+            <input
+              type="password"
+              className="
+                mt-1 block w-full px-3 py-2 border border-white
+                rounded-md shadow-sm focus:outline-none focus:ring-indigo-500
+                focus:border-indigo-500 sm:text-sm bg-[#563C2D] text-white
+                placeholder-white font-playfair opacity-75
+              "
+              placeholder="Repeat your secret Incantation"
+            />
+          </div>
 
-          <div className="flex items-center justify-between space-x-2">
-            <label className="flex items-center text-xs text-gray-400 font-playfair">
-              <input
-                type="checkbox"
-                className="mr-2 rounded text-indigo-600 focus:ring-indigo-500"
-              />
-              Keep my portal open
+          <div className="flex items-center mt-4">
+            <input
+              id="terms"
+              name="terms"
+              type="checkbox"
+              className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
+            />
+            <label htmlFor="terms" className="ml-2 block text-sm text-gray-400">
+              I abide the rules of this realm
             </label>
-            <a
-              href="#"
-              className="text-xs text-gray-400 hover:underline font-playfair ml-auto"
-            >
-              Forgotten your secret words?
-            </a>
           </div>
 
           <button
@@ -61,7 +85,7 @@ const Login: React.FC = () => {
               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
             "
           >
-            ENTER THE REALM
+            START YOUR JOURNEY
           </button>
         </form>
 
@@ -73,7 +97,7 @@ const Login: React.FC = () => {
         {/* Continue with Social Login */}
         <div className="relative mt-6 flex items-center justify-center">
           <span className="relative bg-gray-800 px-3 text-sm text-gray-400">
-            or continue your journey with
+            or Start your journey with
           </span>
         </div>
 
@@ -98,4 +122,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Register;
