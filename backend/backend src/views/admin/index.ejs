@@ -1,0 +1,94 @@
+<%- include("../header.ejs") %>
+
+<div class="w-full flex justify-center items-center">
+    <a href="/" class="text-center items-center justify-center gap-4 flex">
+        <img
+            src="/images/logo.png"
+            alt="Sage Ai"
+            class="h-6 opacity-60"
+        />
+        <div
+            href="/"
+            class="bg-gradient-to-br from-white to-gray-400 text-transparent bg-clip-text text-center py-4 text-sm opacity-60 tracking-wider inline-block"
+        >
+            Sage Ai
+        </div>
+    </a>
+</div>
+
+<div class="container max-w-4xl mx-auto">
+    <div class="text-white max-w-4xl flex flex-col gap-16 py-10">
+        <div class="prose flex flex-col gap-4">
+            <h1 class="text-4xl font-bold text-purple-500">Admin Dashboard</h1>
+            <div class="container mx-auto px-4 py-8 flex flex-col gap-16">
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-lg font-semibold mb-2">Total</h3>
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                    >
+                        <% ["totalUsers", "totalSessions", "totalGames",
+                        "totalChats" ].forEach((stat, index) => { %>
+                        <div
+                            class="bg-gray-700 p-6 rounded-lg shadow-md hover:shadow-lg transition duration-200"
+                        >
+                            <h3 class="text-lg font-semibold mb-2">
+                                <%- ['Users', 'Sessions', 'Games',
+                                'Chats'][index] %>
+                            </h3>
+                            <p class="text-xl font-bold">
+                                <%= totalCounts[stat] %>
+                            </p>
+                        </div>
+                        <% }); %>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-lg font-semibold mb-2">Daily</h3>
+                    <table class="table-auto w-full mb-6">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2 text-left">Date</th>
+                                <th class="px-4 py-2 text-right">Sessions</th>
+                                <th class="px-4 py-2 text-right">Games</th>
+                                <th class="px-4 py-2 text-right">Chats</th>
+                                <th class="px-4 py-2 text-right">Users</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% dailySummary.forEach(item => { %>
+                            <tr>
+                                <td class="px-4 py-2"><%= item.date %></td>
+                                <td class="px-4 py-2 text-right">
+                                    <%= item.sessions %>
+                                </td>
+                                <td class="px-4 py-2 text-right">
+                                    <%= item.games %>
+                                </td>
+                                <td class="px-4 py-2 text-right">
+                                    <%= item.chats %>
+                                </td>
+                                <td class="px-4 py-2 text-right">
+                                    <%= item.users %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-lg font-semibold mb-2">Top 5 Games</h3>
+                    <ul>
+                        <% topSummary.games.forEach((game) => { %>
+                        <li class="mb-2">
+                            <a href="/<%- game.slug %>"><%= game.title %></a>
+                            (<%= game.dataValues.chatCount %> chats)
+                        </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include("../footer.ejs") %>

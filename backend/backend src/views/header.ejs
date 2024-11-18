@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/app.css?cb=22" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=block" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <% if (typeof game !== "undefined") { %>
+        <title><%- game.title %> Text Game — Sage Ai</title>
+        <meta name="description" content="<%- game.description %>" />
+
+        <meta property="og:url" content="<%- game.slug %>" />
+        <meta property="og:title" content="<%- game.title %> — Sage Ai" />
+        <meta property="og:description" content="<%- game.description %>" />
+
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@PP_Namias">
+        <meta name="twitter:title" content="<%- game.title %>">
+        <meta name="twitter:description" content="<%- game.description %>">
+
+        <% if (game.image_prompt_model) { %>
+            <meta name="twitter:image" content="<%- SITE_URL %>/images/art/<%= game.id %>.png">
+            <meta property="og:image" content="<%- SITE_URL %>/images/art/<%= game.id %>.png" />
+        <% } else { %>
+            <meta name="twitter:image" content="<%- SITE_URL %>/images/banner.png">
+            <meta property="og:image" content="<%- SITE_URL %>/images/banner.png" />
+        <% } %>
+    <% } else { %>
+        <% if (typeof title !== "undefined") { %>
+            <title><%- title %> — Sage Ai</title>
+        <% } else { %>
+            <title>Sage Ai - Text-Based Games and Interactive Fiction</title>
+        <% } %>
+
+        <meta property="og:image" content="<%- SITE_URL %>/images/banner.png" />
+
+        <% if (typeof description !== "undefined") { %>
+            <title><%- title %> — Sage Ai</title>
+            <meta name="description" content="<%- description %>" />
+            <meta name="twitter:description" content="<%- description %>">
+        <% } else { %>
+            <meta name="description" content="Generate and play any interactive text game." />
+            <meta name="twitter:description" content="Generate and play any interactive text game.">
+        <% } %>
+
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@PP_Namias">
+        <meta name="twitter:title" content="Sage Ai">
+    <% } %>
+    <link rel="apple-touch-icon" sizes="180x180" href="<%- SITE_URL %>/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<%- SITE_URL %>/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<%- SITE_URL %>/favicon-16x16.png">
+    <link rel="manifest" href="<%- SITE_URL %>/site.webmanifest">
+</head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NC7YKE524N"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", "G-NC7YKE524N");
+</script>
+
+<body class="bg-black w-full">
