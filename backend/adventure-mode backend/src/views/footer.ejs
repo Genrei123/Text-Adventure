@@ -1,0 +1,65 @@
+<% if (!mobile) { %>
+    <div class="flex flex-col lg:flex-row justify-center items-center gap-8 lg:gap-16 my-4 mt-20" id="footer">
+        <a
+            href="/games"
+            class="text-white hover:text-orange-400 transition-colors"
+            >Games</a
+        >
+        <a
+            href="/Generate"
+            class="text-white hover:text-indigo-400 transition-colors"
+            >Generate</a
+        >
+        <a
+            href="/news"
+            class="text-white hover:text-purple-500 transition-colors"
+            >News</a
+        >
+        <a
+            href="https://github.com/PP-Namias/Sage-AI"
+            class="opacity-50 hover:opacity-100 transition-opacity hidden lg:block w-12 h-12"
+        >
+            <img
+                src="/images/cs-logo.png"
+                class="mx-auto w-12 h-12"
+                alt="Breddit"
+            />
+        </a>
+        <a
+            href="/articles"
+            class="text-white hover:text-yellow-400 transition-colors"
+            >Articles</a
+        >
+        <a
+            href="/about"
+            class="text-white hover:text-blue-500 transition-colors"
+            >About</a
+        >
+        <a
+            href="/faq"
+            class="text-white hover:text-blue-400 transition-colors"
+            >FAQ</a
+        >
+        <a
+            href="https://github.com/PP-Namias/Sage-AI"
+            class="opacity-50 hover:opacity-100 transition-opacity lg:hidden"
+        >
+            <img
+                src="/images/cs-logo.png"
+                class="mx-auto w-12 h-12"
+                alt="Breddit"
+            />
+        </a>
+    </div>
+
+<% } %>
+    <script>
+        var script = document.createElement('script');
+        script.defer = true;
+        script.src = "https://s.cac.app/js/script.outbound-links.js";
+        script.dataset.domain = "sageai.com";
+
+        document.getElementsByTagName('head')[0].appendChild(script);
+    </script>
+    </body>
+</html>
