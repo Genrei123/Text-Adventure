@@ -1,32 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FaFacebook, FaInstagram, FaYoutube, FaLinkedin } from 'react-icons/fa';
-import Image from 'next/image';
-import owlImage from '../assets/owl.png';
+import FooterLine from './FooterLine';
 
 const Footer = () => {
+  useEffect(() => {
+    document.body.style.margin = '0';
+  }, []);
+
   return (
-    <footer className="w-full h-[425px] relative gap-0 opacity-100 flex justify-between items-center p-5 bg-gray-800 text-white">
-      <div className="text-left">
-        <h1>Title</h1>
-        <p>Short description</p>
-      </div>
-      <div className="text-right">
-        <div className="flex items-center">
-          <div>
-            <p>About Us</p>
-            <p>Contact</p>
-            <p>Privacy Policy</p>
-            <p>Terms of Service</p>
+    <footer className="w-[1920px] h-[425px] relative flex flex-col justify-between items-center p-5 bg-[#563C2D] text-[#B28F4C]">
+      <div className="w-full flex items-center justify-between">
+        {/* Center-left content */}
+        <div className="flex-1 flex flex-col items-start justify-center font-playfair absolute left-40 top-20">
+          <h1 className="text-3xl font-bold mb-2">Logo here</h1>
+          <p className="text-base">Where stories are guided by</p>
+          <p className="text-base">One's intuition and knowledge</p>
+        </div>
+
+        {/* Right-side links */}
+        <div className="flex flex-col items-start absolute right-40 top-24 text-xl font-playfair">
+          <p className="mb-2 cursor-pointer hover:underline">About Us</p>
+          <p className="mb-2 cursor-pointer hover:underline">Contact</p>
+          <p className="mb-2 cursor-pointer hover:underline">Privacy Policy</p>
+          <p className="cursor-pointer hover:underline">Terms of Service</p>
+          {/* Social media icons */}
+          <div className="flex justify-center mt-2 space-x-4">
+            <FaFacebook className="cursor-pointer hover:text-blue-500" />
+            <FaInstagram className="cursor-pointer hover:text-pink-500" />
+            <FaYoutube className="cursor-pointer hover:text-red-500" />
+            <FaLinkedin className="cursor-pointer hover:text-blue-700" />
           </div>
-          <Image src={owlImage} alt="Owl" width={50} height={50} className="ml-4" />
-        </div>
-        <div className="flex justify-between mt-2">
-          <FaFacebook />
-          <FaInstagram />
-          <FaYoutube />
-          <FaLinkedin />
         </div>
       </div>
+      <img src="/src/assets/owl.png" alt="Owl" className="absolute right-40 top-[-300px] h-[900px] z-0" />
+      <FooterLine className="z-10" />
     </footer>
   );
 };

@@ -5,7 +5,7 @@ import '../App.css';
 const Register: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 font-cinzel">
-      <div className="bg-gray-800 p-8 rounded shadow-md w-600 max-w-lg text-white">
+      <div className="bg-gray-800 p-8 rounded shadow-md w-full max-w-lg text-white">
         <h1 className="text-2xl font-bold mb-6 text-center font-cinzel">ENTER THE WORLD</h1>
         <form className="space-y-4">
           <div>
