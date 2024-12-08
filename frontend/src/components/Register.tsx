@@ -16,7 +16,7 @@ const Register: React.FC = () => {
                 mt-1 block w-full px-3 py-2 border border-white
                 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500
                 focus:border-indigo-500 sm:text-sm font-playfair bg-[#563C2D]
-                text-white placeholder-white font-playfair opacity-75
+                text-white placeholder-white opacity-75
               "
               placeholder="The name whispered in the legends"
             />
@@ -30,7 +30,7 @@ const Register: React.FC = () => {
                 mt-1 block w-full px-3 py-2 border border-white
                 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500
                 focus:border-indigo-500 sm:text-sm font-playfair bg-[#563C2D]
-                text-white placeholder-white font-playfair opacity-75
+                text-white placeholder-white opacity-75
               "
               placeholder="Where to send your quest updates"
             />

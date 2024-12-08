@@ -4,8 +4,7 @@ import '../App.css';
 
 const Login: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 font-cinzel p-4">
-      <div className="bg-gray-800 p-10 rounded shadow-md w-full max-w-lg text-white">
+      <div className="bg-gray-800 p-10 rounded shadow-md w-[518px] h-[807px] text-white">
         <h2 className="text-2xl font-bold mb-8 text-center font-cinzel">Gates of Realm</h2>
         <form className="space-y-6">
           <div>
@@ -16,7 +15,7 @@ const Login: React.FC = () => {
                 mt-1 block w-full px-3 py-2 border border-white
                 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500
                 focus:border-indigo-500 sm:text-sm font-playfair bg-[#563C2D]
-                text-white placeholder-white font-playfair opacity-75
+                text-white placeholder-white opacity-75
               "
               placeholder="The name whispered in the legends"
             />
@@ -94,7 +93,6 @@ const Login: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
