@@ -1,8 +1,10 @@
-import { expressjwt } from "express-jwt";
 import { Request, Response, NextFunction } from "express";
-import Jwt  from "jsonwebtoken";
+import Jwt from "jsonwebtoken";
 
 const cookieJwtAuth = (req: Request, res: Response, next: NextFunction) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }
     const token = req.cookies.token;
     try {
         const user = Jwt.verify(token, 'test');
@@ -15,5 +17,3 @@ const cookieJwtAuth = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export default cookieJwtAuth;
-
-
