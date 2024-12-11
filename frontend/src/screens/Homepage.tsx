@@ -1,63 +1,50 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-/**
- * Interface for Homepage component props
- * @property {string} username - Optional username of the logged-in user
- * @property {function} onLogout - Callback function to handle user logout
- */
 interface HomepageProps {
-  username?: string;
   onLogout: () => void;
 }
 
-/**
- * Homepage Component
- * Displays the main landing page with conditional rendering based on authentication status
- * 
- * Features:
- * - Navigation bar with login/logout functionality
- * - Welcome message
- * - Conditional rendering of login/register buttons
- * 
- * @param {HomepageProps} props - Component props
- */
-const Homepage: React.FC<HomepageProps> = ({ username, onLogout }) => {
-  // Hook for programmatic navigation
+const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [username, setUsername] = useState<string | null>(null);
 
-  /**
-   * Handles user logout
-   * Calls the onLogout callback and redirects to homepage
-   */
-  const handleLogout = () => {
-    onLogout();
-    navigate('/');
-  };
+  useEffect(() => {
+    // Parse username from the query string
+    const params = new URLSearchParams(location.search);
+    const usernameParam = params.get('username');
+    if (usernameParam) {
+      setUsername(decodeURIComponent(usernameParam));
+    }
+  }, [location]);
 
-  /**
-   * Handles navigation to login page
-   * Used by the "Enter Realm" button when user is not logged in
-   */
-  const handleLogin = () => {
-    navigate('/login');
-  };
+  const handleLogout = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/auth/logout', {
+      method: 'GET',
+      credentials: 'include' // Important for sending/receiving cookies
+    });
+    const data = await response.json();
+    
+    // Manually navigate to the redirect URL
+    window.location.href = data.redirectUrl;
+  } catch (error) {
+    console.error('Logout failed', error);
+  }
+};
+  
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-      {/* Navigation Bar Section */}
       <nav className="bg-[#3D2E22] py-2 px-4">
         <div className="flex justify-between items-center">
-          {/* Logo/Brand */}
           <div className="text-xl font-cinzel text-[#C8A97E]">Sage.AI</div>
-          
-          {/* Auth Status & Actions */}
           <div className="flex items-center space-x-2">
             {username ? (
-              // Logged-in user view
               <>
                 <span className="font-playfair text-[#E5D4B3]">Welcome, {username}</span>
-                <button 
+                <button
                   className="bg-[#8B4513] hover:bg-[#723A10] px-3 py-1 rounded text-sm font-medium text-[#E5D4B3] border border-[#C8A97E]"
                   onClick={handleLogout}
                 >
@@ -65,12 +52,11 @@ const Homepage: React.FC<HomepageProps> = ({ username, onLogout }) => {
                 </button>
               </>
             ) : (
-              // Non-logged-in user view
               <>
                 <span className="font-playfair text-[#E5D4B3]">Not logged in</span>
                 <button
                   className="bg-[#C8A97E] hover:bg-[#B39671] px-3 py-1 rounded text-sm font-medium text-[#1E1E1E] border border-[#E5D4B3]"
-                  onClick={handleLogin}
+                  onClick={() => navigate('/login')}
                 >
                   Enter Realm
                 </button>
@@ -79,48 +65,16 @@ const Homepage: React.FC<HomepageProps> = ({ username, onLogout }) => {
           </div>
         </div>
       </nav>
-
-      {/* Main Content Section */}
       <div className="flex-1 flex flex-col items-center justify-center">
-        {/* Welcome Header */}
         <h1 className="text-4xl font-bold font-cinzel text-[#C8A97E] mb-4">
-          Welcome to the Sage.AI
+          Welcome to Sage.AI
         </h1>
-
-        {/* Content Box */}
-        <div className="bg-[#3D2E22] w-full max-w-3xl p-6 border-t border-b border-[#C8A97E]">
-          {/* Welcome Message */}
-          <p className="text-xl font-playfair text-[#E5D4B3] text-center mb-4">
-            Your adventure awaits in this mystical world...
-          </p>
-
-          {/* Conditional Auth Actions */}
-          {!username && (
-            <div className="text-center">
-              <p className="text-[#C8A97E] font-playfair mb-4">
-                Please login or register to begin your journey
-              </p>
-              {/* Auth Buttons */}
-              <div className="flex justify-center gap-4">
-                <button
-                  onClick={() => navigate('/login')}
-                  className="bg-[#C8A97E] hover:bg-[#B39671] px-6 py-2 rounded text-sm font-medium text-[#1E1E1E] border border-[#E5D4B3]"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => navigate('/register')}
-                  className="bg-[#8B4513] hover:bg-[#723A10] px-6 py-2 rounded text-sm font-medium text-[#E5D4B3] border border-[#C8A97E]"
-                >
-                  Register
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+        <p className="text-xl font-playfair text-[#E5D4B3]">
+          {username ? `Hello, ${username}! Your adventure begins now.` : 'Please log in to start your journey.'}
+        </p>
       </div>
     </div>
   );
 };
 
-export default Homepage; 
+export default Homepage;``

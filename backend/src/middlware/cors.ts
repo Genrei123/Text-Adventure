@@ -1,9 +1,10 @@
 import { CorsOptions } from 'cors';
 
-const corsOptions:CorsOptions = {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-    credentials: true
+const corsOptions: CorsOptions = {
+  origin: "http://localhost:5173", // Specify the frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Specify only the methods you want to allow
+  credentials: true, // Allow cookies to be sent with requests
+  allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
 };
 
 export default corsOptions;

@@ -7,8 +7,12 @@ export default {
   component: LoginScreen,
 } as Meta;
 
-const Template: StoryFn = (args) => <LoginScreen {...args} />;
+const Template: StoryFn = (args) => <LoginScreen {...args} onLogin={(username: string) => console.log(`Logged in as ${username}`)} />;
 
 export const Default = Template.bind({});
-Default.args = {};
+Default.args = {
+  onLogin: (username: string) => {
+    console.log(`Logged in as ${username}`);
+  },
+};
 

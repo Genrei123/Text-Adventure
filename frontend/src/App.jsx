@@ -56,7 +56,13 @@ function App() {
               <Register onRegister={handleRegister} />
           } 
         />
+
+      <Route 
+        path = "/homepage"
+        element = {<Homepage username={username} onLogout={handleLogout} />}
+      />
       </Routes>
+      
     </Router>
   );
 }
