@@ -143,23 +143,20 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
    * @param {string} provider - The social login provider ('Google' or 'Facebook')
    */
   const handleSocialLogin = async (provider: string) => {
-    // Current frontend-only implementation
     setIsProcessing(true);
     setSuccessMessage(`Connecting to ${provider}...`);
-
-    // Simulated OAuth flow - Replace with actual OAuth2 implementation
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Simulated successful authentication
-    setSuccessMessage(`${provider} login successful! Redirecting...`);
-    onLogin(`${provider} User`);
-    
-    // Simulated token storage and redirect
-    setTimeout(() => {
+  
+    try {
+      // Redirect to backend's full URL
+      window.location.href = `http://localhost:3000/auth/${provider.toLowerCase()}`;
+    } catch (error) {
+      console.error(`Error during ${provider} login:`, error);
+      setSuccessMessage(`Failed to log in with ${provider}.`);
       setIsProcessing(false);
-      navigate('/');
-    }, 1000);
+    }
   };
+  
+  
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] flex">
