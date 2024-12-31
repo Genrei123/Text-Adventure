@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import '../App.css';
+import axios from '../axiosConfig/axiosConfig';
 
 /**
  * Interface for Register component props
@@ -116,8 +117,20 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     if (validateForm()) {
       setIsProcessing(true);
       // Regular registration
+
+
       onRegister(username, false);
       setSuccessMessage('Registration successful! Redirecting to login...');
+
+      axios.post('/auth/register', {
+        username: username,
+        email: email,
+        password: password
+      }).then((response) => {
+        console.log(response);
+      }).catch((error) => {
+        console.error(error);
+      });
       
       // Wait for 3 seconds to show success message before redirecting
       setTimeout(() => {

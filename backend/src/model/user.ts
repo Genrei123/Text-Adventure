@@ -1,13 +1,52 @@
-import { DataTypes } from "sequelize";
-import database from "../service/database";
+import { DataTypes, Model } from "sequelize";
+import sequelize from "../service/database";
 
-const User = database.define('User', {
-    username: {
-        type: DataTypes.STRING
+class User extends Model {}
+
+User.init(
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
+        username: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+            validate: {
+                isEmail: true,
+            },
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        private: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true,
+        },
+        model: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: "gpt-4",
+        },
+        admin: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
     },
-
-    password: {
-        type: DataTypes.STRING
+    {
+        sequelize,
+        modelName: "User", // Optionally set the model name explicitly
     }
-});
+);
 
+export default User;

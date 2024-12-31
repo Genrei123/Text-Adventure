@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from '../axiosConfig/axiosConfig';
 
 interface HomepageProps {
   onLogout: () => void;
@@ -20,19 +21,17 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   }, [location]);
 
   const handleLogout = async () => {
-  try {
-    const response = await fetch('http://localhost:3000/auth/logout', {
-      method: 'GET',
-      credentials: 'include' // Important for sending/receiving cookies
-    });
-    const data = await response.json();
-    
-    // Manually navigate to the redirect URL
-    window.location.href = data.redirectUrl;
-  } catch (error) {
-    console.error('Logout failed', error);
-  }
-};
+
+    try {
+      const response = await axios.get('/auth/logout');
+      const data = response.data; 
+      window.location.href = data.redirectUrl;
+    }
+
+    catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
   
 
   return (
@@ -77,4 +76,4 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   );
 };
 
-export default Homepage;``
+export default Homepage;

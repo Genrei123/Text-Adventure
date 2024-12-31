@@ -5,15 +5,22 @@ import express, { Request, Response } from 'express';
 import passport from './middlware/passport';
 import session from 'express-session';
 import { error } from 'console';
-// import database from './service/database';
+import database from './service/database';
 import Jwt from 'jsonwebtoken';
+import routes from './routes/routes';
 
 const app = express();
+
 app.use(cors(corsOptions));
 app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: true }));
 app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use('/api', routes);
 
 const frontendUrl = 'http://localhost:5173';
 
@@ -105,10 +112,6 @@ app.get('/auth/:provider/callback',
 );
 
 app.listen(3000, () => { 
-  console.log("Server is running on port 3000");
+  // Test Database Connection
+  console.log('Server is running on port 3000');
 });
-
-
-// app.listen(3000, () => {
-//   console.log(database.getDatabaseName());
-// });

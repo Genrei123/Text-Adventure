@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../App.css';
+import axios from '../axiosConfig/axiosConfig';
 
 interface LoginProps {
   onLogin: (username: string) => void;
@@ -15,6 +16,7 @@ interface ValidationErrors {
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [successMessage, setSuccessMessage] = useState<string>('');
@@ -47,12 +49,19 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       setIsProcessing(true);
       setSuccessMessage('Logging in...');
       
-      // TODO: Replace with actual API call
-      setTimeout(() => {
-        onLogin(username);
-        setIsProcessing(false);
+      // Replaced with actual API call
+      const response = await axios.post('/api/login', {
+        email,
+        password,
+      });
+      const data = response.data;
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        onLogin(data.user.email);
         navigate('/');
-      }, 1500);
+      } else {
+        setErrors({ general: data.message });
+      }
     }
   };
 
