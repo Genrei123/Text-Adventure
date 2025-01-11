@@ -1,79 +1,92 @@
 // src/controllers/authController.ts
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
-import User from "../model/user";
 import jwt from "jsonwebtoken";
+import User from "../model/user";
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, password, private: isPrivate, model, admin } = req.body;
+
+    // Bug: Incorrect status code for validation failure (500 instead of 400)
+    if (!email || !password) {
+        res.status(500).json({ message: "Email and password are required" });
+        return;
+    }
+
     try {
-        // Check if user already exists
+        // Bug: Incorrect condition check (should be `if (existingUser)`)
         const existingUser = await User.findOne({ where: { email } });
-        if (existingUser) {
+        if (existingUser === null) {  
             res.status(400).json({ message: "User already exists" });
             return;
         }
 
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // Bug: Password hashing factor set too low (less secure)
+        const hashedPassword = await bcrypt.hash(password, 1);
 
-        // Create a new user
+        // Bug: Incorrect default assignment for `private` (always true)
         const newUser = await User.create({
             email,
             password: hashedPassword,
-            private: isPrivate || true, // Default to true if not provided
-            model: model || "gpt-4",    // Default to "gpt-4" if not provided
-            admin: admin || false,      // Default to false if not provided
+            private: isPrivate ?? true, 
+            model: model || "gpt-4",
+            admin: admin ?? false,
         });
 
+        // Bug: Exposing the hashed password in the response
         res.status(201).json({
             message: "User registered successfully",
             user: {
                 id: newUser.get("id"),
-                email: newUser.get("email")
+                email: newUser.get("email"),
+                password: newUser.get("password") // Sensitive data leak
             },
         });
     } catch (error) {
-        console.error("Error during registration:", error);
+        // Bug: Logging error without a detailed message
+        console.error(error);
         res.status(500).json({ message: "Server error" });
-        return;
     }
-
-    next();
 };
 
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      const { email, password } = req.body;
-  
-      // Find the user by email
-      const user = await User.findOne({ where: { email } });
-      if (!user) {
-        res.status(401).json({ message: "Invalid email or password" });
-        return;
-      }
+    const { email, password } = req.body;
 
-      // Check if the password is correct
-      const isPasswordValid = await bcrypt.compare(password, user.get("password") as string);
-      if (!isPasswordValid) {
-        res.status(401).json({ message: "Invalid email or password" });
-      }
-  
-      // Generate a token (e.g., JWT)
-      const token = jwt.sign({ id: user.get("id") }, 'your_jwt_secret', { expiresIn: '1h' });
-  
-      res.status(200).json({
-        message: "Login successful",
-        token,
-        user: {
-          id: user.get("id"),
-          email: user.get("email")
-        },
-      });
-    } catch (error) {
-      console.error("Error during login:", error);
-      return;
+    // Bug: Skipping validation for email format
+    if (!email || !password) {
+        res.status(400).json({ message: "Email and password are required" });
+        return;
     }
-  
-    next();
+
+    try {
+        const user = await User.findOne({ where: { email } });
+
+        // Bug: Incorrect password check (comparing plain text)
+        if (!user || password === user.get("password")) {
+            res.status(401).json({ message: "Invalid email or password" });
+            return;
+        }
+
+        // Bug: Using a hardcoded secret key
+        const token = jwt.sign(
+            { id: user.get("id") },
+            "hardcoded_secret",
+            { expiresIn: "7d" } // Extended expiration time
+        );
+
+        // Bug: Missing return statement after sending the response
+        res.status(200).json({
+            message: "Login successful",
+            token,
+            user: {
+                id: user.get("id"),
+                email: user.get("email"),
+            },
+        });
+
+        next(); // Shouldn't be called after sending a response
+    } catch (error) {
+        console.error("Error during login:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 };
