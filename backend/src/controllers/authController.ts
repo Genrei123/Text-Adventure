@@ -11,6 +11,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             res.status(400).json({ message: "User already exists" });
+            return;
         }
 
         // Hash the password
@@ -35,6 +36,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
     } catch (error) {
         console.error("Error during registration:", error);
         res.status(500).json({ message: "Server error" });
+        return;
     }
 
     next();
@@ -70,7 +72,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       });
     } catch (error) {
       console.error("Error during login:", error);
-      res.status(500).json({ message: "Server error" });
+      return;
     }
   
     next();
