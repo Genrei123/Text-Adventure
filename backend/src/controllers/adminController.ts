@@ -1,47 +1,67 @@
 import express, { Request, Response } from 'express';
-import User from '../model/user';
+import UserService from '../service/userService';
 
 const router = express.Router();
 
 // Get all users
 router.get('/users', async (req: Request, res: Response) => {
-    const users = await User.findAll();
-    res.json(users);
+    try {
+        const users = await UserService.getAllUsers();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
 });
 
 // Get user by ID
 router.get('/users/:id', async (req: Request, res: Response) => {
-    const user = await User.findByPk(parseInt(req.params.id));
-    if (user) {
-        res.json(user);
-    } else {
-        res.status(404).send('User not found');
+    try {
+        const user = await UserService.getUserById(parseInt(req.params.id));
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user' });
     }
 });
 
 // Add a new user
 router.post('/users', async (req: Request, res: Response) => {
-    const addedUser = await User.addUser(req.body);
-    res.status(201).json(addedUser);
+    try {
+        const addedUser = await UserService.addUser(req.body);
+        res.status(201).json(addedUser);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to add user' });
+    }
 });
 
 // Update a user
 router.put('/users/:id', async (req: Request, res: Response) => {
-    const updatedUser = await User.updateUser(parseInt(req.params.id), req.body);
-    if (updatedUser) {
-        res.json(updatedUser);
-    } else {
-        res.status(404).send('User not found');
+    try {
+        const updatedUser = await UserService.updateUser(parseInt(req.params.id), req.body);
+        if (updatedUser) {
+            res.json(updatedUser);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update user' });
     }
 });
 
 // Delete a user
 router.delete('/users/:id', async (req: Request, res: Response) => {
-    const deleted = await User.deleteUser(parseInt(req.params.id));
-    if (deleted) {
-        res.status(204).send();
-    } else {
-        res.status(404).send('User not found');
+    try {
+        const deleted = await UserService.deleteUser(parseInt(req.params.id));
+        if (deleted) {
+            res.status(204).send();
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete user' });
     }
 });
 
