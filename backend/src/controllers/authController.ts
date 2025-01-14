@@ -31,7 +31,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
     try {
         // Validate password
         if (!validatePassword(password)) {
-            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters (including underscore)." });
+            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters." });
             return;
         }
 
