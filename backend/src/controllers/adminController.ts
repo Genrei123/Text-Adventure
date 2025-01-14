@@ -27,13 +27,27 @@ router.get('/users/:id', async (req: Request, res: Response) => {
     }
 });
 
+// Get user by username
+router.get('/users/username/:username', async (req: Request, res: Response) => {
+    try {
+        const user = await UserService.getUserByUsername(req.params.username);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user' });
+    }
+});
+
 // Add a new user
 router.post('/users', async (req: Request, res: Response) => {
     try {
         const addedUser = await UserService.addUser(req.body);
         res.status(201).json(addedUser);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to add user' });
+        res.status(400).json({ error: (error as Error).message });
     }
 });
 
@@ -47,7 +61,7 @@ router.put('/users/:id', async (req: Request, res: Response) => {
             res.status(404).send('User not found');
         }
     } catch (error) {
-        res.status(500).json({ error: 'Failed to update user' });
+        res.status(400).json({ error: (error as Error).message });
     }
 });
 

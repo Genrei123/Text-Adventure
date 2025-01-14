@@ -1,16 +1,22 @@
-// src/controllers/authController.ts
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import User from "../model/user";
 import jwt from "jsonwebtoken";
+import { ValidationError } from "sequelize";
 
-export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { email, password, private: isPrivate, model, admin } = req.body;
+export const register = async (req: Request, res: Response): Promise<void> => {
+    const { username, email, password, private: isPrivate, model, admin } = req.body;
     try {
         // Check if user already exists
-        const existingUser = await User.findOne({ where: { email } });
-        if (existingUser) {
-            res.status(400).json({ message: "User already exists" });
+        const existingUserByEmail = await User.findOne({ where: { email } });
+        if (existingUserByEmail) {
+            res.status(400).json({ message: "Email already exists" });
+            return;
+        }
+
+        const existingUserByUsername = await User.findOne({ where: { username } });
+        if (existingUserByUsername) {
+            res.status(400).json({ message: "Username already exists" });
             return;
         }
 
@@ -19,6 +25,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
 
         // Create a new user
         const newUser = await User.create({
+            username,
             email,
             password: hashedPassword,
             private: isPrivate || true, // Default to true if not provided
@@ -30,19 +37,21 @@ export const register = async (req: Request, res: Response, next: NextFunction):
             message: "User registered successfully",
             user: {
                 id: newUser.get("id"),
+                username: newUser.get("username"),
                 email: newUser.get("email")
             },
         });
     } catch (error) {
-        console.error("Error during registration:", error);
-        res.status(500).json({ message: "Server error" });
-        return;
+        if (error instanceof ValidationError) {
+            res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
+        } else {
+            console.error("Error during registration:", error);
+            res.status(500).json({ message: "Server error" });
+        }
     }
-
-    next();
 };
 
-export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const login = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password } = req.body;
   
@@ -57,6 +66,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       const isPasswordValid = await bcrypt.compare(password, user.get("password") as string);
       if (!isPasswordValid) {
         res.status(401).json({ message: "Invalid email or password" });
+        return;
       }
   
       // Generate a token (e.g., JWT)
@@ -67,13 +77,12 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
         token,
         user: {
           id: user.get("id"),
-          email: user.get("email")
+          email: user.get("email"),
+          username: user.get("username")
         },
       });
     } catch (error) {
       console.error("Error during login:", error);
-      return;
+      res.status(500).json({ message: "Server error" });
     }
-  
-    next();
 };

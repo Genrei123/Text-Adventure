@@ -10,6 +10,8 @@ import database from './service/database';
 import Jwt from 'jsonwebtoken';
 import routes from './routes/routes';
 import adminController from './controllers/adminController'; // Import the adminController
+import * as authController from './controllers/authController'; // Import the authController
+import User from './model/user'; // Import the User model
 
 const app = express();
 
@@ -22,6 +24,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', routes);
 app.use('/api', adminController); // Use the adminController for /api routes
+
+// Add the auth routes under /api prefix
+app.post('/api/register', authController.register);
+app.post('/api/login', authController.login);
 
 const frontendUrl = 'http://localhost:5173';
 
@@ -114,6 +120,10 @@ app.listen(3000, async () => {
   try {
     await database.authenticate();
     console.log('Connection to the database has been established successfully.');
+    
+    // Synchronize the User model with the database
+    await User.sync({ alter: true });
+    console.log('User table has been synchronized.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
