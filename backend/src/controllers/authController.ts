@@ -16,6 +16,7 @@ interface RegisterRequestBody {
 
 // Function to validate password
 const validatePassword = (password: string): boolean => {
+    if (!password) return false;
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
@@ -63,9 +64,9 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         res.status(201).json({
             message: "User registered successfully",
             user: {
-                id: newUser.get("id"),
-                username: newUser.get("username"),
-                email: newUser.get("email")
+                id: newUser.id,
+                username: newUser.username,
+                email: newUser.email
             },
         });
     } catch (error) {
@@ -90,22 +91,22 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       }
 
       // Check if the password is correct
-      const isPasswordValid = await bcrypt.compare(password, user.get("password") as string);
+      const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         res.status(401).json({ message: "Invalid email or password" });
         return;
       }
   
       // Generate a token (e.g., JWT)
-      const token = jwt.sign({ id: user.get("id") }, 'your_jwt_secret', { expiresIn: '1h' });
+      const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
   
       res.status(200).json({
         message: "Login successful",
         token,
         user: {
-          id: user.get("id"),
-          email: user.get("email"),
-          username: user.get("username")
+          id: user.id,
+          email: user.email,
+          username: user.username
         },
       });
     } catch (error) {
