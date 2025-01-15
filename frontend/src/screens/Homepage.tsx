@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from '../axiosConfig/axiosConfig';
+import Footer from '../components/Footer';
 
 interface HomepageProps {
   onLogout: () => void;
@@ -73,6 +74,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         </p>
       </div>
     </div>
+
   );
 };
 
