@@ -3,35 +3,15 @@ import bcrypt from "bcrypt";
 import User from "../model/user";
 import jwt from "jsonwebtoken";
 import { ValidationError } from "sequelize";
-
-// Define an interface for the request body
-interface RegisterRequestBody {
-    username: string;
-    email: string;
-    password: string;
-    private?: boolean;
-    model?: string;
-    admin?: boolean;
-}
-
-// Function to validate password
-const validatePassword = (password: string): boolean => {
-    if (!password) return false;
-    const minLength = 8;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>_]/.test(password); // Include underscore
-
-    return password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar;
-};
+import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
+import { validatePassword } from "../utils/passwordValidator";
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
     try {
         // Validate password
         if (!validatePassword(password)) {
-            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters." });
+            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters (including underscore)." });
             return;
         }
 
