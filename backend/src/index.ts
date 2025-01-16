@@ -9,7 +9,7 @@ import { error } from 'console';
 import database from './service/database';
 import Jwt from 'jsonwebtoken';
 import routes from './routes/routes';
-import adminController from './controllers/adminController'; // Import the adminController
+import adminController from './routes/adminRoutes'; // Import the adminController
 import * as authController from './controllers/authController'; // Import the authController
 import User from './model/user'; // Import the User model
 
