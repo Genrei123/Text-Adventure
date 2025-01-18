@@ -9,7 +9,7 @@ import { error } from 'console';
 import database from './service/database';
 import Jwt from 'jsonwebtoken';
 import routes from './routes/routes';
-import adminController from './routes/adminRoutes'; // Import the adminController
+import adminController from './routes/userCRUDRoutes'; // Import the adminController
 import * as authController from './controllers/authController'; // Import the authController
 import User from './model/user'; // Import the User model
 
@@ -22,12 +22,12 @@ app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api', routes);
-app.use('/api', adminController); // Use the adminController for /api routes
+app.use('/', routes);
+app.use('/', adminController); 
 
-// Add the auth routes under /api prefix
-app.post('/api/register', authController.register);
-app.post('/api/login', authController.login);
+// Add the auth routes without /api prefix
+app.post('/register', authController.register);
+app.post('/login', authController.login);
 
 const frontendUrl = 'http://localhost:5173';
 
