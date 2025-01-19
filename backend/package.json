@@ -7,7 +7,7 @@
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "serve": "node dist/index.js",
-    "test": "jest --watchAll --verbose --coverage"
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",
