@@ -1,7 +1,7 @@
-import express from 'express';
+import { Router } from 'express';
 import { createInvoice } from '../controllers/paymentController';
 
-const router = express.Router();
+const router = Router();
 
 router.post('/create-invoice', createInvoice);
 
