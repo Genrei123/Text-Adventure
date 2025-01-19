@@ -10,6 +10,7 @@ import database from './service/database';
 import Jwt from 'jsonwebtoken';
 import routes from './routes/routes';
 import adminController from './routes/userCRUDRoutes'; // Import the adminController
+import paymentRoutes from './routes/paymentRoutes'; // Import the paymentRoutes
 import * as authController from './controllers/authController'; // Import the authController
 import User from './model/user'; // Import the User model
 
@@ -19,11 +20,12 @@ app.use(cors(corsOptions));
 app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.json());
+app.use(express.json()); // Ensure JSON body parsing
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routes);
-app.use('/', adminController); 
+app.use('/', adminController);
+app.use('/', paymentRoutes); // Use the payment routes
 
 // Add the auth routes without /api prefix
 app.post('/register', authController.register);
