@@ -151,6 +151,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
    * 
    * @param {string} provider - The social login provider ('Google' or 'Facebook')
    */
+  
   const handleSocialLogin = async (provider: string) => {
     setIsProcessing(true);
     setSuccessMessage(`Connecting to ${provider}...`);
@@ -164,19 +165,16 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       setIsProcessing(false);
     }
   };
-  
-  
 
   return (
-    <div className="min-h-screen bg-[#1E1E1E] flex">
+    <div className="min-h-screen bg-[#1E1E1E] flex flex-col md:flex-row items-center justify-center md:justify-start">
       {/* Left Side - Logo */}
-      <div className="w-1/2 flex items-center justify-center">
+      <div className="w-full md:w-1/2 flex items-center justify-center md:block hidden">
         <div className="text-xl font-cinzel text-white">SAGE.AI</div>
       </div>
-
       {/* Right Side - Login Form */}
-      <div className="w-1/2 flex items-center justify-center">
-        <div className="w-[480px] relative">
+      <div className="w-full md:w-1/2 flex items-center justify-center md:justify-end p-4 md:p-0 mt-8 md:mt-0 md:mr-[250px]">
+        <div className="w-full md:w-[480px] relative">
           {/* Success Message Overlay */}
           {(successMessage && isProcessing) && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
@@ -191,7 +189,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </div>
           )}
 
-          <h2 className="text-4xl font-cinzel text-white mb-12 text-center">Gates of Realm</h2>
+          <h2 className="text-4xl font-cinzel text-white mb-12 text-center md:animate-none">Gates of Realm</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-cinzel text-white mb-2">Username</label>

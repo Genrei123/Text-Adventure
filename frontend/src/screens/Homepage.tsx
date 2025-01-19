@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from '../axiosConfig/axiosConfig';
+import Footer from '../components/Footer';
+import SearchBar from '../components/SearchBar';
+import Sidebar from '../components/Sidebar';
 
 interface HomepageProps {
   onLogout: () => void;
@@ -36,9 +39,11 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-      <nav className="bg-[#3D2E22] py-2 px-4">
+      <nav className="bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
         <div className="flex justify-between items-center">
           <div className="text-xl font-cinzel text-[#C8A97E]">Sage.AI</div>
+          {/* Remove comment if the searchbar is now done */}
+          {/* <SearchBar /> */}
           <div className="flex items-center space-x-2">
             {username ? (
               <>
@@ -65,6 +70,9 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         </div>
       </nav>
       <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="flex flex-row w-full">
+            <Sidebar/>
+          </div>
         <h1 className="text-4xl font-bold font-cinzel text-[#C8A97E] mb-4">
           Welcome to Sage.AI
         </h1>
@@ -73,6 +81,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         </p>
       </div>
     </div>
+
   );
 };
 
