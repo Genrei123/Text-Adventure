@@ -167,10 +167,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1E1E1E] flex flex-col md:flex-row items-center justify-center md:justify-start">
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-cover bg-center fade-in" style={{ backgroundImage: "url('src/assets/Login.jpg')" }}>
+      <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
       {/* Left Side - Logo */}
-      <div className="w-full md:w-1/2 flex items-center justify-center md:block hidden">
-        <div className="text-xl font-cinzel text-white">SAGE.AI</div>
+      <div className="w-full md:w-1/2 flex items-center justify-center h-screen">
       </div>
       {/* Right Side - Login Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center md:justify-end p-4 md:p-0 mt-8 md:mt-0 md:mr-[250px]">
@@ -188,7 +188,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               </div>
             </div>
           )}
-
+          
           <h2 className="text-4xl font-cinzel text-white mb-12 text-center md:animate-none">Gates of Realm</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
