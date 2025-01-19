@@ -167,14 +167,17 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-cover bg-center fade-in" style={{ backgroundImage: "url('src/assets/Login.jpg')" }}>
-      <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: "url('src/assets/Login.jpg')" }}>
+      <img
+      src="src/assets/fadeLogin.png"
+      className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block"
+      />
       {/* Left Side - Logo */}
-      <div className="w-full md:w-1/2 flex items-center justify-center h-screen">
+      <div className="hidden md:block md:w-1/2 flex items-center justify-center h-screen">
       </div>
       {/* Right Side - Login Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center md:justify-end p-4 md:p-0 mt-8 md:mt-0 md:mr-[250px]">
-        <div className="w-full md:w-[480px] relative">
+      <div className="w-full md:w-1/2 flex items-center justify-center md:justify-end p-4 md:p-0 mt-0 md:mt-0 md:mr-[250px] z-10">
+        <div className="w-full max-w-[90%] md:w-[480px] relative">
           {/* Success Message Overlay */}
           {(successMessage && isProcessing) && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
@@ -287,3 +290,4 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 };
 
 export default Login;
+
