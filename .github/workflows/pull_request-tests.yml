@@ -1,5 +1,9 @@
 name: Pull Request Tests
 
+env:
+  googleClientID: ${{ secrets.GOOGLE_CLIENT_ID }}
+  googleClientSecret: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+  
 on:
   pull_request:
     branches:
