@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import cors from 'cors';
 import corsOptions from './middlware/cors';
 import cookieJwtAuth from './middlware/auth';
@@ -8,19 +9,25 @@ import { error } from 'console';
 import database from './service/database';
 import Jwt from 'jsonwebtoken';
 import routes from './routes/routes';
+import adminController from './routes/userCRUDRoutes'; // Import the adminController
+import * as authController from './controllers/authController'; // Import the authController
+import User from './model/user'; // Import the User model
 
 const app = express();
 
 app.use(cors(corsOptions));
-app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: true }));
 app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/', routes);
+app.use('/', adminController); 
 
-app.use('/api', routes);
+// Add the auth routes without /api prefix
+app.post('/register', authController.register);
+app.post('/login', authController.login);
 
 const frontendUrl = 'http://localhost:5173';
 
@@ -51,8 +58,6 @@ app.get('/auth/google/callback',
     }
   }
 );
-
-
 
 app.get('/auth/logout', (req: Request, res: Response) => {
   // Clear the token cookie
@@ -111,8 +116,17 @@ app.get('/auth/:provider/callback',
   }
 );
 
-app.listen(3000, () => { 
-  // Test Database Connection
+app.listen(3000, async () => { 
+  try {
+    await database.authenticate();
+    console.log('Connection to the database has been established successfully.');
+    
+    // Synchronize the User model with the database
+    await User.sync({ alter: true });
+    console.log('User table has been synchronized.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
   console.log('Server is running on port 3000');
 });
 
