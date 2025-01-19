@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from '../axiosConfig/axiosConfig';
 import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
+import Sidebar from '../components/Sidebar';
 
 interface HomepageProps {
   onLogout: () => void;
@@ -70,53 +71,8 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
       </nav>
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="flex flex-row w-full">
-          {/* leftsidebar */}
-          <div className="hidden md:block w-1/15 h-10 p-6 absolute top-12 left-0 md:w-1/15 md:h-[calc(127vh-4rem)] md:p-6">
-            <ul className="space-y-2 md:space-y-0 md:flex md:flex-col">
-              <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                <img src="src/assets/Home.svg" className="w-9 h-9 group-hover:opacity-0" />
-                <img src="src/assets/Home-after.svg" className="w-9 h-9 absolute top-0 left-3 opacity-0 group-hover:opacity-100" />
-              </li>
-              <br />
-              <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                <img src="src/assets/Settings.svg" className="w-9 h-9 group-hover:opacity-0" />
-                <img src="src/assets/Settings-after.svg" className="w-9 h-9 absolute top-0 left-3 opacity-0 group-hover:opacity-100" />
-              </li>
-              <br />
-              <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                <img src="src/assets/Message.svg" className="w-13 h-13 group-hover:opacity-0" />
-                <img src="src/assets/Message-after.svg" className="w-13 h-13 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
-              </li>
-              <br />
-              <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                <img src="src/assets/Any.svg" className="w-15 h-15 group-hover:opacity-0" />
-                <img src="src/assets/Any-after.svg" className="w-15 h-15 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
-              </li>
-            </ul>
+            <Sidebar/>
           </div>
-          {/* upper side bar */}
-          <div className="block md:hidden w-full p-1 top-12 left-0 h-50 absolute">
-            <ul className="flex justify-around">
-              <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                <img src="src/assets/Home.svg" className="w-4.5 h-4.5 group-hover:opacity-0" />
-                <img src="src/assets/Home-after.svg" className="w-4.5 h-4.5 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
-              </li>
-              <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                <img src="src/assets/Settings.svg" className="w-4.5 h-4.5 group-hover:opacity-0" />
-                <img src="src/assets/Settings-after.svg" className="w-4.5 h-4.5 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
-              </li>
-              <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                <img src="src/assets/Message.svg" className="w-6.5 h-6.5 group-hover:opacity-0" />
-                <img src="src/assets/Message-after.svg" className="w-6.5 h-6.5 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
-              </li>
-              <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                <img src="src/assets/Any.svg" className="w-7.5 h-7.5 group-hover:opacity-0" />
-                <img src="src/assets/Any-after.svg" className="w-7.5 h-7.5 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
-              </li>
-            </ul>
-          </div>
-          </div>
-          
         <h1 className="text-4xl font-bold font-cinzel text-[#C8A97E] mb-4">
           Welcome to Sage.AI
         </h1>

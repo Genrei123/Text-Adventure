@@ -3,6 +3,7 @@ import { useState } from 'react';
 import LoginScreen from './screens/LoginScreen';
 import Homepage from './screens/Homepage';
 import Register from './components/Register';
+import GameScreen from './screens/GameScreen';
 import './theme/LoginTheme.css'
 import "./App.css"; 
 
@@ -56,13 +57,15 @@ function App() {
               <Register onRegister={handleRegister} />
           } 
         />
-
       <Route 
-        path = "/homepage"
+        path =   "/homepage"
         element = {<Homepage username={username} onLogout={handleLogout} />}
       />
+      <Route 
+        path = "/GameScreen"
+        element = {<GameScreen/>}
+      />
       </Routes>
-      
     </Router>
   );
 }
