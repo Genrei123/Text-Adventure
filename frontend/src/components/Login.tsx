@@ -50,8 +50,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       setSuccessMessage('Logging in...');
       
       // Replaced with actual API call
-      const response = await axios.post('/api/login', {
-        email,
+      const response = await axios.post('/login', {
+        username,
         password,
       });
       const data = response.data;
