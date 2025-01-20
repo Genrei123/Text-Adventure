@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../service/database";
 
+// Define the attributes of the User model
 interface UserAttributes {
     id: number;
     username: string;
@@ -14,8 +15,10 @@ interface UserAttributes {
     emailVerified: boolean;
 }
 
+// Define the creation attributes for the User model
 interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationCodeExpires' | 'emailVerified'> {}
 
+// Extend the Model class with the User attributes
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
     public id!: number;
     public username!: string;
