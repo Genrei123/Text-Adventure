@@ -167,9 +167,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: "url('src/assets/Login.jpg')" }}>
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: `url(${('/Login.jpg')})` }}>
       <img
-      src="src/assets/fadeLogin.png"
+      src={('src/assets/fadeLogin.png')}
       className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block"
       />
       {/* Left Side - Logo */}
