@@ -4,6 +4,7 @@ import LoginScreen from './screens/LoginScreen';
 import Homepage from './screens/Homepage';
 import Register from './components/Register';
 import GameScreen from './screens/GameScreen';
+import UserProfile from './screens/UserProfile';
 import './theme/LoginTheme.css'
 import "./App.css"; 
 
@@ -64,6 +65,10 @@ function App() {
       <Route 
         path = "/GameScreen"
         element = {<GameScreen/>}
+      />
+      <Route 
+        path = "/UserProfile"
+        element = {<UserProfile/>}
       />
       </Routes>
     </Router>
