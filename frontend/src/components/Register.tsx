@@ -116,8 +116,33 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     e.preventDefault();
     if (validateForm()) {
       setIsProcessing(true);
+      const now = new Date().toISOString();
       // Regular registration
 
+
+
+      
+      try {
+        const response = await axios.post('/api/register', {
+          username,
+          email,
+          password,
+          private: true,
+          model: 'gpt-4',
+          admin: false,
+          createdAt: now,
+          updatedAt: now,
+        });
+        setSuccessMessage('Registration successful! Please check your email for the verification code.');
+        setTimeout(() => navigate('/verify-email'), 3000);
+      } catch (error) {
+        setErrors({ general: error.response?.data?.message || 'Registration failed.' });
+      } finally {
+        setIsProcessing(false);
+      }
+
+
+      
 
       onRegister(username, false);
       setSuccessMessage('Registration successful! Redirecting to login...');

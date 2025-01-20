@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { ValidationError } from "sequelize";
 import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
+import { sendVerificationEmail } from "../service/emailService";
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
@@ -31,6 +32,10 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Generate verification code
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const verificationCodeExpires = new Date(Date.now() + 3600000); // 1 hour from now
+
         // Create a new user
         const newUser = await User.create({
             username,
@@ -39,10 +44,20 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             private: isPrivate || true, // Default to true if not provided
             model: model || "gpt-4",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
+            verificationCode,
+            verificationCodeExpires,
         });
 
+        // Send verification email
+        const emailSent = await sendVerificationEmail(email, verificationCode);
+        if (!emailSent) {
+            await newUser.destroy(); // Rollback user creation if email sending fails
+            res.status(500).json({ message: "Failed to send verification email. Please try again." });
+            return;
+        }
+
         res.status(201).json({
-            message: "User registered successfully",
+            message: "User registered successfully. Please check your email for the verification code.",
             user: {
                 id: newUser.id,
                 username: newUser.username,
@@ -93,4 +108,32 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     console.error("Error during login:", error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
+    const { email, code } = req.body;
+
+    try {
+        const user = await User.findOne({ where: { email } });
+
+        if (!user) {
+            res.status(400).json({ message: "Invalid email or verification code" });
+            return;
+        }
+
+        if (user.verificationCode !== code || !user.verificationCodeExpires || user.verificationCodeExpires < new Date()) {
+            res.status(400).json({ message: "Invalid or expired verification code" });
+            return;
+        }
+
+        user.emailVerified = true;
+        user.verificationCode = null;
+        user.verificationCodeExpires = null;
+        await user.save();
+
+        res.status(200).json({ message: "Email verified successfully" });
+    } catch (error) {
+        console.error("Error during email verification:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 };
