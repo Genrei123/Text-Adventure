@@ -9,8 +9,9 @@ import database from './service/database';
 import Jwt from 'jsonwebtoken';
 import routes from './routes/routes';
 import adminController from './routes/userCRUDRoutes';
-import paymentRoutes from './routes/paymentRoutes';
+import invoiceRoutes from './routes/invoiceRoutes';
 import * as authController from './controllers/authController';
+import paymentRoutes from './routes/paymentRoutes';
 import User from './model/user';
 
 const app = express();
@@ -25,7 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routes);
 app.use('/', adminController);
-app.use('/', paymentRoutes); // Use the payment routes
+app.use('/', invoiceRoutes);
+app.use('/', paymentRoutes);
 
 // Add the auth routes
 app.post('/register', authController.register);
