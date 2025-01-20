@@ -1,7 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../service/database";
 
-// Define the attributes of the User model
 interface UserAttributes {
     id: number;
     username: string;
@@ -10,12 +9,13 @@ interface UserAttributes {
     private: boolean;
     model: string;
     admin: boolean;
+    verificationCode: string | null;
+    verificationCodeExpires: Date | null;
+    emailVerified: boolean;
 }
 
-// Define the creation attributes for the User model
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationCodeExpires' | 'emailVerified'> {}
 
-// Extend the Model class with the User attributes
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
     public id!: number;
     public username!: string;
@@ -24,6 +24,9 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public private!: boolean;
     public model!: string;
     public admin!: boolean;
+    public verificationCode!: string | null;
+    public verificationCodeExpires!: Date | null;
+    public emailVerified!: boolean;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -61,9 +64,22 @@ User.init(
         model: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: "gpt-4",
+            defaultValue: 'gpt-4',
         },
         admin: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
+        verificationCode: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        verificationCodeExpires: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        emailVerified: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
@@ -71,7 +87,7 @@ User.init(
     },
     {
         sequelize,
-        modelName: "User", // Optionally set the model name explicitly
+        modelName: 'User',
     }
 );
 
