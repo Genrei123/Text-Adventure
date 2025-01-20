@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import '../App.css';
 import axios from '../axiosConfig/axiosConfig';
+import emailjs from 'emailjs-com';
 
 /**
  * Interface for Register component props
@@ -117,51 +118,25 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     if (validateForm()) {
       setIsProcessing(true);
       const now = new Date().toISOString();
-      // Regular registration
+      const token = generateToken();
 
-
-
-      
       try {
         const response = await axios.post('/api/register', {
           username,
           email,
           password,
-          private: true,
-          model: 'gpt-4',
-          admin: false,
+          token,
           createdAt: now,
           updatedAt: now,
         });
+
+        sendVerificationEmail(email, token);
         setSuccessMessage('Registration successful! Please check your email for the verification code.');
-        setTimeout(() => navigate('/verify-email'), 3000);
       } catch (error) {
         setErrors({ general: error.response?.data?.message || 'Registration failed.' });
       } finally {
         setIsProcessing(false);
       }
-
-
-      
-
-      onRegister(username, false);
-      setSuccessMessage('Registration successful! Redirecting to login...');
-
-      axios.post('/api/register', {
-        username: username,
-        email: email,
-        password: password
-      }).then((response) => {
-        console.log(response);
-      }).catch((error) => {
-        console.error(error);
-      });
-      
-      // Wait for 3 seconds to show success message before redirecting
-      setTimeout(() => {
-        setIsProcessing(false);
-        navigate('/login');
-      }, 3000);
     }
   };
 
@@ -243,6 +218,24 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       setIsProcessing(false);
       navigate('/');
     }, 1500);
+  };
+
+  const sendVerificationEmail = (email: string, token: string) => {
+    const templateParams = {
+      to_email: email,
+      verification_link: `htthttps://text-adventure-six.vercel.app/verify-email?token=${token}`,
+    };
+  
+    emailjs.send(
+      process.env.REACT_APP_EMAILJS_SERVICE_ID!,
+      process.env.REACT_APP_EMAILJS_TEMPLATE_ID!,
+      templateParams,
+      process.env.REACT_APP_EMAILJS_PUBLIC_KEY!
+    ).then((response) => {
+      console.log('Email sent successfully!', response.status, response.text);
+    }).catch((error) => {
+      console.error('Failed to send email:', error);
+    });
   };
 
   return (
