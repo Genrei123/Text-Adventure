@@ -15,7 +15,7 @@ const GameScreen: React.FC = () => {
                     HIDDEN TAVERN
                 </div>
                 <div className="flex items-center space-x-4 mr-10">
-                    <img src="src/assets/Tokens.svg" alt="Placeholder" className="w-8 h-8 rounded-full" />
+                    <img src="/Tokens.svg" alt="Placeholder" className="w-8 h-8 rounded-full" />
                     <span className="text-xl font-cinzel text-white">14</span>
                 </div>
             </div>
@@ -67,8 +67,8 @@ const GameScreen: React.FC = () => {
             <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
                 <div className="flex space-x-2">
                     <button className="p-2 text-white rounded relative group">
-                        <img src="src/assets/Settings.svg" alt="Icon" className="w-6 h-6 group-hover:opacity-0" />
-                        <img src="src/assets/Settings-After.svg" alt="Icon Hover" className="w-6 h-6 absolute top-2 left-2 opacity-0 group-hover:opacity-100" />
+                        <img src="/Settings.svg" alt="Icon" className="w-6 h-6 group-hover:opacity-0" />
+                        <img src="/Settings-After.svg" alt="Icon Hover" className="w-6 h-6 absolute top-2 left-2 opacity-0 group-hover:opacity-100" />
                     </button>
                     <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
                         <img src="src/assets/Story.svg" alt="Icon 2" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
@@ -88,6 +88,7 @@ const GameScreen: React.FC = () => {
                     <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
                         <img src="src/assets/See.svg" alt="Icon 5" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
                         <img src="src/assets/See-After.svg" alt="Icon 5 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
+
                         <span>See</span>
                     </button>
                 </div>
@@ -98,8 +99,8 @@ const GameScreen: React.FC = () => {
                         placeholder="Type your text here..." 
                     />
                     <button className="p-4 bg-transparent rounded-r-2xl relative group">
-                        <img src="src/assets/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
-                        <img src="src/assets/Enter-After.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
+                        <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
+                        <img src="/Enter-After.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
                     </button>
                 </div>
             </div>
