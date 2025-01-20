@@ -14,23 +14,22 @@ import * as authController from './controllers/authController';
 import User from './model/user';
 
 const app = express();
+const frontendUrl = 'http://localhost:5173';
 
 app.use(cors(corsOptions));
 app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.json()); // Ensure JSON body parsing
+app.use(express.json()); // Middleware to parse JSON bodies
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routes);
 app.use('/', adminController);
 app.use('/', paymentRoutes); // Use the payment routes
 
-// Add the auth routes without /api prefix
+// Add the auth routes
 app.post('/register', authController.register);
 app.post('/login', authController.login);
-
-const frontendUrl = 'http://localhost:5173';
 
 app.get('/', (req: Request, res: Response) => {
   res.send("Hello World!");
