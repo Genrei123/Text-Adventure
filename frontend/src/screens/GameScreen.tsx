@@ -49,10 +49,19 @@ const GameScreen: React.FC = () => {
                         My name is Gian Higino Fungo. I'm a BSCS student studying at Caloocan City. My house is in Bagong Silang, and I live with my family. I attend classes at the university, and I study diligently to achieve my goals. I don't smoke, but I occasionally drink coffee to keep me awake during late-night study sessions.
                     </p>
                     <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        I'm in bed by 11 PM, and I make sure I get eight hours of sleep, no matter what. After having a glass of warm milk and doing about twenty minutes of stretches before going to bed, I usually have no problems sleeping until morning. Just like a baby, I wake up without any fatigue or stress in the morning.
+                        My daily routine involves attending lectures, working on programming projects, and collaborating with my classmates on various assignments. I'm passionate about technology and continuously strive to improve my skills and knowledge.
                     </p>
                     <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        My daily routine involves attending lectures, working on programming projects, and collaborating with my classmates on various assignments. I'm passionate about technology and continuously strive to improve my skills and knowledge.
+                        In my free time, I enjoy reading tech blogs, experimenting with new coding languages, and exploring innovative solutions to real-world problems. This not only helps me stay updated with the latest trends but also fuels my creativity and problem-solving abilities.
+                    </p>
+                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
+                        I believe that a balanced life is essential for success. I make time for relaxation and hobbies, such as playing video games, going for a run, or spending quality time with my family and friends. This helps me recharge and maintain a positive outlook on life.
+                    </p>
+                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
+                        As a BSCS student, I am committed to making a difference in the field of technology. I aspire to contribute to innovative projects that can positively impact society and improve people's lives. With determination and perseverance, I am confident that I can achieve my goals and make a meaningful contribution to the tech industry.
+                    </p>
+                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
+                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
                     </p>
                     <form onSubmit={handleSubmit}>
                         <input
@@ -90,7 +99,6 @@ const GameScreen: React.FC = () => {
                     <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
                         <img src="/See.svg" alt="Icon 5" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
                         <img src="/See-After.svg" alt="Icon 5 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
-
                         <span>See</span>
                     </button>
                 </div>
@@ -106,7 +114,6 @@ const GameScreen: React.FC = () => {
                     </button>
                 </div>
             </div>
-
         </div>
     );
 };
