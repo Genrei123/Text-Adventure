@@ -1,29 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import Searchbar from '../components/SearchBar';
+import axios from '../axiosConfig/axiosConfig';
 
 const GameScreen: React.FC = () => {
+    const [userInput, setUserInput] = useState('');
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('/api/chat', {
+                session_id: 'session123', // Example session ID
+                model: 'gpt-4',
+                role: 'user',
+                content: userInput,
+                GameId: 1, // Example Game ID
+                UserId: 1, // Example User ID
+            });
+
+            console.log('Response processed:', response.data);
+        } catch (error) {
+            console.error('Error processing response:', error);
+        }
+    };
+
     return (
-        <>
         <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
             <nav className="bg-[#1e1e1e] py-3.5 px-4 shadow-[0_10px_10px_0_rgba(0,0,0,0.75)] z-50">
-            <div className="flex justify-between items-center">
-                <div className="text-2xl font-cinzel text-[#C8A97E]">
-                    Sage.AI
+                <div className="flex justify-between items-center">
+                    <div className="text-2xl font-cinzel text-[#C8A97E]">Sage.AI</div>
+                    <div className="text-2xl font-cinzel text-white font-bold absolute left-1/4 transform -translate-x-1/2 hidden md:block md:whitespace-nowrap overflow-hidden text-ellipsis">
+                        HIDDEN TAVERN
+                    </div>
+                    <div className="flex items-center space-x-4 mr-10">
+                        <img src="/Tokens.svg" alt="Placeholder" className="w-8 h-8 rounded-full" />
+                        <span className="text-xl font-cinzel text-white">14</span>
+                    </div>
                 </div>
-                <div className="text-2xl font-cinzel text-white font-bold absolute left-1/4 transform -translate-x-1/2 hidden md:block md:whitespace-nowrap overflow-hidden text-ellipsis">
-                    HIDDEN TAVERN
-                </div>
-                <div className="flex items-center space-x-4 mr-10">
-                    <img src="/Tokens.svg" alt="Placeholder" className="w-8 h-8 rounded-full" />
-                    <span className="text-xl font-cinzel text-white">14</span>
-                </div>
-            </div>
             </nav>
-            <Sidebar/>
-            <br/>
-            <br/>
-            <br/>
+            <Sidebar />
+            <br />
+            <br />
+            <br />
             <div className="flex-grow flex justify-center items-center mt-[-5%]">
                 <div className="bg- text-white w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto max-h-[calc(1.5em*30)] scrollbar-hide" style={{ scrollbarColor: '#634630 #1E1E1E' }}>
                     <p className="text-left first-letter:ml-10 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
@@ -35,33 +54,16 @@ const GameScreen: React.FC = () => {
                     <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
                         My daily routine involves attending lectures, working on programming projects, and collaborating with my classmates on various assignments. I'm passionate about technology and continuously strive to improve my skills and knowledge.
                     </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        In my free time, I enjoy reading tech blogs, experimenting with new coding languages, and exploring innovative solutions to real-world problems. This not only helps me stay updated with the latest trends but also fuels my creativity and problem-solving abilities.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        I believe that a balanced life is essential for success. I make time for relaxation and hobbies, such as playing video games, going for a run, or spending quality time with my family and friends. This helps me recharge and maintain a positive outlook on life.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        As a BSCS student, I am committed to making a difference in the field of technology. I aspire to contribute to innovative projects that can positively impact society and improve people's lives. With determination and perseverance, I am confident that I can achieve my goals and make a meaningful contribution to the tech industry.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
+                    <form onSubmit={handleSubmit}>
+                        <input
+                            type="text"
+                            value={userInput}
+                            onChange={(e) => setUserInput(e.target.value)}
+                            className="w-full p-2 mt-4 bg-[#2E2E2E] text-white rounded"
+                            placeholder="Type your response..."
+                        />
+                        <button type="submit" className="mt-2 p-2 bg-[#C8A97E] text-white rounded">Submit</button>
+                    </form>
                 </div>
             </div>
             <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
@@ -106,7 +108,6 @@ const GameScreen: React.FC = () => {
             </div>
 
         </div>
-        </>
     );
 };
 
