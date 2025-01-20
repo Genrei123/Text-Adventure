@@ -122,7 +122,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       onRegister(username, false);
       setSuccessMessage('Registration successful! Redirecting to login...');
 
-      axios.post('/auth/register', {
+      axios.post('/api/register', {
         username: username,
         email: email,
         password: password

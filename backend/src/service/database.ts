@@ -2,16 +2,20 @@ import { Sequelize } from "sequelize";
 require("dotenv").config();
 
 const DATABASE_URI = process.env.DATABASE_URI;
-const sequelize = new Sequelize(DATABASE_URI?.toString() || "", {
-  dialect: 'postgres',
-  protocol: 'postgres',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
+if (!DATABASE_URI) {
+    throw new Error("DATABASE_URI is not defined in the environment variables");
+}
+
+const sequelize = new Sequelize(DATABASE_URI, {
+    dialect: 'postgres',
+    protocol: 'postgres',
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false,
+        },
     },
-  },
-  logging: false, // Disable logging
+    logging: false, // Disable logging
 });
 
 export default sequelize;
