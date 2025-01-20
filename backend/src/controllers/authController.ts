@@ -60,37 +60,37 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { email, password } = req.body;
-  
-      // Find the user by email
-      const user = await User.findOne({ where: { email } });
-      if (!user) {
-        res.status(401).json({ message: "Invalid email or password" });
-        return;
-      }
+  try {
+    const { email, password } = req.body;
 
-      // Check if the password is correct
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        res.status(401).json({ message: "Invalid email or password" });
-        return;
-      }
-  
-      // Generate a token (e.g., JWT)
-      const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
-  
-      res.status(200).json({
-        message: "Login successful",
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          username: user.username
-        },
-      });
-    } catch (error) {
-      console.error("Error during login:", error);
-      res.status(500).json({ message: "Server error" });
+    // Find the user by email
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.status(401).json({ message: "Invalid email or password" });
+      return;
     }
+
+    // Check if the password is correct
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      res.status(401).json({ message: "Invalid email or password" });
+      return;
+    }
+
+    // Generate a token (e.g., JWT)
+    const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username
+      },
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
