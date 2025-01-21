@@ -46,6 +46,8 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             admin: admin || false,      // Default to false if not provided
             verificationCode,
             verificationCodeExpires,
+            createdAt: new Date(),
+            updatedAt: new Date(),
         });
 
         // Send verification email

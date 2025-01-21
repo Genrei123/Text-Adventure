@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { ValidationError } from 'sequelize';
 import Chat from '../model/chat';
+import User from '../model/user';
 import { sanitizeInput } from '../utils/sanitizeInput';
 
 export const processUserResponse = async (req: Request, res: Response): Promise<void> => {
-    const { session_id, model, role, content, GameId, UserId, parent_id, image_prompt_name, image_prompt_text, image_url } = req.body;
+    const { session_id, model, role, content, GameId, UserId, parent_id } = req.body;
 
     // Validate required fields
     if (!session_id || !content || !GameId || !UserId) {
@@ -13,6 +14,13 @@ export const processUserResponse = async (req: Request, res: Response): Promise<
     }
 
     try {
+        // Check if the user exists
+        const user = await User.findByPk(UserId);
+        if (!user) {
+            res.status(400).json({ message: 'User not found' });
+            return;
+        }
+
         // Sanitize user input
         const sanitizedContent = sanitizeInput(content);
 
@@ -25,9 +33,8 @@ export const processUserResponse = async (req: Request, res: Response): Promise<
             GameId,
             UserId,
             parent_id,
-            image_prompt_name,
-            image_prompt_text,
-            image_url,
+            createdAt: new Date(),
+            updatedAt: new Date(),
         });
 
         res.status(201).json({

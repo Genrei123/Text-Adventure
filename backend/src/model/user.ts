@@ -13,6 +13,8 @@ interface UserAttributes {
     verificationCode: string | null;
     verificationCodeExpires: Date | null;
     emailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the creation attributes for the User model
@@ -30,9 +32,8 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public verificationCode!: string | null;
     public verificationCodeExpires!: Date | null;
     public emailVerified!: boolean;
-
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    public createdAt!: Date;
+    public updatedAt!: Date;
 }
 
 User.init(
@@ -86,6 +87,16 @@ User.init(
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
         },
     },
     {

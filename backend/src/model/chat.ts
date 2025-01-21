@@ -1,6 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../service/database";
-//import Game from "./game";
 import User from "./user";
 
 interface ChatAttributes {
@@ -80,7 +79,6 @@ Chat.init({
     modelName: "Chat",
 });
 
-//Chat.belongsTo(Game, { foreignKey: "GameId" });
 Chat.belongsTo(User, { foreignKey: "UserId" });
 
 export default Chat;
