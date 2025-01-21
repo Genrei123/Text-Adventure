@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routes);
 app.use('/', adminController);
-app.use('/', invoiceRoutes);
+app.use('/invoice', invoiceRoutes);
 app.use('/', paymentRoutes);
 
 // Add the auth routes
