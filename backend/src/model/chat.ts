@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../sequelize";
-import Game from "./game";
+import sequelize from "../service/database";
+//import Game from "./game";
 import User from "./user";
 
 interface ChatAttributes {
@@ -10,16 +10,13 @@ interface ChatAttributes {
     model: string;
     role: string;
     content: string;
-    image_prompt_name?: string;
-    image_prompt_text?: string;
-    image_url?: string;
     createdAt: Date;
     updatedAt: Date;
     GameId: number;
     UserId: number;
 }
 
-interface ChatCreationAttributes extends Optional<ChatAttributes, "id" | "parent_id" | "image_prompt_name" | "image_prompt_text" | "image_url"> {}
+interface ChatCreationAttributes extends Optional<ChatAttributes, "id" | "parent_id"> {}
 
 class Chat extends Model<ChatAttributes, ChatCreationAttributes> implements ChatAttributes {
     public id!: number;
@@ -28,9 +25,6 @@ class Chat extends Model<ChatAttributes, ChatCreationAttributes> implements Chat
     public model!: string;
     public role!: string;
     public content!: string;
-    public image_prompt_name?: string;
-    public image_prompt_text?: string;
-    public image_url?: string;
     public createdAt!: Date;
     public updatedAt!: Date;
     public GameId!: number;
@@ -63,18 +57,6 @@ Chat.init({
         type: DataTypes.TEXT,
         allowNull: false,
     },
-    image_prompt_name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    image_prompt_text: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-    },
-    image_url: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-    },
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -98,7 +80,7 @@ Chat.init({
     modelName: "Chat",
 });
 
-Chat.belongsTo(Game, { foreignKey: "GameId" });
+//Chat.belongsTo(Game, { foreignKey: "GameId" });
 Chat.belongsTo(User, { foreignKey: "UserId" });
 
 export default Chat;
