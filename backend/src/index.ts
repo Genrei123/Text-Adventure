@@ -12,6 +12,7 @@ import routes from './routes/routes';
 import adminController from './routes/userCRUDRoutes'; // Import the adminController
 import * as authController from './controllers/authController'; // Import the authController
 import User from './model/user'; // Import the User model
+import chatRoutes from './routes/chatRoutes'; // Import the chatRoutes
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routes);
 app.use('/', adminController); 
+app.use('/api', chatRoutes); // Add the chat routes
 
 // Add the auth routes without /api prefix
 app.post('/register', authController.register);
@@ -116,7 +118,7 @@ app.get('/auth/:provider/callback',
   }
 );
 
-app.listen(3000, async () => { 
+app.listen(process.env.PORT, async () => { 
   try {
     await database.authenticate();
     console.log('Connection to the database has been established successfully.');
@@ -127,7 +129,7 @@ app.listen(3000, async () => {
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
-  console.log('Server is running on port 3000');
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
 
 export default app;
