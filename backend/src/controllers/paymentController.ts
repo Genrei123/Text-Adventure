@@ -4,7 +4,7 @@ import { PaymentRequestParameters, PaymentRequestCurrency } from 'xendit-node/pa
 
 // Placeholder functions, replace with actual implementations
 const getItemDetails = async (itemId: string) => {
-  return { id: itemId, price: 100 }; // Example item details
+  return { id: itemId, name: 'Sample Item', price: 100 }; // Example item details
 };
 
 const getUserDetails = async (userId: string) => {
@@ -25,31 +25,37 @@ export const buyItem = async (req: Request, res: Response) => {
       ewallet: {
         channelProperties: {
           successReturnUrl: 'https://example.com/payment-success',
-          failureReturnUrl: 'https://example.com/payment-failure', // Add failureReturnUrl
+          failureReturnUrl: 'https://example.com/payment-failure',
         },
         channelCode: paymentMethod, // 'GCASH' or 'MAYA'
       },
       reusability: 'ONE_TIME_USE',
       type: 'EWALLET',
     },
-    currency: 'PHP' as PaymentRequestCurrency, // Change to 'PHP' for GCASH
+    currency: 'PHP' as PaymentRequestCurrency,
     referenceId: `order-${itemId}-${userId}`,
   };
 
   try {
-    console.log('Creating payment request with data:', data);
     const paymentRequest = await PaymentRequest.createPaymentRequest({ data });
-    console.log('Payment request created successfully:', paymentRequest);
+    const paymentLink = paymentRequest.actions?.find((action: { urlType: string }) => action.urlType === 'WEB')?.url || 'N/A';
+    console.log(`Request Status: Success
+Item ID: ${itemId}
+User ID: ${userId}
+Payment Method: ${paymentMethod}
+Date Created: ${new Date().toISOString()}
+Link To Payment: ${paymentLink}`);
     res.json(paymentRequest);
   } catch (error: any) {
-    console.error('Error creating payment request:', error);
+    console.error(`Request Status: Fail
+Item ID: ${itemId}
+User ID: ${userId}
+Payment Method: ${paymentMethod}
+Date Created: ${new Date().toISOString()}
+Error: ${error.message}`);
     if (error.response) {
-      console.error('Error response data:', error.response.data);
-      console.error('Error response status:', error.response.status);
-      console.error('Error response headers:', error.response.headers);
       res.status(error.response.status).json({ error: error.response.data });
     } else if (error.request) {
-      console.error('Error request data:', error.request);
       res.status(500).json({ error: 'No response received from Xendit API' });
     } else {
       res.status(500).json({ error: error.message });
