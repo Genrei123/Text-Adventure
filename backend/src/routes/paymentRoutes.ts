@@ -1,8 +1,9 @@
-import express from 'express';
-import { buyItem } from '../controllers/paymentController';
+import { Router } from 'express';
+import { buyItem, handlePaymentCallback } from '../controllers/paymentController';
 
-const router = express.Router();
+const router = Router();
 
 router.post('/buy-item', buyItem);
+router.post('/payment-callback', handlePaymentCallback);
 
 export default router;

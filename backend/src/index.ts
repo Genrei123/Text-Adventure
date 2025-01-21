@@ -9,8 +9,8 @@ import database from './service/database';
 import Jwt from 'jsonwebtoken';
 import routes from './routes/routes';
 import adminController from './routes/userCRUDRoutes';
-import invoiceRoutes from './routes/invoiceRoutes';
 import * as authController from './controllers/authController';
+import invoiceRoutes from './routes/invoiceRoutes';
 import paymentRoutes from './routes/paymentRoutes';
 import User from './model/user';
 
