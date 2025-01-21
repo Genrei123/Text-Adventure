@@ -14,7 +14,7 @@ const GameScreen: React.FC = () => {
                     HIDDEN TAVERN
                 </div>
                 <div className="flex items-center space-x-4 mr-10">
-                    <img src="src/assets/Tokens.svg" alt="Placeholder" className="w-8 h-8 rounded-full" />
+                    <img src="/Tokens.svg" alt="Placeholder" className="w-8 h-8 rounded-full" />
                     <span className="text-xl font-cinzel text-white">14</span>
                 </div>
             </div>
@@ -97,8 +97,8 @@ const GameScreen: React.FC = () => {
                         placeholder="Type your text here..." 
                     />
                     <button className="p-4 bg-transparent rounded-r-2xl relative group">
-                        <img src="src/assets/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
-                        <img src="src/assets/Enter-After.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
+                        <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
+                        <img src="/Enter-After.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
                     </button>
                 </div>
             </div>

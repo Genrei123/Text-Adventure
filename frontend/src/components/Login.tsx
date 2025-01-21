@@ -27,11 +27,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const newErrors: ValidationErrors = {};
 
     /*TODO: Add validation for existing username */
+    /*
     if (!username) {
       newErrors.username = 'Username is required';
     } else if (username.length < 3) {
       newErrors.username = 'Username must be at least 3 characters';
     }
+    */
 
     if (!password) {
       newErrors.password = 'Password is required';
@@ -49,18 +51,23 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       setIsProcessing(true);
       setSuccessMessage('Logging in...');
       
-      // Replaced with actual API call
-      const response = await axios.post('/api/login', {
-        email,
-        password,
-      });
-      const data = response.data;
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        onLogin(data.user.email);
-        navigate('/');
-      } else {
-        setErrors({ general: data.message });
+      try {
+        const response = await axios.post('/api/login', {
+          email, // Ensure this is the correct field
+          password,
+        });
+        const data = response.data;
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          onLogin(data.user.email);
+          navigate('/');
+        } else {
+          setErrors({ general: data.message });
+        }
+      } catch (error) {
+        setErrors({ general: 'Login failed. Please try again.' });
+      } finally {
+        setIsProcessing(false);
       }
     }
   };
@@ -169,7 +176,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: `url(${('/Login.jpg')})` }}>
       <img
-      src={('src/assets/fadeLogin.png')}
+      src={('/fadeLogin.png')}
       className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block"
       />
       {/* Left Side - Logo */}
@@ -195,20 +202,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <h2 className="text-4xl font-cinzel text-white mb-12 text-center md:animate-none">Gates of Realm</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-cinzel text-white mb-2">Username</label>
+              <label className="block text-sm font-cinzel text-white mb-2">Email</label>
               <input
-                type="text"
-                value={username}
-                onChange={(e) => {
-                  setUsername(e.target.value);
-                  setErrors({ ...errors, username: undefined });
-                }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.username ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
-                placeholder="The name whispered in legends"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
+                placeholder="Your email"
               />
               {errors.username && (
                 <p className="mt-1 text-sm text-red-400">{errors.username}</p>
@@ -220,39 +220,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               <input
                 type="password"
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setErrors({ ...errors, password: undefined });
-                }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.password ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
-                placeholder="Your secret incantation"
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
+                placeholder="Your password"
               />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-400">{errors.password}</p>
-              )}
             </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center text-[#8B7355]">
-                <input
-                  type="checkbox"
-                  className="mr-2 bg-[#3D2E22] border-[#8B7355]"
-                />
-                Keep my portal open
-              </label>
-              <a href="#" className="text-[#8B7355] hover:text-[#C8A97E]">
-                Forgotten the secret words?
-              </a>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel"
-            >
+            <button type="submit" className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel">
               Enter the Realm
             </button>
           </form>
