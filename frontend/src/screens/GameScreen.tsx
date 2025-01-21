@@ -1,6 +1,5 @@
 import React from 'react';
 import Sidebar from '../components/Sidebar';
-import Searchbar from '../components/SearchBar';
 
 const GameScreen: React.FC = () => {
     return (
@@ -67,27 +66,27 @@ const GameScreen: React.FC = () => {
             <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
                 <div className="flex space-x-2">
                     <button className="p-2 text-white rounded relative group">
-                        <img src="src/assets/Settings.svg" alt="Icon" className="w-6 h-6 group-hover:opacity-0" />
-                        <img src="src/assets/Settings-After.svg" alt="Icon Hover" className="w-6 h-6 absolute top-2 left-2 opacity-0 group-hover:opacity-100" />
+                        <img src="/Settings.svg" alt="Icon" className="w-6 h-6 group-hover:opacity-0" />
+                        <img src="/Settings-After.svg" alt="Icon Hover" className="w-6 h-6 absolute top-2 left-2 opacity-0 group-hover:opacity-100" />
                     </button>
                     <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
-                        <img src="src/assets/Story.svg" alt="Icon 2" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
-                        <img src="src/assets/Story-After.svg" alt="Icon 2 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
+                        <img src="/Story.svg" alt="Icon 2" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
+                        <img src="/Story-after.svg" alt="Icon 2 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
                         <span>Story</span>
                     </button>
                     <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
-                        <img src="src/assets/Do.svg" alt="Icon 3" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
-                        <img src="src/assets/Do-After.svg" alt="Icon 3 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
+                        <img src="/Do.svg" alt="Icon 3" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
+                        <img src="/Do-after.svg" alt="Icon 3 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
                         <span>Do</span>
                     </button>
                     <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
-                        <img src="src/assets/Say.svg" alt="Icon 4" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
-                        <img src="src/assets/Say-After.svg" alt="Icon 4 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
+                        <img src="/Say.svg" alt="Icon 4" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
+                        <img src="/Say-after.svg" alt="Icon 4 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
                         <span>Say</span>
                     </button>
                     <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
-                        <img src="src/assets/See.svg" alt="Icon 5" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
-                        <img src="src/assets/See-After.svg" alt="Icon 5 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
+                        <img src="/See.svg" alt="Icon 5" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
+                        <img src="/See-after.svg" alt="Icon 5 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
                         <span>See</span>
                     </button>
                 </div>
