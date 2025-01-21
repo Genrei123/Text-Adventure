@@ -1,6 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../sequelize";
-import utils from "../utils";
+import sequelize from "../service/database";
 import User from "./user";
 
 interface GameAttributes {
@@ -24,9 +23,10 @@ interface GameAttributes {
     private: boolean;
     createdAt: Date;
     updatedAt: Date;
+    UserId: number;
 }
 
-interface GameCreationAttributes extends Optional<GameAttributes, "id" | "slug" | "primary_color" | "prompt_text" | "prompt_model" | "image_prompt_model" | "image_prompt_name" | "image_prompt_text" | "image_data" | "music_prompt_text" | "music_prompt_seed_image"> {}
+interface GameCreationAttributes extends Optional<GameAttributes, "id" | "primary_color" | "prompt_text" | "prompt_model" | "image_prompt_model" | "image_prompt_name" | "image_prompt_text" | "image_data" | "music_prompt_text" | "music_prompt_seed_image" | "createdAt" | "updatedAt"> {}
 
 class Game extends Model<GameAttributes, GameCreationAttributes> implements GameAttributes {
     public id!: number;
@@ -49,6 +49,7 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public private!: boolean;
     public createdAt!: Date;
     public updatedAt!: Date;
+    public UserId!: number;
 
     public llm_fields!: {
         title: string;
@@ -138,48 +139,26 @@ Game.init({
         allowNull: false,
         defaultValue: false,
     },
-    llm_fields: {
-        type: DataTypes.VIRTUAL,
-        get() {
-            return {
-                title: this.getDataValue("title"),
-                description: this.getDataValue("description"),
-                genre: this.getDataValue("genre"),
-                subgenre: this.getDataValue("subgenre"),
-                tagline: this.getDataValue("tagline"),
-                primary_color: this.getDataValue("primary_color"),
-            };
-        },
-        set() {
-            throw new Error('Do not try to set the `llm_fields` value!');
-        },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    UserId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
 }, {
     sequelize,
     modelName: "Game",
 });
 
-const create = Game.create.bind(Game);
-Game.create = async function (game: GameCreationAttributes) {
-    try {
-        if (!game.slug) {
-            game.slug = utils.slugify(game.title);
-        }
-
-        return await create(game);
-    } catch (e) {
-        if (e.name !== "SequelizeUniqueConstraintError") return e;
-        if (e.errors.length !== 1) return e;
-        if (e.errors[0].type !== "unique violation") return e;
-        if (e.errors[0].path !== "slug") return e;
-
-        // DUPLICATE SLUG...fix and try to save again
-        game.slug = utils.slugify(`${game.title} ${utils.rand()}`);
-        return await create(game);
-    }
-};
-
-Game.belongsTo(User, { foreignKey: { allowNull: true }, onDelete: 'CASCADE' });
-User.hasMany(Game, { foreignKey: { allowNull: true }, onDelete: 'CASCADE' });
+Game.belongsTo(User, { foreignKey: "UserId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+User.hasMany(Game, { foreignKey: "UserId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
 export default Game;
