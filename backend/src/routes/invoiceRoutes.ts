@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createInvoice } from '../controllers/paymentController';
+import { createInvoice } from '../controllers/invoiceController';
 
 const router = Router();
 
