@@ -25,24 +25,34 @@ export const buyItem = async (req: Request, res: Response) => {
       ewallet: {
         channelProperties: {
           successReturnUrl: 'https://example.com/payment-success',
+          failureReturnUrl: 'https://example.com/payment-failure', // Add failureReturnUrl
         },
         channelCode: paymentMethod, // 'GCASH' or 'MAYA'
       },
       reusability: 'ONE_TIME_USE',
       type: 'EWALLET',
     },
-    currency: 'IDR' as PaymentRequestCurrency,
+    currency: 'PHP' as PaymentRequestCurrency, // Change to 'PHP' for GCASH
     referenceId: `order-${itemId}-${userId}`,
   };
 
   try {
+    console.log('Creating payment request with data:', data);
     const paymentRequest = await PaymentRequest.createPaymentRequest({ data });
+    console.log('Payment request created successfully:', paymentRequest);
     res.json(paymentRequest);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
+  } catch (error: any) {
+    console.error('Error creating payment request:', error);
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      console.error('Error response status:', error.response.status);
+      console.error('Error response headers:', error.response.headers);
+      res.status(error.response.status).json({ error: error.response.data });
+    } else if (error.request) {
+      console.error('Error request data:', error.request);
+      res.status(500).json({ error: 'No response received from Xendit API' });
     } else {
-      res.status(500).json({ error: 'An unknown error occurred' });
+      res.status(500).json({ error: error.message });
     }
   }
 };
