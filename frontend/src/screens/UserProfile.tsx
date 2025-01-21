@@ -2,6 +2,9 @@ import React, { useState, useRef } from "react";
 import Sidebar from "../components/Sidebar";
 import Cropper, { ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
+import YourGames from "../components/YourGames";
+import YourComments from "../components/YourComments";
+import YourLikes from "../components/YourLikes";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("comments");
@@ -112,6 +115,65 @@ export default function ProfilePage() {
               </div>
             </div>
 
+            {showUserModal && (
+                            <div className="fixed inset-0 flex items-center justify-center z-50">
+                                <div className="fixed inset-0 bg-black opacity-80"></div>
+                                <div className="bg-[#1e1e1e] p-8 rounded-lg shadow-lg w-[400px] relative z-10 border-2 border-[#634630]">
+                                    <button
+                                        onClick={() => setShowUserModal(false)}
+                                        className="absolute top-2 right-2 text-[#B39C7D] hover:text-[#a38b6d] transition-colors duration-300"
+                                    >
+                                        &times;
+                                    </button>
+                                    <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">EDIT PROFILE</h2>
+                                    <form>
+                                        <div className="mb-4">
+                                            <label className="block text-[#B39C7D] mb-2" htmlFor="username">Username:</label>
+                                            <input
+                                                type="text"
+                                                id="username"
+                                                className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-[#B39C7D] mb-2" htmlFor="email">Email:</label>
+                                            <input
+                                                type="email"
+                                                id="email"
+                                                className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-[#B39C7D] mb-2" htmlFor="password">Password:</label>
+                                            <input
+                                                type="password"
+                                                id="password"
+                                                className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-[#B39C7D] mb-2" htmlFor="confirmPassword">Confirm Password:</label>
+                                            <input
+                                                type="password"
+                                                id="confirmPassword"
+                                                className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
+                                            />
+                                        </div>
+                                        <br></br>
+                                        <div className="flex justify-end">
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowUserModal(false)}
+                                                className="w-full px-4 py-2 bg-[#B39C7D] text-[#1e1e1e] rounded hover:bg-[#ffffff] transition-colors duration-300"
+                                            >
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )} 
+
             {/* Crop Modal */}
             {showCropModal && (
               <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -175,6 +237,42 @@ export default function ProfilePage() {
                                 </button>
                             </div>
                         </div>
+            <div className="mt-4">
+              {activeTab === "games" && (
+              <div>
+                <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Your Games</h2>
+                <YourGames />
+              </div>
+              )}
+            </div>
+            {activeTab === "comments" && (
+            <div>
+              <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Your Comments</h2>
+              <YourComments 
+                userName="John Doe" 
+                comment="This is a comment" 
+                onGoToGame={() => console.log('Go to game')}
+              />
+            </div>
+            )}
+            {activeTab === "likes" && (
+                <div>
+                  <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Your Likes</h2>
+                  <YourLikes 
+                    game={{
+                      picture: "samplebg.jpg",
+                      username: "Zyciann",
+                      dateCreated: "2023-01-01",
+                      title: "Something Spectacular",
+                      stars: 5,
+                      comments: 10,
+                      favorites: 20,
+                      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                      genres: ["Adventure", "Puzzle"]
+                    }}
+                  />
+                </div>
+              )}
           </div>
         </main>
       </div>
