@@ -248,29 +248,13 @@ export default function ProfilePage() {
             {activeTab === "comments" && (
             <div>
               <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Your Comments</h2>
-              <YourComments 
-                userName="John Doe" 
-                comment="This is a comment" 
-                onGoToGame={() => console.log('Go to game')}
-              />
+              <YourComments />
             </div>
             )}
             {activeTab === "likes" && (
                 <div>
                   <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Your Likes</h2>
-                  <YourLikes 
-                    game={{
-                      picture: "samplebg.jpg",
-                      username: "Zyciann",
-                      dateCreated: "2023-01-01",
-                      title: "Something Spectacular",
-                      stars: 5,
-                      comments: 10,
-                      favorites: 20,
-                      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-                      genres: ["Adventure", "Puzzle"]
-                    }}
-                  />
+                  <YourLikes />
                 </div>
               )}
           </div>
