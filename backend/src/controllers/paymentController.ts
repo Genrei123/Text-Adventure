@@ -11,6 +11,7 @@ const items = [
   { id: 'item1', name: '500 Coins Package', price: 100, coins: 500 },
   { id: 'item2', name: '1500 Coins Package', price: 200, coins: 1500 },
   { id: 'item3', name: '3000 Coins Package', price: 300, coins: 3000 },
+  { id: 'item4', name: '5000 Coins Package', price: 300, coins: 4500 },
 ];
 
 // Function to fetch item details based on item ID
