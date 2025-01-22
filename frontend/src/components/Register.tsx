@@ -4,6 +4,9 @@ import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import '../App.css';
 import axios from '../axiosConfig/axiosConfig';
 import emailjs from 'emailjs-com';
+import { sendVerificationEmail, generateVerificationCode } from '../emailService';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 /**
  * Interface for Register component props
@@ -51,6 +54,9 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   
   // Hook for programmatic navigation
+  const [codeSent, setCodeSent] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [userInputCode, setUserInputCode] = useState('');
   const navigate = useNavigate();
 
   /**
@@ -113,27 +119,26 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
    * 
    * @param {React.FormEvent} e - Form submission event
    */
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
       setIsProcessing(true);
-      const now = new Date().toISOString();
-      const token = generateToken();
+      const code = generateVerificationCode();
+      setVerificationCode(code);
 
       try {
         const response = await axios.post('/api/register', {
           username,
           email,
           password,
-          token,
-          createdAt: now,
-          updatedAt: now,
         });
 
-        sendVerificationEmail(email, token);
-        setSuccessMessage('Registration successful! Please check your email for the verification code.');
+        await sendVerificationEmail(email, username, code);
+        setCodeSent(true);
+        toast.success('Verification email sent! Please check your inbox.');
       } catch (error) {
         setErrors({ general: error.response?.data?.message || 'Registration failed.' });
+        toast.error('Failed to send verification email. Please try again.');
       } finally {
         setIsProcessing(false);
       }
@@ -220,22 +225,13 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }, 1500);
   };
 
-  const sendVerificationEmail = (email: string, token: string) => {
-    const templateParams = {
-      to_email: email,
-      verification_link: `htthttps://text-adventure-six.vercel.app/verify-email?token=${token}`,
-    };
-  
-    emailjs.send(
-      process.env.REACT_APP_EMAILJS_SERVICE_ID!,
-      process.env.REACT_APP_EMAILJS_TEMPLATE_ID!,
-      templateParams,
-      process.env.REACT_APP_EMAILJS_PUBLIC_KEY!
-    ).then((response) => {
-      console.log('Email sent successfully!', response.status, response.text);
-    }).catch((error) => {
-      console.error('Failed to send email:', error);
-    });
+  const handleVerify = () => {
+    if (userInputCode === verificationCode) {
+      toast.success('Your account has been verified!');
+      navigate('/login');
+    } else {
+      toast.error('Invalid verification code. Please try again.');
+    }
   };
 
   return (
@@ -261,11 +257,10 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               </div>
             </div>
           )}
-
           <h2 className="text-4xl font-cinzel text-white mb-12 text-center">Enter the World</h2>
           
           {/* Registration Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleRegister} className="space-y-6">
             {/* Username Field */}
             <div>
               <label className="block text-sm font-cinzel text-white mb-2">Username</label>
@@ -276,11 +271,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setUsername(e.target.value);
                   setErrors({ ...errors, username: undefined });
                 }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.username ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
+                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${errors.username ? 'border-red-500' : 'border-[#8B7355]'}`}
                 placeholder="The name whispered in legends"
               />
               {errors.username && (
@@ -298,11 +289,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setEmail(e.target.value);
                   setErrors({ ...errors, email: undefined });
                 }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.email ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
+                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${errors.email ? 'border-red-500' : 'border-[#8B7355]'}`}
                 placeholder="Where to send your quest updates"
               />
               {errors.email && (
@@ -320,11 +307,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setPassword(e.target.value);
                   setErrors({ ...errors, password: undefined });
                 }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.password ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
+                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${errors.password ? 'border-red-500' : 'border-[#8B7355]'}`}
                 placeholder="Your secret incantation"
               />
               {errors.password && (
@@ -342,11 +325,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setConfirmPassword(e.target.value);
                   setErrors({ ...errors, confirmPassword: undefined });
                 }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.confirmPassword ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
+                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${errors.confirmPassword ? 'border-red-500' : 'border-[#8B7355]'}`}
                 placeholder="Repeat your mystical phrase"
               />
               {errors.confirmPassword && (
@@ -364,9 +343,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setAcceptTerms(e.target.checked);
                   setErrors({ ...errors, terms: undefined });
                 }}
-                className={`mr-2 bg-[#3D2E22] border-[#8B7355] rounded
-                  ${errors.terms ? 'border-red-500' : ''}
-                `}
+                className={`mr-2 bg-[#3D2E22] border-[#8B7355] rounded ${errors.terms ? 'border-red-500' : ''}`}
               />
               <label htmlFor="terms" className="text-sm text-[#8B7355]">
                 I agree to abide by the rules of this realm
@@ -375,12 +352,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             {errors.terms && (
               <p className="text-sm text-red-400">{errors.terms}</p>
             )}
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel"
-            >
+            <button type="submit" className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel">
               Start Your Journey
             </button>
           </form>
@@ -405,6 +377,19 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               </button>
             </div>
           </div>
+
+          {codeSent && (
+            <div>
+              <h3>Enter Verification Code</h3>
+              <input
+                type="text"
+                placeholder="Verification Code"
+                value={userInputCode}
+                onChange={(e) => setUserInputCode(e.target.value)}
+              />
+              <button onClick={handleVerify}>Verify</button>
+            </div>
+          )}
 
           {/* Login Link Section */}
           <div className="mt-6 text-center">

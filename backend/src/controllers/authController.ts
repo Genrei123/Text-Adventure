@@ -7,6 +7,11 @@ import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
 import { sendVerificationEmail } from "../service/emailService";
 import { v4 as uuidv4 } from 'uuid';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const jwtSecret = process.env.JWT_SECRET!;
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password } = req.body;
@@ -32,9 +37,12 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             password: hashedPassword,
             verificationCode,
             verificationCodeExpires,
+            private: true,
+            model: 'gpt-4',
+            admin: false,
         });
 
-        const emailSent = await sendVerificationEmail(email, verificationCode);
+        const emailSent = await sendVerificationEmail(email, username, verificationCode);
         if (!emailSent) {
             await newUser.destroy();
             res.status(500).json({ message: "Failed to send verification email. Please try again." });
@@ -63,30 +71,27 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
-    // Find the user by email
     const user = await User.findOne({ where: { email } });
     if (!user) {
       res.status(401).json({ message: "Invalid email or password" });
       return;
     }
 
-    // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       res.status(401).json({ message: "Invalid email or password" });
       return;
     }
 
-    // Generate a token (e.g., JWT)
-    const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: '1h' });
 
     res.status(200).json({
       message: "Login successful",
       token,
       user: {
         id: user.id,
-        email: user.email,
-        username: user.username
+        username: user.username,
+        email: user.email
       },
     });
   } catch (error) {
