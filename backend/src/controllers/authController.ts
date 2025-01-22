@@ -39,7 +39,6 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             private: isPrivate || true, // Default to true if not provided
             model: model || "gpt-4",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
-            coins: 0,                   // Default value for coins
         });
 
         res.status(201).json({
