@@ -28,7 +28,6 @@ blending traditional storytelling with cutting-edge AI technology.
 
 
 # Members
-
 Cristobal, Genrey O.  
 Acedo, Mark Relan Gercee  
 Capalac, Garvy Ren V.  
@@ -37,5 +36,3 @@ Fungo, Gian Higino O.
 Llanes, Kevin  
 Namias, Jhon Keneth B.  
 Valencia, Ronan 
-
-test test
