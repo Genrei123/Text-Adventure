@@ -1,10 +1,5 @@
 import emailjs from '@emailjs/browser';
 
-const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID!;
-const templateId = process.env.REACT_APP_EMAILJS_TEMPLATE_ID!;
-const userId = process.env.REACT_APP_EMAILJS_USER_ID!;
-const fromName = process.env.REACT_APP_EMAILJS_FROM_NAME!;
-
 export const sendVerificationEmail = (
   toEmail: string,
   toName: string,
@@ -14,12 +9,8 @@ export const sendVerificationEmail = (
     to_email: toEmail,
     to_name: toName,
     verification_code: verificationCode,
-    from_name: fromName,
+    from_name: 'Text Adventure',
   };
 
   return emailjs.send(serviceId, templateId, templateParams, userId);
-};
-
-export const generateVerificationCode = (): string => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
 };

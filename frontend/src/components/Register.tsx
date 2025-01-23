@@ -5,6 +5,7 @@ import '../App.css';
 import axios from '../axiosConfig/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import emailjs from 'emailjs-com';
 
 /**
  * Interface for Register component props
@@ -50,10 +51,28 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [successMessage, setSuccessMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [inputCode, setInputCode] = useState('');
+  const [isCodeSent, setIsCodeSent] = useState(false);
   
   // Hook for programmatic navigation
   const navigate = useNavigate();
 
+
+
+
+  try {
+    await emailjs.send(
+      process.env.REACT_APP_EMAILJS_SERVICE_ID!,
+      process.env.REACT_APP_EMAILJS_TEMPLATE_ID!,
+      templateParams,
+      process.env.REACT_APP_EMAILJS_PUBLIC_KEY!
+    );
+    toast.success('Verification email sent!');
+    setIsCodeSent(true);
+  } catch (error) {
+    toast.error('Faile
+      
   /**
    * Validates all form fields
    * Checks for:
@@ -138,7 +157,43 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }
   };
 
-  
+  const generateVerificationCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
+
+  const sendVerificationEmail = async () => {
+    const code = generateVerificationCode();
+    setVerificationCode(code);
+
+    const templateParams = {
+      to_email: email,
+      to_name: username,
+      verification_code: code,
+    };
+
+    try {
+      await emailjs.send(
+        process.env.REACT_APP_EMAILJS_SERVICE_ID!,
+        process.env.REACT_APP_EMAILJS_TEMPLATE_ID!,
+        templateParams,
+        process.env.REACT_APP_EMAILJS_PUBLIC_KEY!
+      );
+      toast.success('Verification email sent!');
+      setIsCodeSent(true);
+    } catch (error) {
+      toast.error('Failed to send verification email.');
+    }
+  };
+
+  const handleVerifyCode = () => {
+    if (inputCode === verificationCode) {
+      toast.success('Verification successful!');
+      // Proceed with registration logic
+    } else {
+      toast.error('Invalid verification code.');
+    }
+  };
+
   /**
    * Handles social registration (Google/Facebook)
    * 
@@ -366,6 +421,25 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               Start Your Journey
             </button>
           </form>
+
+          {/* Verification Code Section */}
+          {isCodeSent && (
+            <div className="mt-6">
+              <input
+                type="text"
+                placeholder="Enter verification code"
+                value={inputCode}
+                onChange={(e) => setInputCode(e.target.value)}
+                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
+              />
+              <button
+                onClick={handleVerifyCode}
+                className="w-full py-2 mt-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel"
+              >
+                Verify
+              </button>
+            </div>
+          )}
 
           {/* Social Registration Section */}
           <div className="mt-8">
