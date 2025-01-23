@@ -2,21 +2,14 @@ import { Request, Response } from 'express';
 import { PaymentRequest } from '../../service/xenditClient';
 import { PaymentRequestParameters, PaymentRequestCurrency } from 'xendit-node/payment_request/models';
 import User from '../../model/user'; // Import the User model
+import Item from '../../model/itemModel'; // Import the Item model
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Simulated database of items
-const items = [
-  { id: 'item1', name: '500 Coins Package', price: 100, coins: 500 },
-  { id: 'item2', name: '1500 Coins Package', price: 200, coins: 1500 },
-  { id: 'item3', name: '3000 Coins Package', price: 300, coins: 3000 },
-  { id: 'item4', name: '5000 Coins Package', price: 300, coins: 4500 },
-];
-
 // Function to fetch item details based on item ID
 export const getItemDetails = async (itemId: string) => {
-  const item = items.find(item => item.id === itemId);
+  const item = await Item.findByPk(itemId);
   if (!item) {
     throw new Error('Item not found');
   }
