@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { buyItem, handlePaymentCallback } from '../controllers/paymentController';
+import { buyItem, handlePaymentCallback } from '../controllers/transaction_controllers/paymentController';
 
 const router = Router();
 

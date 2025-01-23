@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Invoice } from '../service/xenditClient';
+import { Invoice } from '../../service/xenditClient';
 
 // Utility function to log errors
 const logError = (error: any) => {

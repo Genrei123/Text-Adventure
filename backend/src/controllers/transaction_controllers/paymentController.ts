@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { PaymentRequest } from '../service/xenditClient';
+import { PaymentRequest } from '../../service/xenditClient';
 import { PaymentRequestParameters, PaymentRequestCurrency } from 'xendit-node/payment_request/models';
-import User from '../model/user'; // Import the User model
+import User from '../../model/user'; // Import the User model
 import dotenv from 'dotenv';
 
 dotenv.config();
