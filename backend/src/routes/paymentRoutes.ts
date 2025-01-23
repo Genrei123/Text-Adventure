@@ -1,9 +1,10 @@
-import { Router } from 'express';
-import { buyItem, handlePaymentCallback } from '../controllers/transaction_controllers/paymentController';
+import express from 'express';
+import { buyItem } from '../controllers/transaction_controllers/paymentController';
+import { handlePaymentCallback } from '../controllers/transaction_controllers/webhookController'; // Correct import path
 
-const router = Router();
+const router = express.Router();
 
 router.post('/buy-item', buyItem);
-router.post('/payment-callback', handlePaymentCallback);
+router.post('/payment', handlePaymentCallback);
 
 export default router;
