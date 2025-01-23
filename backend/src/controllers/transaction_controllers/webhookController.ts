@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import User from '../../model/user'; // Import the User model
 import dotenv from 'dotenv';
-import { getItemDetails } from './paymentController'; // Import the getItemDetails function
+import { getItemDetails } from './shopController'; // Import the getItemDetails function
 
 dotenv.config();
 
