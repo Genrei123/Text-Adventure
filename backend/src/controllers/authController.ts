@@ -5,52 +5,44 @@ import jwt from "jsonwebtoken";
 import { ValidationError } from "sequelize";
 import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
-import { sendVerificationEmail } from "../service/emailService";
-import { v4 as uuidv4 } from 'uuid';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const jwtSecret = process.env.JWT_SECRET!;
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
-    const { username, email, password } = req.body;
+    const { username, email, password, private: isPrivate, model, admin } = req.body;
     try {
+        // Validate password
         if (!validatePassword(password)) {
-            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters." });
+            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters (including underscore)." });
             return;
         }
 
+        // Check if user already exists
         const existingUserByEmail = await User.findOne({ where: { email } });
         if (existingUserByEmail) {
-            res.status(400).json({ message: "Email already exists" });
+            res.status(400).json({ message: 'Email already in use. Please try another email.' });
             return;
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const verificationCode = uuidv4();
-        const verificationCodeExpires = new Date(Date.now() + 3600000); // 1 hour from now
+        const existingUserByUsername = await User.findOne({ where: { username } });
+        if (existingUserByUsername) {
+            res.status(400).json({ message: 'Username already exists. Please try another username.' });
+            return;
+        }
 
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create a new user
         const newUser = await User.create({
             username,
             email,
             password: hashedPassword,
-            verificationCode,
-            verificationCodeExpires,
-            private: true,
-            model: 'gpt-4',
-            admin: false,
+            private: isPrivate || true, // Default to true if not provided
+            model: model || "gpt-4",    // Default to "gpt-4" if not provided
+            admin: admin || false,      // Default to false if not provided
         });
 
-        const emailSent = await sendVerificationEmail(email, username, verificationCode);
-        if (!emailSent) {
-            await newUser.destroy();
-            res.status(500).json({ message: "Failed to send verification email. Please try again." });
-            return;
-        }
-
         res.status(201).json({
-            message: "User registered successfully. Please check your email for the verification code.",
+            message: 'Registration successful! A verification email has been sent to your email address.',
             user: {
                 id: newUser.id,
                 username: newUser.username,
@@ -71,59 +63,34 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
+    // Find the user by email
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: 'Email not found. Please check your email or register.' });
       return;
     }
 
+    // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: 'Incorrect password. Please try again.' });
       return;
     }
 
-    const token = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: '1h' });
+    // Generate a token (e.g., JWT)
+    const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
 
     res.status(200).json({
       message: "Login successful",
       token,
       user: {
         id: user.id,
-        username: user.username,
-        email: user.email
+        email: user.email,
+        username: user.username
       },
     });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ message: "Server error" });
   }
-};
-
-export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
-    const { email, code } = req.body;
-
-    try {
-        const user = await User.findOne({ where: { email } });
-
-        if (!user) {
-            res.status(400).json({ message: "Invalid email or verification code" });
-            return;
-        }
-
-        if (user.verificationCode !== code || !user.verificationCodeExpires || user.verificationCodeExpires < new Date()) {
-            res.status(400).json({ message: "Invalid or expired verification code" });
-            return;
-        }
-
-        user.emailVerified = true;
-        user.verificationCode = null;
-        user.verificationCodeExpires = null;
-        await user.save();
-
-        res.status(200).json({ message: "Email verified successfully" });
-    } catch (error) {
-        console.error("Error during email verification:", error);
-        res.status(500).json({ message: "Server error" });
-    }
 };

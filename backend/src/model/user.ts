@@ -10,13 +10,10 @@ interface UserAttributes {
     private: boolean;
     model: string;
     admin: boolean;
-    verificationCode: string | null;
-    verificationCodeExpires: Date | null;
-    emailVerified: boolean;
 }
 
 // Define the creation attributes for the User model
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationCodeExpires' | 'emailVerified'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
 
 // Extend the Model class with the User attributes
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -27,9 +24,6 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public private!: boolean;
     public model!: string;
     public admin!: boolean;
-    public verificationCode!: string | null;
-    public verificationCodeExpires!: Date | null;
-    public emailVerified!: boolean;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -67,22 +61,9 @@ User.init(
         model: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 'gpt-4',
+            defaultValue: "gpt-4",
         },
         admin: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-        },
-        verificationCode: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        verificationCodeExpires: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
-        emailVerified: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
@@ -90,7 +71,7 @@ User.init(
     },
     {
         sequelize,
-        modelName: 'User',
+        modelName: "User", // Optionally set the model name explicitly
     }
 );
 

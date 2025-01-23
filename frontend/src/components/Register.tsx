@@ -3,9 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import '../App.css';
 import axios from '../axiosConfig/axiosConfig';
-import emailjs from 'emailjs-com';
-import { sendVerificationEmail, generateVerificationCode } from '../emailService';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 /**
@@ -50,13 +48,10 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   
   // Hook for programmatic navigation
-  const [codeSent, setCodeSent] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [userInputCode, setUserInputCode] = useState('');
   const navigate = useNavigate();
 
   /**
@@ -91,8 +86,8 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     // Password validation
     if (!password) {
       newErrors.password = 'Password is required';
-    } else if (password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
       newErrors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
     }
@@ -119,32 +114,31 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
    * 
    * @param {React.FormEvent} e - Form submission event
    */
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
       setIsProcessing(true);
-      const code = generateVerificationCode();
-      setVerificationCode(code);
+      toast.info('Registering...');
 
       try {
-        const response = await axios.post('/api/register', {
-          username,
-          email,
-          password,
-        });
-
-        await sendVerificationEmail(email, username, code);
-        setCodeSent(true);
-        toast.success('Verification email sent! Please check your inbox.');
+        const response = await axios.post('/api/register', { username, email, password });
+        toast.success('Registration successful! A verification email has been sent to your email address.');
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
       } catch (error) {
-        setErrors({ general: error.response?.data?.message || 'Registration failed.' });
-        toast.error('Failed to send verification email. Please try again.');
+        if (error.response && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Registration failed. Please try again.');
+        }
       } finally {
         setIsProcessing(false);
       }
     }
   };
 
+  
   /**
    * Handles social registration (Google/Facebook)
    * 
@@ -225,15 +219,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }, 1500);
   };
 
-  const handleVerify = () => {
-    if (userInputCode === verificationCode) {
-      toast.success('Your account has been verified!');
-      navigate('/login');
-    } else {
-      toast.error('Invalid verification code. Please try again.');
-    }
-  };
-
+  
   return (
     <div className="min-h-screen bg-[#1E1E1E] flex">
       {/* Left Side - Logo Section */}
@@ -257,10 +243,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               </div>
             </div>
           )}
+
           <h2 className="text-4xl font-cinzel text-white mb-12 text-center">Enter the World</h2>
           
           {/* Registration Form */}
-          <form onSubmit={handleRegister} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username Field */}
             <div>
               <label className="block text-sm font-cinzel text-white mb-2">Username</label>
@@ -271,7 +258,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setUsername(e.target.value);
                   setErrors({ ...errors, username: undefined });
                 }}
-                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${errors.username ? 'border-red-500' : 'border-[#8B7355]'}`}
+                className={`
+                  w-full px-3 py-2 bg-[#3D2E22] border
+                  rounded text-sm text-white placeholder-[#8B7355]
+                  ${errors.username ? 'border-red-500' : 'border-[#8B7355]'}
+                `}
                 placeholder="The name whispered in legends"
               />
               {errors.username && (
@@ -289,7 +280,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setEmail(e.target.value);
                   setErrors({ ...errors, email: undefined });
                 }}
-                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${errors.email ? 'border-red-500' : 'border-[#8B7355]'}`}
+                className={`
+                  w-full px-3 py-2 bg-[#3D2E22] border
+                  rounded text-sm text-white placeholder-[#8B7355]
+                  ${errors.email ? 'border-red-500' : 'border-[#8B7355]'}
+                `}
                 placeholder="Where to send your quest updates"
               />
               {errors.email && (
@@ -307,7 +302,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setPassword(e.target.value);
                   setErrors({ ...errors, password: undefined });
                 }}
-                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${errors.password ? 'border-red-500' : 'border-[#8B7355]'}`}
+                className={`
+                  w-full px-3 py-2 bg-[#3D2E22] border
+                  rounded text-sm text-white placeholder-[#8B7355]
+                  ${errors.password ? 'border-red-500' : 'border-[#8B7355]'}
+                `}
                 placeholder="Your secret incantation"
               />
               {errors.password && (
@@ -325,7 +324,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setConfirmPassword(e.target.value);
                   setErrors({ ...errors, confirmPassword: undefined });
                 }}
-                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${errors.confirmPassword ? 'border-red-500' : 'border-[#8B7355]'}`}
+                className={`
+                  w-full px-3 py-2 bg-[#3D2E22] border
+                  rounded text-sm text-white placeholder-[#8B7355]
+                  ${errors.confirmPassword ? 'border-red-500' : 'border-[#8B7355]'}
+                `}
                 placeholder="Repeat your mystical phrase"
               />
               {errors.confirmPassword && (
@@ -343,7 +346,9 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   setAcceptTerms(e.target.checked);
                   setErrors({ ...errors, terms: undefined });
                 }}
-                className={`mr-2 bg-[#3D2E22] border-[#8B7355] rounded ${errors.terms ? 'border-red-500' : ''}`}
+                className={`mr-2 bg-[#3D2E22] border-[#8B7355] rounded
+                  ${errors.terms ? 'border-red-500' : ''}
+                `}
               />
               <label htmlFor="terms" className="text-sm text-[#8B7355]">
                 I agree to abide by the rules of this realm
@@ -352,7 +357,12 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             {errors.terms && (
               <p className="text-sm text-red-400">{errors.terms}</p>
             )}
-            <button type="submit" className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel">
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel"
+            >
               Start Your Journey
             </button>
           </form>
@@ -378,19 +388,6 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             </div>
           </div>
 
-          {codeSent && (
-            <div>
-              <h3>Enter Verification Code</h3>
-              <input
-                type="text"
-                placeholder="Verification Code"
-                value={userInputCode}
-                onChange={(e) => setUserInputCode(e.target.value)}
-              />
-              <button onClick={handleVerify}>Verify</button>
-            </div>
-          )}
-
           {/* Login Link Section */}
           <div className="mt-6 text-center">
             <div className="text-[#8B7355] text-sm">Continue your journey?</div>
@@ -403,6 +400,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
