@@ -39,6 +39,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             private: isPrivate || true, // Default to true if not provided
             model: model || "gpt-4",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
+            coins: 0,                   // Default value for coins
         });
 
         res.status(201).json({
@@ -76,21 +77,4 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       res.status(401).json({ message: 'Incorrect password. Please try again.' });
       return;
     }
-
-    // Generate a token (e.g., JWT)
-    const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
-
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username
-      },
-    });
-  } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ message: "Server error" });
-  }
 };
