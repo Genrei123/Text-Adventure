@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import Login from './Login';
+import Login from '../components/Login';
 
 export default {
   title: 'Components/Login',
