@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { StoryFn, Meta } from '@storybook/react';
-import Register from './Register';
+import Register from '../components/Register';
 
 export default {
   title: 'Components/Register',
