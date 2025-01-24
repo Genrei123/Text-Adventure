@@ -20,6 +20,7 @@ interface RecurringPaymentData {
   recurring_action: string;
   currency: string;
   amount: number;
+  payment_methods: { payment_method_id: string; rank: number }[];
   schedule: object;
   immediate_action_type?: string;
   notification_config?: object;

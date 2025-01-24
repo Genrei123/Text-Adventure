@@ -29,7 +29,7 @@ app.use('/', routes);
 app.use('/', adminController);
 app.use('/invoice', invoiceRoutes);
 app.use('/payments', paymentRoutes);
-app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/subscriptions', subscriptionRoutes);
 
 // Add the auth routes
 app.post('/register', authController.register);
