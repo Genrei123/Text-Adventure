@@ -12,6 +12,7 @@ import adminController from './routes/userCRUDRoutes';
 import * as authController from './controllers/authController';
 import invoiceRoutes from './routes/invoiceRoutes';
 import paymentRoutes from './routes/paymentRoutes';
+import subscriptionRoutes from './routes/subscriptionRoutes';
 import User from './model/user';
 
 const app = express();
@@ -28,6 +29,7 @@ app.use('/', routes);
 app.use('/', adminController);
 app.use('/invoice', invoiceRoutes);
 app.use('/payments', paymentRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // Add the auth routes
 app.post('/register', authController.register);
