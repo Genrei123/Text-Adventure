@@ -76,5 +76,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     if (!isPasswordValid) {
       res.status(401).json({ message: 'Incorrect password. Please try again.' });
       return;
-    }
+    } 
+
+    } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+
 };
