@@ -82,8 +82,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         </p>
       </div>
       {/* placeholder for memories */}
-
-        <div className="bg-[#1e1e1e] border border-black w-[full] p-4 mx-auto my-10 mx-[5%] max-h-[1240px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#C8A97E] scrollbar-track-transparent">
+        <div className="bg-[#1e1e1e] border-t border-b border-[#B28F4C] w-[full] p-4 mx-auto my-10 mx-[5%] max-h-[1240px] overflow-x-auto scrollbar-thin scrollbar-thumb-[#C8A97E] scrollbar-track-transparent">
               <div className="flex justify-end space-x-4">
             <button
               className="p-2"
@@ -104,7 +103,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         <style>{`
           /* Custom scrollbar styles */
           .scrollbar-thin::-webkit-scrollbar {
-            width: 8px;
+            height: 8px;
           }
           .scrollbar-thin::-webkit-scrollbar-track {
             background: transparent;
