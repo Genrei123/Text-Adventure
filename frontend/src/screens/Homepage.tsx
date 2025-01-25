@@ -4,7 +4,6 @@ import axios from '../axiosConfig/axiosConfig';
 import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
 import Sidebar from '../components/Sidebar';
-import PortraitCard from '../components/PortraitCard';
 
 interface HomepageProps {
   onLogout: () => void;
@@ -81,39 +80,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
           {username ? `Hello, ${username}! Your adventure begins now.` : 'Please log in to start your journey.'}
         </p>
       </div>
-      {/* placeholder for memories */}
-        <div className="bg-[#1e1e1e] border-t border-b border-[#B28F4C] w-[full] p-4 mx-auto my-10 mx-[5%] max-h-[1240px] overflow-x-auto scrollbar-thin scrollbar-thumb-[#C8A97E] scrollbar-track-transparent">
-              <div className="flex justify-end space-x-4">
-            <button
-              className="p-2"
-              onClick={() => console.log('Button 1 clicked')}
-            >
-              <img src="filter1.svg" alt="Button 1" className="w-10 h-10" />
-            </button>
-            <button
-              className="p-2"
-              onClick={() => console.log('Button 2 clicked')}
-            >
-              <img src="filter2.svg" alt="Button 2" className="w-6 h-6" />
-            </button>
-              </div>
-              <br></br>
-            <PortraitCard/>
-        </div>
-        <style>{`
-          /* Custom scrollbar styles */
-          .scrollbar-thin::-webkit-scrollbar {
-            height: 8px;
-          }
-          .scrollbar-thin::-webkit-scrollbar-track {
-            background: transparent;
-          }
-          .scrollbar-thin::-webkit-scrollbar-thumb {
-            background-color: #B28F4C;
-            border-radius: 10px;
-            border: 2px solid transparent;
-          }
-        `}</style>
     </div>
 
   );

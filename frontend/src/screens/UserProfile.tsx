@@ -100,7 +100,7 @@ export default function ProfilePage() {
                 <p className="text-[#ffffff]/80 mb-6 self-start text-2xl">
                   MAIN TEXT
                 </p>
-                <p className="text-[#B39C7D]/80 mb-6 self-start text-left">
+                <p className="text-[#B39C7D]/80 mb-6 self-start">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                   Ut enim ad minim veniam, quis nostrud exercitation ullamco

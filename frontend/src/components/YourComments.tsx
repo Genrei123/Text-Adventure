@@ -23,7 +23,7 @@ const Comment: React.FC<CommentProps> = ({ userName, comment, onGoToGame }) => {
                 <FaUserCircle size={40} style={{ marginRight: "10px" }} />
                 <div style={{ flex: 1, textAlign: "left" }}>
                     <h5 style={{ margin: 0, color: "white" }}>{userName}</h5>
-                    <p style={{ margin: 0, color: "#B28F4C", textAlign: "left" }}>{comment}</p>
+                    <p style={{ margin: 0, color: "#B28F4C" }}>{comment}</p>
                 </div>
                 <div
                     onClick={onGoToGame}
