@@ -11,7 +11,7 @@ const PortraitCard: React.FC = () => {
                     style={{
                         width: '100%',
                         maxWidth: '400px',
-                        border: '1px solid #ccc',
+                        border: '1px solid #C8A97E', // Updated stroke color
                         borderRadius: '16px',
                         padding: '0',
                         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',

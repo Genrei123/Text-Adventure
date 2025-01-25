@@ -81,21 +81,41 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
           {username ? `Hello, ${username}! Your adventure begins now.` : 'Please log in to start your journey.'}
         </p>
       </div>
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      <div className="flex justify-center w-full px-4 md:px-0 items-center">
+        <h2 className="text-2xl font-cinzel text-[#C8A97E] mr-4">your journey</h2>
+        <div className="w-full md:w-[60%] h-1 bg-[#C8A97E]"></div>
+        <div className="flex justify-end space-x-4 md:flex-row flex-col md:items-center items-end">
+          <button
+            className="p-2 relative group w-12 h-12 md:w-10 md:h-10"
+            onClick={() => console.log('Button 1 clicked')}
+          >
+            <img src="Any.svg" alt="Button 1" className="w-full h-full" />
+            <img
+              src="Any-After.svg"
+              alt="Hover Button 1"
+              className="w-[70%] h-[70%] absolute top-1.5 left-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            />
+          </button>
+          <button
+            className="p-2 relative group w-12 h-12 md:w-10 md:h-10"
+            onClick={() => console.log('Button 2 clicked')}
+          >
+            <img src="filter2.svg" alt="Button 2" className="w-full h-full" />
+            <img
+              src="filter2-after.svg"
+              alt="Hover Button 2"
+              className="w-[70%] h-[70%] absolute top-1.5 left-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            />
+          </button>
+        </div>
+      </div>
       {/* placeholder for memories */}
-        <div className="bg-[#1e1e1e] border-t border-b border-[#B28F4C] w-[full] p-4 mx-auto my-10 mx-[5%] max-h-[1240px] overflow-x-auto scrollbar-thin scrollbar-thumb-[#C8A97E] scrollbar-track-transparent">
-              <div className="flex justify-end space-x-4">
-            <button
-              className="p-2"
-              onClick={() => console.log('Button 1 clicked')}
-            >
-              <img src="filter1.svg" alt="Button 1" className="w-10 h-10" />
-            </button>
-            <button
-              className="p-2"
-              onClick={() => console.log('Button 2 clicked')}
-            >
-              <img src="filter2.svg" alt="Button 2" className="w-6 h-6" />
-            </button>
+      <div className="bg-[#1e1e1e] w-[90%] p-4 mx-auto my-10 max-h-[1240px] overflow-x-auto scrollbar-thin scrollbar-thinner">
+      <div className="flex justify-end space-x-4">
               </div>
               <br></br>
             <PortraitCard/>
@@ -113,6 +133,21 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
             border-radius: 10px;
             border: 2px solid transparent;
           }
+          /* Custom Scrollbar Styles */
+          .scrollbar-thinner::-webkit-scrollbar {
+            width: 4px; /* Adjust width */
+            height: 4px; /* Adjust height for horizontal scrollbar */
+          }
+
+          .scrollbar-thinner::-webkit-scrollbar-thumb {
+            background-color: #C8A97E; /* Thumb color */
+            border-radius: 10px; /* Round edges */
+          }
+
+          .scrollbar-thinner::-webkit-scrollbar-track {
+            background-color: transparent; /* Track color */
+          }
+
         `}</style>
     </div>
 
