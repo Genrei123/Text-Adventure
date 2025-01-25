@@ -13,6 +13,7 @@ import * as authController from './controllers/authController';
 import invoiceRoutes from './routes/invoiceRoutes';
 import paymentRoutes from './routes/paymentRoutes';
 import User from './model/user';
+import shopRoutes from './routes/shopRoutes';
 
 const app = express();
 const frontendUrl = 'http://localhost:5173';
@@ -28,6 +29,7 @@ app.use('/', routes);
 app.use('/', adminController);
 app.use('/invoice', invoiceRoutes);
 app.use('/payments', paymentRoutes);
+app.use('/shop', shopRoutes);
 
 // Add the auth routes
 app.post('/register', authController.register);

@@ -4,6 +4,9 @@ import { PaymentRequestParameters, PaymentRequestCurrency } from 'xendit-node/pa
 import User from '../../model/user'; // Import the User model
 import Item from '../../model/itemModel'; // Import the Item model
 import dotenv from 'dotenv';
+import { createCustomer } from '../../service/customerService';
+import { createPaymentMethod } from '../../service/paymentMethodService';
+import { createSubscriptionPlan } from '../../service/recurringPaymentService';
 
 dotenv.config();
 
@@ -96,5 +99,28 @@ Error: ${error.message}`);
     } else {
       res.status(500).json({ error: error.message });
     }
+  }
+};
+
+export const createSubscription = async (req: Request, res: Response) => {
+  try {
+    const { customerData, paymentMethodData, planData } = req.body;
+
+    // Create customer
+    const customer = await createCustomer(customerData);
+
+    // Create payment method
+    paymentMethodData.customer_id = customer.id;
+    const paymentMethod = await createPaymentMethod(paymentMethodData);
+
+    // Create subscription plan
+    planData.customer_id = customer.id;
+    planData.payment_methods = [{ payment_method_id: paymentMethod.id, rank: 1 }];
+    const subscriptionPlan = await createSubscriptionPlan(planData);
+
+    res.status(201).json(subscriptionPlan);
+  } catch (error) {
+    console.error('Error creating subscription:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };

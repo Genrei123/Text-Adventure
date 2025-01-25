@@ -61,3 +61,13 @@ export const stopRecurringPayment = async (id: string) => {
     throw error;
   }
 };
+
+export const createSubscriptionPlan = async (planData: any) => {
+  try {
+    const response = await axiosInstance.post('/recurring/plans', planData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating subscription plan:', error);
+    throw error;
+  }
+};
