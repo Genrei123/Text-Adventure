@@ -1,47 +1,21 @@
 import { Request, Response } from 'express';
-import { createCustomer } from '../../service/customerService';
-import { createPaymentMethod } from '../../service/paymentMethodService';
 import { createRecurringPayment, updateRecurringPayment, stopRecurringPayment } from '../../service/recurringPaymentService';
 
-export const createSubscriptionPlan = async (req: Request, res: Response) => {
-  const { reference_id, given_names, surname, email, mobile_number, channel_code, currency, amount, schedule, immediate_action_type, notification_config, failed_cycle_action, metadata, description, items, success_return_url, failure_return_url } = req.body;
+export const createSubscriptionPlan = async (req: Request, res: Response): Promise<Response> => {
+  const { reference_id, customer_id, channel_code, currency, amount, schedule, immediate_action_type, notification_config, failed_cycle_action, metadata, description, items, success_return_url, failure_return_url } = req.body;
+
+  if (!reference_id || !customer_id) {
+    return res.status(400).json({ message: '"reference_id" and "customer_id" are required' });
+  }
 
   try {
-    // Step 1: Create Customer
-    const customer = await createCustomer({
-      reference_id,
-      type: 'INDIVIDUAL',
-      individual_detail: {
-        given_names,
-        surname
-      },
-      email,
-      mobile_number
-    });
-
-    // Step 2: Create Payment Method
-    const paymentMethod = await createPaymentMethod({
-      type: 'EWALLET',
-      reusability: 'MULTIPLE_USE',
-      ewallet: {
-        channel_code,
-        channel_properties: {
-          success_return_url,
-          failure_return_url
-        }
-      },
-      customer_id: customer.id,
-      metadata: { sku: 'ABCDEFGH' }
-    });
-
-    // Step 3: Create Subscription Plan
     const plan = await createRecurringPayment({
       reference_id,
-      customer_id: customer.id,
+      customer_id,
       recurring_action: 'PAYMENT',
       currency,
       amount,
-      payment_methods: [{ payment_method_id: paymentMethod.id, rank: 1 }],
+      payment_methods: [{ payment_method_id: channel_code, rank: 1 }],
       schedule: {
         ...schedule,
         reference_id
@@ -56,14 +30,14 @@ export const createSubscriptionPlan = async (req: Request, res: Response) => {
       failure_return_url
     });
 
-    res.status(201).json(plan);
+    return res.status(201).json(plan);
   } catch (error: any) {
     console.error('Error creating subscription plan:', error.response?.data || error.message);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-export const updateSubscriptionPlan = async (req: Request, res: Response) => {
+export const updateSubscriptionPlan = async (req: Request, res: Response): Promise<Response> => {
   const { id } = req.params;
   const { reference_id, customer_id, recurring_action, currency, amount, schedule, immediate_action_type, notification_config, failed_cycle_action, metadata, description, items, success_return_url, failure_return_url } = req.body;
 
@@ -85,26 +59,26 @@ export const updateSubscriptionPlan = async (req: Request, res: Response) => {
       failure_return_url
     });
 
-    res.status(200).json(plan);
+    return res.status(200).json(plan);
   } catch (error: any) {
     console.error('Error updating subscription plan:', error.response?.data || error.message);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-export const stopSubscriptionPlan = async (req: Request, res: Response) => {
+export const stopSubscriptionPlan = async (req: Request, res: Response): Promise<Response> => {
   const { id } = req.params;
 
   try {
     const response = await stopRecurringPayment(id);
-    res.status(200).json(response);
+    return res.status(200).json(response);
   } catch (error: any) {
     console.error('Error stopping subscription plan:', error.response?.data || error.message);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-export const handleSubscriptionWebhook = async (req: Request, res: Response) => {
+export const handleSubscriptionWebhook = async (req: Request, res: Response): Promise<Response> => {
   const { event, data } = req.body;
 
   try {
@@ -125,9 +99,9 @@ export const handleSubscriptionWebhook = async (req: Request, res: Response) => 
         console.log('Unhandled event:', event);
     }
 
-    res.status(200).json({ message: 'Webhook received' });
+    return res.status(200).json({ message: 'Webhook received' });
   } catch (error: any) {
     console.error('Error handling webhook:', error.response?.data || error.message);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 };
