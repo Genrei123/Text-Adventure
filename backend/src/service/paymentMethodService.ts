@@ -26,6 +26,7 @@ interface PaymentMethodData {
   };
   customer_id: string;
   metadata: object;
+  context: 'buy_item' | 'subscription';
 }
 
 export const createPaymentMethod = async (data: PaymentMethodData) => {
