@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { StoryFn, Meta } from '@storybook/react';
-import Verification from './Verification';
+import Verification from '../components/Verification';
 
 export default {
   title: 'Components/Verification',

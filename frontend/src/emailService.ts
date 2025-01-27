@@ -1,13 +1,8 @@
-import dotenv from 'dotenv';
 import emailjs from '@emailjs/browser';
 
-// Load environment variables from .env file
-dotenv.config();
-
-// Safely retrieve environment variables with fallback
-const serviceId = process.env.EMAILJS_SERVICE_ID || '';
-const templateId = process.env.EMAILJS_TEMPLATE_ID || '';
-const userId = process.env.EMAILJS_PUBLIC_KEY || '';
+const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID!;
+const templateId = process.env.REACT_APP_EMAILJS_TEMPLATE_ID!;
+const userId = process.env.REACT_APP_EMAILJS_PUBLIC_KEY!;
 const fromName = 'Text Adventure';
 
 export const sendVerificationEmail = async (

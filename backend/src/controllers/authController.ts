@@ -19,13 +19,13 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         // Check if user already exists
         const existingUserByEmail = await User.findOne({ where: { email } });
         if (existingUserByEmail) {
-            res.status(400).json({ message: "Email already exists" });
+            res.status(400).json({ message: 'Email already in use. Please try another email.' });
             return;
         }
 
         const existingUserByUsername = await User.findOne({ where: { username } });
         if (existingUserByUsername) {
-            res.status(400).json({ message: "Username already exists" });
+            res.status(400).json({ message: 'Username already exists. Please try another username.' });
             return;
         }
 
@@ -83,30 +83,18 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     // Find the user by email
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: 'Email not found. Please check your email or register.' });
       return;
     }
 
     // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({ message: "Invalid email or password" });
+      res.status(401).json({ message: 'Incorrect password. Please try again.' });
       return;
-    }
+    } 
 
-    // Generate a token (e.g., JWT)
-    const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
-
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username
-      },
-    });
-  } catch (error) {
+    } catch (error) {
     console.error("Error during login:", error);
     res.status(500).json({ message: "Server error" });
   }

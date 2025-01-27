@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import '../App.css';
 import axios from '../axiosConfig/axiosConfig';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 /**
  * Interface for Register component props
@@ -46,7 +48,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   
   // Hook for programmatic navigation
@@ -116,55 +118,27 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     e.preventDefault();
     if (validateForm()) {
       setIsProcessing(true);
-      const now = new Date().toISOString();
-      // Regular registration
+      toast.info('Registering...');
 
-
-
-      
       try {
-        const response = await axios.post('/api/register', {
-          username,
-          email,
-          password,
-          private: true,
-          model: 'gpt-4',
-          admin: false,
-          createdAt: now,
-          updatedAt: now,
-        });
-        setSuccessMessage('Registration successful! Please check your email for the verification code.');
-        setTimeout(() => navigate('/verify-email'), 3000);
+        const response = await axios.post('/api/register', { username, email, password });
+        toast.success('Registration successful! A verification email has been sent to your email address.');
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
       } catch (error) {
-        setErrors({ general: error.response?.data?.message || 'Registration failed.' });
+        if (error.response && error.response.data.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Registration failed. Please try again.');
+        }
       } finally {
         setIsProcessing(false);
       }
-
-
-      
-
-      onRegister(username, false);
-      setSuccessMessage('Registration successful! Redirecting to login...');
-
-      axios.post('/api/register', {
-        username: username,
-        email: email,
-        password: password
-      }).then((response) => {
-        console.log(response);
-      }).catch((error) => {
-        console.error(error);
-      });
-      
-      // Wait for 3 seconds to show success message before redirecting
-      setTimeout(() => {
-        setIsProcessing(false);
-        navigate('/login');
-      }, 3000);
     }
   };
 
+  
   /**
    * Handles social registration (Google/Facebook)
    * 
@@ -245,6 +219,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }, 1500);
   };
 
+  
   return (
     <div className="min-h-screen bg-[#1E1E1E] flex">
       {/* Left Side - Logo Section */}
@@ -425,6 +400,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
