@@ -3,34 +3,33 @@ import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../App.css';
 import axios from '../axiosConfig/axiosConfig';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface LoginProps {
   onLogin: (username: string) => void;
 }
 
 interface ValidationErrors {
-  username?: string;
+  email?: string;
   password?: string;
   general?: string;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [successMessage, setSuccessMessage] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = (): boolean => {
     const newErrors: ValidationErrors = {};
 
-    /*TODO: Add validation for existing username */
-    if (!username) {
-      newErrors.username = 'Username is required';
-    } else if (username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
+    if (!email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Email format is invalid';
     }
 
     if (!password) {
@@ -47,20 +46,25 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     e.preventDefault();
     if (validateForm()) {
       setIsProcessing(true);
-      setSuccessMessage('Logging in...');
-      
-      // Replaced with actual API call
-      const response = await axios.post('/api/login', {
-        email,
-        password,
-      });
-      const data = response.data;
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        onLogin(data.user.email);
-        navigate('/');
-      } else {
-        setErrors({ general: data.message });
+      toast.info('Logging in...');
+
+      try {
+        const response = await axios.post('/api/login', { email, password });
+        const data = response.data;
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          onLogin(data.user.email);
+          toast.success('Login successful!');
+          navigate('/');
+        } else {
+          setErrors({ general: data.message });
+          toast.error(data.message);
+        }
+      } catch (error) {
+        setErrors({ general: 'Login failed. Please try again.' });
+        toast.error('Login failed. Please try again.');
+      } finally {
+        setIsProcessing(false);
       }
     }
   };
@@ -154,65 +158,38 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   
   const handleSocialLogin = async (provider: string) => {
     setIsProcessing(true);
-    setSuccessMessage(`Connecting to ${provider}...`);
-  
+    toast.info(`Connecting to ${provider}...`);
+
     try {
       // Redirect to backend's full URL
       window.location.href = `http://localhost:3000/auth/${provider.toLowerCase()}`;
     } catch (error) {
       console.error(`Error during ${provider} login:`, error);
-      setSuccessMessage(`Failed to log in with ${provider}.`);
+      toast.error(`Failed to log in with ${provider}.`);
       setIsProcessing(false);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: `url(${('/Login.jpg')})` }}>
-      <img
-      src={('src/assets/fadeLogin.png')}
-      className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block"
-      />
+      <img src={('/fadeLogin.png')} className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block" />
       {/* Left Side - Logo */}
-      <div className="hidden md:block md:w-1/2 flex items-center justify-center h-screen">
-      </div>
+      <div className="hidden md:block md:w-1/2 flex items-center justify-center h-screen"></div>
       {/* Right Side - Login Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center md:justify-end p-4 md:p-0 mt-0 md:mt-0 md:mr-[250px] z-10">
         <div className="w-full max-w-[90%] md:w-[480px] relative">
-          {/* Success Message Overlay */}
-          {(successMessage && isProcessing) && (
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="bg-[#1E1E1E] bg-opacity-95 p-6 rounded-lg border border-[#C8A97E] shadow-lg">
-                <div className="text-center">
-                  <div className="mb-4 text-[#C8A97E] font-cinzel text-xl">
-                    {successMessage}
-                  </div>
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C8A97E] mx-auto"></div>
-                </div>
-              </div>
-            </div>
-          )}
-          
           <h2 className="text-4xl font-cinzel text-white mb-12 text-center md:animate-none">Gates of Realm</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-cinzel text-white mb-2">Username</label>
+              <label className="block text-sm font-cinzel text-white mb-2">Email</label>
               <input
-                type="text"
-                value={username}
-                onChange={(e) => {
-                  setUsername(e.target.value);
-                  setErrors({ ...errors, username: undefined });
-                }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.username ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
-                placeholder="The name whispered in legends"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
+                placeholder="Your email"
               />
-              {errors.username && (
-                <p className="mt-1 text-sm text-red-400">{errors.username}</p>
-              )}
+              {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
             </div>
 
             <div>
@@ -220,39 +197,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               <input
                 type="password"
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setErrors({ ...errors, password: undefined });
-                }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.password ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
-                placeholder="Your secret incantation"
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
+                placeholder="Your password"
               />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-400">{errors.password}</p>
-              )}
+              {errors.password && <p className="mt-1 text-sm text-red-400">{errors.password}</p>}
             </div>
-
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center text-[#8B7355]">
-                <input
-                  type="checkbox"
-                  className="mr-2 bg-[#3D2E22] border-[#8B7355]"
-                />
-                Keep my portal open
-              </label>
-              <a href="#" className="text-[#8B7355] hover:text-[#C8A97E]">
-                Forgotten the secret words?
-              </a>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel"
-            >
+            <button type="submit" className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel" disabled={isProcessing}>
               Enter the Realm
             </button>
           </form>
@@ -260,18 +211,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <div className="mt-8">
             <div className="text-center text-sm text-[#8B7355] mb-4">Enter Using</div>
             <div className="flex justify-center space-x-4">
-              <button
-                onClick={() => handleSocialLogin('Google')}
-                className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50"
-                disabled={isProcessing}
-              >
+              <button onClick={() => handleSocialLogin('Google')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
                 <FaGoogle className="text-[#8B7355]" size={20} />
               </button>
-              <button
-                onClick={() => handleSocialLogin('Facebook')}
-                className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50"
-                disabled={isProcessing}
-              >
+              <button onClick={() => handleSocialLogin('Facebook')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
                 <FaFacebook className="text-[#8B7355]" size={20} />
               </button>
             </div>
@@ -285,9 +228,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
 
 export default Login;
-

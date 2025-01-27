@@ -31,7 +31,7 @@ const GameDetails: React.FC<GameDetailsProps> = ({ title, description }) => {
                 </div>
             </div>
             <div>
-                <p className="text-white mb-2 text-left">{truncatedDescription}</p>
+                <p className="text-white mb-2">{truncatedDescription}</p>
                 {!isExpanded && description.length > 300 && (
                     <div
                         onClick={() => setIsExpanded(true)}

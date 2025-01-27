@@ -42,7 +42,6 @@ const YourLikes: React.FC = () => {
                                     style={{
                                         ...styles.description,
                                         whiteSpace: isExpanded ? "normal" : "nowrap",
-                                        textAlign: "left",
                                     }}
                                 >
                                     {truncatedDescription}
