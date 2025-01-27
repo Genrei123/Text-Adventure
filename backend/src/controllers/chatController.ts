@@ -8,9 +8,18 @@ import { sanitizeInput } from '../utils/sanitizeInput';
 export const processUserResponse = async (req: Request, res: Response): Promise<void> => {
     const { session_id, model, role, content, GameId, UserId, parent_id, image_prompt_name, image_prompt_text, image_url } = req.body;
 
+    // Log the received request body for debugging
+    console.log('Received payload:', req.body);
+
     // Validate required fields
     if (!session_id || !model || !role || !content || !GameId || !UserId) {
         res.status(400).json({ message: 'Missing required fields' });
+        return;
+    }
+
+    // Check for valid content type
+    if (typeof content !== 'string' || content.trim() === '') {
+        res.status(400).json({ message: 'Invalid content field' });
         return;
     }
 

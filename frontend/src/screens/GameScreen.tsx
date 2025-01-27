@@ -3,36 +3,43 @@ import Sidebar from '../components/Sidebar';
 import axios from 'axios';
 
 const GameScreen: React.FC = () => {
-    const [chatInput, setChatInput] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!chatInput.trim()) {
-            alert('Please enter a message.');
+        setError('');
+        setSuccess('');
+
+        // Frontend validation
+        if (!message.trim()) {
+            setError('Message cannot be empty.');
             return;
         }
 
-        try {
-            const response = await axios.post('/api/chat', {
-                session_id: '7126ba87-1650-4be3-93ed-209f656569b4',
-                model: 'gpt-4',
-                role: 'user',
-                content: chatInput,
-                GameId: 2,
-                UserId: 42,
-            });
+        const payload = {
+            session_id: 'abc123',
+            model: 'gpt-4',
+            role: 'user',
+            content: message,
+            GameId: 1,
+            UserId: 42, // Replace with dynamic user ID if needed
+        };
 
-            if (response.status === 201) {
-                alert('Message sent successfully!');
-                setChatInput('');
-                setErrorMessage('');
-            } else {
-                setErrorMessage('Failed to send message.');
-            }
-        } catch (error) {
-            console.error('Error sending message:', error);
-            setErrorMessage(error.response?.data?.message || 'An error occurred while sending the message.');
+        // Log the payload for debugging
+        console.log('Payload:', payload);
+
+        try {
+            const response = await axios.post('http://localhost:3000/api/chat', payload);
+
+            setSuccess('Message sent successfully!');
+            setMessage('');
+        } catch (err) {
+            console.error('Error sending message:', err);
+            setError(
+                err.response?.data?.message || 'An unexpected error occurred. Please try again.'
+            );
         }
     };
 
@@ -129,15 +136,16 @@ const GameScreen: React.FC = () => {
                         type="text" 
                         className="w-full h-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none" 
                         placeholder="Type your text here..." 
-                        value={chatInput}
-                        onChange={(e) => setChatInput(e.target.value)}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
                     />
                     <button className="p-4 bg-transparent rounded-r-2xl relative group" onClick={handleSubmit}>
                         <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
                         <img src="/Enter-After.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
                     </button>
                 </div>
-                {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
+                {error && <p className="text-red-500 mt-2">{error}</p>}
+                {success && <p className="text-green-500 mt-2">{success}</p>}
             </div>
 
         </div>
