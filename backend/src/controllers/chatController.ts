@@ -2,13 +2,14 @@ import { Request, Response } from 'express';
 import { ValidationError } from 'sequelize';
 import Chat from '../model/chat';
 import User from '../model/user';
+import Game from '../model/game';
 import { sanitizeInput } from '../utils/sanitizeInput';
 
 export const processUserResponse = async (req: Request, res: Response): Promise<void> => {
-    const { session_id, model, role, content, GameId, UserId, parent_id } = req.body;
+    const { session_id, model, role, content, GameId, UserId, parent_id, image_prompt_name, image_prompt_text, image_url } = req.body;
 
     // Validate required fields
-    if (!session_id || !content || !GameId || !UserId) {
+    if (!session_id || !model || !role || !content || !GameId || !UserId) {
         res.status(400).json({ message: 'Missing required fields' });
         return;
     }
@@ -18,6 +19,13 @@ export const processUserResponse = async (req: Request, res: Response): Promise<
         const user = await User.findByPk(UserId);
         if (!user) {
             res.status(400).json({ message: 'User not found' });
+            return;
+        }
+
+        // Check if the game exists
+        const game = await Game.findByPk(GameId);
+        if (!game) {
+            res.status(400).json({ message: 'Game not found' });
             return;
         }
 
@@ -33,6 +41,9 @@ export const processUserResponse = async (req: Request, res: Response): Promise<
             GameId,
             UserId,
             parent_id,
+            image_prompt_name,
+            image_prompt_text,
+            image_url,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
