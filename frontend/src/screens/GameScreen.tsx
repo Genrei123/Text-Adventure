@@ -24,7 +24,7 @@ const GameScreen: React.FC = () => {
             role: 'user',
             content: message,
             GameId: 1,
-            UserId: 42, // Replace with dynamic user ID if needed
+            UserId: 70, // Replace with dynamic user ID if needed
         };
 
         // Log the payload for debugging
