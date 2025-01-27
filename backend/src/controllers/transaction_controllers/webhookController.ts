@@ -51,10 +51,10 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
       const item = await getItemDetails(itemId);
 
       // Update user's coins
-      user.coins = (user.coins || 0) + item.coins;
+      //user.coins = (user.coins || 0) + item.coins;
       await user.save();
 
-      console.log(`Payment completed for order: ${reference_id}. Coins added: ${item.coins}. Total coins: ${user.coins}. External ID: ${external_id}`);
+      //console.log(`Payment completed for order: ${reference_id}. Coins added: ${item.coins}. Total coins: ${user.coins}. External ID: ${external_id}`);
       res.status(200).json({ message: 'Payment confirmed and coins added to user account' });
     } catch (error: any) {
       console.error('Error handling payment callback:', error);

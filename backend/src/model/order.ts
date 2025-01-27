@@ -1,0 +1,91 @@
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "../service/database";
+import User from "./user";
+
+// Define the attributes of the Order model
+interface OrderAttributes {
+    id: number;
+    stripe_id: string;
+    email: string;
+    client_reference_id: string;
+    customer_details: object;
+    total: number;
+    createdAt: Date;
+    updatedAt: Date;
+    UserId: number;
+}
+
+// Define the creation attributes for the Order model
+interface OrderCreationAttributes extends Optional<OrderAttributes, "id"> {}
+
+// Extend the Model class with the Order attributes
+class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
+    public id!: number;
+    public stripe_id!: string;
+    public email!: string;
+    public client_reference_id!: string;
+    public customer_details!: object;
+    public total!: number;
+    public createdAt!: Date;
+    public updatedAt!: Date;
+    public UserId!: number;
+}
+
+// Initialize the Order model
+Order.init({
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    },
+    stripe_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    client_reference_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    customer_details: {
+        type: DataTypes.JSON,
+        allowNull: false,
+    },
+    total: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    UserId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+    },
+}, {
+    sequelize,
+    modelName: "Order",
+});
+
+// Define the relationship between Order and User
+Order.belongsTo(User, { foreignKey: "UserId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+User.hasMany(Order, { foreignKey: "UserId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+export default Order;
