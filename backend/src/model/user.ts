@@ -79,6 +79,8 @@ User.init(
   {
     sequelize,
     modelName: 'User', // Optionally set the model name explicitly
+    tableName: 'Users', // Ensure the table name matches the database
+    timestamps: true, // Enable timestamps
   }
 );
 

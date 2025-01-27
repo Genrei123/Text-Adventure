@@ -10,11 +10,11 @@ import Jwt from 'jsonwebtoken';
 import routes from './routes/routes';
 import adminController from './routes/userCRUDRoutes';
 import * as authController from './controllers/authController';
-import invoiceRoutes from './routes/invoiceRoutes';
-import paymentRoutes from './routes/paymentRoutes';
+import invoiceRoutes from './routes/Xendit Routes/invoiceRoutes';
+import paymentRoutes from './routes/Xendit Routes/paymentRoutes';
 import User from './model/user';
-import shopRoutes from './routes/shopRoutes';
-import webhookRoutes from './routes/webhookRoutes';
+import shopRoutes from './routes/Xendit Routes/shopRoutes';
+import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
 
 const app = express();
 const frontendUrl = 'http://localhost:5173';

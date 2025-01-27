@@ -1,14 +1,18 @@
 import { Request, Response } from 'express';
-import { PaymentRequest } from '../../service/xenditClient';
+import { PaymentRequest } from '../../service/Xendit Service/xenditClient';
 import { PaymentRequestParameters, PaymentRequestCurrency } from 'xendit-node/payment_request/models';
 import User from '../../model/user'; // Import the User model
-import Item from '../../model/itemModel'; // Import the Item model
+import Item from '../../model/ItemModel'; // Import the Item model
 import dotenv from 'dotenv';
-import { createCustomer } from '../../service/customerService';
-import { createPaymentMethod } from '../../service/paymentMethodService';
-import { createSubscriptionPlan } from '../../service/recurringPaymentService';
+import { createCustomer } from '../../service/Xendit Service/Subscription/customerService';
+import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
+import { createSubscriptionPlan } from '../../service/Xendit Service/Subscription/recurringPaymentService';
+import { getCoinBalance, deductCoinsByWords } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
 
 dotenv.config();
+
+const SUCCESS_RETURN_URL = 'https://example.com/payment-success';
+const FAILURE_RETURN_URL = 'https://example.com/payment-failure';
 
 // Function to fetch item details based on item ID
 export const getItemDetails = async (itemId: string) => {
@@ -28,6 +32,31 @@ const getUserDetailsByEmail = async (email: string) => {
   return user;
 };
 
+// Fetch coin balance
+export const getCoins = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.userId, 10);
+
+  try {
+    const coins = await getCoinBalance(userId);
+    res.status(200).json({ coins });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Deduct coins based on text input
+export const deductCoins = async (req: Request, res: Response) => {
+  const { userId, text } = req.body;
+
+  try {
+    const wordCount = text.trim().split(/\s+/).length; // Count words in the text
+    await deductCoinsByWords(userId, wordCount);
+    res.status(200).json({ message: 'Coins deducted successfully' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const buyItem = async (req: Request, res: Response) => {
   const { itemId, paymentMethod, email } = req.body;
 
@@ -44,14 +73,33 @@ export const buyItem = async (req: Request, res: Response) => {
     const date = new Date().toISOString().split('T')[0].replace(/-/g, ''); // Format date as YYYYMMDD
     orderId = `order-${itemId}-${item.name}-${user.username}-${date}`;
 
+    // Create payment method data
+    const paymentMethodData = {
+      type: 'ewallet',
+      reusability: 'ONE_TIME_USE',
+      ewallet: {
+        channel_code: paymentMethod,
+        channel_properties: {
+          success_return_url: SUCCESS_RETURN_URL,
+          failure_return_url: FAILURE_RETURN_URL,
+        },
+      },
+      customer_id: user.id.toString(), // Convert customer_id to string
+      metadata: {},
+      context: 'buy_item' as 'buy_item', // Explicitly set context as 'buy_item'
+    };
+
+    // Create payment method
+    const paymentMethodResponse = await createPaymentMethod(paymentMethodData);
+
     // Create a payment request
     const data: PaymentRequestParameters = {
       amount: item.price,
       paymentMethod: {
         ewallet: {
           channelProperties: {
-            successReturnUrl: 'https://example.com/payment-success',
-            failureReturnUrl: 'https://example.com/payment-failure',
+            successReturnUrl: SUCCESS_RETURN_URL,
+            failureReturnUrl: FAILURE_RETURN_URL,
           },
           channelCode: paymentMethod, // 'GCASH' or 'MAYA'
         },
@@ -108,15 +156,31 @@ export const createSubscription = async (req: Request, res: Response) => {
 
     // Create customer
     const customer = await createCustomer(customerData);
+    console.log('Customer created:', customer);
 
     // Create payment method
-    paymentMethodData.customer_id = customer.id;
+    paymentMethodData.customer_id = customer.id.toString(); // Convert customer_id to string
+    paymentMethodData.context = 'subscription' as 'subscription'; // Explicitly set context as 'subscription'
     const paymentMethod = await createPaymentMethod(paymentMethodData);
+    console.log('Payment method created:', paymentMethod);
 
     // Create subscription plan
-    planData.customer_id = customer.id;
-    planData.payment_methods = [{ payment_method_id: paymentMethod.id, rank: 1 }];
-    const subscriptionPlan = await createSubscriptionPlan(planData);
+    const subscriptionPlanData = {
+      reference_id: `sub-${new Date().getTime()}`, // Generate a unique reference ID
+      customer_id: customer.id.toString(), // Convert customer_id to string
+      recurring_action: 'CHARGE_CUSTOMER', // Set the recurring action
+      payment_methods: [{ payment_method_id: paymentMethod.id, rank: 1 }],
+      interval: planData.interval,
+      interval_count: planData.interval_count,
+      total_recurrence: planData.total_recurrence,
+      amount: planData.amount,
+      currency: planData.currency,
+    };
+
+    console.log('Subscription plan data:', subscriptionPlanData);
+
+    const subscriptionPlan = await createSubscriptionPlan(subscriptionPlanData);
+    console.log('Subscription plan created:', subscriptionPlan);
 
     res.status(201).json(subscriptionPlan);
   } catch (error) {
