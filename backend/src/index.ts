@@ -14,6 +14,8 @@ import invoiceRoutes from './routes/invoiceRoutes';
 import paymentRoutes from './routes/paymentRoutes';
 import User from './model/user';
 import chatRoutes from './routes/chatRoutes'; // Import the chatRoutes
+import shopRoutes from './routes/shopRoutes';
+import webhookRoutes from './routes/webhookRoutes';
 
 const app = express();
 const frontendUrl = 'http://localhost:5173';
@@ -29,6 +31,8 @@ app.use('/', routes);
 app.use('/', adminController);
 app.use('/invoice', invoiceRoutes);
 app.use('/payments', paymentRoutes);
+app.use('/shop', shopRoutes);
+app.use('/webhook', webhookRoutes);
 
 // Add the auth routes
 app.post('/register', authController.register);
