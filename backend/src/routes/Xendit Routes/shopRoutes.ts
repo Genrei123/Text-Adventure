@@ -1,7 +1,9 @@
 import express from 'express';
-import { createCustomer } from '../service/customerService';
-import { createPaymentMethod } from '../service/paymentMethodService';
-import { createSubscriptionPlan } from '../service/subscriptionService';
+import { createCustomer } from '../../service/Xendit Service/Subscription/customerService';
+import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
+import { createSubscriptionPlan } from '../../service/Xendit Service/Subscription/subscriptionService';
+import { buyItem, getCoins, deductCoins } from '../../controllers/transaction_controllers/shopController';
+import { handlePaymentCallback } from '../../controllers/transaction_controllers/webhookController'; // Correct import path
 
 const router = express.Router();
 
@@ -53,5 +55,11 @@ router.post('/create-subscription-plan', async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+router.post('/buy-item', buyItem);
+router.post('/payment', handlePaymentCallback);
+router.get('/coins/:userId', getCoins);
+router.post('/deduct-coins', deductCoins);
+
 
 export default router;

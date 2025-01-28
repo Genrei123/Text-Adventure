@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const secretApiKey = process.env.XENDIT_SECRET_KEY!;
-const xenditBaseURL = 'https://f717-136-158-40-151.ngrok-free.app';
+const xenditBaseURL = 'https://api.xendit.co';
 
 const axiosInstance = axios.create({
     baseURL: xenditBaseURL,
