@@ -58,7 +58,6 @@
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.13.1",
     "sequelize": "^6.37.5",
-    "tiktoken": "^1.0.18",
     "uuid": "^11.0.5",
     "xendit-node": "^6.0.0"
   }
