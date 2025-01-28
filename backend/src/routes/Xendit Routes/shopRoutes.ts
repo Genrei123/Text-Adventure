@@ -2,7 +2,7 @@ import express from 'express';
 import { createCustomer } from '../../service/Xendit Service/Subscription/customerService';
 import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
 import { createSubscriptionPlan } from '../../service/Xendit Service/Subscription/subscriptionService';
-import { buyItem, createSubscription, getCoins, deductCoins } from '../../controllers/transaction_controllers/shopController';
+import { buyItem, getCoins, deductCoins } from '../../controllers/transaction_controllers/shopController';
 import { handlePaymentCallback } from '../../controllers/transaction_controllers/webhookController'; // Correct import path
 
 const router = express.Router();

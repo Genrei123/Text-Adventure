@@ -1,41 +1,36 @@
-import { QueryTypes } from 'sequelize';
-import sequelize from '../../database';
+import User from '../../../model/user';
 import { IItem } from '../../../interfaces/itemInterface';
 import Item from '../../../model/ItemModel';
 
-interface UserCoins {
-  coins: number;
-}
-
 // Fetch user's coin balance
 export async function getCoinBalance(userId: number): Promise<number> {
-  const query = `SELECT coins FROM User WHERE id = :userId`;
-  const result = await sequelize.query<UserCoins>(query, {
-    replacements: { userId },
-    type: QueryTypes.SELECT,
+  const user = await User.findByPk(userId, {
+    attributes: ['coins'],
   });
-  return result[0].coins;
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  return user.coins;
 }
 
-// Deduct coins based on word count
-export async function deductCoinsByWords(userId: number, wordCount: number): Promise<void> {
-  // Calculate the number of coins to deduct
-  const coinsToDeduct = Math.ceil(wordCount / 4); // 4 words = 1 coin
+// Deduct coins based on token count
+export async function deductCoinsByTokens(userId: number, coinsToDeduct: number): Promise<void> {
+  // Fetch the user
+  const user = await User.findByPk(userId);
 
-  // Deduct coins only if the user has enough
-  const query = `
-    UPDATE Users
-    SET coins = coins - :coinsToDeduct
-    WHERE id = :userId AND coins >= :coinsToDeduct`;
+  if (!user) {
+    throw new Error('User not found');
+  }
 
-  const result = await sequelize.query(query, {
-    replacements: { coinsToDeduct, userId },
-    type: QueryTypes.UPDATE,
-  });
-
-  if (result[1] === 0) {
+  if (user.coins < coinsToDeduct) {
     throw new Error('Insufficient coins');
   }
+
+  // Deduct the coins
+  user.coins -= coinsToDeduct;
+  await user.save();
 }
 
 // Fetch item details based on item ID

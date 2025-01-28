@@ -4,10 +4,8 @@ import { PaymentRequestParameters, PaymentRequestCurrency } from 'xendit-node/pa
 import User from '../../model/user'; // Import the User model
 import Item from '../../model/ItemModel'; // Import the Item model
 import dotenv from 'dotenv';
-import { createCustomer } from '../../service/Xendit Service/Subscription/customerService';
 import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
-import { createSubscriptionPlan } from '../../service/Xendit Service/Subscription/recurringPaymentService';
-import { getCoinBalance, deductCoinsByWords } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
+import { getCoinBalance, deductCoinsByTokens } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
 
 dotenv.config();
 
@@ -34,11 +32,18 @@ const getUserDetailsByEmail = async (email: string) => {
 
 // Fetch coin balance
 export const getCoins = async (req: Request, res: Response) => {
-  const userId = parseInt(req.params.userId, 10);
+  const userId = parseInt(req.params.userId);
 
   try {
-    const coins = await getCoinBalance(userId);
-    res.status(200).json({ coins });
+    const user = await User.findByPk(userId, {
+      attributes: ['coins'],
+    });
+
+    if (user) {
+      res.json({ coins: user.coins });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -49,9 +54,19 @@ export const deductCoins = async (req: Request, res: Response) => {
   const { userId, text } = req.body;
 
   try {
-    const wordCount = text.trim().split(/\s+/).length; // Count words in the text
-    await deductCoinsByWords(userId, wordCount);
-    res.status(200).json({ message: 'Coins deducted successfully' });
+    // Calculate the number of tokens
+    const tokenCount = Math.ceil(text.length / 4); // 1 token ≈ 4 characters
+
+    // Calculate the number of coins to deduct
+    const coinsToDeduct = Math.ceil(tokenCount / 4); // 4 tokens = 1 coin
+
+    await deductCoinsByTokens(userId, coinsToDeduct);
+    res.status(200).json({ 
+      message: 'Coins deducted successfully', 
+      coinsDeducted: coinsToDeduct, 
+      deductionDetails: `Deducted ${coinsToDeduct} coins for ${tokenCount} tokens (1 coin per 4 tokens)` 
+    });
+    console.log(`Coins deducted: ${coinsToDeduct} coins for ${tokenCount} tokens`);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -147,44 +162,5 @@ Error: ${error.message}`);
     } else {
       res.status(500).json({ error: error.message });
     }
-  }
-};
-
-export const createSubscription = async (req: Request, res: Response) => {
-  try {
-    const { customerData, paymentMethodData, planData } = req.body;
-
-    // Create customer
-    const customer = await createCustomer(customerData);
-    console.log('Customer created:', customer);
-
-    // Create payment method
-    paymentMethodData.customer_id = customer.id.toString(); // Convert customer_id to string
-    paymentMethodData.context = 'subscription' as 'subscription'; // Explicitly set context as 'subscription'
-    const paymentMethod = await createPaymentMethod(paymentMethodData);
-    console.log('Payment method created:', paymentMethod);
-
-    // Create subscription plan
-    const subscriptionPlanData = {
-      reference_id: `sub-${new Date().getTime()}`, // Generate a unique reference ID
-      customer_id: customer.id.toString(), // Convert customer_id to string
-      recurring_action: 'CHARGE_CUSTOMER', // Set the recurring action
-      payment_methods: [{ payment_method_id: paymentMethod.id, rank: 1 }],
-      interval: planData.interval,
-      interval_count: planData.interval_count,
-      total_recurrence: planData.total_recurrence,
-      amount: planData.amount,
-      currency: planData.currency,
-    };
-
-    console.log('Subscription plan data:', subscriptionPlanData);
-
-    const subscriptionPlan = await createSubscriptionPlan(subscriptionPlanData);
-    console.log('Subscription plan created:', subscriptionPlan);
-
-    res.status(201).json(subscriptionPlan);
-  } catch (error) {
-    console.error('Error creating subscription:', error);
-    res.status(500).json({ message: 'Server error' });
   }
 };
