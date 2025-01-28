@@ -25,6 +25,11 @@ const Sidebar: React.FC = () => {
                         <img src="/Any.svg" className="w-15 h-15 group-hover:opacity-0" />
                         <img src="/Any-After.svg" className="w-15 h-15 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
                     </li>
+                    <br />
+                    <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
+                        <img src="/Shop.svg" className="w-19 h-19 group-hover:opacity-0" />
+                        <img src="/Shop-after.svg" className="w-15 h-15 absolute top-0 left-3.3 opacity-0 group-hover:opacity-100" />
+                    </li>
                 </ul>
             </div>
             <div className="block md:hidden w-full p-1 top-16 left-0 h-50 absolute">
