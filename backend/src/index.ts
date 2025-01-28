@@ -4,13 +4,12 @@ import corsOptions from './middlware/cors';
 import express, { Request, Response, Router } from 'express';
 import session from 'express-session';
 import database from './service/database';
-import User from './model/user';
 import routes from './routes/routes';
 import adminController from './routes/userCRUDRoutes';
-import invoiceRoutes from './routes/invoiceRoutes';
-import paymentRoutes from './routes/paymentRoutes';
-import shopRoutes from './routes/shopRoutes';
-import webhookRoutes from './routes/webhookRoutes';
+import invoiceRoutes from './routes/Xendit Routes/invoiceRoutes';
+import paymentRoutes from './routes/Xendit Routes/paymentRoutes';
+import shopRoutes from './routes/Xendit Routes/shopRoutes';
+import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
 import authRoutes from './routes/authRoutes'; // Import the authRoutes
 import * as authController from './controllers/authController';
 import User from './model/user';
