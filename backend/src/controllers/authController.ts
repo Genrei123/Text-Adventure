@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import { ValidationError } from "sequelize";
 import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
+import { sendVerificationEmail } from "../service/emailService";
+import crypto from 'crypto';
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
@@ -31,6 +33,10 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Generate verification code
+        const verificationCode = crypto.randomBytes(20).toString('hex');
+        const verificationExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+
         // Create a new user
         const newUser = await User.create({
             username,
@@ -39,7 +45,12 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             private: isPrivate || true, // Default to true if not provided
             model: model || "gpt-4",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
+            verificationCode,
+            verificationExpiry
         });
+
+        // Send verification email
+        await sendVerificationEmail(username, email, verificationCode);
 
         res.status(201).json({
             message: 'Registration successful! A verification email has been sent to your email address.',
