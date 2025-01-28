@@ -2,7 +2,7 @@ import express from 'express';
 import { createCustomer } from '../../service/Xendit Service/Subscription/customerService';
 import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
 import { createSubscriptionPlan } from '../../service/Xendit Service/Subscription/subscriptionService';
-import { buyItem, getCoins, deductCoins } from '../../controllers/transaction_controllers/shopController';
+//import { buyItem, getCoins, deductCoins } from '../../controllers/transaction_controllers/shopController';
 import { handlePaymentCallback } from '../../controllers/transaction_controllers/webhookController'; // Correct import path
 
 const router = express.Router();
@@ -56,10 +56,10 @@ router.post('/create-subscription-plan', async (req, res) => {
   }
 });
 
-router.post('/buy-item', buyItem);
+// router.post('/buy-item', buyItem);
 router.post('/payment', handlePaymentCallback);
-router.get('/coins/:userId', getCoins);
-router.post('/deduct-coins', deductCoins);
+// router.get('/coins/:userId', getCoins);
+// router.post('/deduct-coins', deductCoins);
 
 
 export default router;
