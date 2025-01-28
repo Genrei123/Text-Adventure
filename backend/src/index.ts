@@ -12,6 +12,12 @@ import paymentRoutes from './routes/paymentRoutes';
 import shopRoutes from './routes/shopRoutes';
 import webhookRoutes from './routes/webhookRoutes';
 import authRoutes from './routes/authRoutes'; // Import the authRoutes
+import * as authController from './controllers/authController';
+import User from './model/user';
+// import shopRoutes from './routes/Xendit Routes/shopRoutes';
+// import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
+import chatRoutes from './routes/chatRoutes'; // Import the chatRoutes
+
 
 const app = express();
 const router = Router();
