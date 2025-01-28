@@ -14,10 +14,8 @@ import invoiceRoutes from './routes/Xendit Routes/invoiceRoutes';
 import paymentRoutes from './routes/Xendit Routes/paymentRoutes';
 import User from './model/user';
 import shopRoutes from './routes/Xendit Routes/shopRoutes';
-import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
 import chatRoutes from './routes/chatRoutes'; // Import the chatRoutes
-import shopRoutes from './routes/shopRoutes';
-import webhookRoutes from './routes/webhookRoutes';
+import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
 
 const app = express();
 const frontendUrl = 'http://localhost:5173';

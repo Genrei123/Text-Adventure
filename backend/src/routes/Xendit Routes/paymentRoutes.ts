@@ -1,6 +1,6 @@
 import express from 'express';
 import { buyItem } from '../../controllers/transaction_controllers/shopController';
-import { handlePaymentCallback } from '../../controllers/transaction_controllers/webhookController'; // Correct import path
+import { handlePaymentCallback } from '../../controllers/transaction_controllers/shopWebhookController'; // Correct import path
 
 const router = express.Router();
 

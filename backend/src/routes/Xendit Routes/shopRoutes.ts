@@ -3,7 +3,7 @@ import { createCustomer } from '../../service/Xendit Service/Subscription/custom
 import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
 import { createSubscriptionPlan } from '../../service/Xendit Service/Subscription/subscriptionService';
 import { buyItem, getCoins, deductCoins } from '../../controllers/transaction_controllers/shopController';
-import { handlePaymentCallback } from '../../controllers/transaction_controllers/webhookController'; // Correct import path
+import { handlePaymentCallback } from '../../controllers/transaction_controllers/shopWebhookController'; // Correct import path
 
 const router = express.Router();
 

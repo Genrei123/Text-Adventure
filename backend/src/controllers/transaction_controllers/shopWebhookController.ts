@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import User from '../../model/user'; // Import the User model
+import Order from '../../model/order'; // Import the Order model
 import dotenv from 'dotenv';
 import { getItemDetails } from './shopController'; // Import the getItemDetails function
 
@@ -50,12 +51,24 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
 
       const item = await getItemDetails(itemId);
 
-      // Update user's coins
-      //user.coins = (user.coins || 0) + item.coins;
-      await user.save();
+      // Find the order by reference_id
+      const order = await Order.findOne({ where: { order_id: reference_id } });
 
-      //console.log(`Payment completed for order: ${reference_id}. Coins added: ${item.coins}. Total coins: ${user.coins}. External ID: ${external_id}`);
-      res.status(200).json({ message: 'Payment confirmed and coins added to user account' });
+      if (!order) {
+        console.error(`Order with reference_id ${reference_id} not found`);
+        res.status(404).json({ message: 'Order not found' });
+        return;
+      }
+
+      // Update the order coins
+      order.coins = item.coins; // Assuming the item has a coins property
+      await order.save();
+
+      // Sum the user's total coins from all their orders
+      const totalCoins = await Order.sum('coins', { where: { UserId: user.id } });
+
+      console.log(`Payment completed for order: ${reference_id}. Coins added: ${item.coins}. Total coins: ${totalCoins}. External ID: ${external_id}`);
+      res.status(200).json({ message: 'Payment confirmed and coins added to user account', totalCoins });
     } catch (error: any) {
       console.error('Error handling payment callback:', error);
       res.status(500).json({ message: 'Server error' });
