@@ -89,7 +89,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Generate a token (e.g., JWT)
-    const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
 
     res.status(200).json({
       message: "Login successful",
@@ -104,4 +104,31 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     console.error("Error during login:", error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
+    const { code } = req.params;
+
+    try {
+        const user = await User.findOne({ where: { verificationCode: code } });
+
+        if (!user) {
+            res.status(400).json({ message: 'Invalid or expired verification code.' });
+            return;
+        }
+
+        if (user.verificationExpiry && user.verificationExpiry < new Date()) {
+            res.status(400).json({ message: 'Verification code has expired.' });
+            return;
+        }
+
+        user.verificationCode = undefined;
+        user.verificationExpiry = undefined;
+        await user.save();
+
+        res.status(200).json({ message: 'Email verified successfully!' });
+    } catch (error) {
+        console.error("Error during email verification:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 };
