@@ -28,6 +28,16 @@ const getUserDetailsByEmail = async (email: string) => {
   return user;
 };
 
+// Function to generate a random alphanumeric string
+const generateRandomString = (length: number) => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+};
+
 export const buyItem = async (req: Request, res: Response) => {
   const { itemId, paymentMethod, email } = req.body;
 
@@ -42,7 +52,8 @@ export const buyItem = async (req: Request, res: Response) => {
 
     // Create an orderId with username and date
     const date = new Date().toISOString().split('T')[0].replace(/-/g, ''); // Format date as YYYYMMDD
-    orderId = `order-${itemId}-${item.name}-${user.username}-${date}`;
+    const randomString = generateRandomString(6); // Generate a 6-character random string
+    orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomString}`;
 
     // Create a payment request
     const data: PaymentRequestParameters = {

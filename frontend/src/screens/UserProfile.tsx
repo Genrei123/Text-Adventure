@@ -95,16 +95,13 @@ export default function ProfilePage() {
               </div>
               <div className="flex-1 flex flex-col items-start mt-4 md:mt-0">
                 <h1 className="text-[#B39C7D] text-4xl font-serif mb-4 self-start">
-                  HEADING
+                  Username
                 </h1>
                 <p className="text-[#ffffff]/80 mb-6 self-start text-2xl">
-                  MAIN TEXT
+                  "MAIN TEXT - (TO BE DECIDED)""
                 </p>
                 <p className="text-[#B39C7D]/80 mb-6 self-start">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
+                  -- BIODATA --
                 </p>
                 <button
                   onClick={() => setShowUserModal(true)}
