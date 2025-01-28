@@ -15,6 +15,9 @@ import paymentRoutes from './routes/Xendit Routes/paymentRoutes';
 import User from './model/user';
 import shopRoutes from './routes/Xendit Routes/shopRoutes';
 import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
+import chatRoutes from './routes/chatRoutes'; // Import the chatRoutes
+import shopRoutes from './routes/shopRoutes';
+import webhookRoutes from './routes/webhookRoutes';
 
 const app = express();
 const frontendUrl = 'http://localhost:5173';
@@ -36,6 +39,8 @@ app.use('/webhook', webhookRoutes);
 // Add the auth routes
 app.post('/register', authController.register);
 app.post('/login', authController.login);
+
+app.use('/api', chatRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send("Hello World!");
@@ -121,7 +126,7 @@ app.listen(3000, async () => {
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
-  console.log('Server is running on port 3000');
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
 
 export default app;
