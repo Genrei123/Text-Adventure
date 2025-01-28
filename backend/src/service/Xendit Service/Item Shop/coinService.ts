@@ -1,31 +1,26 @@
-import Order from '../../../model/order';
+import User from '../../../model/user';
 import { getTokenDetails } from '../../../utils/tokenizer';
 
-// Fetch user's coin balance from the latest order
+// Fetch user's coin balance
 export async function getCoinBalance(userId: number): Promise<number> {
-  const order = await Order.findOne({
-    where: { UserId: userId },
-    order: [['createdAt', 'DESC']],
+  const user = await User.findByPk(userId, {
     attributes: ['coins'],
   });
 
-  if (!order) {
-    throw new Error('Order not found');
+  if (!user) {
+    throw new Error('User not found');
   }
 
-  return order.coins;
+  return user.totalCoins;
 }
 
-// Deduct coins based on token count from the latest order
+// Deduct coins based on token count
 export async function deductCoinsByTokens(userId: number, text: string): Promise<void> {
-  // Fetch the latest order
-  const order = await Order.findOne({
-    where: { UserId: userId },
-    order: [['createdAt', 'DESC']],
-  });
+  // Fetch the user
+  const user = await User.findByPk(userId);
 
-  if (!order) {
-    throw new Error('Order not found');
+  if (!user) {
+    throw new Error('User not found');
   }
 
   // Calculate the token count and get tokens
@@ -40,11 +35,11 @@ export async function deductCoinsByTokens(userId: number, text: string): Promise
   const { tokenCount, tokens } = tokenDetails;
   const coinsToDeduct = tokenCount; // Assuming 1 coin per token
 
-  if (order.coins < coinsToDeduct) {
+  if (user.totalCoins < coinsToDeduct) {
     throw new Error('Insufficient coins');
   }
 
   // Deduct coins
-  order.coins -= coinsToDeduct;
-  await order.save();
+  user.totalCoins -= coinsToDeduct;
+  await user.save();
 }

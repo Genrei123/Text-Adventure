@@ -48,6 +48,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             verificationCodeExpires,
             createdAt: new Date(),
             updatedAt: new Date(),
+            totalCoins: 0,
         });
 
         // Send verification email

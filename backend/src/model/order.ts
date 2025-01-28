@@ -5,12 +5,11 @@ import User from "./user";
 // Define the attributes of the Order model
 interface OrderAttributes {
     id: number;
-    order_id: string;
+    stripe_id: string;
     email: string;
     client_reference_id: string;
     customer_details: object;
     total: number;
-    coins: number; // Add the coins property here
     createdAt: Date;
     updatedAt: Date;
     UserId: number;
@@ -22,12 +21,11 @@ interface OrderCreationAttributes extends Optional<OrderAttributes, "id"> {}
 // Extend the Model class with the Order attributes
 class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
     public id!: number;
-    public order_id!: string;
+    public stripe_id!: string;
     public email!: string;
     public client_reference_id!: string;
     public customer_details!: object;
     public total!: number;
-    public coins!: number; // Add the coins property here
     public createdAt!: Date;
     public updatedAt!: Date;
     public UserId!: number;
@@ -40,7 +38,7 @@ Order.init({
         autoIncrement: true,
         primaryKey: true,
     },
-    order_id: {
+    stripe_id: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
@@ -60,11 +58,6 @@ Order.init({
     total: {
         type: DataTypes.INTEGER,
         allowNull: false,
-    },
-    coins: {
-        type: DataTypes.INTEGER, // Add the coins property here
-        allowNull: false,
-        defaultValue: 0,
     },
     createdAt: {
         type: DataTypes.DATE,

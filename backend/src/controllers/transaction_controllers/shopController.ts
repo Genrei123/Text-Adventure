@@ -3,7 +3,6 @@ import { PaymentRequest } from '../../service/Xendit Service/xenditClient';
 import { PaymentRequestParameters, PaymentRequestCurrency } from 'xendit-node/payment_request/models';
 import User from '../../model/user'; // Import the User model
 import Item from '../../model/ItemModel'; // Import the Item model
-import Order from '../../model/order'; // Import the Order model
 import dotenv from 'dotenv';
 import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
 import { getCoinBalance, deductCoinsByTokens } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
@@ -13,6 +12,11 @@ dotenv.config();
 
 const SUCCESS_RETURN_URL = 'https://example.com/payment-success';
 const FAILURE_RETURN_URL = 'https://example.com/payment-failure';
+
+// Function to generate a random 6-character alphanumeric string
+const generateRandomId = () => {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+};
 
 // Function to fetch item details based on item ID
 export const getItemDetails = async (itemId: string) => {
@@ -37,8 +41,15 @@ export const getCoins = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.userId);
 
   try {
-    const coins = await getCoinBalance(userId);
-    res.json({ coins });
+    const user = await User.findByPk(userId, {
+      attributes: ['totalCoins'],
+    });
+
+    if (user) {
+      res.json({ coins: user.totalCoins });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -82,19 +93,14 @@ export const buyItem = async (req: Request, res: Response) => {
     item = await getItemDetails(itemId);
     user = await getUserDetailsByEmail(email);
 
-    // Create an orderId with username and date
+    // Create an orderId with username, date, and a random 6-character alphanumeric string
     const date = new Date().toISOString().split('T')[0].replace(/-/g, ''); // Format date as YYYYMMDD
-    orderId = `order-${itemId}-${item.name}-${user.username}-${date}`;
-
-    // Check if an order with the same orderId already exists
-    const existingOrder = await Order.findOne({ where: { order_id: orderId } });
-    if (existingOrder) {
-      throw new Error('Order with this ID already exists');
-    }
+    const randomId = generateRandomId();
+    orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomId}`;
 
     // Create payment method data
     const paymentMethodData = {
-      type: 'EWALLET', // Correct the type to uppercase
+      type: 'EWALLET',
       reusability: 'ONE_TIME_USE',
       ewallet: {
         channel_code: paymentMethod,
@@ -107,8 +113,6 @@ export const buyItem = async (req: Request, res: Response) => {
       metadata: {},
       context: 'buy_item' as 'buy_item', // Explicitly set context as 'buy_item'
     };
-
-    console.log('Payment Method Data:', paymentMethodData);
 
     // Create payment method
     const paymentMethodResponse = await createPaymentMethod(paymentMethodData);
@@ -134,24 +138,6 @@ export const buyItem = async (req: Request, res: Response) => {
     const paymentRequest = await PaymentRequest.createPaymentRequest({ data });
     const paymentLink = paymentRequest.actions?.find((action: { urlType: string }) => action.urlType === 'WEB')?.url || 'N/A';
     const formattedDate = new Date().toLocaleString();
-
-    // Create a new order record in the Order table only if payment is successful
-    if (paymentRequest.status === 'PENDING') {
-      await Order.create({
-        order_id: orderId,
-        email: user.email,
-        client_reference_id: orderId,
-        customer_details: {
-          username: user.username,
-          email: user.email,
-        },
-        total: item.price,
-        coins: 0, // Assuming no coins are deducted for this order
-        UserId: user.id,
-        createdAt: new Date(), // Add createdAt
-        updatedAt: new Date(), // Add updatedAt
-      });
-    }
 
     console.log(`Status: Success
 Item ID: ${itemId}
@@ -180,7 +166,6 @@ Date Created: ${formattedDate}
 Order ID: ${orderId}
 Error: ${error.message}`);
     if (error.response) {
-      console.error('Validation Errors:', error.response.data.errors);
       res.status(error.response.status).json({ error: error.response.data });
     } else if (error.request) {
       res.status(500).json({ error: 'No response received from Xendit API' });
