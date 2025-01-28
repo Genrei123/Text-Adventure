@@ -5,7 +5,7 @@ import User from '../../model/user'; // Import the User model
 import Item from '../../model/ItemModel'; // Import the Item model
 import dotenv from 'dotenv';
 import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
-import { getCoinBalance, deductCoinsByTokens } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
+// import { getCoinBalance, deductCoinsByTokens } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
 import { getTokenDetails } from '../../utils/tokenizer'; // Import the tokenizer
 
 dotenv.config();
@@ -41,7 +41,7 @@ export const getCoins = async (req: Request, res: Response) => {
     });
 
     if (user) {
-      res.json({ coins: user.coins });
+      // res.json({ coins: user.coins });
     } else {
       res.status(404).json({ error: 'User not found' });
     }
@@ -61,7 +61,7 @@ export const deductCoins = async (req: Request, res: Response) => {
     // Calculate the number of coins to deduct
     const coinsToDeduct = tokenCount; // Assuming 1 coin per token
 
-    await deductCoinsByTokens(userId, text);
+    // await deductCoinsByTokens(userId, text);
     res.status(200).json({ 
       message: 'Coins deducted successfully', 
       coinsDeducted: coinsToDeduct, 

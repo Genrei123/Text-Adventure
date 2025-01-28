@@ -2,17 +2,17 @@ import User from '../../../model/user';
 import { getTokenDetails } from '../../../utils/tokenizer';
 
 // Fetch user's coin balance
-export async function getCoinBalance(userId: number): Promise<number> {
-  const user = await User.findByPk(userId, {
-    attributes: ['coins'],
-  });
+// export async function getCoinBalance(userId: number): Promise<number> {
+//   const user = await User.findByPk(userId, {
+//     attributes: ['coins'],
+//   });
 
-  if (!user) {
-    throw new Error('User not found');
-  }
+  // if (!user) {
+  //   throw new Error('User not found');
+  // }
 
-  return user.coins;
-}
+  //return user.coins;
+//}
 
 // Deduct coins based on token count
 export async function deductCoinsByTokens(userId: number, text: string): Promise<void> {
@@ -35,11 +35,11 @@ export async function deductCoinsByTokens(userId: number, text: string): Promise
   const { tokenCount, tokens } = tokenDetails;
   const coinsToDeduct = tokenCount; // Assuming 1 coin per token
 
-  if (user.coins < coinsToDeduct) {
-    throw new Error('Insufficient coins');
-  }
+  // if (user.coins < coinsToDeduct) {
+  //   throw new Error('Insufficient coins');
+  // }
 
   // Deduct coins
-  user.coins -= coinsToDeduct;
+  //user.coins -= coinsToDeduct;
   await user.save();
 }

@@ -99,7 +99,6 @@ User.init(
             defaultValue: DataTypes.NOW,
         },
     },
-  },
   {
     sequelize,
     modelName: 'User', // Optionally set the model name explicitly
