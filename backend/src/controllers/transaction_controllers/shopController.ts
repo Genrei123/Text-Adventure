@@ -31,49 +31,14 @@ const getUserDetailsByEmail = async (email: string) => {
   return user;
 };
 
-// Fetch coin balance
-export const getCoins = async (req: Request, res: Response) => {
-  const userId = parseInt(req.params.userId);
-
-  try {
-    const user = await User.findByPk(userId, {
-      attributes: ['coins'],
-    });
-
-    if (user) {
-      // res.json({ coins: user.coins });
-    } else {
-      res.status(404).json({ error: 'User not found' });
-    }
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+// Function to generate a random alphanumeric string
+const generateRandomString = (length: number) => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
-};
-
-// Deduct coins based on text input
-export const deductCoins = async (req: Request, res: Response) => {
-  const { userId, text } = req.body;
-
-  try {
-    // Calculate the number of tokens using the tokenizer
-    const { tokenCount, tokens } = getTokenDetails(text);
-
-    // Calculate the number of coins to deduct
-    const coinsToDeduct = tokenCount; // Assuming 1 coin per token
-
-    // await deductCoinsByTokens(userId, text);
-    res.status(200).json({ 
-      message: 'Coins deducted successfully', 
-      coinsDeducted: coinsToDeduct, 
-      deductionDetails: `Deducted ${coinsToDeduct} coins for ${tokenCount} tokens (1 coin per token)`,
-      tokens: tokens 
-    });
-    console.log(`Input Text: ${text}`);
-    console.log(`Coins deducted: ${coinsToDeduct} coins for ${tokenCount} tokens`);
-    console.log(`Tokens: ${tokens.join(', ')}`);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
-  }
+  return result;
 };
 
 export const buyItem = async (req: Request, res: Response) => {
@@ -90,7 +55,8 @@ export const buyItem = async (req: Request, res: Response) => {
 
     // Create an orderId with username and date
     const date = new Date().toISOString().split('T')[0].replace(/-/g, ''); // Format date as YYYYMMDD
-    orderId = `order-${itemId}-${item.name}-${user.username}-${date}`;
+    const randomString = generateRandomString(6); // Generate a 6-character random string
+    orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomString}`;
 
     // Create payment method data
     const paymentMethodData = {
