@@ -146,7 +146,7 @@ User ID: ${user.id}
 Username: ${user.username}
 User Email: ${user.email}
 Payment Method: ${paymentMethod}
-Amount: ${item.price}
+Paid Amount: ${item.price}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
 Payment Request ID: ${paymentRequest.id}
@@ -161,7 +161,7 @@ User ID: ${user?.id || 'N/A'}
 Username: ${user?.username || 'N/A'}
 User Email: ${email}
 Payment Method: ${paymentMethod}
-Amount: ${item?.price || 'N/A'}
+Paid Amount: ${item?.price || 'N/A'}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
 Error: ${error.message}`);
