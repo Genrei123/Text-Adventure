@@ -12,10 +12,14 @@ interface UserAttributes {
     admin: boolean;
     verificationCode?: string;
     verificationExpiry?: Date;
+    emailVerified: boolean;
+    totalCoins: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 // Define the creation attributes for the User model
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationExpiry'> {}
 
 // Extend the Model class with the User attributes
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -28,6 +32,8 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public admin!: boolean;
     public verificationCode?: string;
     public verificationExpiry?: Date;
+    public emailVerified!: boolean;
+    public totalCoins!: number;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -80,10 +86,31 @@ User.init(
             type: DataTypes.DATE,
             allowNull: true,
         },
+        emailVerified: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
+        totalCoins: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+        },
     },
     {
         sequelize,
         modelName: "User", // Optionally set the model name explicitly
+        timestamps: true, // Enable timestamps
     }
 );
 
