@@ -127,7 +127,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         await sendVerificationEmail(email, username, verificationCode);
         toast.success('Registration successful! A verification email has been sent to your email address.');
         setTimeout(() => {
-          navigate('/email-confirmation-required');
+          navigate('/email-confirmation');
         }, 3000);
       } catch (error) {
         if (error.response && error.response.data.message) {

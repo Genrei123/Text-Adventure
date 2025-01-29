@@ -11,7 +11,7 @@ interface UserAttributes {
     model: string;
     admin: boolean;
     verificationCode?: string;
-    verificationExpiry?: Date;
+    verificationCodeExpires?: Date;
     emailVerified: boolean;
     totalCoins: number;
     createdAt: Date;
@@ -19,7 +19,7 @@ interface UserAttributes {
 }
 
 // Define the creation attributes for the User model
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationExpiry'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationCodeExpires' | 'createdAt' | 'updatedAt'> {}
 
 // Extend the Model class with the User attributes
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -31,7 +31,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public model!: string;
     public admin!: boolean;
     public verificationCode?: string;
-    public verificationExpiry?: Date;
+    public verificationCodeExpires?: Date;
     public emailVerified!: boolean;
     public totalCoins!: number;
 

@@ -7,6 +7,7 @@ import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
 import { sendVerificationEmail } from "../service/emailService";
 import crypto from 'crypto';
+import crypto from 'crypto';
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
@@ -46,13 +47,26 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             model: model || "gpt-4",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
             verificationCode,
-            verificationExpiry
+            verificationCodeExpires,
+            emailVerified: false,
+            totalCoins: 0,
+            createdAt: new Date(),
+            updatedAt: new Date()
         });
 
+        // Log the user data for debugging
+        console.log("New user created:", newUser);
+
         // Send verification email
-        await sendVerificationEmail(email, username, verificationCode);
+        const emailSent = await sendVerificationEmail(email, verificationCode);
+        if (!emailSent) {
+            await newUser.destroy(); // Rollback user creation if email sending fails
+            res.status(500).json({ message: "Failed to send verification email. Please try again." });
+            return;
+        }
 
         res.status(201).json({
+            message: 'Registration successful! A verification email has been sent to your email address.',
             message: 'Registration successful! A verification email has been sent to your email address.',
             user: {
                 id: newUser.id,
@@ -66,21 +80,21 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
         } else {
             console.error("Error during registration:", error);
-            res.status(500).json({ message: "Server error" });
+            res.status(500).json({ message: `Server error during registration: ${(error as Error).message}` });
         }
     }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    // Find the user by email
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      res.status(401).json({ message: 'Email not found. Please check your email or register.' });
-      return;
-    }
+        // Find the user by email
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            res.status(401).json({ message: 'Email not found. Please check your email or register.' });
+            return;
+        }
 
     // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -89,22 +103,22 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Generate a token (e.g., JWT)
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+        // Generate JWT token
+        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, { expiresIn: '1h' });
 
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username
-      },
-    });
-  } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ message: "Server error" });
-  }
+        res.status(200).json({
+            message: 'Login successful!',
+            token,
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email
+            },
+        });
+    } catch (error) {
+        console.error("Error during login:", error);
+        res.status(500).json({ message: `Server error during login: ${(error as Error).message}` });
+    }
 };
 
 export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
@@ -123,13 +137,14 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
             return;
         }
 
+        user.emailVerified = true;
         user.verificationCode = undefined;
-        user.verificationExpiry = undefined;
+        user.verificationCodeExpires = undefined;
         await user.save();
 
         res.status(200).json({ message: 'Email verified successfully!' });
     } catch (error) {
         console.error("Error during email verification:", error);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: `Server error during email verification: ${(error as Error).message}` });
     }
 };
