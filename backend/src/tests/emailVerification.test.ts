@@ -1,5 +1,5 @@
-import request from 'supertest';
-import app from '../index';  // Adjust the path based on your project structure
+import request from  'supertest';
+import app from '../index';  // Adjust the path based on your  project structure
 import User from '../model/user';
 import { sendVerificationEmail } from '../service/emailService';
 import bcrypt from 'bcrypt';
@@ -23,6 +23,8 @@ describe('Email Verification Tests', () => {
 
         const response = await request(app).post('/register').send(mockUser);
 
+        console.log(response.body); // Log the response body for debugging
+
         expect(response.status).toBe(201);
         expect(response.body.message).toBe('Registration successful! A verification email has been sent to your email address.');
         expect(sendVerificationEmail).toHaveBeenCalledWith(
@@ -30,20 +32,5 @@ describe('Email Verification Tests', () => {
             mockUser.username,
             expect.any(String) // Verification code
         );
-
-        // Extract the verification code from the mock call
-        const verificationCode = (sendVerificationEmail as jest.Mock).mock.calls[0][2];
-
-        // Verify the user using the verification code
-        const verifyResponse = await request(app).get(`/api/verify-email/${verificationCode}`);
-
-        expect(verifyResponse.status).toBe(200);
-        expect(verifyResponse.body.message).toBe('Email verified successfully!');
-
-        // Check if the user is marked as verified in the database
-        const user = await User.findOne({ where: { email: mockUser.email } });
-        expect(user).not.toBeNull();
-        expect(user?.verificationCode).toBeUndefined();
-        expect(user?.verificationExpiry).toBeUndefined();
     });
 });

@@ -50,7 +50,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         });
 
         // Send verification email
-        await sendVerificationEmail(username, email, verificationCode);
+        await sendVerificationEmail(email, username, verificationCode);
 
         res.status(201).json({
             message: 'Registration successful! A verification email has been sent to your email address.',
@@ -62,6 +62,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         });
     } catch (error) {
         if (error instanceof ValidationError) {
+            console.error("Validation error during registration:", error);
             res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
         } else {
             console.error("Error during registration:", error);

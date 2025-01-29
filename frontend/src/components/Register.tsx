@@ -5,7 +5,7 @@ import '../App.css';
 import axios from '../axiosConfig/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import emailjs from 'emailjs-com';
+import emailjs from "@emailjs/browser";
 
 /**
  * Interface for Register component props
@@ -51,28 +51,10 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [successMessage, setSuccessMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
-  const [inputCode, setInputCode] = useState('');
-  const [isCodeSent, setIsCodeSent] = useState(false);
   
   // Hook for programmatic navigation
   const navigate = useNavigate();
 
-
-
-
-  try {
-    await emailjs.send(
-      process.env.REACT_APP_EMAILJS_SERVICE_ID!,
-      process.env.REACT_APP_EMAILJS_TEMPLATE_ID!,
-      templateParams,
-      process.env.REACT_APP_EMAILJS_PUBLIC_KEY!
-    );
-    toast.success('Verification email sent!');
-    setIsCodeSent(true);
-  } catch (error) {
-    toast.error('Faile
-      
   /**
    * Validates all form fields
    * Checks for:
@@ -141,9 +123,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
 
       try {
         const response = await axios.post('/api/register', { username, email, password });
+        const verificationCode = response.data.user.verificationCode;
+        await sendVerificationEmail(email, username, verificationCode);
         toast.success('Registration successful! A verification email has been sent to your email address.');
         setTimeout(() => {
-          navigate('/login');
+          navigate('/email-confirmation-required');
         }, 3000);
       } catch (error) {
         if (error.response && error.response.data.message) {
@@ -154,43 +138,6 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       } finally {
         setIsProcessing(false);
       }
-    }
-  };
-
-  const generateVerificationCode = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
-
-  const sendVerificationEmail = async () => {
-    const code = generateVerificationCode();
-    setVerificationCode(code);
-
-    const templateParams = {
-      to_email: email,
-      to_name: username,
-      verification_code: code,
-    };
-
-    try {
-      await emailjs.send(
-        process.env.REACT_APP_EMAILJS_SERVICE_ID!,
-        process.env.REACT_APP_EMAILJS_TEMPLATE_ID!,
-        templateParams,
-        process.env.REACT_APP_EMAILJS_PUBLIC_KEY!
-      );
-      toast.success('Verification email sent!');
-      setIsCodeSent(true);
-    } catch (error) {
-      toast.error('Failed to send verification email.');
-    }
-  };
-
-  const handleVerifyCode = () => {
-    if (inputCode === verificationCode) {
-      toast.success('Verification successful!');
-      // Proceed with registration logic
-    } else {
-      toast.error('Invalid verification code.');
     }
   };
 
@@ -274,6 +221,21 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }, 1500);
   };
 
+  const sendVerificationEmail = async (userEmail: string, username: string, verificationCode: string) => {
+    const emailParams = {
+      to_name: username,
+      to_email: userEmail,
+      verification_code: verificationCode,
+      from_name: "Realm Gatekeepers",
+    };
+  
+    try {
+      await emailjs.send("service_2tn8v7o", "template_tkrxjur", emailParams);
+      console.log("Verification email sent!");
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
+  };
   
   return (
     <div className="min-h-screen bg-[#1E1E1E] flex">
@@ -417,29 +379,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             <button
               type="submit"
               className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel"
+              disabled={isProcessing}
             >
               Start Your Journey
             </button>
           </form>
-
-          {/* Verification Code Section */}
-          {isCodeSent && (
-            <div className="mt-6">
-              <input
-                type="text"
-                placeholder="Enter verification code"
-                value={inputCode}
-                onChange={(e) => setInputCode(e.target.value)}
-                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
-              />
-              <button
-                onClick={handleVerifyCode}
-                className="w-full py-2 mt-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel"
-              >
-                Verify
-              </button>
-            </div>
-          )}
 
           {/* Social Registration Section */}
           <div className="mt-8">

@@ -12,6 +12,7 @@ import routes from './routes/routes';
 import adminController from './routes/userCRUDRoutes'; // Import the adminController
 import * as authController from './controllers/authController'; // Import the authController
 import User from './model/user'; // Import the User model
+import emailConfirmationRouter from './routes/emailConfirmation'; // Import the email confirmation router
 
 const app = express();
 
@@ -23,9 +24,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routes);
-app.use('/', adminController); 
+app.use('/', adminController);
+app.use('/', emailConfirmationRouter); // Use the email confirmation router
 
-// Add the auth routes without /api prefix
 app.post('/register', authController.register);
 app.post('/login', authController.login);
 
@@ -55,9 +56,12 @@ app.get('/auth/google/callback',
       res.redirect(`${frontendUrl}/homepage?username=${encodeURIComponent(username)}`);
     } else {
       res.redirect('/?error=authentication_failed');
+      
+      res.redirect('/');
     }
   }
 );
+
 
 app.get('/auth/logout', (req: Request, res: Response) => {
   // Clear the token cookie
@@ -115,8 +119,9 @@ app.get('/auth/:provider/callback',
     res.status(400).send("Unsupported provider");
   }
 );
+const PORT = process.env.NODE_ENV === 'test' ? 4000 : 3000;
 
-app.listen(3000, async () => { 
+app.listen(PORT, async () => { 
   try {
     await database.authenticate();
     console.log('Connection to the database has been established successfully.');
@@ -124,10 +129,10 @@ app.listen(3000, async () => {
     // Synchronize the User model with the database
     await User.sync({ alter: true });
     console.log('User table has been synchronized.');
+    console.log(`Server is running on port ${PORT}`);
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
-  console.log('Server is running on port 3000');
 });
 
 export default app;
