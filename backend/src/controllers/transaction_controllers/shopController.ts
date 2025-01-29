@@ -5,8 +5,8 @@ import User from '../../model/user'; // Import the User model
 import Item from '../../model/ItemModel'; // Import the Item model
 import dotenv from 'dotenv';
 import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
-import { getCoinBalance, deductCoinsByTokens } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
-import { getTokenDetails } from '../../utils/tokenizer'; // Import the tokenizer
+import { deductCoinsByTokens } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
+import { getChatTokenDetails } from '../../utils/tokenizer'; // Import the correct function
 
 dotenv.config();
 
@@ -57,25 +57,24 @@ export const getCoins = async (req: Request, res: Response) => {
 
 // Deduct coins based on text input
 export const deductCoins = async (req: Request, res: Response) => {
-  const { userId, text } = req.body;
+  const { userId, messages } = req.body;
 
   try {
     // Calculate the number of tokens using the tokenizer
-    const { tokenCount, tokens } = getTokenDetails(text);
+    const tokenCount = getChatTokenDetails(messages);
 
     // Calculate the number of coins to deduct
     const coinsToDeduct = tokenCount; // Assuming 1 coin per token
 
-    await deductCoinsByTokens(userId, text);
+    await deductCoinsByTokens(userId, messages.map((msg: { role: string; content: string }) => msg.content).join(' '));
     res.status(200).json({ 
       message: 'Coins deducted successfully', 
       coinsDeducted: coinsToDeduct, 
       deductionDetails: `Deducted ${coinsToDeduct} coins for ${tokenCount} tokens (1 coin per token)`,
-      tokens: tokens 
+      tokens: messages 
     });
-    console.log(`Input Text: ${text}`);
+    console.log(`Messages: ${JSON.stringify(messages)}`);
     console.log(`Coins deducted: ${coinsToDeduct} coins for ${tokenCount} tokens`);
-    console.log(`Tokens: ${tokens.join(', ')}`);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

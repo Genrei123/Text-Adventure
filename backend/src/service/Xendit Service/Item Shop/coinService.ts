@@ -1,5 +1,5 @@
 import User from '../../../model/user';
-import { getTokenDetails } from '../../../utils/tokenizer';
+import { getChatTokenDetails } from '../../../utils/tokenizer';
 
 // Fetch user's coin balance
 export async function getCoinBalance(userId: number): Promise<number> {
@@ -24,15 +24,16 @@ export async function deductCoinsByTokens(userId: number, text: string): Promise
   }
 
   // Calculate the token count and get tokens
-  let tokenDetails;
+  let tokenCount;
   try {
-    tokenDetails = getTokenDetails(text);
+    // Assuming the text is a single message
+    const messages = [{ role: "user", content: text }];
+    tokenCount = getChatTokenDetails(messages);
   } catch (error) {
     console.error('Error getting token details:', error);
     throw new Error('Failed to get token details');
   }
 
-  const { tokenCount, tokens } = tokenDetails;
   const coinsToDeduct = tokenCount; // Assuming 1 coin per token
 
   if (user.totalCoins < coinsToDeduct) {
