@@ -221,10 +221,10 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
 
   
   return (
-    <div className="min-h-screen bg-[#1E1E1E] flex">
-      {/* Left Side - Logo Section */}
+    // register design
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: `url(${('/Register.png')})` }}>
+      <img src={('/fadeLogin.png')} className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block" />
       <div className="w-1/2 flex items-center justify-center">
-        <div className="text-xl font-cinzel text-white">SAGE.AI</div>
       </div>
 
       {/* Right Side - Registration Form */}

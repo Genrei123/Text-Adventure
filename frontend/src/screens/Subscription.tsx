@@ -79,7 +79,7 @@ const Subscription: React.FC = () => {
                         @media (max-width: 600px) {
                             #billingModal {
                                 height: 90% !important;
-                                width: 90% !important;
+                                width: 90%   !important;
                                 padding: 0.5rem !important;
                             }
                             #billingModal h2 {
