@@ -1,5 +1,6 @@
 import User from '../../../model/user';
 import { getChatTokenDetails } from '../../../utils/tokenizer';
+import Order from '../../../model/order'; // Import the Order model
 
 // Fetch user's coin balance
 export async function getCoinBalance(userId: number): Promise<number> {
@@ -43,4 +44,9 @@ export async function deductCoinsByTokens(userId: number, text: string): Promise
   // Deduct coins
   user.totalCoins -= coinsToDeduct;
   await user.save();
+}
+
+export async function checkOrderIdExists(order_id: string): Promise<boolean> {
+  const order = await Order.findOne({ where: { order_id } });
+  return !!order; // Return true if order exists, false otherwise
 }

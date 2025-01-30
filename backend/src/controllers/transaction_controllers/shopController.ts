@@ -5,7 +5,7 @@ import User from '../../model/user'; // Import the User model
 import Item from '../../model/ItemModel'; // Import the Item model
 import dotenv from 'dotenv';
 import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
-import { deductCoinsByTokens } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
+import { deductCoinsByTokens, checkOrderIdExists } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
 import { getChatTokenDetails } from '../../utils/tokenizer'; // Import the correct function
 
 dotenv.config();
@@ -94,8 +94,14 @@ export const buyItem = async (req: Request, res: Response) => {
 
     // Create an orderId with username, date, and a random 6-character alphanumeric string
     const date = new Date().toISOString().split('T')[0].replace(/-/g, ''); // Format date as YYYYMMDD
-    const randomId = generateRandomId();
+    let randomId = generateRandomId();
     orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomId}`;
+
+    // Ensure the Order ID is unique
+    while (await checkOrderIdExists(orderId)) {
+      randomId = generateRandomId();
+      orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomId}`;
+    }
 
     // Create payment method data
     const paymentMethodData = {
