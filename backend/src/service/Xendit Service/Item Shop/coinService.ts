@@ -4,12 +4,12 @@ import { getChatTokenDetails } from '../../../utils/tokenizer';
 // Fetch user's coin balance
 export async function getCoinBalance(userId: number): Promise<number> {
   const user = await User.findByPk(userId, {
-    attributes: ['coins'],
+     attributes: ['coins'],
   });
 
   if (!user) {
     throw new Error('User not found');
-  }
+   }
 
   return user.totalCoins;
 }
