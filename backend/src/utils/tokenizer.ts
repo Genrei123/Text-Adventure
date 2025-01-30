@@ -10,6 +10,7 @@ export function getChatTokenDetails(messages: { role: string; content: string }[
   let tokenCount = 0;
 
   for (const message of messages) {
+    // Removed `<|im_start|><|im_sep|><|im_end|>` that causes inflation on token count
     const formattedMessage = `${message.role}${message.content}`;
     tokenCount += enc.encode(formattedMessage).length;
   }
