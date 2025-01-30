@@ -1,0 +1,8 @@
+.settings-container {
+    display: flex;
+}
+
+.settings-content {
+    margin-left: 200px; /* Adjust based on the width of your sidebar */
+    padding: 20px;
+}
