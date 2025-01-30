@@ -5,7 +5,8 @@ import jwt from "jsonwebtoken";
 import { ValidationError } from "sequelize";
 import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
-import { sendVerificationEmail } from "../service/emailService";
+import { sendVerificationEmail, sendResetPasswordEmail } from '../service/emailService';
+import crypto from 'crypto';
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
@@ -127,3 +128,74 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
         res.status(500).json({ message: "Server error" });
     }
 };
+
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+    console.log('Received forgot password request:', req.body); // Debug log
+    const { email } = req.body;
+  
+    try {
+      // Validate email input
+      if (!email || typeof email !== 'string' || !email.includes('@')) {
+        res.status(400).json({ message: 'Please provide a valid email address' });
+        return;
+      }
+  
+      // Find the user and ensure email exists
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        // Use a generic message for security
+        res.status(400).json({ message: 'If this email exists in our system, you will receive a password reset link' });
+        return;
+      }
+  /*
+      // Optional: Check if email is verified
+      if (user.emailVerified === false) {
+        res.status(400).json({ message: 'Please verify your email address first' });
+        return;
+      }
+  */
+      // Generate a more secure reset token
+      const resetToken = crypto.randomBytes(3).toString('hex').toUpperCase();
+      
+      // Update user with new reset token
+      user.verificationCode = resetToken;
+      user.verificationCodeExpires = new Date(Date.now() + 3600000); // 1 hour from now
+      await user.save();
+  
+      // Attempt to send email
+      try {
+        const emailSent = await sendResetPasswordEmail(email, resetToken);
+        if (!emailSent) {
+          throw new Error('Email sending failed');
+        }
+      } catch (emailError) {
+        // Roll back the token if email fails
+        user.verificationCode = null;
+        user.verificationCodeExpires = null;
+        await user.save();
+        
+        console.error('Error sending reset email:', emailError);
+        res.status(500).json({ message: 'Failed to send reset email. Please try again later.' });
+        return;
+      }
+  
+      // Success response
+      res.status(200).json({ 
+        message: 'If this email exists in our system, you will receive a password reset link',
+        // For development only:
+        debug: {
+          resetToken,
+          expiresAt: user.verificationCodeExpires
+        }
+      });
+  
+    } catch (error) {
+      console.error('Error during forgot password:', error);
+      
+      if (error instanceof ValidationError) {
+        res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
+      } else {
+        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+      }
+    }
+  };

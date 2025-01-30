@@ -10,31 +10,32 @@ import invoiceRoutes from './routes/Xendit Routes/invoiceRoutes';
 import paymentRoutes from './routes/Xendit Routes/paymentRoutes';
 import shopRoutes from './routes/Xendit Routes/shopRoutes';
 import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
-import authRoutes from './routes/authRoutes'; // Import the authRoutes
-import * as authController from './controllers/authController';
+import createAuthRouter from './routes/authRoutes';
+import chatRoutes from './routes/chatRoutes';
 import User from './model/user';
-// import shopRoutes from './routes/Xendit Routes/shopRoutes';
-// import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
-import chatRoutes from './routes/chatRoutes'; // Import the chatRoutes
-
 
 const app = express();
-const router = Router();
 const frontendUrl = 'http://localhost:5173';
 
+// Middleware setup
 app.use(cors(corsOptions));
 app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: true }));
-app.use(express.json()); // Middleware to parse JSON bodies
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Route setup
 app.use('/', routes);
 app.use('/', adminController);
 app.use('/invoice', invoiceRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/shop', shopRoutes);
 app.use('/webhook', webhookRoutes);
-authRoutes(router, frontendUrl); // Use the authRoutes with router and frontendUrl
-app.use('/', router);
+
+// Auth routes setup - using the new createAuthRouter function
+const authRouter = createAuthRouter(frontendUrl);
+app.use('/api', authRouter);
+
+//app.use('/api', chatRoutes);
 
 app.listen(3000, async () => { 
   try {
