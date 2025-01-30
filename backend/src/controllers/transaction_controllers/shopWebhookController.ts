@@ -1,13 +1,16 @@
 import { Request, Response } from 'express';
 import User from '../../model/user'; // Import the User model
+import Order from '../../model/order'; // Import the Order model
 import dotenv from 'dotenv';
 import { getItemDetails } from './shopController'; // Import the getItemDetails function
 
 dotenv.config();
 
 export const handlePaymentCallback = async (req: Request, res: Response): Promise<void> => {
+  console.log('handlePaymentCallback called'); // Add logging to confirm function call
+
   const { data, event } = req.body;
-  const { id: external_id, status, reference_id } = data;
+  const { id: external_id, status, reference_id, email, amount } = data;
   const webhookToken = req.headers['x-callback-token'];
 
   // Verify the webhook token
@@ -29,15 +32,15 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
     try {
       // Check if reference_id format is as expected
       const referenceIdParts = reference_id.split('-');
-      if (referenceIdParts.length !== 5) {
+      if (referenceIdParts.length !== 6) {
         console.error(`Invalid reference_id format: ${reference_id}`);
         res.status(400).json({ message: `Invalid reference_id format: ${reference_id}` });
         return;
       }
 
-      // Extract itemId and email from reference_id
-      const [orderPrefix, itemId, itemName, username, date] = referenceIdParts;
-      console.log(`Extracted values - itemId: ${itemId}, itemName: ${itemName}, username: ${username}, date: ${date}, external_id: ${external_id}`);
+      // Extract itemId, itemName, username, date, and randomId from reference_id
+      const [orderPrefix, itemId, itemName, username, date, randomId] = referenceIdParts;
+      console.log(`Extracted values - itemId: ${itemId}, itemName: ${itemName}, username: ${username}, date: ${date}, randomId: ${randomId}, external_id: ${external_id}`);
       console.log(`Processing payment for order: ${reference_id}`);
 
       const user = await User.findOne({ where: { username } });
@@ -51,10 +54,27 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
       const item = await getItemDetails(itemId);
 
       // Update user's coins
-      //user.coins = (user.coins || 0) + item.coins;
+      user.totalCoins = (user.totalCoins || 0) + item.coins;
       await user.save();
 
-      //console.log(`Payment completed for order: ${reference_id}. Coins added: ${item.coins}. Total coins: ${user.coins}. External ID: ${external_id}`);
+      // Insert order data into Order table
+      await Order.create({
+        order_id: reference_id,
+        email: user.email,
+        client_reference_id: external_id,
+        customer_details: {
+          username: user.username,
+          itemName: item.name,
+          date: date,
+          randomId: randomId
+        },
+        paid_amount: amount,
+        UserId: user.id,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+
+      console.log(`Payment completed for order: ${reference_id}. Coins added: ${item.coins}. Total coins: ${user.totalCoins}. External ID: ${external_id}`);
       res.status(200).json({ message: 'Payment confirmed and coins added to user account' });
     } catch (error: any) {
       console.error('Error handling payment callback:', error);

@@ -1,18 +1,23 @@
-import { encoding_for_model } from 'tiktoken';
+import { get_encoding } from "tiktoken";
 
-let enc: any;
+const enc = get_encoding("o200k_base"); // GPT-4o uses "o200k_base"
 
-try {
-  enc = encoding_for_model('gpt-4o');
-} catch (error) {
-  console.error('Error initializing encoder:', error);
-}
-
-export function getTokenDetails(text: string): { tokenCount: number, tokens: number[] } {
+export function getChatTokenDetails(messages: { role: string; content: string }[]): number {
   if (!enc) {
-    throw new Error('Encoder not initialized');
+    throw new Error("Encoder not initialized");
   }
-  const tokens = Array.from(enc.encode(text)) as number[]; // Convert Uint32Array to number[]
-  const tokenCount = tokens.length;
-  return { tokenCount, tokens };
+
+  let tokenCount = 0;
+
+  for (const message of messages) {
+    const formattedMessage = `<|im_start|>${message.role}<|im_sep|>${message.content}<|im_end|>`;
+    tokenCount += enc.encode(formattedMessage).length;
+  }
+
+  // Add additional tokens for API metadata (OpenAI adds 3 extra tokens per message)
+  // See: https://platform.openai.com/docs/api-reference/chat/create
+  // Remove this is not raw GPT-4o
+  tokenCount += messages.length * 3;
+
+  return tokenCount;
 }

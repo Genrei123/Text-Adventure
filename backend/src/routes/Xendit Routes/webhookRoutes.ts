@@ -1,9 +1,12 @@
 import express from 'express';
+import { handlePaymentCallback } from '../../controllers/transaction_controllers/shopWebhookController'; // Import the handlePaymentCallback function
 
 const router = express.Router();
 
 router.post('/webhook', async (req, res) => {
   const event = req.body;
+
+  console.log('Received webhook event:', event);
 
   try {
     switch (event.type) {
@@ -27,6 +30,11 @@ router.post('/webhook', async (req, res) => {
         console.log('Payment cycle failed:', event.data);
         // Update your database to mark the payment as failed and terminate the service if necessary
         break;
+      case 'payment_request.paid':
+        // Handle payment success for buyItem
+        console.log('Payment request paid:', event.data);
+        await handlePaymentCallback(req, res);
+        return; // Return to avoid sending another response
       default:
         console.log('Unhandled event type:', event.type);
     }

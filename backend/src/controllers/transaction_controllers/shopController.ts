@@ -5,13 +5,18 @@ import User from '../../model/user'; // Import the User model
 import Item from '../../model/ItemModel'; // Import the Item model
 import dotenv from 'dotenv';
 import { createPaymentMethod } from '../../service/Xendit Service/Subscription/paymentMethodService';
-// import { getCoinBalance, deductCoinsByTokens } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
-import { getTokenDetails } from '../../utils/tokenizer'; // Import the tokenizer
+import { deductCoinsByTokens } from '../../service/Xendit Service/Item Shop/coinService'; // Import coin service
+import { getChatTokenDetails } from '../../utils/tokenizer'; // Import the correct function
 
 dotenv.config();
 
 const SUCCESS_RETURN_URL = 'https://example.com/payment-success';
 const FAILURE_RETURN_URL = 'https://example.com/payment-failure';
+
+// Function to generate a random 6-character alphanumeric string
+const generateRandomId = () => {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+};
 
 // Function to fetch item details based on item ID
 export const getItemDetails = async (itemId: string) => {
@@ -31,14 +36,48 @@ const getUserDetailsByEmail = async (email: string) => {
   return user;
 };
 
-// Function to generate a random alphanumeric string
-const generateRandomString = (length: number) => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
+// Fetch coin balance
+export const getCoins = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.userId);
+
+  try {
+    const user = await User.findByPk(userId, {
+      attributes: ['totalCoins'],
+    });
+
+    if (user) {
+      res.json({ coins: user.totalCoins });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
-  return result;
+};
+
+// Deduct coins based on text input
+export const deductCoins = async (req: Request, res: Response) => {
+  const { userId, messages } = req.body;
+
+  try {
+    // Calculate the number of tokens using the tokenizer
+    const tokenCount = getChatTokenDetails(messages);
+
+    // Calculate the number of coins to deduct
+    const coinsToDeduct = tokenCount; // Assuming 1 coin per token
+
+    await deductCoinsByTokens(userId, messages.map((msg: { role: string; content: string }) => msg.content).join(' '));
+    res.status(200).json({ 
+      message: 'Coins deducted successfully', 
+      coinsDeducted: coinsToDeduct, 
+      deductionDetails: `Deducted ${coinsToDeduct} coins for ${tokenCount} tokens (1 coin per token)`,
+      tokens: messages 
+    });
+    console.log(`Messages: ${JSON.stringify(messages)}`);
+    console.log(`Coins deducted: ${coinsToDeduct} coins for ${tokenCount} tokens`);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 export const buyItem = async (req: Request, res: Response) => {
@@ -53,14 +92,14 @@ export const buyItem = async (req: Request, res: Response) => {
     item = await getItemDetails(itemId);
     user = await getUserDetailsByEmail(email);
 
-    // Create an orderId with username and date
+    // Create an orderId with username, date, and a random 6-character alphanumeric string
     const date = new Date().toISOString().split('T')[0].replace(/-/g, ''); // Format date as YYYYMMDD
-    const randomString = generateRandomString(6); // Generate a 6-character random string
-    orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomString}`;
+    const randomId = generateRandomId();
+    orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomId}`;
 
     // Create payment method data
     const paymentMethodData = {
-      type: 'ewallet',
+      type: 'EWALLET',
       reusability: 'ONE_TIME_USE',
       ewallet: {
         channel_code: paymentMethod,
@@ -106,7 +145,7 @@ User ID: ${user.id}
 Username: ${user.username}
 User Email: ${user.email}
 Payment Method: ${paymentMethod}
-Amount: ${item.price}
+Paid Amount: ${item.price}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
 Payment Request ID: ${paymentRequest.id}
@@ -121,7 +160,7 @@ User ID: ${user?.id || 'N/A'}
 Username: ${user?.username || 'N/A'}
 User Email: ${email}
 Payment Method: ${paymentMethod}
-Amount: ${item?.price || 'N/A'}
+Paid Amount: ${item?.price || 'N/A'}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
 Error: ${error.message}`);

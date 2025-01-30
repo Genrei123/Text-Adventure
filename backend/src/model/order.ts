@@ -5,11 +5,11 @@ import User from "./user";
 // Define the attributes of the Order model
 interface OrderAttributes {
     id: number;
-    stripe_id: string;
+    order_id: string;
     email: string;
     client_reference_id: string;
     customer_details: object;
-    total: number;
+    paid_amount: number;
     createdAt: Date;
     updatedAt: Date;
     UserId: number;
@@ -21,11 +21,11 @@ interface OrderCreationAttributes extends Optional<OrderAttributes, "id"> {}
 // Extend the Model class with the Order attributes
 class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
     public id!: number;
-    public stripe_id!: string;
+    public order_id!: string;
     public email!: string;
     public client_reference_id!: string;
     public customer_details!: object;
-    public total!: number;
+    public paid_amount!: number;
     public createdAt!: Date;
     public updatedAt!: Date;
     public UserId!: number;
@@ -38,7 +38,7 @@ Order.init({
         autoIncrement: true,
         primaryKey: true,
     },
-    stripe_id: {
+    order_id: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
@@ -55,7 +55,7 @@ Order.init({
         type: DataTypes.JSON,
         allowNull: false,
     },
-    total: {
+    paid_amount: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
