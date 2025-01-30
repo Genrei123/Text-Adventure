@@ -17,7 +17,7 @@ export function getChatTokenDetails(messages: { role: string; content: string }[
   // Add additional tokens for API metadata (OpenAI adds 3 extra tokens per message)
   // See: https://platform.openai.com/docs/api-reference/chat/create
   // Remove this is not raw GPT-4o
-  //tokenCount += messages.length * 3;
+  tokenCount += messages.length * 3;
 
   return tokenCount;
 }
