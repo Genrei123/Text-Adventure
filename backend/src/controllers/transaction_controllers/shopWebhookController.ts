@@ -9,6 +9,9 @@ dotenv.config();
 export const handlePaymentCallback = async (req: Request, res: Response): Promise<void> => {
   console.log('handlePaymentCallback called'); // Add logging to confirm function call
 
+  console.log('Request Headers:', req.headers);
+  console.log('Request Body:', req.body);
+
   const { data, event } = req.body;
   const { id: external_id, status, reference_id, email, amount } = data;
   const webhookToken = req.headers['x-callback-token'];
@@ -20,7 +23,7 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
     return;
   }
 
-  console.log(`Received payment callback for order: ${reference_id} with status: ${status}`);
+  console.log(`Received payment callback for order: ${reference_id} with status: ${status} and event: ${event}`);
 
   if (event === 'payment_method.activated') {
     console.log(`Payment method activated for order: ${reference_id}`);
