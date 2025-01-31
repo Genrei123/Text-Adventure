@@ -167,38 +167,57 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 };
 
 export const resetPassword = async (req: Request, res: Response): Promise<void> => {
-    console.log('Received reset password request:', req.body);
-    const { token, newPassword } = req.body;
+  console.log('Reset Password Request:', req.body);
+  const { token, newPassword } = req.body;
 
-    try {
-        if (!token || !newPassword) {
-            res.status(400).json({ message: 'Invalid request' });
-            return;
-        }
-
-        const user = await User.findOne({ where: { resetPasswordToken: token, resetPasswordExpires: { [Op.gt]: new Date() } } });
-        if (!user) {
-            res.status(400).json({ message: 'Invalid or expired token' });
-            return;
-        }
-
-        if (!validatePassword(newPassword)) {
-            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters (including underscore)." });
-            return;
-        }
-
-        user.password = await bcrypt.hash(newPassword, 10);
-        user.resetPasswordToken = null;
-        user.resetPasswordExpires = null;
-        await user.save();
-
-        res.status(200).json({ message: 'Password reset successfully' });
-    } catch (error) {
-        console.error('Error during reset password:', error);
-        if (error instanceof ValidationError) {
-            res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
-        } else {
-            res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
-        }
+  try {
+    // Validate input
+    if (!token || !newPassword) {
+      res.status(400).json({ 
+        message: 'Invalid request. Token and new password are required.' 
+      });
+      return;
     }
+
+    // Find user with valid token
+    const user = await User.findOne({ 
+      where: { 
+        resetPasswordToken: token,
+        resetPasswordExpires: {
+          [Op.gt]: new Date() // Token not expired
+        } 
+      } 
+    });
+
+    if (!user) {
+      res.status(400).json({ 
+        message: 'Invalid or expired reset token. Please request a new reset link.' 
+      });
+      return;
+    }
+
+    // Validate password
+    if (!validatePassword(newPassword)) {
+      res.status(400).json({ 
+        message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters." 
+      });
+      return;
+    }
+
+    // Hash and update password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    user.password = hashedPassword;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ 
+      message: 'An unexpected error occurred. Please try again later.' 
+    });
+  }
 };
