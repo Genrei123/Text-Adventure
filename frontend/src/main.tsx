@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
 import Footer from './components/Footer';
-import emailjs from '@emailjs/browser';
+import emailjs from 'emailjs-com';
 
-emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY!);
+emailjs.init(process.env.REACT_APP_EMAILJS_PUBLIC_KEY!);
 
 const rootElement = document.getElementById('root');
 

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import User from "../model/user";
 import jwt from "jsonwebtoken";
-import { ValidationError } from "sequelize";
+import { ValidationError, Op } from "sequelize";
 import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
 import { sendVerificationEmail, sendResetPasswordEmail } from '../service/emailService';
@@ -130,72 +130,75 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
 };
 
 export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
-    console.log('Received forgot password request:', req.body); // Debug log
+    console.log('Received forgot password request:', req.body);
     const { email } = req.body;
-  
+
     try {
-      // Validate email input
-      if (!email || typeof email !== 'string' || !email.includes('@')) {
-        res.status(400).json({ message: 'Please provide a valid email address' });
-        return;
-      }
-  
-      // Find the user and ensure email exists
-      const user = await User.findOne({ where: { email } });
-      if (!user) {
-        // Use a generic message for security
-        res.status(400).json({ message: 'If this email exists in our system, you will receive a password reset link' });
-        return;
-      }
-  /*
-      // Optional: Check if email is verified
-      if (user.emailVerified === false) {
-        res.status(400).json({ message: 'Please verify your email address first' });
-        return;
-      }
-  */
-      // Generate a more secure reset token
-      const resetToken = crypto.randomBytes(3).toString('hex').toUpperCase();
-      
-      // Update user with new reset token
-      user.verificationCode = resetToken;
-      user.verificationCodeExpires = new Date(Date.now() + 3600000); // 1 hour from now
-      await user.save();
-  
-      // Attempt to send email
-      try {
+        if (!email || typeof email !== 'string' || !email.includes('@')) {
+            res.status(400).json({ message: 'Please provide a valid email address' });
+            return;
+        }
+
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            res.status(400).json({ message: 'If this email exists in our system, you will receive a password reset link' });
+            return;
+        }
+
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour from now
+        await user.save();
+
         const emailSent = await sendResetPasswordEmail(email, resetToken);
         if (!emailSent) {
-          throw new Error('Email sending failed');
+            throw new Error('Email sending failed');
         }
-      } catch (emailError) {
-        // Roll back the token if email fails
-        user.verificationCode = null;
-        user.verificationCodeExpires = null;
-        await user.save();
-        
-        console.error('Error sending reset email:', emailError);
-        res.status(500).json({ message: 'Failed to send reset email. Please try again later.' });
-        return;
-      }
-  
-      // Success response
-      res.status(200).json({ 
-        message: 'If this email exists in our system, you will receive a password reset link',
-        // For development only:
-        debug: {
-          resetToken,
-          expiresAt: user.verificationCodeExpires
-        }
-      });
-  
+
+        res.status(200).json({ message: 'If this email exists in our system, you will receive a password reset link' });
     } catch (error) {
-      console.error('Error during forgot password:', error);
-      
-      if (error instanceof ValidationError) {
-        res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
-      } else {
-        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
-      }
+        console.error('Error during forgot password:', error);
+        if (error instanceof ValidationError) {
+            res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
+        } else {
+            res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+        }
     }
-  };
+};
+
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+    console.log('Received reset password request:', req.body);
+    const { token, newPassword } = req.body;
+
+    try {
+        if (!token || !newPassword) {
+            res.status(400).json({ message: 'Invalid request' });
+            return;
+        }
+
+        const user = await User.findOne({ where: { resetPasswordToken: token, resetPasswordExpires: { [Op.gt]: new Date() } } });
+        if (!user) {
+            res.status(400).json({ message: 'Invalid or expired token' });
+            return;
+        }
+
+        if (!validatePassword(newPassword)) {
+            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters (including underscore)." });
+            return;
+        }
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+        await user.save();
+
+        res.status(200).json({ message: 'Password reset successfully' });
+    } catch (error) {
+        console.error('Error during reset password:', error);
+        if (error instanceof ValidationError) {
+            res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
+        } else {
+            res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+        }
+    }
+};

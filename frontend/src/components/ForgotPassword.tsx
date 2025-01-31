@@ -52,8 +52,8 @@ const ForgotPassword: React.FC = () => {
             Back to Login
           </Link>
         </div>
+        <ToastContainer />
       </div>
-      <ToastContainer />
     </div>
   );
 };

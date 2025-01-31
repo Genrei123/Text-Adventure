@@ -1,11 +1,16 @@
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
+import emailjs from '@emailjs/browser';
 
 // Load environment variables from .env file
 dotenv.config();
 
 // Safely retrieve environment variables
 const fromName = 'Text Adventure';
+
+const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID!;
+const templateId = process.env.REACT_APP_EMAILJS_TEMPLATE_ID!;
+const userId = process.env.REACT_APP_EMAILJS_PUBLIC_KEY!;
 
 // Create reusable transporter object using SMTP transport
 const transporter = nodemailer.createTransport({
@@ -52,27 +57,38 @@ const generateResetPasswordEmailHtml = (token: string): string => `
 
 /**
  * Sends a verification email with a unique code.
- * @param to - Recipient's email.
- * @param code - Verification code.
+ * @param toEmail - Recipient's email.
+ * @param verificationCode - Verification code.
  * @returns Promise<boolean>
  */
-export const sendVerificationEmail = async (to: string, code: string): Promise<boolean> => {
+export const sendVerificationEmail = async (
+  toEmail: string,
+  verificationCode: string
+): Promise<boolean> => {
   try {
-    const emailHtml = generateVerificationEmailHtml(code);
-
-    const mailOptions = {
-      from: `"${fromName}" <${process.env.EMAIL_USER}>`,
-      to,
-      subject: 'Verify Your Email',
-      html: emailHtml,
-    };
-
-    await transporter.sendMail(mailOptions);
-    return true;
+    const response = await emailjs.send(
+      serviceId,
+      templateId,
+      {
+        to_email: toEmail,
+        verification_code: verificationCode,
+        from_name: fromName
+      },
+      userId
+    );
+    return response.status === 200;
   } catch (error) {
-    console.error('Error sending verification email:', error);
+    console.error('Email sending failed:', error);
     return false;
   }
+};
+
+/**
+ * Generates a verification code.
+ * @returns Verification code string.
+ */
+export const generateVerificationCode = (): string => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
 /**

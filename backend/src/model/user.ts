@@ -13,12 +13,15 @@ interface UserAttributes {
     verificationCode: string | null;
     verificationCodeExpires: Date | null;
     emailVerified: boolean;
+    resetPasswordToken: string | null;
+    resetPasswordExpires: Date | null;
+    totalCoins: number; // Add totalCoins field
     createdAt: Date;
     updatedAt: Date;
 }
 
 // Define the creation attributes for the User model
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationCodeExpires' | 'emailVerified'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationCodeExpires' | 'emailVerified' | 'resetPasswordToken' | 'resetPasswordExpires' | 'totalCoins'> {}
 
 // Extend the Model class with the User attributes
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -32,6 +35,9 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public verificationCode!: string | null;
     public verificationCodeExpires!: Date | null;
     public emailVerified!: boolean;
+    public resetPasswordToken!: string | null;
+    public resetPasswordExpires!: Date | null;
+    public totalCoins!: number; // Add totalCoins field
     public createdAt!: Date;
     public updatedAt!: Date;
 }
@@ -87,6 +93,19 @@ User.init(
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
+        },
+        resetPasswordToken: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        resetPasswordExpires: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
+        totalCoins: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
         },
         createdAt: {
             type: DataTypes.DATE,
