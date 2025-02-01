@@ -150,7 +150,7 @@ Item ID: ${itemId}
 Item Name: ${item.name}
 User ID: ${user.id}
 Username: ${user.username}
-User Email: ${user.email}
+Email: ${user.email}
 Payment Method: ${paymentMethod}
 Paid Amount: ${item.price}
 Date Created: ${formattedDate}

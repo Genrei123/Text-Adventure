@@ -8,7 +8,7 @@ dotenv.config();
 
 export const handlePaymentCallback = async (req: Request, res: Response): Promise<void> => {
   const { data, event } = req.body;
-  const { id: product_id, status, reference_id, email, amount } = data;
+  const { id: product_id, status, reference_id, email, amount, payment_method } = data;
   const webhookToken = req.headers['x-callback-token'];
 
   // Verify the webhook token
@@ -23,6 +23,14 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
   console.log(`Received payment webhook for order: ${reference_id}
 Status: ${status}
 Event: ${event}`);
+
+  // Extract the payment method
+  const paymentMethod = payment_method?.ewallet?.channel_code || 'Unknown';
+  console.log(`Payment Method: ${paymentMethod}`);
+
+  // Extract the transaction ID
+  const transactionId = data.payment_request_id || 'Unknown';
+  console.log(`Transaction ID: ${transactionId}`);
 
   if (event === 'payment_method.activated') {
     console.log(`Payment method activated for order: ${reference_id}`);
@@ -71,14 +79,14 @@ Product ID: ${product_id}`);
       await Order.create({
         order_id: reference_id,
         email: user.email,
-        client_reference_id: product_id,
+        client_reference_id: transactionId, // Use the transaction ID as the client reference ID
         order_details: {
           username: user.username,
           email: user.email,
           item_name: item.name,
           orderId: reference_id,
           received_coins: item.coins,
-          payment_method: event,
+          payment_method: paymentMethod, // Use the extracted payment method here
           currency: data.currency,
           paid_amount: amount,
           created_at: new Date(),
@@ -89,18 +97,32 @@ Product ID: ${product_id}`);
         updatedAt: new Date(),
         received_coins: item.coins
       });
-      
-      console.log(`------------------- Receipt -------------------`);
-      console.log(`Payment completed for order: ${reference_id}`);
-      console.log(`Coins added to user account: ${item.coins}`);
-      console.log(`Total coins: ${user.totalCoins}`);
-      console.log(`Product ID: ${product_id}`);
-      console.log(`Email: ${email}`);
-      console.log(`Payment Method: ${event}`);
-      console.log(`Currency: ${data.currency}`);
-      console.log(`Paid Amount: ${amount}`);
-      console.log(`Created At: ${new Date()}`);
-      console.log(`-----------------------------------------------`);
+
+      const formattedDateTime = new Date().toLocaleString();
+      console.log(`
+=================== Payment Receipt ===================
+Transaction ID: ${transactionId}
+Order Reference ID: ${reference_id}
+Client Reference ID: ${product_id}     
+
+Timestamp: ${formattedDateTime}  
+Username: ${user.username}
+Email: ${user.email}
+
+------------------------------------
+💳 Payment Details:
+Payment Method: ${paymentMethod} 
+Currency: ${data.currency}
+Paid Amount: ${amount}
+
+------------------------------------
+🛒 Purchase Summary:
+Purchased Item: ${item.name}  
+Coins Added: ${item.coins}
+Total Coins Balance: ${user.totalCoins}
+
+=======================================================`); 
+
       res.status(200).json({ message: 'Payment confirmed and coins added to user account' });
     } catch (error: any) {
       console.error('Error handling payment callback:', error);
