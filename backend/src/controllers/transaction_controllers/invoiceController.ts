@@ -14,6 +14,7 @@ const logError = (error: any) => {
     }
 };
 
+// Create an invoice
 export const createInvoice = async (req: Request, res: Response): Promise<void> => {
     try {
         console.log('Request received:', req.body);

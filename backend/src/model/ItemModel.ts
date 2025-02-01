@@ -2,6 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../service/database';
 import { IItem } from '../interfaces/itemInterface';
 
+// Database model for the Shop Item table
 class Item extends Model<IItem> implements IItem {
   public id!: string;
   public name!: string;

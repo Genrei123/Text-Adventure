@@ -7,6 +7,8 @@ import { handlePaymentCallback } from '../../controllers/transaction_controllers
 
 const router = express.Router();
 
+// ============================== Subscription Routes ==============================
+
 // Route for creating a customer
 router.post('/create-customer', async (req, res) => {
   try {
@@ -56,10 +58,11 @@ router.post('/create-subscription-plan', async (req, res) => {
   }
 });
 
+// ============================== Shop Item Routes ==============================
+
+// Route for buying an item on shop
 router.post('/buy-item', buyItem);
 router.post('/payment', handlePaymentCallback);
-router.get('/coins/:userId', getCoins);
-router.post('/deduct-coins', deductCoins);
 
 
 export default router;

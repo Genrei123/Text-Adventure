@@ -6,6 +6,7 @@ import { getItemDetails } from './shopController'; // Import the getItemDetails 
 
 dotenv.config();
 
+// Webhook handler for payment callbacks at buy item
 export const handlePaymentCallback = async (req: Request, res: Response): Promise<void> => {
   const { data, event } = req.body;
   const { id: product_id, status, reference_id, email, amount, payment_method } = data;
@@ -79,14 +80,14 @@ Product ID: ${product_id}`);
       await Order.create({
         order_id: reference_id,
         email: user.email,
-        client_reference_id: transactionId, // Use the transaction ID as the client reference ID
+        client_reference_id: transactionId, 
         order_details: {
           username: user.username,
           email: user.email,
           item_name: item.name,
           orderId: reference_id,
           received_coins: item.coins,
-          payment_method: paymentMethod, // Use the extracted payment method here
+          payment_method: paymentMethod,
           currency: data.currency,
           paid_amount: amount,
           created_at: new Date(),

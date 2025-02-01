@@ -10,6 +10,7 @@ import { getChatTokenDetails } from '../../utils/tokenizer'; // Import the corre
 
 dotenv.config();
 
+// Constants for return URLs
 const SUCCESS_RETURN_URL = 'https://example.com/payment-success';
 const FAILURE_RETURN_URL = 'https://example.com/payment-failure';
 

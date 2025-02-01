@@ -7,7 +7,6 @@ import database from './service/database';
 import routes from './routes/routes';
 import adminController from './routes/userCRUDRoutes';
 import invoiceRoutes from './routes/Xendit Routes/invoiceRoutes';
-import paymentRoutes from './routes/Xendit Routes/paymentRoutes';
 import shopRoutes from './routes/Xendit Routes/shopRoutes';
 import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
 import createAuthRouter from './routes/authRoutes';
@@ -27,7 +26,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/', routes);
 app.use('/', adminController);
 app.use('/invoice', invoiceRoutes);
-app.use('/payments', paymentRoutes);
 app.use('/shop', shopRoutes);
 app.use('/webhook', webhookRoutes);
 
