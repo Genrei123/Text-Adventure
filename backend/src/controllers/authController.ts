@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import User from "../model/user";
 import jwt from "jsonwebtoken";
-import { ValidationError } from "sequelize";
+import { ValidationError, Op } from "sequelize";
 import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
-import { sendVerificationEmail } from "../service/emailService";
+import { sendVerificationEmail, sendResetPasswordEmail } from '../service/emailService';
+import crypto from 'crypto';
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
@@ -126,5 +127,105 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
     } catch (error) {
         console.error("Error during email verification:", error);
         res.status(500).json({ message: "Server error" });
+    }
+};
+
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+    console.log('Received forgot password request:', req.body);
+    const { email } = req.body;
+
+    try {
+        if (!email || typeof email !== 'string' || !email.includes('@')) {
+            res.status(400).json({ message: 'Invalid email address' });
+            return;
+        }
+
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            res.status(400).json({ message: 'If this email exists in our system, you will receive a password reset link' });
+            return;
+        }
+
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour from now
+        await user.save();
+
+        const emailSent = await sendResetPasswordEmail(email, resetToken);
+        if (!emailSent) {
+            throw new Error('Email sending failed');
+        }
+
+        res.status(200).json({ message: 'If this email exists in our system, you will receive a password reset link' });
+    } catch (error) {
+        console.error('Error during forgot password:', error);
+        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+    console.log('Reset Password Request:', req.body);
+    const { token, newPassword } = req.body;
+
+    try {
+        if (!token || !newPassword) {
+            res.status(400).json({ message: 'Invalid request. Token and new password are required.' });
+            return;
+        }
+
+        const user = await User.findOne({ 
+            where: { 
+                resetPasswordToken: token,
+                resetPasswordExpires: {
+                    [Op.gt]: new Date() // Token not expired
+                } 
+            } 
+        });
+
+        if (!user) {
+            res.status(400).json({ message: 'Invalid or expired reset token' });
+            return;
+        }
+
+        if (!validatePassword(newPassword)) {
+            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters." });
+            return;
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+        await user.save();
+
+        res.status(200).json({ message: 'Password reset successfully' });
+    } catch (error) {
+        console.error('Reset password error:', error);
+        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+    }
+};
+
+export const validateResetToken = async (req: Request, res: Response): Promise<void> => {
+    const { token } = req.body;
+
+    try {
+        const user = await User.findOne({ 
+            where: { 
+                resetPasswordToken: token,
+                resetPasswordExpires: {
+                    [Op.gt]: new Date() // Token not expired
+                } 
+            } 
+        });
+
+        if (!user) {
+            res.status(400).json({ message: 'Invalid or expired reset token' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Valid reset token' });
+    } catch (error) {
+        console.error('Error during token validation:', error);
+        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
     }
 };

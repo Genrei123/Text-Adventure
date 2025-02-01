@@ -2,8 +2,16 @@ import { Router, Request, Response } from 'express';
 import passport from '../middlware/passport';
 import Jwt from 'jsonwebtoken';
 import cookieJwtAuth from '../middlware/auth';
+import { forgotPassword, resetPassword, validateResetToken } from '../controllers/authController';
 
-export default (router: Router, frontendUrl: string) => {
+// Create a function that returns the configured router
+const createAuthRouter = (frontendUrl: string) => {
+  const router = Router();
+
+  router.post('/forgot-password', forgotPassword);
+  router.post('/validate-reset-token', validateResetToken);
+  router.post('/reset-password', resetPassword);
+
   router.get('/', (req: Request, res: Response) => {
     res.send("Hello World!");
   });
@@ -78,4 +86,10 @@ export default (router: Router, frontendUrl: string) => {
       res.status(400).send("Unsupported provider");
     }
   );
+
+  // ... other routes
+
+  return router;
 };
+
+export default createAuthRouter;

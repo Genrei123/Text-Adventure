@@ -69,93 +69,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     }
   };
 
-  /**
-   * Handles social login (Google/Facebook)
-   * 
-   * TODO: Backend Integration Guide
-   * 1. OAuth2 Configuration:
-   *    - Replace the setTimeout with actual OAuth2 flow
-   *    - Set up OAuth2 client credentials in environment variables
-   *    - Configure OAuth2 scopes (email, profile, etc.)
-   *    - Handle OAuth2 state parameter for security
-   * 
-   * 2. API Endpoints Needed:
-   *    - POST /api/auth/social/login/google
-   *    - POST /api/auth/social/login/facebook
-   *    Expected Response:
-   *    {
-   *      success: boolean,
-   *      data: {
-   *        userId: string,
-   *        username: string,
-   *        email: string,
-   *        token: string,
-   *        refreshToken?: string
-   *      },
-   *      error?: string
-   *    }
-   * 
-   * 3. Error Handling:
-   *    - Handle OAuth2 popup blocked
-   *    - Handle user cancelled login
-   *    - Handle invalid/expired tokens
-   *    - Handle network errors
-   *    - Handle account linking (if user exists with same email)
-   * 
-   * Example Integration:
-   * try {
-   *   setIsProcessing(true);
-   *   setSuccessMessage(`Connecting to ${provider}...`);
-   * 
-   *   // 1. Initialize OAuth2 flow
-   *   const oauthProvider = new OAuth2Provider(provider);
-   *   const authResponse = await oauthProvider.signIn();
-   * 
-   *   setSuccessMessage('Verifying credentials...');
-   * 
-   *   // 2. Verify with our backend
-   *   const apiResponse = await fetch(`/api/auth/social/login/${provider.toLowerCase()}`, {
-   *     method: 'POST',
-   *     headers: {
-   *       'Content-Type': 'application/json',
-   *       'Accept': 'application/json'
-   *     },
-   *     body: JSON.stringify({
-   *       token: authResponse.accessToken,
-   *       provider: provider.toLowerCase()
-   *     })
-   *   });
-   * 
-   *   const userData = await apiResponse.json();
-   * 
-   *   if (!apiResponse.ok) {
-   *     throw new Error(userData.error || 'Authentication failed');
-   *   }
-   * 
-   *   // 3. Store authentication data
-   *   localStorage.setItem('token', userData.data.token);
-   *   if (userData.data.refreshToken) {
-   *     localStorage.setItem('refreshToken', userData.data.refreshToken);
-   *   }
-   * 
-   *   // 4. Update UI and redirect
-   *   setSuccessMessage('Login successful! Redirecting...');
-   *   onLogin(userData.data.username);
-   *   setTimeout(() => {
-   *     setIsProcessing(false);
-   *     navigate('/');
-   *   }, 1000);
-   * 
-   * } catch (error) {
-   *   console.error('Social login error:', error);
-   *   setErrors({ general: 'Login failed. Please try again.' });
-   *   setSuccessMessage('');
-   *   setIsProcessing(false);
-   * }
-   * 
-   * @param {string} provider - The social login provider ('Google' or 'Facebook')
-   */
-  
   const handleSocialLogin = async (provider: string) => {
     setIsProcessing(true);
     toast.info(`Connecting to ${provider}...`);
@@ -218,6 +131,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 <FaFacebook className="text-[#8B7355]" size={20} />
               </button>
             </div>
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link to="/forgot-password" className="text-[#C8A97E] hover:text-[#D8B98E] text-sm">
+              Forgot Password?
+            </Link>
           </div>
 
           <div className="mt-6 text-center">
