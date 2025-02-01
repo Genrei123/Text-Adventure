@@ -100,7 +100,6 @@ Product ID: ${product_id}`);
       console.log(`Currency: ${data.currency}`);
       console.log(`Paid Amount: ${amount}`);
       console.log(`Created At: ${new Date()}`);
-      console.log(`Updated At: ${new Date()}`);
       console.log(`-----------------------------------------------`);
       res.status(200).json({ message: 'Payment confirmed and coins added to user account' });
     } catch (error: any) {
