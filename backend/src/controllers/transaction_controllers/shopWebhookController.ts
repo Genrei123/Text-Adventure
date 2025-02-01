@@ -29,7 +29,7 @@ Event: ${event}`);
   console.log(`Payment Method: ${paymentMethod}`);
 
   // Extract the transaction ID
-  const transactionId = data.payment_request_id || 'Unknown';
+  const transactionId = payment_method?.id || 'Unknown';
   console.log(`Transaction ID: ${transactionId}`);
 
   if (event === 'payment_method.activated') {
