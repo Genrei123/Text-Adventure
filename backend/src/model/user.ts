@@ -18,7 +18,6 @@ interface UserAttributes {
     totalCoins: number; // Add totalCoins field
     createdAt: Date;
     updatedAt: Date;
-    totalCoins: number; // Add coins attribute
 }
 
 // Define the creation attributes for the User model
@@ -41,7 +40,6 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public totalCoins!: number; // Add totalCoins field
     public createdAt!: Date;
     public updatedAt!: Date;
-    public totalCoins!: number; // Add coins attribute
 }
 
 User.init(
@@ -118,11 +116,6 @@ User.init(
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW,
-        },
-        totalCoins: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 0, // Set a default value for coins
         },
     },
   {
