@@ -7,6 +7,7 @@ import GameScreen from './screens/GameScreen';
 import UserProfile from './screens/UserProfile';
 import './theme/LoginTheme.css'
 import "./App.css"; 
+import ReviewPage from './screens/ReviewPage';
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -70,6 +71,11 @@ function App() {
         path = "/UserProfile"
         element = {<UserProfile/>}
       />
+      <Route 
+        path = "/ReviewPage"
+        element = {<ReviewPage/>}
+      />
+
       </Routes>
     </Router>
   );
