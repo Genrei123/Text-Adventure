@@ -144,7 +144,8 @@ export const buyItem = async (req: Request, res: Response) => {
     const paymentLink = paymentRequest.actions?.find((action: { urlType: string }) => action.urlType === 'WEB')?.url || 'N/A';
     const formattedDate = new Date().toLocaleString();
 
-    console.log(`Status: Success
+    console.log(`-------------- Payment Request Details --------------`)
+console.log(`Status: Success
 Item ID: ${itemId}
 Item Name: ${item.name}
 User ID: ${user.id}
@@ -156,9 +157,12 @@ Date Created: ${formattedDate}
 Order ID: ${orderId}
 Payment Request ID: ${paymentRequest.id}
 Link To Payment: ${paymentLink}`);
+console.log(`-----------------------------------------------------`);
+console.log(` `);
     res.json({ paymentLink });
   } catch (error: any) {
     const formattedDate = new Date().toLocaleString();
+    console.error(` ----------------- Payment Request Details -----------------`)
     console.error(`Status: Fail
 Item ID: ${itemId}
 Item Name: ${item?.name || 'N/A'}
@@ -170,6 +174,8 @@ Paid Amount: ${item?.price || 'N/A'}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
 Error: ${error.message}`);
+    console.log(`-----------------------------------------------------`);
+    console.log(` `);
     if (error.response) {
       res.status(error.response.status).json({ error: error.response.data });
     } else if (error.request) {

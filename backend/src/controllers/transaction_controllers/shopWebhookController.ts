@@ -7,13 +7,8 @@ import { getItemDetails } from './shopController'; // Import the getItemDetails 
 dotenv.config();
 
 export const handlePaymentCallback = async (req: Request, res: Response): Promise<void> => {
-  console.log('handlePaymentCallback called'); // Add logging to confirm function call
-
-  console.log('Request Headers:', req.headers);
-  console.log('Request Body:', req.body);
-
   const { data, event } = req.body;
-  const { id: external_id, status, reference_id, email, amount } = data;
+  const { id: product_id, status, reference_id, email, amount } = data;
   const webhookToken = req.headers['x-callback-token'];
 
   // Verify the webhook token
@@ -23,7 +18,11 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
     return;
   }
 
-  console.log(`Received payment callback for order: ${reference_id} with status: ${status} and event: ${event}`);
+  console.log(` `);
+  console.log(`------------ Webhook Order Details ------------`);
+  console.log(`Received payment webhook for order: ${reference_id}
+Status: ${status}
+Event: ${event}`);
 
   if (event === 'payment_method.activated') {
     console.log(`Payment method activated for order: ${reference_id}`);
@@ -43,8 +42,16 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
 
       // Extract itemId, itemName, username, date, and randomId from reference_id
       const [orderPrefix, itemId, itemName, username, date, randomId] = referenceIdParts;
-      console.log(`Extracted values - itemId: ${itemId}, itemName: ${itemName}, username: ${username}, date: ${date}, randomId: ${randomId}, external_id: ${external_id}`);
+
+      console.log(`Item ID: ${itemId}
+Item Name: ${itemName}
+Username: ${username}
+Date: ${date}
+Product ID: ${product_id}`);
       console.log(`Processing payment for order: ${reference_id}`);
+      console.log(`-----------------------------------------------`);
+
+      console.log(` `);
 
       const user = await User.findOne({ where: { username } });
 
@@ -64,20 +71,37 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
       await Order.create({
         order_id: reference_id,
         email: user.email,
-        client_reference_id: external_id,
-        customer_details: {
+        client_reference_id: product_id,
+        order_details: {
           username: user.username,
-          itemName: item.name,
-          date: date,
-          randomId: randomId
+          email: user.email,
+          item_name: item.name,
+          orderId: reference_id,
+          received_coins: item.coins,
+          payment_method: event,
+          currency: data.currency,
+          paid_amount: amount,
+          created_at: new Date(),
         },
         paid_amount: amount,
         UserId: user.id,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        received_coins: item.coins
       });
-
-      console.log(`Payment completed for order: ${reference_id}. Coins added: ${item.coins}. Total coins: ${user.totalCoins}. External ID: ${external_id}`);
+      
+      console.log(`------------------- Receipt -------------------`);
+      console.log(`Payment completed for order: ${reference_id}`);
+      console.log(`Coins added to user account: ${item.coins}`);
+      console.log(`Total coins: ${user.totalCoins}`);
+      console.log(`Product ID: ${product_id}`);
+      console.log(`Email: ${email}`);
+      console.log(`Payment Method: ${event}`);
+      console.log(`Currency: ${data.currency}`);
+      console.log(`Paid Amount: ${amount}`);
+      console.log(`Created At: ${new Date()}`);
+      console.log(`Updated At: ${new Date()}`);
+      console.log(`-----------------------------------------------`);
       res.status(200).json({ message: 'Payment confirmed and coins added to user account' });
     } catch (error: any) {
       console.error('Error handling payment callback:', error);
