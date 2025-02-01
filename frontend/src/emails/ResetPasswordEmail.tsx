@@ -6,13 +6,15 @@ interface ResetPasswordEmailProps {
 }
 
 export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({ token }) => {
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
   return (
     <Html>
       <Head />
       <Body style={{ backgroundColor: '#f6f9fc', padding: '20px 0' }}>
         <Container>
           <Section style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '5px' }}>
-            <Text>Here is your password reset code:</Text>
+            <Text>Click the link below to reset your password:</Text>
             <Text style={{ 
               fontSize: '24px', 
               fontWeight: 'bold',
@@ -20,9 +22,9 @@ export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({ token })
               margin: '20px 0',
               letterSpacing: '5px'
             }}>
-              {token}
+              <a href={resetLink}>Reset Password</a>
             </Text>
-            <Text>This code will expire in 1 hour.</Text>
+            <Text>This link will expire in 1 hour.</Text>
             <Text>If you didn't request this, please ignore this email.</Text>
           </Section>
         </Container>

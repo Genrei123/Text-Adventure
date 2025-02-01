@@ -2,17 +2,15 @@ import { Router, Request, Response } from 'express';
 import passport from '../middlware/passport';
 import Jwt from 'jsonwebtoken';
 import cookieJwtAuth from '../middlware/auth';
-import { forgotPassword } from '../controllers/authController';
+import { forgotPassword, resetPassword, validateResetToken } from '../controllers/authController';
 
 // Create a function that returns the configured router
 const createAuthRouter = (frontendUrl: string) => {
   const router = Router();
 
-  // Add debug logging to forgot password route
-  router.post('/forgot-password', async (req: Request, res: Response) => {
-    console.log('Received forgot password request:', req.body);
-    await forgotPassword(req, res);
-  });
+  router.post('/forgot-password', forgotPassword);
+  router.post('/validate-reset-token', validateResetToken);
+  router.post('/reset-password', resetPassword);
 
   router.get('/', (req: Request, res: Response) => {
     res.send("Hello World!");
@@ -88,6 +86,8 @@ const createAuthRouter = (frontendUrl: string) => {
       res.status(400).send("Unsupported provider");
     }
   );
+
+  // ... other routes
 
   return router;
 };

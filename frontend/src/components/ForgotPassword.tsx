@@ -19,7 +19,7 @@ const ForgotPassword: React.FC = () => {
       const response = await axios.post('/api/forgot-password', { email });
       toast.success('Reset link sent! Please check your email.');
       setTimeout(() => {
-        navigate('/login');
+        navigate('/email-confirmation');
       }, 3000);
     } catch (error) {
       toast.error('Failed to send reset link. Please try again.');
