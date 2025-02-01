@@ -8,11 +8,12 @@ interface OrderAttributes {
     order_id: string;
     email: string;
     client_reference_id: string;
-    customer_details: object;
+    order_details: object;
     paid_amount: number;
     createdAt: Date;
     updatedAt: Date;
     UserId: number;
+    received_coins: number;
 }
 
 // Define the creation attributes for the Order model
@@ -24,11 +25,12 @@ class Order extends Model<OrderAttributes, OrderCreationAttributes> implements O
     public order_id!: string;
     public email!: string;
     public client_reference_id!: string;
-    public customer_details!: object;
+    public order_details!: object;
     public paid_amount!: number;
     public createdAt!: Date;
     public updatedAt!: Date;
     public UserId!: number;
+    public received_coins!: number;
 }
 
 // Initialize the Order model
@@ -51,7 +53,7 @@ Order.init({
         type: DataTypes.STRING,
         allowNull: false,
     },
-    customer_details: {
+    order_details: {
         type: DataTypes.JSON,
         allowNull: false,
     },
@@ -78,6 +80,10 @@ Order.init({
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
+    },
+    received_coins: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
     },
 }, {
     sequelize,
