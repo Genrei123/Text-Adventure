@@ -7,12 +7,12 @@ import database from './service/database';
 import routes from './routes/routes';
 import adminController from './routes/userCRUDRoutes';
 import invoiceRoutes from './routes/Xendit Routes/invoiceRoutes';
-import paymentRoutes from './routes/Xendit Routes/paymentRoutes';
 import shopRoutes from './routes/Xendit Routes/shopRoutes';
 import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
 import createAuthRouter from './routes/authRoutes';
 import chatRoutes from './routes/chatRoutes';
 import User from './model/user';
+import coinRoutes from './routes/Game Routes/coinRoutes';
 
 const app = express();
 const frontendUrl = 'http://localhost:5173';
@@ -26,10 +26,10 @@ app.use(express.urlencoded({ extended: true }));
 // Route setup
 app.use('/', routes);
 app.use('/', adminController);
-app.use('/invoice', invoiceRoutes);
-app.use('/payments', paymentRoutes);
-app.use('/shop', shopRoutes);
-app.use('/webhook', webhookRoutes);
+app.use('/invoice', invoiceRoutes); // Invoice routes setup
+app.use('/shop', shopRoutes); // Shop routes setup
+app.use('/webhook', webhookRoutes); // Webhook routes setup
+app.use('/gameplay', coinRoutes); // Coin routes setup
 
 // Auth routes setup - using the new createAuthRouter function
 const authRouter = createAuthRouter(frontendUrl);
