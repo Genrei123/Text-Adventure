@@ -57,7 +57,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         });
 
         // Send verification email
-        const emailSent = await sendVerificationEmail(email, verificationToken);
+        const emailSent = await sendVerificationEmail(email, verificationToken, username);
         if (!emailSent) {
             await newUser.destroy(); // Rollback user creation if email sending fails
             res.status(500).json({ message: "Failed to send verification email. Please try again." });
