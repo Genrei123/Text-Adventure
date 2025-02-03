@@ -57,28 +57,42 @@ const generateResetPasswordEmailHtml = (token: string): string => `
 
 /**
  * Sends a verification email with a unique code.
- * @param toEmail - Recipient's email.
- * @param verificationCode - Verification code.
+ * @param to - Recipient's email.
+ * @param token - Verification token.
  * @returns Promise<boolean>
  */
-export const sendVerificationEmail = async (
-  toEmail: string,
-  verificationCode: string
-): Promise<boolean> => {
+export const sendVerificationEmail = async (to: string, token: string): Promise<boolean> => {
+  const verificationLink = `${process.env.FRONTEND_URL}/verify-email/${token}`;
+
+  const emailHtml = `
+    <html>
+      <body>
+        <p>Hi there,</p>
+        <p>Thank you for signing up on our website! We're excited to have you on board.</p>
+        <p>Please click the link below to verify your email address:</p>
+        <p><a href="${verificationLink}">Verify email</a></p>
+        <p>This link will expire in 1 hour.</p>
+        <p>If you're having trouble clicking the button, copy and paste the URL below into your browser:</p>
+        <p>${verificationLink}</p>
+        <p>If you didn't create this account, please let us know by replying to this email.</p>
+        <p>Best regards,</p>
+        <p>The Website Team</p>
+      </body>
+    </html>
+  `;
+
   try {
-    const response = await emailjs.send(
-      serviceId,
-      templateId,
-      {
-        to_email: toEmail,
-        verification_code: verificationCode,
-        from_name: fromName
-      },
-      userId
-    );
-    return response.status === 200;
+    const mailOptions = {
+      from: `"${fromName}" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: 'Verify Your Email',
+      html: emailHtml,
+    };
+
+    await transporter.sendMail(mailOptions);
+    return true;
   } catch (error) {
-    console.error('Email sending failed:', error);
+    console.error('Error sending verification email:', error);
     return false;
   }
 };
