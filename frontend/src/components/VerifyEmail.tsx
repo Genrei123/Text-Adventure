@@ -1,39 +1,42 @@
-// frontend/src/components/VerifyEmail.tsx
 import React, { useEffect, useState } from 'react';
-import axios from '../axiosConfig/axiosConfig';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
-const VerifyEmail: React.FC = () => {
-  const [message, setMessage] = useState('');
-  const location = useLocation();
-  const navigate = useNavigate();
+const VerifyEmail = () => {
+  const { token } = useParams();
+  const [message, setMessage] = useState('Verifying your email...');
+  const [status, setStatus] = useState('loading'); // 'loading', 'success', 'error'
 
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get('token');
+    const verifyEmail = async () => {
+      try {
+        const response = await axios.get(`/api/verify-email/${token}`);
+        setMessage(response.data.message);
+        setStatus('success');
+      } catch (error) {
+        setMessage('Failed to verify email. Please try again.');
+        setStatus('error');
+      }
+    };
 
-    if (token) {
-      axios.post('/api/verify-email', { token })
-        .then(response => {
-          setMessage('Email verified successfully!');
-          setTimeout(() => navigate('/login'), 3000);
-        })
-        .catch(error => {
-          if (error.response?.data?.message === 'Invalid or expired verification code') {
-            setMessage('Invalid or expired verification code.');
-          } else {
-            setMessage('Email verification failed. Please try again.');
-          }
-        });
-    } else {
-      setMessage('Invalid verification link.');
-    }
-  }, [location, navigate]);
+    verifyEmail();
+  }, [token]);
 
   return (
     <div>
       <h1>Email Verification</h1>
       <p>{message}</p>
+      {status === 'success' && (
+        <div>
+          <p>Your email has been successfully verified. You can now log in.</p>
+          <a href="/login">Go to Login</a>
+        </div>
+      )}
+      {status === 'error' && (
+        <div>
+          <p>There was an error verifying your email. Please try again later.</p>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,7 +5,6 @@ import '../App.css';
 import axios from '../axiosConfig/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import emailjs from "@emailjs/browser";
 
 /**
  * Interface for Register component props
@@ -123,11 +122,9 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
 
       try {
         const response = await axios.post('/api/register', { username, email, password });
-        const verificationCode = response.data.user.verificationCode;
-        await sendVerificationEmail(email, username, verificationCode);
         toast.success('Registration successful! A verification email has been sent to your email address.');
         setTimeout(() => {
-          navigate('/email-confirmation');
+          navigate('/login');
         }, 3000);
       } catch (error) {
         if (error.response && error.response.data.message) {
@@ -141,6 +138,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }
   };
 
+  
   /**
    * Handles social registration (Google/Facebook)
    * 
@@ -221,27 +219,12 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }, 1500);
   };
 
-  const sendVerificationEmail = async (userEmail: string, username: string, verificationCode: string) => {
-    const emailParams = {
-      to_name: username,
-      to_email: userEmail,
-      verification_code: verificationCode,
-      from_name: "Realm Gatekeepers",
-    };
-  
-    try {
-      await emailjs.send("service_2tn8v7o", "template_tkrxjur", emailParams);
-      console.log("Verification email sent!");
-    } catch (error) {
-      console.error("Error sending email:", error);
-    }
-  };
   
   return (
-    <div className="min-h-screen bg-[#1E1E1E] flex">
-      {/* Left Side - Logo Section */}
+    // register design
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: `url(${('/Register.png')})` }}>
+      <img src={('/fadeLogin.png')} className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block" />
       <div className="w-1/2 flex items-center justify-center">
-        <div className="text-xl font-cinzel text-white">SAGE.AI</div>
       </div>
 
       {/* Right Side - Registration Form */}
@@ -379,7 +362,6 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             <button
               type="submit"
               className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel"
-              disabled={isProcessing}
             >
               Start Your Journey
             </button>

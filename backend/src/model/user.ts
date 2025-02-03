@@ -10,16 +10,18 @@ interface UserAttributes {
     private: boolean;
     model: string;
     admin: boolean;
-    verificationCode?: string;
-    verificationCodeExpires?: Date;
     emailVerified: boolean;
+    resetPasswordToken: string | null;
+    resetPasswordExpires: Date | null;
     totalCoins: number;
+    verificationToken: string | null;
+    verificationTokenExpires: Date | null;
     createdAt: Date;
     updatedAt: Date;
 }
 
 // Define the creation attributes for the User model
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationCodeExpires' | 'createdAt' | 'updatedAt'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'emailVerified' | 'resetPasswordToken' | 'resetPasswordExpires' | 'totalCoins' | 'verificationToken' | 'verificationTokenExpires'> {}
 
 // Extend the Model class with the User attributes
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -30,13 +32,14 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public private!: boolean;
     public model!: string;
     public admin!: boolean;
-    public verificationCode?: string;
-    public verificationCodeExpires?: Date;
     public emailVerified!: boolean;
+    public resetPasswordToken!: string | null;
+    public resetPasswordExpires!: Date | null;
     public totalCoins!: number;
-
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    public verificationToken!: string | null;
+    public verificationTokenExpires!: Date | null;
+    public createdAt!: Date;
+    public updatedAt!: Date;
 }
 
 User.init(
@@ -71,30 +74,38 @@ User.init(
         model: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: "gpt-4",
+            defaultValue: 'gpt-4',
         },
         admin: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
         },
-        verificationCode: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        verificationExpiry: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
         emailVerified: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
         },
+        resetPasswordToken: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        resetPasswordExpires: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
         totalCoins: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0,
+        },
+        verificationToken: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        verificationTokenExpires: {
+            type: DataTypes.DATE,
+            allowNull: true,
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -107,11 +118,12 @@ User.init(
             defaultValue: DataTypes.NOW,
         },
     },
-    {
-        sequelize,
-        modelName: "User", // Optionally set the model name explicitly
-        timestamps: true, // Enable timestamps
-    }
+  {
+    sequelize,
+    modelName: 'User', // Optionally set the model name explicitly
+    tableName: 'Users', // Ensure the table name matches the database
+    timestamps: true, // Enable timestamps
+  }
 );
 
 export default User;

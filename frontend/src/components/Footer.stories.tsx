@@ -5,9 +5,11 @@ import Footer from './Footer';
 export default {
   title: 'Components/Footer',
   component: Footer,
-} as Meta<typeof Footer>;
+} as Meta;
 
-const Template: StoryFn<typeof Footer> = (args) => <Footer {...args} />;
+const Template: StoryFn = (args) => <Footer {...args} />;
 
-export const Default = Template.bind({});
-Default.args = {};
+export const DefaultFooter = Template.bind({});
+DefaultFooter.args = {
+  // ...existing args...
+};

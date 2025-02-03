@@ -2,12 +2,15 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import User from "../model/user";
 import jwt from "jsonwebtoken";
-import { ValidationError } from "sequelize";
+import { ValidationError, Op } from "sequelize";
 import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
-import { sendVerificationEmail } from "../service/emailService";
+import { sendVerificationEmail, sendResetPasswordEmail } from '../service/emailService';
 import crypto from 'crypto';
-import crypto from 'crypto';
+
+const generateVerificationToken = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
@@ -34,9 +37,9 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Generate verification code
-        const verificationCode = crypto.randomBytes(20).toString('hex');
-        const verificationExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+        // Generate verification token
+        const verificationToken = generateVerificationToken();
+        const verificationTokenExpires = new Date(Date.now() + 3600000); // 1 hour from now
 
         // Create a new user
         const newUser = await User.create({
@@ -46,19 +49,15 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             private: isPrivate || true, // Default to true if not provided
             model: model || "gpt-4",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
-            verificationCode,
-            verificationCodeExpires,
-            emailVerified: false,
-            totalCoins: 0,
+            verificationToken,
+            verificationTokenExpires,
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
+            totalCoins: 0,
         });
 
-        // Log the user data for debugging
-        console.log("New user created:", newUser);
-
         // Send verification email
-        const emailSent = await sendVerificationEmail(email, verificationCode);
+        const emailSent = await sendVerificationEmail(email, verificationToken);
         if (!emailSent) {
             await newUser.destroy(); // Rollback user creation if email sending fails
             res.status(500).json({ message: "Failed to send verification email. Please try again." });
@@ -66,8 +65,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         }
 
         res.status(201).json({
-            message: 'Registration successful! A verification email has been sent to your email address.',
-            message: 'Registration successful! A verification email has been sent to your email address.',
+            message: "User registered successfully. Please check your email for the verification link.",
             user: {
                 id: newUser.id,
                 username: newUser.username,
@@ -76,75 +74,162 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         });
     } catch (error) {
         if (error instanceof ValidationError) {
-            console.error("Validation error during registration:", error);
             res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
         } else {
             console.error("Error during registration:", error);
-            res.status(500).json({ message: `Server error during registration: ${(error as Error).message}` });
+            res.status(500).json({ message: "Server error" });
         }
     }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        // Find the user by email
-        const user = await User.findOne({ where: { email } });
-        if (!user) {
-            res.status(401).json({ message: 'Email not found. Please check your email or register.' });
-            return;
-        }
+    // Find the user by email
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      res.status(401).json({ message: 'Email not found. Please check your email or register.' });
+      return;
+    }
 
     // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       res.status(401).json({ message: 'Incorrect password. Please try again.' });
       return;
-    }
+    } 
 
-        // Generate JWT token
-        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, { expiresIn: '1h' });
-
-        res.status(200).json({
-            message: 'Login successful!',
-            token,
-            user: {
-                id: user.id,
-                username: user.username,
-                email: user.email
-            },
-        });
     } catch (error) {
-        console.error("Error during login:", error);
-        res.status(500).json({ message: `Server error during login: ${(error as Error).message}` });
-    }
+    console.error("Error during login:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
-    const { code } = req.params;
+    const { token } = req.params;
 
     try {
-        const user = await User.findOne({ where: { verificationCode: code } });
+        const user = await User.findOne({ where: { verificationToken: token } });
 
         if (!user) {
-            res.status(400).json({ message: 'Invalid or expired verification code.' });
+            res.status(400).json({ message: "Invalid verification token" });
             return;
         }
 
-        if (user.verificationExpiry && user.verificationExpiry < new Date()) {
-            res.status(400).json({ message: 'Verification code has expired.' });
+        if (!user.verificationTokenExpires || user.verificationTokenExpires < new Date()) {
+            res.status(400).json({ message: "Verification token has expired" });
             return;
         }
 
         user.emailVerified = true;
-        user.verificationCode = undefined;
-        user.verificationCodeExpires = undefined;
+        user.verificationToken = null;
+        user.verificationTokenExpires = null;
         await user.save();
 
-        res.status(200).json({ message: 'Email verified successfully!' });
+        res.status(200).json({ message: "Email verified successfully" });
     } catch (error) {
         console.error("Error during email verification:", error);
-        res.status(500).json({ message: `Server error during email verification: ${(error as Error).message}` });
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+    console.log('Received forgot password request:', req.body);
+    const { email } = req.body;
+
+    try {
+        if (!email || typeof email !== 'string' || !email.includes('@')) {
+            res.status(400).json({ message: 'Invalid email address' });
+            return;
+        }
+
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            res.status(400).json({ message: 'If this email exists in our system, you will receive a password reset link' });
+            return;
+        }
+
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour from now
+        await user.save();
+
+        const emailSent = await sendResetPasswordEmail(email, resetToken);
+        if (!emailSent) {
+            throw new Error('Email sending failed');
+        }
+
+        res.status(200).json({ message: 'If this email exists in our system, you will receive a password reset link' });
+    } catch (error) {
+        console.error('Error during forgot password:', error);
+        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+    console.log('Reset Password Request:', req.body);
+    const { token, newPassword } = req.body;
+
+    try {
+        if (!token || !newPassword) {
+            res.status(400).json({ message: 'Invalid request. Token and new password are required.' });
+            return;
+        }
+
+        const user = await User.findOne({ 
+            where: { 
+                resetPasswordToken: token,
+                resetPasswordExpires: {
+                    [Op.gt]: new Date() // Token not expired
+                } 
+            } 
+        });
+
+        if (!user) {
+            res.status(400).json({ message: 'Invalid or expired reset token' });
+            return;
+        }
+
+        if (!validatePassword(newPassword)) {
+            res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters." });
+            return;
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+        await user.save();
+
+        res.status(200).json({ message: 'Password reset successfully' });
+    } catch (error) {
+        console.error('Reset password error:', error);
+        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+    }
+};
+
+export const validateResetToken = async (req: Request, res: Response): Promise<void> => {
+    const { token } = req.body;
+
+    try {
+        const user = await User.findOne({ 
+            where: { 
+                resetPasswordToken: token,
+                resetPasswordExpires: {
+                    [Op.gt]: new Date() // Token not expired
+                } 
+            } 
+        });
+
+        if (!user) {
+            res.status(400).json({ message: 'Invalid or expired reset token' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Valid reset token' });
+    } catch (error) {
+        console.error('Error during token validation:', error);
+        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
     }
 };

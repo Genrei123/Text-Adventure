@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { StoryFn, Meta } from '@storybook/react';
-import Searchbar from './Searchbar';
+import Searchbar from '../components/Searchbar';
 
 export default {
   title: 'Components/Searchbar',
