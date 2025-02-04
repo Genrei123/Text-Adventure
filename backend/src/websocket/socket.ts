@@ -35,9 +35,13 @@ io.on('connection', (socket) => {
     const normalizedRoute = route.toLowerCase();
     console.log(`Disconnection from route: ${normalizedRoute}`);
     if (normalizedRoute && includedRoutes.some(includedRoute => normalizedRoute.includes(includedRoute.toLowerCase()))) {
-      activePlayers--;
-      console.log(`Player disconnected. Active players: ${activePlayers}`);
-      io.emit('playerCount', { activePlayers });
+      if (activePlayers > 0) {
+        activePlayers--;
+        console.log(`Player disconnected. Active players: ${activePlayers}`);
+        io.emit('playerCount', { activePlayers });
+      } else {
+        console.log(`Active players count is already zero, cannot decrement.`);
+      }
     } else {
       console.log(`Route does not match included routes.`);
     }

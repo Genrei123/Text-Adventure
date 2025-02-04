@@ -6,7 +6,7 @@
 
 const includedRoutes = [
   '/homepage',
-  '/GameScreen',
+  '/gameScreen',
   '/profile',
   // Add more routes here
 ];

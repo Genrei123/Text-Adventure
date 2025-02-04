@@ -1,4 +1,3 @@
-// filepath: /c:/Users/Ervhyne/Documents/VS PROJECTS/Text-Adventure/frontend/src/components/ActivePlayerCount.tsx
 import React from 'react';
 import { useWebSocket } from '../context/WebSocketContext';
 
