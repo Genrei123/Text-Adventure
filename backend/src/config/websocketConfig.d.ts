@@ -1,4 +1,3 @@
-declare module '../config/websocketConfig' {
-    const includedRoutes: string[];
-    export = includedRoutes;
-  }
+// For the websocketConfig.js file
+declare const includedRoutes: string[];
+export = includedRoutes;

@@ -1,20 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
-
-const socket = io('http://localhost:3000'); // Adjust the URL to match your backend(Lagay localhost url ng backend)
+// filepath: /c:/Users/Ervhyne/Documents/VS PROJECTS/Text-Adventure/frontend/src/components/ActivePlayerCount.tsx
+import React from 'react';
+import { useWebSocket } from '../context/WebSocketContext';
 
 const ActivePlayerCount: React.FC = () => {
-  const [playerCount, setPlayerCount] = useState(0);
-
-  useEffect(() => {
-    socket.on('playerCount', (data) => {
-      setPlayerCount(data.activePlayers);
-    });
-
-    return () => {
-      socket.off('playerCount');
-    };
-  }, []);
+  const { playerCount } = useWebSocket();
 
   return (
     <div style={{ color: 'white' }}>

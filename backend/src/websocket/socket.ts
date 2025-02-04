@@ -1,4 +1,3 @@
-// filepath: /c:/Users/Ervhyne/Documents/VS PROJECTS/Text-Adventure/backend/src/websocket/socket.ts
 import { Server } from 'socket.io';
 import http from 'http';
 import app from '../index'; // Adjust the path as needed
@@ -19,19 +18,33 @@ const io = new Server(server, {
 let activePlayers = 0;
 
 io.on('connection', (socket) => {
-  const url = socket.handshake.headers.referer;
-  if (url && includedRoutes.some(route => url.includes(route))) {
-    activePlayers++;
-    console.log(`Player connected. Active players: ${activePlayers}`);
-    io.emit('playerCount', { activePlayers });
-  }
+  socket.on('join', ({ route }) => {
+    const normalizedRoute = route.toLowerCase();
+    console.log(`New connection from route: ${normalizedRoute}`);
+    console.log(`Included routes: ${includedRoutes}`);
+    if (normalizedRoute && includedRoutes.some(includedRoute => normalizedRoute.includes(includedRoute.toLowerCase()))) {
+      activePlayers++;
+      console.log(`Player connected. Active players: ${activePlayers}`);
+      io.emit('playerCount', { activePlayers });
+    } else {
+      console.log(`Route does not match included routes.`);
+    }
+  });
 
-  socket.on('disconnect', () => {
-    if (url && includedRoutes.some(route => url.includes(route))) {
+  socket.on('leave', ({ route }) => {
+    const normalizedRoute = route.toLowerCase();
+    console.log(`Disconnection from route: ${normalizedRoute}`);
+    if (normalizedRoute && includedRoutes.some(includedRoute => normalizedRoute.includes(includedRoute.toLowerCase()))) {
       activePlayers--;
       console.log(`Player disconnected. Active players: ${activePlayers}`);
       io.emit('playerCount', { activePlayers });
+    } else {
+      console.log(`Route does not match included routes.`);
     }
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`Socket disconnected`);
   });
 });
 
