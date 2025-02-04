@@ -12,6 +12,7 @@ import "./App.css";
 import ReviewPage from './screens/ReviewPage';
 import GameScreen from './screens/GameScreen';
 import Homepage from './screens/Homepage';
+import LandingPage from './screens/LandingPage';
 import './theme/LoginTheme.css';
 import './App.css';
 
@@ -46,6 +47,7 @@ function App() {
         <Route path="/GameScreen" element={<GameScreen />} />
         <Route path="/homepage" element={<Homepage username={username} onLogout={handleLogout} />} />
         <Route path="/review" element={<ReviewPage />} />
+        <Route path="/LandingPage" element={<LandingPage />} />
       </Routes>
     </Router>
   );
