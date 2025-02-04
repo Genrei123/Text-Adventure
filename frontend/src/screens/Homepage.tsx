@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from '../axiosConfig/axiosConfig';
 import Footer from '../components/Footer';
-import SearchBar from '../components/SearchBar';
+import SearchBar from '../components/Searchbar';
 import Sidebar from '../components/Sidebar';
 import PortraitCard from '../components/PortraitCard';
 
