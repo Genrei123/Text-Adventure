@@ -138,68 +138,6 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }
   };
 
-  
-  /**
-   * Handles social registration (Google/Facebook)
-   * 
-   * TODO: Backend Integration Guide
-   * 1. OAuth2 Configuration:
-   *    - Replace the setTimeout with actual OAuth2 flow
-   *    - Implement proper OAuth2 client configuration for each provider
-   *    - Handle OAuth2 callback URLs and state management
-   * 
-   * 2. API Endpoints Needed:
-   *    - POST /api/auth/social/google
-   *    - POST /api/auth/social/facebook
-   *    - Response should include: { userId, username, email, token }
-   * 
-   * 3. Error Handling:
-   *    - Add try-catch blocks around API calls
-   *    - Handle specific OAuth errors (e.g., cancelled by user, token expired)
-   *    - Show appropriate error messages to user
-   * 
-   * Example Integration:
-   * try {
-   *   setIsProcessing(true);
-   *   setSuccessMessage(`Logging in with ${provider}...`);
-   * 
-   *   // 1. Initialize OAuth2 flow
-   *   const authResponse = await initializeOAuth2Flow(provider);
-   * 
-   *   // 2. Exchange OAuth2 token for our API token
-   *   const apiResponse = await fetch(`/api/auth/social/${provider.toLowerCase()}`, {
-   *     method: 'POST',
-   *     headers: { 'Content-Type': 'application/json' },
-   *     body: JSON.stringify({ 
-   *       token: authResponse.token,
-   *       // Add any other necessary OAuth data
-   *     })
-   *   });
-   * 
-   *   const userData = await apiResponse.json();
-   *   
-   *   if (!apiResponse.ok) {
-   *     throw new Error(userData.message || 'Authentication failed');
-   *   }
-   * 
-   *   // 3. Handle successful authentication
-   *   setSuccessMessage(`${provider} login successful! Redirecting...`);
-   *   onRegister(userData.username, true);
-   * 
-   *   // 4. Store token and redirect
-   *   localStorage.setItem('token', userData.token);
-   *   setTimeout(() => {
-   *     setIsProcessing(false);
-   *     navigate('/');
-   *   }, 1500);
-   * 
-   * } catch (error) {
-   *   setSuccessMessage('Authentication failed. Please try again.');
-   *   setTimeout(() => setIsProcessing(false), 2000);
-   * }
-   * 
-   * @param {string} provider - The social login provider ('Google' or 'Facebook')
-   */
   const handleSocialRegister = async (provider: string) => {
     // Current frontend-only implementation
     setIsProcessing(true);

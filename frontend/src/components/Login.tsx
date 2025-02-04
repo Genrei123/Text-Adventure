@@ -75,7 +75,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
     try {
       // Redirect to backend's full URL
-      window.location.href = `http://localhost:3000/auth/${provider.toLowerCase()}`;
+      window.location.href = `http://localhost:3000/api/auth/${provider.toLowerCase()}`;
     } catch (error) {
       console.error(`Error during ${provider} login:`, error);
       toast.error(`Failed to log in with ${provider}.`);
@@ -125,11 +125,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <div className="text-center text-sm text-[#8B7355] mb-4">Enter Using</div>
             <div className="flex justify-center space-x-4">
               <button onClick={() => handleSocialLogin('Google')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
-                <FaGoogle className="text-[#8B7355]" size={20} />
+                <FaGoogle className="text-[#8B7355]" size={30} />
               </button>
-              <button onClick={() => handleSocialLogin('Facebook')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
+              {/* <button onClick={() => handleSocialLogin('Facebook')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
                 <FaFacebook className="text-[#8B7355]" size={20} />
-              </button>
+              </button> */}
             </div>
           </div>
 
