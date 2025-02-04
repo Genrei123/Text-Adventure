@@ -35,9 +35,12 @@ app.use('/gameplay', coinRoutes); // Coin routes setup
 const authRouter = createAuthRouter(frontendUrl);
 app.use('/api', authRouter);
 
-//app.use('/api', chatRoutes);
+// Import and use the socket server
+import { server } from './websocket/socket';
 
-app.listen(3000, async () => { 
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, async () => { 
   try {
     await database.authenticate();
     console.log('Connection to the database has been established successfully.');
@@ -46,7 +49,7 @@ app.listen(3000, async () => {
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
-  console.log(`Server is running on port ${process.env.PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
 
 export default app;
