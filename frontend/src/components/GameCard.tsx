@@ -1,9 +1,6 @@
 import * as React from "react";
 import { BookCardProps } from "../types/GameCard"; 
 
-
-
-
 const truncateDescription = (description: string, wordLimit: number) => {
   const words = description.split(' ');
   if (words.length > wordLimit) {
@@ -17,7 +14,7 @@ export const BookCard: React.FC<BookCardProps> = ({
   date,
   title,
   description,
-  coverImage = "posa.jpg",
+  coverImage,
   iconImage,
   genres
 }) => {
@@ -65,8 +62,9 @@ export const BookCard: React.FC<BookCardProps> = ({
              lagay yung
               mga Genrey */}
             <div className="flex flex-1 shrink self-stretch my-auto h-8 basis-[50px] bg-zinc-300 bg-opacity-0 min-w-[240px] w-[363px]" />
+            {/* button ng card */}
             <button 
-              className="overflow-hidden flex-wrap gap-8 content-center self-stretch px-6 py-3 my-auto font-bold leading-none shadow-md bg-stone-900 border-stone-900 min-h-[40px] min-w-[240px] pb-[var(--sds-size-space-300)] pt-[var(--sds-size-space-300)] rounded-[var(--sds-size-radius-200)] text-[length:var(--sds-typography-body-size-medium)] text-stone-100 max-md:px-5"
+              className="overflow-hidden flex-wrap gap-8 content-center self-stretch px-6 py-3 my-auto font-bold leading-none shadow-md bg-stone-900 border-stone-900 min-h-[40px] min-w-[240px] pb-[var(--sds-size-space-300)] pt-[var(--sds-size-space-300)] rounded-full text-[length:var(--sds-typography-body-size-medium)] text-stone-100 max-md:px-5 ml-[-20px]"
               aria-label={`Continue reading ${title}`}
             >
               Continue your Journey

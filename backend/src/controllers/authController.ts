@@ -31,6 +31,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         const existingUserByUsername = await User.findOne({ where: { username } });
         if (existingUserByUsername) {
             res.status(400).json({ message: 'Username already exists. Please try another username.' });
+            res.status(400).json({ message: 'Username already exists. Please try another username.' });
             return;
         }
 
