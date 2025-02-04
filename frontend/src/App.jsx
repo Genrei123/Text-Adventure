@@ -45,7 +45,7 @@ function App() {
         <Route path="/GameScreen" element={<GameScreen />} />
         <Route path="/homepage" element={<Homepage username={username} onLogout={handleLogout} />} />
         <Route path="/review" element={<ReviewPage />} />
-        <Route path="/active-players" element={<ActivePlayerCount />} /> {/* Add the new route */}
+        <Route path="/active-players" element={<ActivePlayerCount />} />
       </Routes>
     </Router>
   );
