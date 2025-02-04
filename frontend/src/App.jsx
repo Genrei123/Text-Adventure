@@ -12,8 +12,7 @@ import "./App.css";
 import ReviewPage from './screens/ReviewPage';
 import GameScreen from './screens/GameScreen';
 import Homepage from './screens/Homepage';
-import './theme/LoginTheme.css';
-import './App.css';
+import ActivePlayerCount from './components/ActivePlayerCount'; // Import the new component
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -46,6 +45,7 @@ function App() {
         <Route path="/GameScreen" element={<GameScreen />} />
         <Route path="/homepage" element={<Homepage username={username} onLogout={handleLogout} />} />
         <Route path="/review" element={<ReviewPage />} />
+        <Route path="/active-players" element={<ActivePlayerCount />} /> {/* Add the new route */}
       </Routes>
     </Router>
   );
