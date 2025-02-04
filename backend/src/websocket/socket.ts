@@ -6,9 +6,8 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://localhost:5173",
-      "https://text-adventure-six.vercel.app/",
-      "https://orange-space-engine-66r5v9667p5h46qr-5173.app.github.dev" // Add your Codespace URL
+      "http://localhost:5173", // Adjust the URL to match your frontend(lagay url ng frontend)
+      "https://text-adventure-six.vercel.app" // URL ng vercel frontend
     ],
     methods: ["GET", "POST"],
     credentials: true

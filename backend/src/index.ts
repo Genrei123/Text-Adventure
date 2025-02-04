@@ -13,7 +13,9 @@ import createAuthRouter from './routes/authRoutes';
 import chatRoutes from './routes/chatRoutes';
 import User from './model/user';
 import coinRoutes from './routes/Game Routes/coinRoutes';
+import { server } from './websocket/socket';
 
+const PORT = process.env.PORT || 3000;
 const app = express();
 const frontendUrl = 'http://localhost:5173';
 
@@ -34,11 +36,6 @@ app.use('/gameplay', coinRoutes); // Coin routes setup
 // Auth routes setup - using the new createAuthRouter function
 const authRouter = createAuthRouter(frontendUrl);
 app.use('/api', authRouter);
-
-// Import and use the socket server
-import { server } from './websocket/socket';
-
-const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, async () => { 
   try {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io('https://orange-space-engine-66r5v9667p5h46qr-3000.app.github.dev'); // Adjust the URL to match your backend
+const socket = io('http://localhost:3000'); // Adjust the URL to match your backend(Lagay localhost url ng backend)
 
 const ActivePlayerCount: React.FC = () => {
   const [playerCount, setPlayerCount] = useState(0);
@@ -17,7 +17,7 @@ const ActivePlayerCount: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ color: 'white' }}>
       <h1>Active Player Count</h1>
       <p>Active players: {playerCount}</p>
     </div>
