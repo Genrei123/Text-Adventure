@@ -53,6 +53,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         const data = response.data;
         if (data.token) {
           localStorage.setItem('token', data.token);
+          localStorage.setItem('username', data.user.email);
           onLogin(data.user.email);
           toast.success('Login successful!');
           navigate('/');
@@ -62,7 +63,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         }
       } catch (error) {
         setErrors({ general: 'Login failed. Please try again.' });
-        toast.error('Login failed. Please try again.');
+        toast.error(`Login failed. ${error.response?.data?.message}`);
       } finally {
         setIsProcessing(false);
       }
@@ -76,6 +77,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     try {
       // Redirect to backend's full URL
       window.location.href = `http://localhost:3000/api/auth/${provider.toLowerCase()}`;
+  
     } catch (error) {
       console.error(`Error during ${provider} login:`, error);
       toast.error(`Failed to log in with ${provider}.`);

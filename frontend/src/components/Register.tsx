@@ -139,22 +139,18 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   };
 
   const handleSocialRegister = async (provider: string) => {
-    // Current frontend-only implementation
-    setIsProcessing(true);
-    setSuccessMessage(`Logging in with ${provider}...`);
-
-    // Simulated OAuth flow - Replace with actual OAuth2 implementation
-    await new Promise(resolve => setTimeout(resolve, 5000));
+      setIsProcessing(true);
+      toast.info(`Connecting to ${provider}...`);
+  
+      try {
+        // Redirect to backend's full URL
+        window.location.href = `http://localhost:3000/api/auth/${provider.toLowerCase()}`;
     
-    // Simulated successful authentication
-    setSuccessMessage(`${provider} login successful! Redirecting...`);
-    onRegister(`${provider} User`, true);
-    
-    // Simulated token storage and redirect
-    setTimeout(() => {
-      setIsProcessing(false);
-      navigate('/');
-    }, 1500);
+      } catch (error) {
+        console.error(`Error during ${provider} login:`, error);
+        toast.error(`Failed to log in with ${provider}.`);
+        setIsProcessing(false);
+      }
   };
 
   
@@ -316,13 +312,13 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               >
                 <FaGoogle className="text-[#8B7355]" size={20} />
               </button>
-              <button
+              {/* <button
                 onClick={() => handleSocialRegister('Facebook')}
                 className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50"
                 disabled={isProcessing}
               >
                 <FaFacebook className="text-[#8B7355]" size={20} />
-              </button>
+              </button> */}
             </div>
           </div>
 
