@@ -11,9 +11,10 @@ import Homepage from './screens/Homepage';
 import VerifyEmail from './components/VerifyEmail';
 import ReviewPage from './screens/ReviewPage';
 import GameScreen from './screens/GameScreen';
-import GameCard from './components/GameCard';
+import GameCard from './components/BookCard';
 import './theme/LoginTheme.css';
 import './App.css';
+import Subscription from './screens/Subscription';
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -45,7 +46,7 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/homepage" element={<Homepage username={username} onLogout={handleLogout} />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
-        <Route path="/" element={<Homepage username={username} onLogout={handleLogout} />} />
+        {/* <Route path="/" element={<Homepage username={username} onLogout={handleLogout} />} /> */}
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onRegister={handleRegister} />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -57,6 +58,8 @@ function App() {
         <Route path="/homepage" element={<Homepage username={username} onLogout={handleLogout} />} />
         <Route path="/review" element={<ReviewPage />} />
         <Route path="/gameCard" element={<GameCard />} />
+        <Route path = "/settings" element = {<UserProfile />} />
+        <Route path = "/subscription" element = {<Subscription />} />
       </Routes>
     </Router>
   );

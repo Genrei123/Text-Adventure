@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import axios from 'axios';
+import Navbar from '../components/Navbar';
 
 const GameScreen: React.FC = () => {
     const [message, setMessage] = useState('');
@@ -46,7 +47,7 @@ const GameScreen: React.FC = () => {
     return (
         <>
         <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-            <nav className="bg-[#1e1e1e] py-3.5 px-4 shadow-[0_10px_10px_0_rgba(0,0,0,0.75)] z-50">
+            {/* <nav className="bg-[#1e1e1e] py-3.5 px-4 shadow-[0_10px_10px_0_rgba(0,0,0,0.75)] z-50">
             <div className="flex justify-between items-center">
                 <div className="text-2xl font-cinzel text-[#C8A97E]">
                     Sage.AI
@@ -59,7 +60,8 @@ const GameScreen: React.FC = () => {
                     <span className="text-xl font-cinzel text-white">14</span>
                 </div>
             </div>
-            </nav>
+            </nav> */}
+            <Navbar/>
             <Sidebar/>
             <br/>
             <br/>

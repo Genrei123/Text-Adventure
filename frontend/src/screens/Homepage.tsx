@@ -5,7 +5,8 @@ import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
 import Sidebar from '../components/Sidebar';
 import PortraitCard from '../components/PortraitCard';
-import GameCard from '../components/GameCard';
+import BookCard from '../components/BookCard';
+import Navbar from '../components/Navbar';
 
 interface HomepageProps {
   onLogout: () => void;
@@ -37,73 +38,14 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
     const usernameParam = params.get('username');
     if (usernameParam) {
       setUsername(decodeURIComponent(usernameParam));
+      localStorage.setItem('username', usernameParam);
     }
   }, [location]);
-  
-
-  const handleLogout = async () => {
-
-    try {
-      // const response = await axios.get('/auth/logout');
-      // const data = response.data; 
-      // window.location.href = data.redirectUrl;
-
-      // Clear local storage
-      localStorage.removeItem('username');
-      localStorage.removeItem('token');
-
-      window.location.href = '/login';
-
-    }
-
-    catch (error) {
-      console.error('Logout failed', error);
-    }
-  };
-
-  const changeCard = () => {
-    if (card === "portrait") {
-      setCard("landscape");
-    }
-
-    else {
-      setCard("portrait");
-    }
-  }
-  
+    
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-      <nav className="bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
-        <div className="flex justify-between items-center">
-          <div className="text-xl font-cinzel text-[#C8A97E]">Sage.AI</div>
-          {/* Remove comment if the searchbar is now done */}
-          {/* <SearchBar /> */}
-          <div className="flex items-center space-x-2">
-            {username ? (
-              <>
-                <span className="font-playfair text-[#E5D4B3]">Welcome, {username}</span>
-                <button
-                  className="bg-[#8B4513] hover:bg-[#723A10] px-3 py-1 rounded text-sm font-medium text-[#E5D4B3] border border-[#C8A97E]"
-                  onClick={handleLogout}
-                >
-                  Leave Realm
-                </button>
-              </>
-            ) : (
-              <>
-                <span className="font-playfair text-[#E5D4B3]">Not logged in</span>
-                <button
-                  className="bg-[#C8A97E] hover:bg-[#B39671] px-3 py-1 rounded text-sm font-medium text-[#1E1E1E] border border-[#E5D4B3]"
-                  onClick={() => navigate('/login')}
-                >
-                  Enter Realm
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar/>
       <div className="flex-1 flex flex-col items-center justify-center">
         <div className="flex flex-row w-full">
             <Sidebar/>
