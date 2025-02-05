@@ -97,9 +97,20 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({ message: 'Incorrect password. Please try again.' });
+      res.status(401).json({ message: 'Incorrect account credentials. Please try again.' });
       return;
     } 
+
+    // Check if the email is verified
+    if (!user.emailVerified) {
+      res.status(401).json({ message: 'Email not verified. Please check your email for the verification link.' });
+      return;
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ email }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+
+    res.status(200).json({ message: 'Login successful', token, user: { id: user.id, username: user.username, email: user.email, private: user.private, model: user.model, admin: user.admin } });
 
     } catch (error) {
     console.error("Error during login:", error);
@@ -232,5 +243,33 @@ export const validateResetToken = async (req: Request, res: Response): Promise<v
     } catch (error) {
         console.error('Error during token validation:', error);
         res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+    }
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logout successful', redirectUrl: '/login' });
+};
+
+export const checkAuth = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string };
+        const user = await User.findOne({ where: { email: decoded.email } });
+
+        if (!user) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        res.status(200).json({ username: user.username });
+    } catch (error) {
+        console.error('Error during authentication check:', error);
+        res.status(401).json({ message: 'Unauthorized' });
     }
 };

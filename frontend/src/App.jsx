@@ -11,6 +11,7 @@ import Homepage from './screens/Homepage';
 import VerifyEmail from './components/VerifyEmail';
 import ReviewPage from './screens/ReviewPage';
 import GameScreen from './screens/GameScreen';
+import GameCard from './components/GameCard';
 import './theme/LoginTheme.css';
 import './App.css';
 
@@ -41,7 +42,7 @@ function App() {
         <Route path="/email-confirmation" element={<EmailConfirmation />} />
         <Route path="/success-confirmation" element={<SuccessConfirmation />} />
         <Route path="/profile" element={<UserProfile />} />
-        <Route path="/" element={<GameScreen />} />
+        <Route path="/" element={<Homepage />} />
         <Route path="/homepage" element={<Homepage username={username} onLogout={handleLogout} />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route path="/" element={<Homepage username={username} onLogout={handleLogout} />} />
@@ -55,6 +56,7 @@ function App() {
         <Route path="/GameScreen" element={<GameScreen />} />
         <Route path="/homepage" element={<Homepage username={username} onLogout={handleLogout} />} />
         <Route path="/review" element={<ReviewPage />} />
+        <Route path="/gameCard" element={<GameCard />} />
       </Routes>
     </Router>
   );

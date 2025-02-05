@@ -75,3 +75,5 @@ export const BookCard: React.FC<BookCardProps> = ({
     </article>
   );
 };
+
+export default BookCard;

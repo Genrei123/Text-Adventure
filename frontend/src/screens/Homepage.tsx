@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import SearchBar from '../components/SearchBar';
 import Sidebar from '../components/Sidebar';
 import PortraitCard from '../components/PortraitCard';
+import GameCard from '../components/GameCard';
 
 interface HomepageProps {
   onLogout: () => void;
@@ -14,8 +15,23 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState<string | null>(null);
+  const [card, setCard] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      // Fetch in local storage
+      const token = localStorage.getItem('username');
+      if (!token) {
+        return;
+      }
+
+      setUsername(token);
+      console.log('Token:', token);
+    };
+
+
+    fetchUserData();
+
     // Parse username from the query string
     const params = new URLSearchParams(location.search);
     const usernameParam = params.get('username');
@@ -23,19 +39,37 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
       setUsername(decodeURIComponent(usernameParam));
     }
   }, [location]);
+  
 
   const handleLogout = async () => {
 
     try {
-      const response = await axios.get('/auth/logout');
-      const data = response.data; 
-      window.location.href = data.redirectUrl;
+      // const response = await axios.get('/auth/logout');
+      // const data = response.data; 
+      // window.location.href = data.redirectUrl;
+
+      // Clear local storage
+      localStorage.removeItem('username');
+      localStorage.removeItem('token');
+
+      window.location.href = '/login';
+
     }
 
     catch (error) {
       console.error('Logout failed', error);
     }
   };
+
+  const changeCard = () => {
+    if (card === "portrait") {
+      setCard("landscape");
+    }
+
+    else {
+      setCard("portrait");
+    }
+  }
   
 
   return (
@@ -74,12 +108,17 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         <div className="flex flex-row w-full">
             <Sidebar/>
           </div>
-        <h1 className="text-4xl font-bold font-cinzel text-[#C8A97E] mb-4">
-          Welcome to Sage.AI
-        </h1>
-        <p className="text-xl font-playfair text-[#E5D4B3]">
-          {username ? `Hello, ${username}! Your adventure begins now.` : 'Please log in to start your journey.'}
-        </p>
+
+        {!PortraitCard && (
+          <div>
+            <h1 className="text-4xl font-bold font-cinzel text-[#C8A97E] mb-4">
+              Welcome to Sage.AI
+            </h1>
+            <p className="text-xl font-playfair text-[#E5D4B3]">
+              {username ? `Hello, ${username}! Your adventure begins now.` : 'Please log in to start your journey.'}
+            </p>
+          </div>
+        )}
       </div>
       <br></br>
       <br></br>
@@ -91,7 +130,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         <div className="flex justify-end space-x-4 md:flex-row flex-col md:items-center items-end">
           <button
             className="p-2 relative group w-12 h-12 md:w-10 md:h-10"
-            onClick={() => console.log('Button 1 clicked')}
+            onClick={() => setCard("portrait")}
           >
             <img src="Any.svg" alt="Button 1" className="w-full h-full" />
             <img
@@ -102,7 +141,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
           </button>
           <button
             className="p-2 relative group w-12 h-12 md:w-10 md:h-10"
-            onClick={() => console.log('Button 2 clicked')}
+            onClick={() => setCard("landscape")}
           >
             <img src="filter2.svg" alt="Button 2" className="w-full h-full" />
             <img
@@ -114,13 +153,16 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         </div>
       </div>
       {/* placeholder for memories */}
+      
       <div className="bg-[#1e1e1e] w-[90%] p-4 mx-auto my-10 max-h-[1240px] overflow-x-auto scrollbar-thin scrollbar-thinner">
       <div className="flex justify-end space-x-4">
               </div>
               <br></br>
-            <PortraitCard/>
+            <PortraitCard />
+            
         </div>
-        <style>{`
+        <style>
+          {`
           /* Custom scrollbar styles */
           .scrollbar-thin::-webkit-scrollbar {
             height: 8px;
@@ -148,7 +190,8 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
             background-color: transparent; /* Track color */
           }
 
-        `}</style>
+        `}
+        </style>
     </div>
 
   );
