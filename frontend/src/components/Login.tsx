@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../App.css';
-import axios from '../axiosConfig/axiosConfig';
+import axiosInstance from '../axiosConfig/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -49,7 +49,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       toast.info('Logging in...');
 
       try {
-        const response = await axios.post('/api/login', { email, password });
+        const response = await axiosInstance.post('/api/login', { email, password });
         const data = response.data;
         if (data.token) {
           localStorage.setItem('token', data.token);
@@ -75,14 +75,14 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     toast.info(`Connecting to ${provider}...`);
 
     try {
-      // Redirect to backend's full URL
-      // window.location.href = `http://localhost:3000/api/auth/${provider.toLowerCase()}`;
-      window.location.href = import.meta.env.VITE_SITE_URL + `/api/auth/${provider.toLowerCase()}`;
-  
+        // Ensure clean URL construction
+        const authUrl = `${import.meta.env.VITE_SITE_URL}/api/auth/${provider.toLowerCase()}`;
+        alert(import.meta.env.VITE_SITE_URL);
+        window.location.href = authUrl;
     } catch (error) {
-      console.error(`Error during ${provider} login:`, error);
-      toast.error(`Failed to log in with ${provider}.`);
-      setIsProcessing(false);
+        console.error(`Error during ${provider} login:`, error);
+        toast.error(`Failed to log in with ${provider}.`);
+        setIsProcessing(false);
     }
   };
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import '../App.css';
-import axios from '../axiosConfig/axiosConfig';
+import axiosInstance from '../axiosConfig/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -121,7 +121,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       toast.info('Registering...');
 
       try {
-        const response = await axios.post('/api/register', { username, email, password });
+        const response = await axiosInstance.post('/api/register', { username, email, password });
         toast.success('Registration successful! A verification email has been sent to your email address.');
         setTimeout(() => {
           navigate('/login');
