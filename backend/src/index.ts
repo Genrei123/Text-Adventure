@@ -15,7 +15,7 @@ import User from './model/user';
 import coinRoutes from './routes/Game Routes/coinRoutes';
 
 const app = express();
-const frontendUrl = 'http://localhost:5173';
+const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 // Middleware setup
 app.use(cors(corsOptions));

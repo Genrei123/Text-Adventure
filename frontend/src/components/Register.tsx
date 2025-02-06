@@ -144,7 +144,8 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   
       try {
         // Redirect to backend's full URL
-        window.location.href = `http://localhost:3000/api/auth/${provider.toLowerCase()}`;
+        // window.location.href = `http://localhost:3000/api/auth/${provider.toLowerCase()}`;
+        window.location.href = import.meta.env.VITE_SITE_URL + `/api/auth/${provider.toLowerCase()}`;
     
       } catch (error) {
         console.error(`Error during ${provider} login:`, error);
