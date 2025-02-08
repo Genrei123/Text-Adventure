@@ -15,6 +15,7 @@ import VerifyEmail from './components/VerifyEmail';
 import ReviewPage from './screens/ReviewPage';
 import GameScreen from './screens/GameScreen';
 import GameCard from './components/BookCard';
+import LandingPage from './screens/LandingPage';
 import './theme/LoginTheme.css';
 import './App.css';
 import Subscription from './screens/Subscription';
@@ -64,7 +65,7 @@ function App() {
         <Route path="/gameCard" element={<GameCard />} />
         <Route path = "/settings" element = {<UserProfile />} />
         <Route path = "/subscription" element = {<Subscription />} />
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/LandingPage" element={<LandingPage />} />
       </Routes>
     </Router>
   );
