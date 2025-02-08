@@ -28,14 +28,16 @@ const Sidebar: React.FC = () => {
                         </Link>
                     </li>
                     <br />
+                    {/* <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
+                            <img src="/Any.svg" className="w-15 h-15 group-hover:opacity-0" />
+                            <img src="/Any-After.svg" className="w-15 h-15 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
+                    </li> */}
+                    {/* <br /> */}
                     <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                        <img src="/Any.svg" className="w-15 h-15 group-hover:opacity-0" />
-                        <img src="/Any-After.svg" className="w-15 h-15 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
-                    </li>
-                    <br />
-                    <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                        <img src="/Shop.svg" className="w-19 h-19 group-hover:opacity-0" />
-                        <img src="/Shop-after.svg" className="w-15 h-15 absolute top-0 left-3.3 opacity-0 group-hover:opacity-100" />
+                        <Link to="/subscription">
+                            <img src="/Shop.svg" className="w-19 h-19 group-hover:opacity-0" />
+                            <img src="/Shop-after.svg" className="w-15 h-15 absolute top-0 left-3.3 opacity-0 group-hover:opacity-100" />
+                        </Link>
                     </li>
                 </ul>
             </div>
@@ -60,8 +62,10 @@ const Sidebar: React.FC = () => {
                         </Link>
                     </li>
                     <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                        <img src="/Any.svg" className="w-9 h-9 group-hover:opacity-0" />
-                        <img src="/Any-After.svg" className="w-9 h-9 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
+                        <Link to = "/subscription">
+                            <img src="/Any.svg" className="w-9 h-9 group-hover:opacity-0" />
+                            <img src="/Any-After.svg" className="w-9 h-9 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
+                        </Link >
                     </li>
                 </ul>
             </div>

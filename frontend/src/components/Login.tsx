@@ -74,6 +74,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     setIsProcessing(true);
     toast.info(`Connecting to ${provider}...`);
 
+    // Clear any previous errors
+    setErrors({});
+
+    // Clear tokens
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+
     try {
         // Ensure clean URL construction
         const authUrl = `${import.meta.env.VITE_SITE_URL}/api/auth/${provider.toLowerCase()}`;

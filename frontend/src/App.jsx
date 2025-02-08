@@ -8,15 +8,16 @@ import ResetPassword from './components/ResetPassword';
 import EmailConfirmation from './components/EmailConfirmation';
 import SuccessConfirmation from './components/SuccessConfirmation';
 import UserProfile from './screens/UserProfile';
-import GameScreen from './screens/GameScreen';
 import Homepage from './screens/Homepage';
 import ActivePlayerCount from './components/ActivePlayerCount'; // Import the new component
 import { WebSocketProvider } from './context/WebSocketContext'; // Import the WebSocket provider
 import VerifyEmail from './components/VerifyEmail';
 import ReviewPage from './screens/ReviewPage';
-import GameCard from './components/GameCard';
+import GameScreen from './screens/GameScreen';
+import GameCard from './components/BookCard';
 import './theme/LoginTheme.css';
 import './App.css';
+import Subscription from './screens/Subscription';
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -48,7 +49,7 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/homepage" element={<Homepage username={username} onLogout={handleLogout} />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
-        <Route path="/" element={<Homepage username={username} onLogout={handleLogout} />} />
+        {/* <Route path="/" element={<Homepage username={username} onLogout={handleLogout} />} /> */}
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onRegister={handleRegister} />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -61,6 +62,8 @@ function App() {
         <Route path="/review" element={<ReviewPage />} />
         <Route path="/active-players" element={<WebSocketProvider><ActivePlayerCount /></WebSocketProvider>} />
         <Route path="/gameCard" element={<GameCard />} />
+        <Route path = "/settings" element = {<UserProfile />} />
+        <Route path = "/subscription" element = {<Subscription />} />
       </Routes>
     </Router>
   );

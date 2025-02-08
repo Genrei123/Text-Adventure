@@ -1,8 +1,14 @@
 import React from 'react';
+import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';
 
 const Subscription: React.FC = () => {
     return (
+        <>
+        <Navbar/>
+        
         <div style={{ backgroundImage: 'url(Billings.png)', backgroundSize: 'cover', minHeight: '100vh', padding: '1rem' }}>
+            <Sidebar/>
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                 <h2 style={{ textAlign: 'center', color: 'white', marginBottom: '1rem', marginTop: '5rem', fontSize: '3rem', fontFamily: 'Cinzel Decorative, serif' }}>
                     find your path
@@ -150,6 +156,7 @@ const Subscription: React.FC = () => {
                     `}</style>
             </div>               
         </div>
+        </>
         
         
     );
