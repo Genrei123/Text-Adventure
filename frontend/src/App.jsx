@@ -8,7 +8,6 @@ import ResetPassword from './components/ResetPassword';
 import EmailConfirmation from './components/EmailConfirmation';
 import SuccessConfirmation from './components/SuccessConfirmation';
 import UserProfile from './screens/UserProfile';
-import GameScreen from './screens/GameScreen';
 import Homepage from './screens/Homepage';
 import ActivePlayerCount from './components/ActivePlayerCount'; // Import the new component
 import { WebSocketProvider } from './context/WebSocketContext'; // Import the WebSocket provider
