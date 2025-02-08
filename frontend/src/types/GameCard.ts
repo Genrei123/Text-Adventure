@@ -14,6 +14,6 @@ export const DefaultBookCardProps: BookCardProps = {
     title: 'Whispers of the Shore',
     description: "A lone cat stands at the edge of the world, where the whispering waves meet the ancient forest. Embark on a journey of discovery, following the cat's path into a realm of hidden magic and",
     coverImage: 'src/assets/posa.jpg',
-    iconImage: 'src/assets/more_horizontal.jpg',
+    iconImage: 'icon ng menu',
     genres: ['Adventure', 'Fantasy', 'Action'],
 };

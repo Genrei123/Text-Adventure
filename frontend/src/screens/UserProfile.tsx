@@ -6,6 +6,7 @@ import YourGames from "../components/YourGames";
 import YourComments from "../components/YourComments";
 import YourLikes from "../components/YourLikes";
 import axios from 'axios';
+import Navbar from "../components/Navbar";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("comments");
@@ -19,7 +20,8 @@ export default function ProfilePage() {
     const fetchUserDetails = async () => {
       try {
         const userId = 64; // Replace with dynamic user ID if needed
-        const response = await axios.get(`http://localhost:3000/users/${userId}?timestamp=${new Date().getTime()}`);
+        //const response = await axios.get(`http://localhost:3000/users/${userId}?timestamp=${new Date().getTime()}`);
+        const response = await axios.get(`/users/${userId}?timestamp=${new Date().getTime()}`);
         console.log('User details:', response.data); // Log the response data
         setUserDetails(response.data);
       } catch (error) {
@@ -72,11 +74,13 @@ export default function ProfilePage() {
       }}
     >
       {/* Header */}
-      <nav className="bg-[#1e1e1e] py-3.5 px-4 shadow-[0_10px_10px_0_rgba(0,0,0,0.75)] z-50">
+      {/* <nav className="bg-[#1e1e1e] py-3.5 px-4 shadow-[0_10px_10px_0_rgba(0,0,0,0.75)] z-50">
         <div className="flex justify-between items-center">
           <div className="text-2xl font-cinzel text-[#C8A97E]">Sage.AI</div>
         </div>
-      </nav>
+      </nav> */}
+
+      <Navbar />
 
       <div className="flex flex-col md:flex-row">
         {/* Sidebar */}

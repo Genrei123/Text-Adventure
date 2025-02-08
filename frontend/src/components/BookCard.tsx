@@ -1,8 +1,5 @@
 import * as React from "react";
-import { BookCardProps } from "../types/GameCard"; 
-
-
-
+import { BookCardProps } from "../types/GameCard";
 
 const truncateDescription = (description: string, wordLimit: number) => {
   const words = description.split(' ');
@@ -78,3 +75,5 @@ export const BookCard: React.FC<BookCardProps> = ({
     </article>
   );
 };
+
+export default BookCard;

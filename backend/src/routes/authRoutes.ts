@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import passport from '../middlware/passport';
 import Jwt from 'jsonwebtoken';
 import cookieJwtAuth from '../middlware/auth';
-import { forgotPassword, resetPassword, validateResetToken } from '../controllers/authController';
+import { forgotPassword, resetPassword, validateResetToken, verifyEmail } from '../controllers/authController';
 
 // Create a function that returns the configured router
 const createAuthRouter = (frontendUrl: string) => {
@@ -38,7 +38,7 @@ const createAuthRouter = (frontendUrl: string) => {
   router.get('/auth/logout', (req: Request, res: Response) => {
     res.clearCookie('token', { 
       httpOnly: true,
-      domain: 'localhost',
+      domain: process.env.DOMAIN,
       path: '/' 
     });
 
@@ -86,6 +86,8 @@ const createAuthRouter = (frontendUrl: string) => {
       res.status(400).send("Unsupported provider");
     }
   );
+
+  router.get('/verify-email/:token', verifyEmail);
 
   // ... other routes
 
