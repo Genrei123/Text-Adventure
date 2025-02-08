@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import axios from '../axiosConfig/axiosConfig';
 
 const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -7,10 +8,11 @@ const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/user', {
-          credentials: 'include', // Include cookies in the request
-        });
-        const data = await response.json();
+        // const response = await fetch('http://localhost:3000/api/user', {
+        //   credentials: 'include', // Include cookies in the request
+        // });
+        const data = await axios.get('/api/user');
+        //const data = await response.json();
         setIsAuthenticated(!!data.username);
       } catch (error) {
         console.error('Error checking authentication:', error);

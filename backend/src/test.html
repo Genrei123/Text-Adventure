@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Test</title>
+</head>
+<body>
+  <h1>WebSocket Test</h1>
+  <p id="playerCount">Active players: 0</p>
+
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <script>
+    const socket = io('https://orange-space-engine-66r5v9667p5h46qr-3000.app.github.dev'); // Adjust the URL to match your backend
+
+    socket.on('playerCount', (data) => {
+      document.getElementById('playerCount').innerText = `Active players: ${data.activePlayers}`;
+    });
+  </script>
+</body>
+</html>

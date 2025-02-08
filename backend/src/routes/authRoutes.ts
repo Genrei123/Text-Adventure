@@ -38,7 +38,7 @@ const createAuthRouter = (frontendUrl: string) => {
   router.get('/auth/logout', (req: Request, res: Response) => {
     res.clearCookie('token', { 
       httpOnly: true,
-      domain: 'localhost',
+      domain: process.env.DOMAIN,
       path: '/' 
     });
 

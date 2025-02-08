@@ -20,7 +20,8 @@ export default function ProfilePage() {
     const fetchUserDetails = async () => {
       try {
         const userId = 64; // Replace with dynamic user ID if needed
-        const response = await axios.get(`http://localhost:3000/users/${userId}?timestamp=${new Date().getTime()}`);
+        //const response = await axios.get(`http://localhost:3000/users/${userId}?timestamp=${new Date().getTime()}`);
+        const response = await axios.get(`/users/${userId}?timestamp=${new Date().getTime()}`);
         console.log('User details:', response.data); // Log the response data
         setUserDetails(response.data);
       } catch (error) {
