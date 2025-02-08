@@ -12,10 +12,8 @@ import GameScreen from './screens/GameScreen';
 import Homepage from './screens/Homepage';
 import ActivePlayerCount from './components/ActivePlayerCount'; // Import the new component
 import { WebSocketProvider } from './context/WebSocketContext'; // Import the WebSocket provider
-import Homepage from './screens/Homepage';
 import VerifyEmail from './components/VerifyEmail';
 import ReviewPage from './screens/ReviewPage';
-import GameScreen from './screens/GameScreen';
 import GameCard from './components/GameCard';
 import './theme/LoginTheme.css';
 import './App.css';
