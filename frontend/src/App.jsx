@@ -65,7 +65,7 @@ function App() {
         <Route path="/gameCard" element={<GameCard />} />
         <Route path = "/settings" element = {<UserProfile />} />
         <Route path = "/subscription" element = {<Subscription />} />
-        <Route path="/LandingPage" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
       </Routes>
     </Router>
   );
