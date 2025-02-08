@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import cors from 'cors';
 import corsOptions from './middlware/cors';
-import express, { Request, Response, Router } from 'express';
+import express, { Request, Response } from 'express';
 import session from 'express-session';
 import database from './service/database';
 import routes from './routes/routes';
@@ -13,29 +13,42 @@ import createAuthRouter from './routes/authRoutes';
 import chatRoutes from './routes/chatRoutes';
 import User from './model/user';
 import coinRoutes from './routes/Game Routes/coinRoutes';
-import { server } from './websocket/socket';
+import { createServer } from './websocket/socket';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
+declare module 'express-session' {
+  interface SessionData {
+    userId?: string;
+    // Add other session properties you need
+  }
+}
+
 // Middleware setup
 app.use(cors(corsOptions));
-app.use(session({ secret: 'your_secret_key', resave: false, saveUninitialized: true }));
+app.use(session({ 
+  secret: process.env.SESSION_SECRET || 'your_secret_key', 
+  resave: false, 
+  saveUninitialized: true 
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Route setup
 app.use('/', routes);
 app.use('/', adminController);
-app.use('/invoice', invoiceRoutes); // Invoice routes setup
-app.use('/shop', shopRoutes); // Shop routes setup
-app.use('/webhook', webhookRoutes); // Webhook routes setup
-app.use('/gameplay', coinRoutes); // Coin routes setup
+app.use('/invoice', invoiceRoutes);
+app.use('/shop', shopRoutes);
+app.use('/webhook', webhookRoutes);
+app.use('/gameplay', coinRoutes);
 
-// Auth routes setup - using the new createAuthRouter function
+// Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
 app.use('/api', authRouter);
+
+const server = createServer(app);
 
 server.listen(PORT, async () => { 
   try {
