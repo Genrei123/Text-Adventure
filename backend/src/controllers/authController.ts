@@ -8,6 +8,10 @@ import { validatePassword } from "../utils/passwordValidator";
 import { sendVerificationEmail, sendResetPasswordEmail } from '../service/emailService';
 import crypto from 'crypto';
 
+const generateVerificationToken = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
+
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
     try {
@@ -27,15 +31,16 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         const existingUserByUsername = await User.findOne({ where: { username } });
         if (existingUserByUsername) {
             res.status(400).json({ message: 'Username already exists. Please try another username.' });
+            res.status(400).json({ message: 'Username already exists. Please try another username.' });
             return;
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Generate verification code
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-        const verificationCodeExpires = new Date(Date.now() + 3600000); // 1 hour from now
+        // Generate verification token
+        const verificationToken = generateVerificationToken();
+        const verificationTokenExpires = new Date(Date.now() + 3600000); // 1 hour from now
 
         // Create a new user
         const newUser = await User.create({
@@ -45,15 +50,15 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             private: isPrivate || true, // Default to true if not provided
             model: model || "gpt-4",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
-            verificationCode,
-            verificationCodeExpires,
+            verificationToken,
+            verificationTokenExpires,
             createdAt: new Date(),
             updatedAt: new Date(),
             totalCoins: 0,
         });
 
         // Send verification email
-        const emailSent = await sendVerificationEmail(email, verificationCode);
+        const emailSent = await sendVerificationEmail(email, verificationToken, username);
         if (!emailSent) {
             await newUser.destroy(); // Rollback user creation if email sending fails
             res.status(500).json({ message: "Failed to send verification email. Please try again." });
@@ -61,7 +66,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
         }
 
         res.status(201).json({
-            message: "User registered successfully. Please check your email for the verification code.",
+            message: "User registered successfully. Please check your email for the verification link.",
             user: {
                 id: newUser.id,
                 username: newUser.username,
@@ -92,9 +97,20 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     // Check if the password is correct
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(401).json({ message: 'Incorrect password. Please try again.' });
+      res.status(401).json({ message: 'Incorrect account credentials. Please try again.' });
       return;
     } 
+
+    // Check if the email is verified
+    if (!user.emailVerified) {
+      res.status(401).json({ message: 'Email not verified. Please check your email for the verification link.' });
+      return;
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ email }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+
+    res.status(200).json({ message: 'Login successful', token, user: { id: user.id, username: user.username, email: user.email, private: user.private, model: user.model, admin: user.admin } });
 
     } catch (error) {
     console.error("Error during login:", error);
@@ -103,24 +119,24 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
-    const { email, code } = req.body;
+    const { token } = req.params;
 
     try {
-        const user = await User.findOne({ where: { email } });
+        const user = await User.findOne({ where: { verificationToken: token } });
 
         if (!user) {
-            res.status(400).json({ message: "Invalid email or verification code" });
+            res.status(400).json({ message: "Invalid verification token" });
             return;
         }
 
-        if (user.verificationCode !== code || !user.verificationCodeExpires || user.verificationCodeExpires < new Date()) {
-            res.status(400).json({ message: "Invalid or expired verification code" });
+        if (!user.verificationTokenExpires || user.verificationTokenExpires < new Date()) {
+            res.status(400).json({ message: "Verification token has expired" });
             return;
         }
 
         user.emailVerified = true;
-        user.verificationCode = null;
-        user.verificationCodeExpires = null;
+        user.verificationToken = null;
+        user.verificationTokenExpires = null;
         await user.save();
 
         res.status(200).json({ message: "Email verified successfully" });
@@ -227,5 +243,33 @@ export const validateResetToken = async (req: Request, res: Response): Promise<v
     } catch (error) {
         console.error('Error during token validation:', error);
         res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+    }
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'Logout successful', redirectUrl: '/login' });
+};
+
+export const checkAuth = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string };
+        const user = await User.findOne({ where: { email: decoded.email } });
+
+        if (!user) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        res.status(200).json({ username: user.username });
+    } catch (error) {
+        console.error('Error during authentication check:', error);
+        res.status(401).json({ message: 'Unauthorized' });
     }
 };

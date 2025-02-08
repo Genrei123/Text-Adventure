@@ -10,18 +10,18 @@ interface UserAttributes {
     private: boolean;
     model: string;
     admin: boolean;
-    verificationCode: string | null;
-    verificationCodeExpires: Date | null;
     emailVerified: boolean;
     resetPasswordToken: string | null;
     resetPasswordExpires: Date | null;
-    totalCoins: number; // Add totalCoins field
+    totalCoins: number;
+    verificationToken: string | null;
+    verificationTokenExpires: Date | null;
     createdAt: Date;
     updatedAt: Date;
 }
 
 // Define the creation attributes for the User model
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'verificationCode' | 'verificationCodeExpires' | 'emailVerified' | 'resetPasswordToken' | 'resetPasswordExpires' | 'totalCoins'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'emailVerified' | 'resetPasswordToken' | 'resetPasswordExpires' | 'totalCoins' | 'verificationToken' | 'verificationTokenExpires'> {}
 
 // Extend the Model class with the User attributes
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
@@ -32,12 +32,12 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public private!: boolean;
     public model!: string;
     public admin!: boolean;
-    public verificationCode!: string | null;
-    public verificationCodeExpires!: Date | null;
     public emailVerified!: boolean;
     public resetPasswordToken!: string | null;
     public resetPasswordExpires!: Date | null;
-    public totalCoins!: number; // Add totalCoins field
+    public totalCoins!: number;
+    public verificationToken!: string | null;
+    public verificationTokenExpires!: Date | null;
     public createdAt!: Date;
     public updatedAt!: Date;
 }
@@ -81,14 +81,6 @@ User.init(
             allowNull: false,
             defaultValue: false,
         },
-        verificationCode: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        verificationCodeExpires: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
         emailVerified: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
@@ -106,6 +98,14 @@ User.init(
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0,
+        },
+        verificationToken: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        verificationTokenExpires: {
+            type: DataTypes.DATE,
+            allowNull: true,
         },
         createdAt: {
             type: DataTypes.DATE,

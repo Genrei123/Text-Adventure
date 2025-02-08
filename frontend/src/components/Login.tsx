@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../App.css';
-import axios from '../axiosConfig/axiosConfig';
+import axiosInstance from '../axiosConfig/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -49,10 +49,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       toast.info('Logging in...');
 
       try {
-        const response = await axios.post('/api/login', { email, password });
+        const response = await axiosInstance.post('/api/login', { email, password });
         const data = response.data;
         if (data.token) {
           localStorage.setItem('token', data.token);
+          localStorage.setItem('username', data.user.email);
           onLogin(data.user.email);
           toast.success('Login successful!');
           navigate('/');
@@ -62,7 +63,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         }
       } catch (error) {
         setErrors({ general: 'Login failed. Please try again.' });
-        toast.error('Login failed. Please try again.');
+        toast.error(`Login failed. ${error.response?.data?.message}`);
       } finally {
         setIsProcessing(false);
       }
@@ -74,12 +75,14 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     toast.info(`Connecting to ${provider}...`);
 
     try {
-      // Redirect to backend's full URL
-      window.location.href = `http://localhost:3000/auth/${provider.toLowerCase()}`;
+        // Ensure clean URL construction
+        const authUrl = `${import.meta.env.VITE_SITE_URL}/api/auth/${provider.toLowerCase()}`;
+        alert(import.meta.env.VITE_SITE_URL);
+        window.location.href = authUrl;
     } catch (error) {
-      console.error(`Error during ${provider} login:`, error);
-      toast.error(`Failed to log in with ${provider}.`);
-      setIsProcessing(false);
+        console.error(`Error during ${provider} login:`, error);
+        toast.error(`Failed to log in with ${provider}.`);
+        setIsProcessing(false);
     }
   };
 
@@ -125,11 +128,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <div className="text-center text-sm text-[#8B7355] mb-4">Enter Using</div>
             <div className="flex justify-center space-x-4">
               <button onClick={() => handleSocialLogin('Google')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
-                <FaGoogle className="text-[#8B7355]" size={20} />
+                <FaGoogle className="text-[#8B7355]" size={30} />
               </button>
-              <button onClick={() => handleSocialLogin('Facebook')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
+              {/* <button onClick={() => handleSocialLogin('Facebook')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
                 <FaFacebook className="text-[#8B7355]" size={20} />
-              </button>
+              </button> */}
             </div>
           </div>
 

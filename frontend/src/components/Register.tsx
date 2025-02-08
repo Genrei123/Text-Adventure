@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebook, FaGoogle } from 'react-icons/fa';
 import '../App.css';
-import axios from '../axiosConfig/axiosConfig';
+import axiosInstance from '../axiosConfig/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -121,7 +121,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       toast.info('Registering...');
 
       try {
-        const response = await axios.post('/api/register', { username, email, password });
+        const response = await axiosInstance.post('/api/register', { username, email, password });
         toast.success('Registration successful! A verification email has been sent to your email address.');
         setTimeout(() => {
           navigate('/login');
@@ -138,85 +138,20 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     }
   };
 
-  
-  /**
-   * Handles social registration (Google/Facebook)
-   * 
-   * TODO: Backend Integration Guide
-   * 1. OAuth2 Configuration:
-   *    - Replace the setTimeout with actual OAuth2 flow
-   *    - Implement proper OAuth2 client configuration for each provider
-   *    - Handle OAuth2 callback URLs and state management
-   * 
-   * 2. API Endpoints Needed:
-   *    - POST /api/auth/social/google
-   *    - POST /api/auth/social/facebook
-   *    - Response should include: { userId, username, email, token }
-   * 
-   * 3. Error Handling:
-   *    - Add try-catch blocks around API calls
-   *    - Handle specific OAuth errors (e.g., cancelled by user, token expired)
-   *    - Show appropriate error messages to user
-   * 
-   * Example Integration:
-   * try {
-   *   setIsProcessing(true);
-   *   setSuccessMessage(`Logging in with ${provider}...`);
-   * 
-   *   // 1. Initialize OAuth2 flow
-   *   const authResponse = await initializeOAuth2Flow(provider);
-   * 
-   *   // 2. Exchange OAuth2 token for our API token
-   *   const apiResponse = await fetch(`/api/auth/social/${provider.toLowerCase()}`, {
-   *     method: 'POST',
-   *     headers: { 'Content-Type': 'application/json' },
-   *     body: JSON.stringify({ 
-   *       token: authResponse.token,
-   *       // Add any other necessary OAuth data
-   *     })
-   *   });
-   * 
-   *   const userData = await apiResponse.json();
-   *   
-   *   if (!apiResponse.ok) {
-   *     throw new Error(userData.message || 'Authentication failed');
-   *   }
-   * 
-   *   // 3. Handle successful authentication
-   *   setSuccessMessage(`${provider} login successful! Redirecting...`);
-   *   onRegister(userData.username, true);
-   * 
-   *   // 4. Store token and redirect
-   *   localStorage.setItem('token', userData.token);
-   *   setTimeout(() => {
-   *     setIsProcessing(false);
-   *     navigate('/');
-   *   }, 1500);
-   * 
-   * } catch (error) {
-   *   setSuccessMessage('Authentication failed. Please try again.');
-   *   setTimeout(() => setIsProcessing(false), 2000);
-   * }
-   * 
-   * @param {string} provider - The social login provider ('Google' or 'Facebook')
-   */
   const handleSocialRegister = async (provider: string) => {
-    // Current frontend-only implementation
-    setIsProcessing(true);
-    setSuccessMessage(`Logging in with ${provider}...`);
-
-    // Simulated OAuth flow - Replace with actual OAuth2 implementation
-    await new Promise(resolve => setTimeout(resolve, 5000));
+      setIsProcessing(true);
+      toast.info(`Connecting to ${provider}...`);
+  
+      try {
+        // Redirect to backend's full URL
+        // window.location.href = `http://localhost:3000/api/auth/${provider.toLowerCase()}`;
+        window.location.href = import.meta.env.VITE_SITE_URL + `/api/auth/${provider.toLowerCase()}`;
     
-    // Simulated successful authentication
-    setSuccessMessage(`${provider} login successful! Redirecting...`);
-    onRegister(`${provider} User`, true);
-    
-    // Simulated token storage and redirect
-    setTimeout(() => {
-      setIsProcessing(false);
-      navigate('/');
-    }, 1500);
+      } catch (error) {
+        console.error(`Error during ${provider} login:`, error);
+        toast.error(`Failed to log in with ${provider}.`);
+        setIsProcessing(false);
+      }
   };
 
   
@@ -378,13 +313,13 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               >
                 <FaGoogle className="text-[#8B7355]" size={20} />
               </button>
-              <button
+              {/* <button
                 onClick={() => handleSocialRegister('Facebook')}
                 className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50"
                 disabled={isProcessing}
               >
                 <FaFacebook className="text-[#8B7355]" size={20} />
-              </button>
+              </button> */}
             </div>
           </div>
 
