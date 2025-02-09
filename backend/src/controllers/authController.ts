@@ -7,6 +7,8 @@ import { RegisterRequestBody } from "../interfaces/RegisterRequestBody";
 import { validatePassword } from "../utils/passwordValidator";
 import { sendVerificationEmail, sendResetPasswordEmail } from '../service/emailService';
 import crypto from 'crypto';
+import { handleServerError } from '../middleware/errorHandler';
+import { Parser } from 'json2csv';
 
 const generateVerificationToken = () => {
   return crypto.randomBytes(32).toString('hex');
@@ -272,4 +274,52 @@ export const checkAuth = async (req: Request, res: Response): Promise<void> => {
         console.error('Error during authentication check:', error);
         res.status(401).json({ message: 'Unauthorized' });
     }
+};
+
+export const getPlayerStats = async (req: Request, res: Response) => {
+  try {
+    const totalPlayers = await User.count();
+    const activePlayers = await User.count({ where: { lastActivity: { [Op.gt]: new Date(Date.now() - 15 * 60 * 1000) } } });
+    res.json({ totalPlayers, activePlayers, offlinePlayers: totalPlayers - activePlayers });
+  } catch (error) {
+    handleServerError(res, error);
+  }
+};
+
+export const getFilteredPlayers = async (req: Request, res: Response) => {
+  const { status, tier, sortBy, order } = req.query;
+
+  const whereClause: any = {};
+  if (status === 'active') whereClause.lastActivity = { [Op.gt]: new Date(Date.now() - 15 * 60 * 1000) };
+  if (tier) whereClause.subscriptionTier = tier;
+
+  const orderClause = sortBy && order ? [[sortBy, order]] : [['createdAt', 'DESC']];
+
+  try {
+    const players = await User.findAll({ where: whereClause, order: orderClause });
+    res.json(players);
+  } catch (error) {
+    handleServerError(res, error);
+  }
+};
+
+export const exportPlayerData = async (req: Request, res: Response) => {
+  const { status, tier, sortBy, order } = req.query;
+
+  const whereClause: any = {};
+  if (status === 'active') whereClause.lastActivity = { [Op.gt]: new Date(Date.now() - 15 * 60 * 1000) };
+  if (tier) whereClause.subscriptionTier = tier;
+
+  const orderClause = sortBy && order ? [[sortBy, order]] : [['createdAt', 'DESC']];
+
+  try {
+    const players = await User.findAll({ where: whereClause, order: orderClause });
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(players);
+    res.header('Content-Type', 'text/csv');
+    res.attachment('players.csv');
+    res.send(csv);
+  } catch (error) {
+    handleServerError(res, error);
+  }
 };

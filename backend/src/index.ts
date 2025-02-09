@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import cors from 'cors';
-import corsOptions from './middlware/cors';
+import corsOptions from './middleware/cors';
 import express, { Request, Response } from 'express';
 import session from 'express-session';
 import database from './service/database';

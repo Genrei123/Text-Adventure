@@ -1,8 +1,9 @@
 import { Router, Request, Response } from 'express';
-import passport from '../middlware/passport';
+import passport from '../middleware/passport';
 import Jwt from 'jsonwebtoken';
-import cookieJwtAuth from '../middlware/auth';
-import { forgotPassword, resetPassword, validateResetToken, verifyEmail } from '../controllers/authController';
+import cookieJwtAuth from '../middleware/auth';
+import { forgotPassword, resetPassword, validateResetToken, verifyEmail, getPlayerStats, getFilteredPlayers, exportPlayerData } from '../controllers/authController';
+import { requireAdmin } from '../middleware/adminAuth';
 
 // Create a function that returns the configured router
 const createAuthRouter = (frontendUrl: string) => {
@@ -11,6 +12,10 @@ const createAuthRouter = (frontendUrl: string) => {
   router.post('/forgot-password', forgotPassword);
   router.post('/validate-reset-token', validateResetToken);
   router.post('/reset-password', resetPassword);
+
+  router.get('/admin/player-stats', requireAdmin, getPlayerStats);
+  router.get('/admin/players', requireAdmin, getFilteredPlayers);
+  router.get('/admin/export', requireAdmin, exportPlayerData);
 
   router.get('/', (req: Request, res: Response) => {
     res.send("Hello World!");
