@@ -47,7 +47,7 @@ function App() {
         <Route path="/email-confirmation" element={<EmailConfirmation />} />
         <Route path="/success-confirmation" element={<SuccessConfirmation />} />
         <Route path="/profile" element={<UserProfile />} />
-        <Route path="/" element={<Homepage />} />
+        {/* <Route path="/" element={<Homepage />} /> */}
         <Route path="/homepage" element={<Homepage username={username} onLogout={handleLogout} />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
         {/* <Route path="/" element={<Homepage username={username} onLogout={handleLogout} />} /> */}
