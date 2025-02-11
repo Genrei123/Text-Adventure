@@ -96,7 +96,7 @@ export default function ProfilePage() {
               <div className="relative">
                 <div className="w-[150px] h-[150px] md:w-[200px] md:h-[200px] rounded-full border-4 border-[#B39C7D] flex items-center justify-center mx-auto md:mx-0">
                   <img
-                    src="src/assets/Placeholder.png"
+                    src="/null_Icon.svg"
                     alt="Profile"
                     width={150}
                     height={150}
@@ -134,63 +134,88 @@ export default function ProfilePage() {
             </div>
 
             {showUserModal && (
-              <div className="fixed inset-0 flex items-center justify-center z-50">
-                <div className="fixed inset-0 bg-black opacity-80"></div>
-                <div className="bg-[#1e1e1e] p-8 rounded-lg shadow-lg w-[400px] relative z-10 border-2 border-[#634630]">
-                  <button
-                    onClick={() => setShowUserModal(false)}
-                    className="absolute top-2 right-2 text-[#B39C7D] hover:text-[#a38b6d] transition-colors duration-300"
-                  >
-                    &times;
-                  </button>
-                  <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">EDIT PROFILE</h2>
-                  <form>
-                    <div className="mb-4">
-                      <label className="block text-[#B39C7D] mb-2" htmlFor="username">Username:</label>
-                      <input
-                        type="text"
-                        id="username"
-                        className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-[#B39C7D] mb-2" htmlFor="email">Email:</label>
-                      <input
-                        type="email"
-                        id="email"
-                        className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-[#B39C7D] mb-2" htmlFor="password">Password:</label>
-                      <input
-                        type="password"
-                        id="password"
-                        className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-[#B39C7D] mb-2" htmlFor="confirmPassword">Confirm Password:</label>
-                      <input
-                        type="password"
-                        id="confirmPassword"
-                        className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
-                      />
-                    </div>
-                    <br></br>
-                    <div className="flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => setShowUserModal(false)}
-                        className="w-full px-4 py-2 bg-[#B39C7D] text-[#1e1e1e] rounded hover:bg-[#ffffff] transition-colors duration-300"
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </form>
+              <div className="fixed inset-0 flex items-center justify-center z-50 animate-fadeIn">
+              <div className="fixed inset-0 bg-black opacity-80"></div>
+              <div className="bg-[#1e1e1e] p-8 rounded-lg shadow-lg w-[400px] relative z-10 border-2 border-[#634630]">
+                <button
+                onClick={() => setShowUserModal(false)}
+                className="absolute top-2 right-2 text-[#B39C7D] hover:text-[#a38b6d] transition-colors duration-300"
+                >
+                &times;
+                </button>
+                <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">EDIT PROFILE</h2>
+                <form>
+                <div className="mb-4">
+                  <label className="block text-[#B39C7D] mb-2" htmlFor="username">Username:</label>
+                  <input
+                  type="text"
+                  id="username"
+                  className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
+                  />
                 </div>
+                <div className="mb-4">
+                  <label className="block text-[#B39C7D] mb-2" htmlFor="email">Email:</label>
+                  <input
+                  type="email"
+                  id="email"
+                  className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-[#B39C7D] mb-2" htmlFor="password">Password:</label>
+                  <input
+                  type="password"
+                  id="password"
+                  className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-[#B39C7D] mb-2" htmlFor="confirmPassword">Confirm Password:</label>
+                  <input
+                  type="password"
+                  id="confirmPassword"
+                  className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
+                  />
+                </div>
+                <br></br>
+                <div className="flex justify-end">
+                  <button
+                  type="button"
+                  onClick={() => setShowUserModal(false)}
+                  className="w-full px-4 py-2 bg-[#B39C7D] text-[#1e1e1e] rounded hover:bg-[#ffffff] transition-colors duration-300"
+                  >
+                  Submit
+                  </button>
+                </div>
+                </form>
+              </div>
               </div>
             )}
+
+            <style>{`
+              @keyframes fadeIn {
+              from {
+                opacity: 0;
+              }
+              to {
+                opacity: 1;
+              }
+              }
+              .animate-fadeIn {
+              animation: fadeIn 0.5s ease-in-out;
+              }
+              @keyframes fadeOut {
+                from {
+                  opacity: 1;
+                }
+                to {
+                  opacity: 0;
+                }
+              }
+              .animate-fadeOut {
+                animation: fadeOut 0.5s ease-in-out;
+              }
+            `}</style>
 
             {/* Crop Modal */}
             {showCropModal && (
@@ -237,19 +262,19 @@ export default function ProfilePage() {
               <div className="flex border-b border-[#3A3A3A]">
                 <button
                   onClick={() => setActiveTab("games")}
-                  className={`px-4 py-2 text-[#ffffff] ${activeTab === "games" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:bg-[#3A3A3A]`}
+                  className={`px-4 py-2 text-[#ffffff] ${activeTab === "games" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:shadow-[0_0_10px_2px_rgba(179,156,125,0.75)] rounded-full bg-transparent`}
                 >
                   YOUR GAMES
                 </button>
                 <button
                   onClick={() => setActiveTab("comments")}
-                  className={`px-4 py-2 text-[#ffffff] ${activeTab === "comments" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:bg-[#3A3A3A]`}
+                  className={`px-4 py-2 text-[#ffffff] ${activeTab === "comments" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:shadow-[0_0_10px_2px_rgba(179,156,125,0.75)] rounded-full bg-transparent`}
                 >
                   YOUR COMMENTS
                 </button>
                 <button
                   onClick={() => setActiveTab("likes")}
-                  className={`px-4 py-2 text-[#ffffff] ${activeTab === "likes" ? "border-b-2 border-[#B39C7D]" : ""} transition-colors duration-300 ease-in-out hover:bg-[#3A3A3A]`}
+                  className={`px-4 py-2 text-[#ffffff] ${activeTab === "likes" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:shadow-[0_0_10px_2px_rgba(179,156,125,0.75)] rounded-full bg-transparent`}
                 >
                   YOUR LIKES
                 </button>
