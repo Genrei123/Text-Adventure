@@ -49,7 +49,7 @@ Chat.init({
     },
     session_id: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
     },
     model: {
         type: DataTypes.STRING,

@@ -5,8 +5,6 @@ import Chat from '../model/chat';
 import User from '../model/user';
 import Game from '../model/game';
 
-
-
 export const handleChatRequest = async (req: Request, res: Response) => {
     try {
         // Check for request if it's valid or not
@@ -15,9 +13,42 @@ export const handleChatRequest = async (req: Request, res: Response) => {
             return;
         }
 
-        if (!process.env.OPENAI_API_KEY) {
-            res.status(500).send("OpenAI API key not found.");
+        const isUser = checkUser(req.body.userId);
+        if (!isUser) {
+            res.status(400).send("User not found.");
             return;
+        }
+
+
+        const game = await Game.findByPk(req.body.gameId);
+        if (!game) {
+            res.status(400).send("Game not found.");
+            return;
+        }
+
+        const session = await Chat.findOne({
+            where: { UserId: req.body.userId, GameId: req.body.gameId },
+            order: [['createdAt', 'DESC']],
+        });
+
+        // If no existing session, generate a new session ID
+        let session_id = "";
+        if (!session) {
+            session_id = "session_" + Math.random().toString(36).substr(2, 9);
+
+            // Store the new session in the database
+            await Chat.create({
+                session_id: session_id,
+                UserId: req.body.userId,
+                GameId: req.body.gameId,
+                content: req.body.message, // Empty initial message
+                role: "assistant",
+                model: "gpt-3.5-turbo",
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
+        } else {
+            req.body.session_id = session.session_id; // Use the existing session ID
         }
 
         // Look for old chats
@@ -27,18 +58,8 @@ export const handleChatRequest = async (req: Request, res: Response) => {
         });
 
         if (!previousChats) {
-            // Check if UserId and GameId are provided and valid
-            const user = await User.findByPk(req.body.userId);
-            if (!user) {
-                res.status(400).send("User not found.");
-                return;
-            }
-
-            const game = await Game.findByPk(req.body.gameId);
-            if (!game) {
-                res.status(400).send("Game not found.");
-                return;
-            }
+            // Generate a unique session ID
+            req.body.session_id = "text" + Math.random().toString(36).substr(2, 9);
 
             // Create a new chat if user and game are valid
             await Chat.create({
@@ -105,3 +126,25 @@ export const handleChatRequest = async (req: Request, res: Response) => {
         return;
     }
 };
+
+function checkUser(userID: number): boolean {
+    // Check if UserId and GameId are provided and valid
+    const user = User.findByPk(userID);
+    if (!user) {
+        return false;
+    }
+    return true;
+}
+
+function checkGame(): boolean {
+    return false;
+}
+
+function checkSession(): boolean {
+    return false;
+}
+
+function generateSessionId(): string {
+    return "";
+}
+
