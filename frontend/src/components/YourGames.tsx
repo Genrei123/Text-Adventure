@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import games from "../types/Games"; // Adjust the path as necessary
+import games from "../types/Story"; // Adjust the path as necessary
 
-interface GameDetailsProps {
+interface Story {
     title: string;
     description: string;
 }
 
-const GameDetails: React.FC<GameDetailsProps> = ({ title, description }) => {
+const GameDetails: React.FC<Story> = ({ title, description }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const truncatedDescription =
@@ -25,11 +25,11 @@ const GameDetails: React.FC<GameDetailsProps> = ({ title, description }) => {
                 </div>
             </div>
             <div>
-                <p className="text-white mb-2">{truncatedDescription}</p>
+                <p className="text-white mb-2 text-left">{truncatedDescription}</p>
                 {!isExpanded && description.length > 300 && (
                     <div
                         onClick={() => setIsExpanded(true)}
-                        className="cursor-pointer hover:underline ml-2 text-[#C9B57B]"
+                        className="cursor-pointer hover:underline ml-2 text-[#C9B57B] text-left"
                         aria-expanded={isExpanded}
                     >
                         Read More

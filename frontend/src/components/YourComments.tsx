@@ -5,21 +5,22 @@ import comments from "../types/Comments"; // Update the path to your Comments.ts
 interface CommentProps {
     userName: string;
     comment: string;
+    story: string;
     onGoToGame: () => void;
 }
 
-const Comment: React.FC<CommentProps> = ({ userName, comment, onGoToGame }) => {
+const Comment: React.FC<CommentProps> = ({ userName, comment, story, onGoToGame }) => {
     return (
         <div className="border border-gray-300 rounded-md m-2 p-3 bg-[#563C2D] shadow-md">
             <div className="flex items-center">
                 <FaUserCircle size={40} className="mr-3 text-black" />
                 <div className="flex-1 text-left">
-                    <h5 className="text-white font-semibold">{userName}</h5>
+                    <h5 className="text-white font-semibold">{userName} <h5 className="text-[#C9B57B] italic"> From "{story}"</h5></h5>
                     <p className="text-[#B28F4C]">{comment}</p>
                 </div>
                 <div 
                     onClick={onGoToGame}
-                    className="bg-[#1e1e1e] text-[#B28F4C] px-3 py-2 rounded-md cursor-pointer text-center hover:bg-[#2a2a2a] transition"
+                    className="bg-[#1e1e1e] text-[#B28F4C] px-1 py-2 rounded-md cursor-pointer text-center hover:bg-[#2a2a2a] hover:shadow-[0_0_10px_#B28F4C] transition text-sm"
                 >
                     Go To Game
                 </div>
@@ -36,6 +37,7 @@ const YourComments: React.FC = () => {
                 key={index}
                 userName={commentData.userName}
                 comment={commentData.comment}
+                story={commentData.story}
                 onGoToGame={commentData.onGoToGame} 
             />
             ))}

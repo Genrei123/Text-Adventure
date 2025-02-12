@@ -155,23 +155,23 @@ export default function ProfilePage() {
               </div>
               </div>
 
-              <p className="text-[#ffffff]/80 mb-6 self-start text-2xl">
+                <p className="text-[#ffffff]/80 mb-6 self-start text-2xl">
                 {userDetails?.email || 'Email'}
-              </p>
+                </p>
+
                 <p className="text-[#ffffff]/80 mb-4 text-left text-xl">
                 {userDetails?.bio
                   ? userDetails.bio.match(/.{1,40}/g)?.map((line, index) => (
                   <span key={index}>{line}<br /></span>
                   ))
                   : <span style={{ opacity: 0.2 }}>Add a bio to tell others more about yourself.</span>}
-              </p>
+                </p>
                 <button
                 onClick={() => setShowBioModal(true)}
                 className="text-[#B39C7D]/80 mb-6 self-start bg-transparent border-none cursor-pointer"
                 >
                 {userDetails?.bio ? <span style={{ opacity: 0.8 }}>Edit Bio</span> : <span style={{ opacity: 0.8 }}>Add Bio</span>}
                 </button>
-                {/* wait lang */}
                 {showBioModal && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 animate-fadeIn">
                 <div className="fixed inset-0 bg-black opacity-80"></div>
@@ -196,6 +196,7 @@ export default function ProfilePage() {
                 <textarea
                   id="bio"
                   maxLength={60}
+                  defaultValue={userDetails?.bio || ""}
                   className="w-full p-2 rounded bg-[#2e2e2e] text-[#ffffff]"
                 />
                 <small className="block text-[#B39C7D] mt-2">Limit: 60 characters</small>
@@ -353,39 +354,39 @@ export default function ProfilePage() {
                   onClick={() => setActiveTab("games")}
                   className={`px-4 py-2 text-[#ffffff] ${activeTab === "games" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:shadow-[0_0_10px_2px_rgba(179,156,125,0.75)] rounded-full bg-transparent`}
                 >
-                  YOUR GAMES
+                  GAMES
                 </button>
                 <button
                   onClick={() => setActiveTab("comments")}
                   className={`px-4 py-2 text-[#ffffff] ${activeTab === "comments" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:shadow-[0_0_10px_2px_rgba(179,156,125,0.75)] rounded-full bg-transparent`}
                 >
-                  YOUR COMMENTS
+                  COMMENTS
                 </button>
                 <button
                   onClick={() => setActiveTab("likes")}
                   className={`px-4 py-2 text-[#ffffff] ${activeTab === "likes" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:shadow-[0_0_10px_2px_rgba(179,156,125,0.75)] rounded-full bg-transparent`}
                 >
-                  YOUR LIKES
+                  LIKES
                 </button>
               </div>
             </div>
             <div className="mt-4">
               {activeTab === "games" && (
                 <div>
-                  <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Your Games</h2>
+                  <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Games</h2>
                   <YourGames />
                 </div>
               )}
             </div>
             {activeTab === "comments" && (
               <div>
-                <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Your Comments</h2>
+                <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Comments</h2>
                 <YourComments />
               </div>
             )}
             {activeTab === "likes" && (
               <div>
-                <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Your Likes</h2>
+                <h2 className="text-2xl text-[#B39C7D] mb-4 font-cinzel">Likes</h2>
                 <YourLikes />
               </div>
             )}
