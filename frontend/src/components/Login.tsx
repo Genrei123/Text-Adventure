@@ -56,7 +56,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           localStorage.setItem('username', data.user.email);
           onLogin(data.user.email);
           toast.success('Login successful!');
-          navigate('/');
+          navigate('/homepage');
         } else {
           setErrors({ general: data.message });
           toast.error(data.message);
