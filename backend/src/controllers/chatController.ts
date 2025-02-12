@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import OpenAI from  "openai";
 import axios from 'axios';
 import Chat from '../model/chat';
+import User from '../model/user';
+import Game from '../model/game';
 
 
 
@@ -23,6 +25,33 @@ export const handleChatRequest = async (req: Request, res: Response) => {
             where: { session_id: req.body.session_id },
             order: [['createdAt', 'DESC']],
         });
+
+        if (!previousChats) {
+            // Check if UserId and GameId are provided and valid
+            const user = await User.findByPk(req.body.userId);
+            if (!user) {
+                res.status(400).send("User not found.");
+                return;
+            }
+
+            const game = await Game.findByPk(req.body.gameId);
+            if (!game) {
+                res.status(400).send("Game not found.");
+                return;
+            }
+
+            // Create a new chat if user and game are valid
+            await Chat.create({
+                session_id: req.body.session_id,
+                model: "gpt-3.5-turbo",
+                role: "user",
+                content: req.body.message,
+                GameId: req.body.gameId,
+                UserId: req.body.userId,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
+        }
 
 
         // Prepare messages for, we are basically copying the previous chats and adding the new message
