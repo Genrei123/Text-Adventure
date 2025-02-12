@@ -1,72 +1,78 @@
 import { Request, Response } from 'express';
-import { ValidationError } from 'sequelize';
+import OpenAI from  "openai";
+import axios from 'axios';
 import Chat from '../model/chat';
-import User from '../model/user';
-import Game from '../model/game';
-import { sanitizeInput } from '../utils/sanitizeInput';
 
-export const processUserResponse = async (req: Request, res: Response): Promise<void> => {
-    const { session_id, model, role, content, GameId, UserId, parent_id, image_prompt_name, image_prompt_text, image_url } = req.body;
 
-    // Log the received request body for debugging
-    console.log('Received payload:', req.body);
 
-    // Validate required fields
-    if (!session_id || !model || !role || !content || !GameId || !UserId) {
-        res.status(400).json({ message: 'Missing required fields' });
-        return;
-    }
-
-    // Check for valid content type
-    if (typeof content !== 'string' || content.trim() === '') {
-        res.status(400).json({ message: 'Invalid content field' });
-        return;
-    }
-
+export const handleChatRequest = async (req: Request, res: Response) => {
     try {
-        // Check if the user exists
-        const user = await User.findByPk(UserId);
-        if (!user) {
-            res.status(400).json({ message: 'User not found' });
+        // Check for request if it's valid or not
+        if (!req.body || !req.body.message) {
+            res.status(400).send("Invalid request body.");
             return;
         }
 
-        // Check if the game exists
-        const game = await Game.findByPk(GameId);
-        if (!game) {
-            res.status(400).json({ message: 'Game not found' });
+        if (!process.env.OPENAI_API_KEY) {
+            res.status(500).send("OpenAI API key not found.");
             return;
         }
 
-        // Sanitize user input
-        const sanitizedContent = sanitizeInput(content);
+        // Look for old chats
+        const previousChats = await Chat.findAll({
+            where: { session_id: req.body.session_id },
+            order: [['createdAt', 'DESC']],
+        });
 
-        // Create a new chat entry
-        const newChat = await Chat.create({
-            session_id,
-            model,
-            role,
-            content: sanitizedContent,
-            GameId,
-            UserId,
-            parent_id,
-            image_prompt_name,
-            image_prompt_text,
-            image_url,
+
+        // Prepare messages for, we are basically copying the previous chats and adding the new message
+        const messages = previousChats.map((chat) => ({
+            role: chat.role,
+            content: chat.content,
+        })); 
+
+        // Add the new message
+        messages.push({
+            role: "user",
+            content: req.body.message,
+        });
+
+        // Call OpenAI API
+        const response = await axios.post("https://api.openai.com/v1/chat/completions", {
+            model: "gpt-3.5-turbo",
+            messages,
+            },
+
+            {
+                headers: {
+                    Authorization: `Bearer ` +  process.env.MY_OPENAI_API_KEY,
+                    "Content-Type": "application/json"
+                }
+            });
+
+        const reply = response.data.choices[0].message.content;
+
+        // Save the chat
+        // The role is in the assistant side because we are saving the AI's response instead of our response
+        // We are inputting the date that we have set it to be the current date
+        await Chat.create({
+            session_id: req.body.session_id,
+            model: "gpt-3.5-turbo",
+            role: "assistant",
+            content: reply,
+            GameId: req.body.gameId,
+            UserId: req.body.userId,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
 
-        res.status(201).json({
-            message: 'Response processed successfully',
-            chat: newChat,
+        res.status(200).send({
+            message: reply,
         });
+
     } catch (error) {
-        if (error instanceof ValidationError) {
-            res.status(400).json({ message: error.errors.map(e => e.message).join(', ') });
-        } else {
-            console.error('Error processing user response:', error);
-            res.status(500).json({ message: 'Server error' });
-        }
+        console.error(error);
+        res.status(500).send(error);
+        return;
     }
 };

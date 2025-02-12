@@ -43,6 +43,7 @@ app.use('/invoice', invoiceRoutes);
 app.use('/shop', shopRoutes);
 app.use('/webhook', webhookRoutes);
 app.use('/gameplay', coinRoutes);
+app.use('/ai', chatRoutes);
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
