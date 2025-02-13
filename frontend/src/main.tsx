@@ -2,10 +2,11 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
-import Footer from './components/Footer';
 import emailjs from 'emailjs-com';
+import Footer from './components/Footer';
+import "./App.css";
 
-emailjs.init(process.env.REACT_APP_EMAILJS_PUBLIC_KEY!);
+emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
 
 const rootElement = document.getElementById('root');
 
@@ -18,9 +19,10 @@ if (rootElement) {
           <br key={i} />
         ))}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Footer />
         </div>
+        <Footer />
       </div>
+      
     </React.StrictMode>
   );
 } else {

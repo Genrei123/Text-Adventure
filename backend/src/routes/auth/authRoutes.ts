@@ -16,11 +16,11 @@ const createAuthRouter = (frontendUrl: string) => {
     res.send("Hello World!");
   });
 
-  router.get('/auth/google',
+  router.get('/google',
     passport.authenticate('google', { scope: ['profile', 'email'] })
   );
 
-  router.get('/auth/google/callback',
+  router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req: Request, res: Response) => {
       if (req.user) {
@@ -28,14 +28,14 @@ const createAuthRouter = (frontendUrl: string) => {
         const username = user.displayName || user.emails[0]?.value;
         const token = Jwt.sign({ id: user.id, username }, 'test', { expiresIn: '1h' });
         res.cookie('token', token, { httpOnly: true });
-        res.redirect(`${frontendUrl}/homepage?username=${encodeURIComponent(username)}`);
+        res.redirect(`${frontendUrl}/home?username=${encodeURIComponent(username)}`);
       } else {
         res.redirect('/?error=authentication_failed');
       }
     }
   );
 
-  router.get('/auth/logout', (req: Request, res: Response) => {
+  router.get('/logout', (req: Request, res: Response) => {
     res.clearCookie('token', { 
       httpOnly: true,
       domain: process.env.DOMAIN,
@@ -60,7 +60,7 @@ const createAuthRouter = (frontendUrl: string) => {
     res.send("This is a protected route");
   });
 
-  router.get('/auth/:provider',
+  router.get('/:provider',
     (req, res, next) => {
       const { provider } = req.params;
       if (provider === 'google') {
@@ -70,7 +70,7 @@ const createAuthRouter = (frontendUrl: string) => {
     }
   );
 
-  router.get('/auth/:provider/callback',
+  router.get('/:provider/callback',
     (req, res, next) => {
       const { provider } = req.params;
       if (provider === 'google') {
