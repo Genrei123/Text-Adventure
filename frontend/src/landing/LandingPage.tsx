@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
 const LandingPage: React.FC = () => {
     const contentRef = useRef<HTMLDivElement>(null);

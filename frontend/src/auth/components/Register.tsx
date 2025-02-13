@@ -40,7 +40,7 @@ interface ValidationErrors {
  * 
  * @param {RegisterProps} props - Component props
  */
-const Register: React.FC<RegisterProps> = ({ onRegister }) => {
+const Register: React.FC<RegisterProps> = ({ }) => {
   // Form state management
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -48,7 +48,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   
   // Hook for programmatic navigation
@@ -121,7 +121,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       toast.info('Registering...');
 
       try {
-        const response = await axiosInstance.post('/auth/register', { username, email, password });
+        await axiosInstance.post('/auth/register', { username, email, password });
         toast.success('Registration successful! A verification email has been sent to your email address.');
         setTimeout(() => {
           navigate('/login');
