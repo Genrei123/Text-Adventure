@@ -7,7 +7,8 @@
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "serve": "node dist/index.js",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "nodemon": "nodemon src/index.ts"
   },
   "repository": {
     "type": "git",

@@ -1,18 +1,18 @@
 import 'dotenv/config';
 import cors from 'cors';
-import corsOptions from './middlware/cors';
+import corsOptions from './config/cors';
 import express, { Request, Response } from 'express';
 import session from 'express-session';
 import database from './service/database';
-import routes from './routes/routes';
-import adminController from './routes/userCRUDRoutes';
-import invoiceRoutes from './routes/Xendit Routes/invoiceRoutes';
-import shopRoutes from './routes/Xendit Routes/shopRoutes';
-import webhookRoutes from './routes/Xendit Routes/webhookRoutes';
-import createAuthRouter from './routes/authRoutes';
-import chatRoutes from './routes/chatRoutes';
-import User from './model/user';
-import coinRoutes from './routes/Game Routes/coinRoutes';
+import routes from './routes/auth/routes';
+import adminController from './routes/user/userCRUDRoutes';
+import invoiceRoutes from './routes/transaction/invoiceRoutes';
+import shopRoutes from './routes/transaction/shopRoutes';
+import webhookRoutes from './routes/transaction/webhookRoutes';
+import createAuthRouter from './routes/auth/authRoutes';
+import chatRoutes from './routes/chat/chatRoutes';
+import User from './model/user/user';
+import coinRoutes from './routes/coins/coinRoutes';
 import { createServer } from './websocket/socket';
 
 const PORT = process.env.PORT || 3000;
@@ -37,8 +37,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Route setup
-app.use('/', routes);
-app.use('/', adminController);
+app.use('/auth', routes);
+app.use('/admin', adminController);
 app.use('/invoice', invoiceRoutes);
 app.use('/shop', shopRoutes);
 app.use('/webhook', webhookRoutes);
@@ -47,10 +47,9 @@ app.use('/ai', chatRoutes);
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
-app.use('/api', authRouter);
+app.use('/auth', authRouter);
 
 const server = createServer(app);
-
 server.listen(PORT, async () => { 
   try {
     await database.authenticate();
