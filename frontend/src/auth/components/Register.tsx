@@ -4,6 +4,7 @@ import { FaGoogle } from 'react-icons/fa';
 import axiosInstance from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 /**
  * Interface for Register component props
@@ -126,7 +127,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           navigate('/login');
         }, 3000);
       } catch (error) {
-        if (error.response && error.response.data.message) {
+        if (axios.isAxiosError(error) && error.response && error.response.data.message) {
           toast.error(error.response.data.message);
         } else {
           toast.error('Registration failed. Please try again.');

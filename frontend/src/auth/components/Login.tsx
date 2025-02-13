@@ -83,7 +83,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     try {
         // Ensure clean URL construction
         const authUrl = `${import.meta.env.VITE_SITE_URL}/auth/${provider.toLowerCase()}`;
-        alert(import.meta.env.VITE_SITE_URL);
         window.location.href = authUrl;
     } catch (error) {
         console.error(`Error during ${provider} login:`, error);

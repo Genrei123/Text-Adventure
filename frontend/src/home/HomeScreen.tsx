@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from '../axiosConfig/axiosConfig';
+import axios from '../../config/axiosConfig';
 
 const HomeScreen: React.FC = () => {
   const [username, setUsername] = useState<string | null>(null);
@@ -8,7 +8,7 @@ const HomeScreen: React.FC = () => {
     const fetchUser = async () => {
       try {
         const data = await axios.get('/admin/user');
-        setUsername(data.username);
+        setUsername(data.data.username || null);
       } catch (error) {
         console.error('Error fetching user:', error);
       }

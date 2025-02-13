@@ -15,7 +15,6 @@ const VerifyEmail = () => {
         setStatus("success");
       } catch (error) {
         setMessage("Failed to verify email. Please try again.");
-        alert("Failed to verify email. Please try again.");
         console.log("Failed to verify email:", error);
         setStatus("error");
       }

@@ -39,7 +39,7 @@ const GameScreen: React.FC = () => {
         } catch (err) {
             console.error('Error sending message:', err);
             setError(
-                err.response?.data?.message || 'An unexpected error occurred. Please try again.'
+                'An unexpected error occurred. Please try again.'
             );
         }
     };
