@@ -46,7 +46,7 @@ function App() {
         <Route path ="/profile" element ={<UserProfile />} />
         <Route path ="/game" element ={<GameScreen />} />
         <Route path ="/subscription" element ={<Subscription />} />
-
+        <Route path ="/active-players" element ={<div>Active Players</div>} />
       </Routes>
     </Router>
   );

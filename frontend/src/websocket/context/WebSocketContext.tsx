@@ -1,8 +1,8 @@
 import React, { createContext, useEffect, useState, useContext, ReactNode } from 'react';
-import { io } from 'socket.io-client';
+import socketIOClient from 'socket.io-client';
 import { useLocation } from 'react-router-dom';
 
-const socket = io('http://localhost:3000'); // Establish the connection only once
+const socket = socketIOClient('http://localhost:3000'); // Establish the connection only once
 
 interface WebSocketContextProps {
   playerCount: number;
@@ -10,6 +10,10 @@ interface WebSocketContextProps {
 
 interface WebSocketProviderProps {
   children: ReactNode;
+}
+
+interface PlayerCountData {
+  activePlayers: number;
 }
 
 const WebSocketContext = createContext<WebSocketContextProps>({ playerCount: 0 });
@@ -22,7 +26,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
     console.log(`Emitting join event for route: ${location.pathname}`);
     socket.emit('join', { route: location.pathname });
 
-    socket.on('playerCount', (data) => {
+    socket.on('playerCount', (data: PlayerCountData) => {
       console.log(`Received playerCount event: ${data.activePlayers}`);
       setPlayerCount(data.activePlayers);
     });
