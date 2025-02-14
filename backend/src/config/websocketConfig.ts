@@ -5,9 +5,10 @@
 // This will allow the backend to count the number of active players on the '/active-players' route
 
 const includedRoutes: string[] = [
-  '/homepage',
-  '/gameScreen',
+  '/home',
+  '/game',
   '/profile',
+  '/active-players'
   // Add more routes here
 ];
 

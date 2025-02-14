@@ -10,26 +10,23 @@ import Homepage from './home/Homepage';
 import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import Subscription from './subscription/Subscription';
-
-
+import { WebSocketProvider } from './websocket/context/WebSocketContext';
+import ActivePlayerCount from './websocket/components/ActivePlayerCount';
 
 function App() {
-  // Add proper typing for username
   const [username, setUsername] = useState<string | null>(null);
 
-  // Add proper typing for user parameter
-  const handleLogin = (user: string) => {
+  const handleLogin = (user: string): void => {
     setUsername(user);
   };
 
-  // Add proper typing for user parameter and isSocialLogin
-  const handleRegister = (user: string, isSocialLogin: boolean) => {
+  const handleRegister = (user: string, isSocialLogin: boolean): void => {
     if (isSocialLogin) {
       setUsername(user);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     setUsername(null);
   };
 
@@ -37,16 +34,16 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path ="/login" element={<LoginScreen onLogin={handleLogin} />} />
-        <Route path ="/register" element={<Register onRegister={handleRegister} />} />
-        <Route path ="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/login" element={<LoginScreen onLogin={handleLogin} />} />
+        <Route path="/register" element={<Register onRegister={handleRegister} />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
-        <Route path ="/home" element ={<Homepage onLogout={handleLogout} />} />
-        <Route path ="/profile" element ={<UserProfile />} />
-        <Route path ="/game" element ={<GameScreen />} />
-        <Route path ="/subscription" element ={<Subscription />} />
-        <Route path ="/active-players" element ={<div>Active Players</div>} />
+        <Route path="/home" element={<WebSocketProvider><Homepage onLogout={handleLogout} /></WebSocketProvider>} />
+        <Route path="/profile" element={<WebSocketProvider><UserProfile /></WebSocketProvider>} />
+        <Route path="/game" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
+        <Route path="/subscription" element={<Subscription />} />
+        <Route path="/active-players" element={<WebSocketProvider><ActivePlayerCount /></WebSocketProvider>} />
       </Routes>
     </Router>
   );
