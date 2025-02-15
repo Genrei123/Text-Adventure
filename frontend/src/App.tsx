@@ -11,6 +11,10 @@ import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import Subscription from './subscription/Subscription';
 import EmailConfirmation from './auth/components/EmailConfirmation';
+import Forbidden from './auth/components/Forbidden';
+import ServerError from './auth/components/ServerError';
+import Unauthorized from './auth/components/Unauthorized';
+import NotFound from './auth/components/NotFound';
 
 
 
@@ -48,6 +52,10 @@ function App() {
         <Route path ="/profile" element ={<UserProfile />} />
         <Route path ="/game" element ={<GameScreen />} />
         <Route path ="/subscription" element ={<Subscription />} />
+        <Route path="/forbidden" element={<Forbidden />} />
+        <Route path="/server-error" element={<ServerError />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
 
       </Routes>
     </Router>

@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
                     <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
                         <Link to="/message">
                             <img src="/Message.svg" className="w-8 h-8 group-hover:opacity-0" />
-                            <img src="/Message-After.svg" className="w-8 h-8 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
+                            <img src="/Message-after.svg" className="w-8 h-8 absolute top-0 left-0 opacity-0 group-hover:opacity-100" />
                         </Link>
                     </li>
                     {/* <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
