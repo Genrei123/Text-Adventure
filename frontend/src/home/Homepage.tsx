@@ -21,7 +21,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       // Fetch in local storage
-      const token = localStorage.getItem('username');
+      const token = localStorage.getItem('token');
       if (!token) {
         return;
       }

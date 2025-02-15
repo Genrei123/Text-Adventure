@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import passport from '../../middlware/auth/google/passport';
 import Jwt from 'jsonwebtoken';
 import cookieJwtAuth from '../../middlware/auth/auth';
@@ -26,7 +26,7 @@ const createAuthRouter = (frontendUrl: string) => {
       if (req.user) {
         const user = req.user as any;
         const username = user.displayName || user.emails[0]?.value;
-        const token = Jwt.sign({ id: user.id, username }, 'test', { expiresIn: '1h' });
+        const token = Jwt.sign({ id: user.id, username }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
         res.cookie('token', token, { httpOnly: true });
         res.redirect(`${frontendUrl}/home?username=${encodeURIComponent(username)}`);
       } else {
@@ -71,14 +71,14 @@ const createAuthRouter = (frontendUrl: string) => {
   );
 
   router.get('/:provider/callback',
-    (req, res, next) => {
+    (req: Request, res: Response, next: NextFunction) => {
       const { provider } = req.params;
       if (provider === 'google') {
-        return passport.authenticate('google', { failureRedirect: '/' }, (err, user, info) => {
+        return passport.authenticate('google', { failureRedirect: '/' }, (err: any, user: any, info: any) => {
           if (err || !user) {
             return res.redirect('/?error=authentication_failed');
           }
-          const token = Jwt.sign({ id: user.id, email: user.email }, 'test', { expiresIn: '1h' });
+          const token = Jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
           res.cookie('token', token, { httpOnly: true });
           res.redirect('/');
         })(req, res, next);
