@@ -10,8 +10,16 @@ import Homepage from './home/Homepage';
 import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import Subscription from './subscription/Subscription';
+import EmailConfirmation from './auth/components/EmailConfirmation';
+import Forbidden from './auth/components/Forbidden';
+import ServerError from './auth/components/ServerError';
+import Unauthorized from './auth/components/Unauthorized';
+import NotFound from './auth/components/NotFound';
 import { WebSocketProvider } from './websocket/context/WebSocketContext';
 import ActivePlayerCount from './websocket/components/ActivePlayerCount';
+
+
+
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
@@ -38,11 +46,16 @@ function App() {
         <Route path="/register" element={<Register onRegister={handleRegister} />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/email-confirmation" element={<EmailConfirmation />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route path="/home" element={<WebSocketProvider><Homepage onLogout={handleLogout} /></WebSocketProvider>} />
         <Route path="/profile" element={<WebSocketProvider><UserProfile /></WebSocketProvider>} />
         <Route path="/game" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
         <Route path="/subscription" element={<Subscription />} />
+        <Route path="/forbidden" element={<Forbidden />} />
+        <Route path="/server-error" element={<ServerError />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
