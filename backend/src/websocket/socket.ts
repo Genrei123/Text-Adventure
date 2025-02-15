@@ -2,6 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { createServer as createHttpServer } from 'http';
 import { Express } from 'express';
 import includedRoutes from '../config/websocketConfig';
+import corsOptions from '../config/cors';
 
 interface JoinPayload {
   route: string;
@@ -14,14 +15,7 @@ interface PlayerCount {
 export function createServer(app: Express) {
   const server = createHttpServer(app);
   const io = new Server(server, {
-    cors: {
-      origin: [
-        "http://localhost:5173",
-        "https://text-adventure-six.vercel.app"
-      ],
-      methods: ["GET", "POST"],
-      credentials: true
-    }
+    cors: corsOptions
   });
 
   let activePlayers = 0;

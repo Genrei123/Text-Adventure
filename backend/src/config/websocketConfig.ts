@@ -4,11 +4,11 @@
 // For counting active players, you can add the route '/active-players'
 // This will allow the backend to count the number of active players on the '/active-players' route
 
-const includedRoutes = [
-  '/homepage',
-  '/gameScreen',
+const includedRoutes: string[] = [
+  '/home',
+  '/game',
   '/profile',
   // Add more routes here
 ];
 
-module.exports = includedRoutes;
+export default includedRoutes;
