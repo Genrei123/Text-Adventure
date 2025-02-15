@@ -29,19 +29,12 @@ export function createServer(app: Express) {
     const totalPlayers = await User.count();
     const offlinePlayers = totalPlayers - activePlayers;
     const activeSessions = activePlayers; // Assuming each active player has one active session
-
-    console.log('Player Statistics:');
-    console.log(`Total registered players: ${totalPlayers}`);
-    console.log(`Active players: ${activePlayers}`);
-    console.log(`Offline players: ${offlinePlayers}`);
-    console.log(`Active sessions: ${activeSessions}`);
   };
 
   io.on('connection', (socket: Socket) => {
     socket.on('join', async ({ route, email, token }: JoinPayload) => {
       const normalizedRoute = route.toLowerCase();
       console.log(`New connection from route: ${normalizedRoute}`);
-      console.log(`Included routes: ${includedRoutes}`);
       console.log(`Token received: ${token}`);
 
       try {
