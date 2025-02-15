@@ -7,7 +7,8 @@
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "serve": "node dist/index.js",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "nodemon": "nodemon src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -60,6 +61,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
     "nodemailer": "^6.10.0",
+    "openai": "^4.83.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.13.1",
@@ -70,6 +72,7 @@
     "socket.io-client": "^4.8.1",
     "tiktoken": "^1.0.18",
     "uuid": "^11.0.5",
+    "ws": "^8.18.0",
     "xendit-node": "^6.0.0"
   }
 }

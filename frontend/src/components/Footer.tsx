@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { FaFacebook, FaInstagram, FaYoutube, FaLinkedin } from 'react-icons/fa';
 import FooterLine from './FooterLine';
+import "../App.css";
 
 const Footer = () => {
   useEffect(() => {
