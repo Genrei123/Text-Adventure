@@ -118,7 +118,7 @@ const GameScreen: React.FC = () => {
                     />
                     <button className="p-4 bg-transparent rounded-r-2xl relative group" onClick={handleSubmit}>
                         <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
-                        <img src="/Enter-After.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
+                        <img src="/Enter-after.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
                     </button>
                 </div>
                 {error && <p className="text-red-500 mt-2">{error}</p>}
