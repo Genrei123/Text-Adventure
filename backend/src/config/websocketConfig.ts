@@ -8,7 +8,6 @@ const includedRoutes: string[] = [
   '/home',
   '/game',
   '/profile',
-  '/active-players'
   // Add more routes here
 ];
 

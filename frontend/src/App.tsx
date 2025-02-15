@@ -43,7 +43,6 @@ function App() {
         <Route path="/profile" element={<WebSocketProvider><UserProfile /></WebSocketProvider>} />
         <Route path="/game" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
         <Route path="/subscription" element={<Subscription />} />
-        <Route path="/active-players" element={<WebSocketProvider><ActivePlayerCount /></WebSocketProvider>} />
       </Routes>
     </Router>
   );
