@@ -15,6 +15,7 @@ import Forbidden from './auth/components/Forbidden';
 import ServerError from './auth/components/ServerError';
 import Unauthorized from './auth/components/Unauthorized';
 import NotFound from './auth/components/NotFound';
+import GameDetails from './game-details/GameDetails';
 
 
 
@@ -56,6 +57,7 @@ function App() {
         <Route path="/server-error" element={<ServerError />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/game-details" element={<GameDetails />} />
 
       </Routes>
     </Router>
