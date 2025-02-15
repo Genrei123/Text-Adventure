@@ -10,12 +10,20 @@ import { activeUserEmails } from '../shared/activeUser'; // Import activeUserEma
 interface JoinPayload {
   route: string;
   email: string;
-  token: string; // Add token to the payload
+  token: string;
 }
 
 interface PlayerCount {
   activePlayers: number;
 }
+
+interface SessionData {
+  startTime: Date;
+  endTime?: Date;
+  interactions: string[];
+}
+
+export const playerSessions: Map<string, SessionData> = new Map(); // Export playerSessions
 
 export function createServer(app: Express) {
   const server = createHttpServer(app);
@@ -27,28 +35,33 @@ export function createServer(app: Express) {
 
   const logPlayerStats = async () => {
     const totalPlayers = await User.count();
-    const offlinePlayers = totalPlayers - activePlayers;
-    const activeSessions = activePlayers; // Assuming each active player has one active session
   };
 
   io.on('connection', (socket: Socket) => {
     socket.on('join', async ({ route, email, token }: JoinPayload) => {
-      const normalizedRoute = route.toLowerCase();
+      if (!route) {
+        console.error('Route is missing');
+        return;
+      }
+      const normalizedRoute = route; 
       console.log(`New connection from route: ${normalizedRoute}`);
       console.log(`Token received: ${token}`);
 
       try {
         const user = await verifyToken(token);
         if (user) {
-          const userEmail = user.email;
+          const userEmail = user.email; 
           if (normalizedRoute && includedRoutes.some(includedRoute => 
-            normalizedRoute.includes(includedRoute.toLowerCase()))) {
+            normalizedRoute.includes(includedRoute))) {
             if (!activeUserEmails.has(userEmail)) {
               activeUserEmails.add(userEmail);
               activePlayers++;
               console.log(`Player connected. Active players: ${activePlayers}`);
               io.emit('playerCount', { activePlayers } as PlayerCount);
               await logPlayerStats(); // Log player statistics
+
+              // Track session start time
+              playerSessions.set(userEmail, { startTime: new Date(), interactions: [] });
             } else {
               console.log(`User email ${userEmail} is already connected.`);
             }
@@ -63,23 +76,41 @@ export function createServer(app: Express) {
       }
     });
 
+    socket.on('interaction', ({ email, interaction }: { email: string, interaction: string }) => {
+      const session = playerSessions.get(email); 
+      if (session) {
+        session.interactions.push(interaction);
+        console.log(`Interaction logged for ${email}: ${interaction}`);
+      }
+    });
+
     socket.on('leave', async ({ route, email, token }: JoinPayload) => {
-      const normalizedRoute = route.toLowerCase();
+      if (!route) {
+        console.error('Route is missing');
+        return;
+      }
+      const normalizedRoute = route;
       console.log(`Disconnection from route: ${normalizedRoute}`);
-      console.log(`Token received: ${token}`);
 
       try {
         const user = await verifyToken(token);
         if (user) {
-          const userEmail = user.email;
+          const userEmail = user.email; 
           if (normalizedRoute && includedRoutes.some(includedRoute => 
-            normalizedRoute.includes(includedRoute.toLowerCase()))) {
+            normalizedRoute.includes(includedRoute))) {
             if (activeUserEmails.has(userEmail)) {
               activeUserEmails.delete(userEmail);
               activePlayers--;
               console.log(`Player disconnected. Active players: ${activePlayers}`);
               io.emit('playerCount', { activePlayers } as PlayerCount);
               await logPlayerStats(); // Log player statistics
+
+              // Track session end time
+              const session = playerSessions.get(userEmail);
+              if (session) {
+                session.endTime = new Date();
+                console.log(`Session ended for ${userEmail}:`, session);
+              }
             } else {
               console.log(`User email ${userEmail} is not connected.`);
             }
