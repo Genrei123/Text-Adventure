@@ -10,6 +10,7 @@ import Homepage from './home/Homepage';
 import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import Subscription from './subscription/Subscription';
+import EmailConfirmation from './auth/components/EmailConfirmation';
 
 
 
@@ -41,6 +42,7 @@ function App() {
         <Route path ="/register" element={<Register onRegister={handleRegister} />} />
         <Route path ="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/email-confirmation" element={<EmailConfirmation />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route path ="/home" element ={<Homepage onLogout={handleLogout} />} />
         <Route path ="/profile" element ={<UserProfile />} />
