@@ -1,7 +1,7 @@
 import React from 'react';
 import { WebSocketProvider } from '../context/WebSocketContext';
 
-const withWebSocketProvider = (Component: React.ComponentType<any>) => {
+const withWebSocket = (Component: React.ComponentType<any>) => {
   return (props: any) => (
     <WebSocketProvider>
       <Component {...props} />
@@ -9,4 +9,4 @@ const withWebSocketProvider = (Component: React.ComponentType<any>) => {
   );
 };
 
-export default withWebSocketProvider;
+export default withWebSocket;

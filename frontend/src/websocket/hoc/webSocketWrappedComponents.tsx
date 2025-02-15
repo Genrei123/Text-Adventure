@@ -1,4 +1,4 @@
-import withWebSocketProvider from './withWebSocketProvider';
+import withWebSocketProvider from './withWebSocket';
 import Homepage from '../../home/Homepage';
 import UserProfile from '../../profile/UserProfile';
 import GameScreen from '../../game/GameScreen';
