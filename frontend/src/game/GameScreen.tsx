@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 
@@ -6,14 +6,29 @@ const GameScreen: React.FC = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [showScroll, setShowScroll] = useState(false);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [chatMessages, setChatMessages] = useState<Array<{content: string, isUser: boolean, timestamp: string}>>([]);
+
+    useEffect(() => {
+        if (textareaRef.current) {
+            const textarea = textareaRef.current;
+            setShowScroll(textarea.scrollHeight > textarea.clientHeight);
+        }
+    }, [message]);
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit(e as any);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setSuccess('');
 
-        // Frontend validation
         if (!message.trim()) {
             setError('Message cannot be empty.');
             return;
@@ -25,15 +40,12 @@ const GameScreen: React.FC = () => {
             role: 'user',
             content: message,
             GameId: 1,
-            UserId: 70, // Replace with dynamic user ID if needed
+            UserId: 70,
         };
 
-        // Log the payload for debugging
         console.log('Payload:', payload);
 
         try {
-            // TODO! Send the message to the backend
-            // For now, we'll just add the message to the chat
             const newUserMessage = {
                 content: message,
                 isUser: true,
@@ -41,7 +53,6 @@ const GameScreen: React.FC = () => {
             };
             setChatMessages(prevMessages => [...prevMessages, newUserMessage]);
 
-            // Simulate a response from the AI
             setTimeout(() => {
                 const aiResponse = {
                     content: "This is a simulated AI response.",
@@ -55,9 +66,7 @@ const GameScreen: React.FC = () => {
             setMessage('');
         } catch (err) {
             console.error('Error sending message:', err);
-            setError(
-                'An unexpected error occurred. Please try again.'
-            );
+            setError('An unexpected error occurred. Please try again.');
         }
     };
 
@@ -108,15 +117,23 @@ const GameScreen: React.FC = () => {
                         <span>See</span>
                     </button>
                 </div>
-                <div className="w-full flex items-center bg-[#311F17] rounded-2xl focus-within:outline-none">
-                    <input 
-                        type="text" 
-                        className="w-full h-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none" 
+                <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
+                    <textarea 
+                        ref={textareaRef}
+                        className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${
+                            showScroll ? 'overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent' : 'overflow-y-hidden'
+                        }`}
                         placeholder="Type your text here..." 
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        rows={1}
+                        style={{
+                            minHeight: '56px',
+                            height: `${Math.min(message.split('\n').length * 24 + 32, 192)}px`
+                        }}
                     />
-                    <button className="p-4 bg-transparent rounded-r-2xl relative group" onClick={handleSubmit}>
+                    <button className="p-4 bg-transparent rounded-r-2xl relative group self-start" onClick={handleSubmit}>
                         <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
                         <img src="/Enter-after.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
                     </button>
