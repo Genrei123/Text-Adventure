@@ -9,7 +9,7 @@ import { sendVerificationEmail, sendResetPasswordEmail } from '../../service/aut
 import crypto from 'crypto';
 
 const generateVerificationToken = () => {
-  return crypto.randomBytes(32).toString('hex');
+    return crypto.randomBytes(32).toString('hex');
 };
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
@@ -30,7 +30,6 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
 
         const existingUserByUsername = await User.findOne({ where: { username } });
         if (existingUserByUsername) {
-            res.status(400).json({ message: 'Username already exists. Please try another username.' });
             res.status(400).json({ message: 'Username already exists. Please try another username.' });
             return;
         }
@@ -84,38 +83,38 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { email, password } = req.body;
+    try {
+        const { email, password } = req.body;
 
-    // Find the user by email
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      res.status(401).json({ message: 'Email not found. Please check your email or register.' });
-      return;
-    }
+        // Find the user by email
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            res.status(401).json({ message: 'Email not found. Please check your email or register.' });
+            return;
+        }
 
-    // Check if the password is correct
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      res.status(401).json({ message: 'Incorrect account credentials. Please try again.' });
-      return;
-    } 
+        // Check if the password is correct
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            res.status(401).json({ message: 'Incorrect account credentials. Please try again.' });
+            return;
+        }
 
-    // Check if the email is verified
-    if (!user.emailVerified) {
-      res.status(401).json({ message: 'Email not verified. Please check your email for the verification link.' });
-      return;
-    }
+        // Check if the email is verified
+        if (!user.emailVerified) {
+            res.status(401).json({ message: 'Email not verified. Please check your email for the verification link.' });
+            return;
+        }
 
-    // Generate JWT token
-    const token = jwt.sign({ email }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+        // Generate JWT token
+        const token = jwt.sign({ email: user.email, id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
 
-    res.status(200).json({ message: 'Login successful', token, user: { id: user.id, username: user.username, email: user.email, private: user.private, model: user.model, admin: user.admin } });
+        res.status(200).json({ message: 'Login successful', token, user: { id: user.id, username: user.username, email: user.email, private: user.private, model: user.model, admin: user.admin } });
 
     } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ message: "Server error" });
-  }
+        console.error("Error during login:", error);
+        res.status(500).json({ message: "Server error" });
+    }
 };
 
 export const verifyEmail = async (req: Request, res: Response): Promise<void> => {
@@ -189,13 +188,13 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        const user = await User.findOne({ 
-            where: { 
+        const user = await User.findOne({
+            where: {
                 resetPasswordToken: token,
                 resetPasswordExpires: {
                     [Op.gt]: new Date() // Token not expired
-                } 
-            } 
+                }
+            }
         });
 
         if (!user) {
@@ -225,13 +224,13 @@ export const validateResetToken = async (req: Request, res: Response): Promise<v
     const { token } = req.body;
 
     try {
-        const user = await User.findOne({ 
-            where: { 
+        const user = await User.findOne({
+            where: {
                 resetPasswordToken: token,
                 resetPasswordExpires: {
                     [Op.gt]: new Date() // Token not expired
-                } 
-            } 
+                }
+            }
         });
 
         if (!user) {
@@ -271,5 +270,23 @@ export const checkAuth = async (req: Request, res: Response): Promise<void> => {
     } catch (error) {
         console.error('Error during authentication check:', error);
         res.status(401).json({ message: 'Unauthorized' });
+    }
+};
+
+// New function to verify the token and return the user
+export const verifyToken = async (token: string): Promise<User | null> => {
+    try {
+        if (!token) {
+            throw new Error('Token is missing');
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string };
+        const user = await User.findOne({ where: { email: decoded.email } });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user;
+    } catch (error: any) {
+        console.error('Token verification error:', error.message);
+        return null;
     }
 };

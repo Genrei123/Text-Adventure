@@ -5,28 +5,6 @@ const Navbar = () => {
   const [username, setUsername] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      // Fetch in local storage
-      const token = localStorage.getItem("username");
-      if (!token) {
-        return;
-      }
-      setUsername(token);
-      console.log("Token:", token);
-    };
-
-
-    // Parse username from the query string
-    const params = new URLSearchParams(location.search);
-    const usernameParam = params.get('username');
-    if (usernameParam) {
-      setUsername(decodeURIComponent(usernameParam));
-    }
-
-    fetchUserData();
-  }, []);
-
   const handleLogout = async () => {
     try {
       // const response = await axios.get('/auth/logout');

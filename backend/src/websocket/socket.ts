@@ -3,9 +3,14 @@ import { createServer as createHttpServer } from 'http';
 import { Express } from 'express';
 import includedRoutes from '../config/websocketConfig';
 import corsOptions from '../config/cors';
+import { verifyToken } from '../controllers/auth/authController'; // Import verifyToken function
+import User from '../model/user/user'; // Import User model
+import { activeUserEmails } from '../shared/activeUser'; // Import activeUserEmails
 
 interface JoinPayload {
   route: string;
+  email: string;
+  token: string; // Add token to the payload
 }
 
 interface PlayerCount {
@@ -20,37 +25,79 @@ export function createServer(app: Express) {
 
   let activePlayers = 0;
 
+  const logPlayerStats = async () => {
+    const totalPlayers = await User.count();
+    const offlinePlayers = totalPlayers - activePlayers;
+    const activeSessions = activePlayers; // Assuming each active player has one active session
+
+    console.log('Player Statistics:');
+    console.log(`Total registered players: ${totalPlayers}`);
+    console.log(`Active players: ${activePlayers}`);
+    console.log(`Offline players: ${offlinePlayers}`);
+    console.log(`Active sessions: ${activeSessions}`);
+  };
+
   io.on('connection', (socket: Socket) => {
-    socket.on('join', ({ route }: JoinPayload) => {
+    socket.on('join', async ({ route, email, token }: JoinPayload) => {
       const normalizedRoute = route.toLowerCase();
       console.log(`New connection from route: ${normalizedRoute}`);
       console.log(`Included routes: ${includedRoutes}`);
-      
-      if (normalizedRoute && includedRoutes.some(includedRoute => 
-        normalizedRoute.includes(includedRoute.toLowerCase()))) {
-        activePlayers++;
-        console.log(`Player connected. Active players: ${activePlayers}`);
-        io.emit('playerCount', { activePlayers } as PlayerCount);
-      } else {
-        console.log(`Route does not match included routes.`);
+      console.log(`Token received: ${token}`);
+
+      try {
+        const user = await verifyToken(token);
+        if (user) {
+          const userEmail = user.email;
+          if (normalizedRoute && includedRoutes.some(includedRoute => 
+            normalizedRoute.includes(includedRoute.toLowerCase()))) {
+            if (!activeUserEmails.has(userEmail)) {
+              activeUserEmails.add(userEmail);
+              activePlayers++;
+              console.log(`Player connected. Active players: ${activePlayers}`);
+              io.emit('playerCount', { activePlayers } as PlayerCount);
+              await logPlayerStats(); // Log player statistics
+            } else {
+              console.log(`User email ${userEmail} is already connected.`);
+            }
+          } else {
+            console.log(`Route does not match included routes.`);
+          }
+        } else {
+          console.log(`User email ${email} is not authenticated.`);
+        }
+      } catch (error: any) {
+        console.error(`Error during join event: ${error.message}`);
       }
     });
 
-    socket.on('leave', ({ route }: JoinPayload) => {
+    socket.on('leave', async ({ route, email, token }: JoinPayload) => {
       const normalizedRoute = route.toLowerCase();
       console.log(`Disconnection from route: ${normalizedRoute}`);
-      
-      if (normalizedRoute && includedRoutes.some(includedRoute => 
-        normalizedRoute.includes(includedRoute.toLowerCase()))) {
-        if (activePlayers > 0) {
-          activePlayers--;
-          console.log(`Player disconnected. Active players: ${activePlayers}`);
-          io.emit('playerCount', { activePlayers } as PlayerCount);
+      console.log(`Token received: ${token}`);
+
+      try {
+        const user = await verifyToken(token);
+        if (user) {
+          const userEmail = user.email;
+          if (normalizedRoute && includedRoutes.some(includedRoute => 
+            normalizedRoute.includes(includedRoute.toLowerCase()))) {
+            if (activeUserEmails.has(userEmail)) {
+              activeUserEmails.delete(userEmail);
+              activePlayers--;
+              console.log(`Player disconnected. Active players: ${activePlayers}`);
+              io.emit('playerCount', { activePlayers } as PlayerCount);
+              await logPlayerStats(); // Log player statistics
+            } else {
+              console.log(`User email ${userEmail} is not connected.`);
+            }
+          } else {
+            console.log(`Route does not match included routes.`);
+          }
         } else {
-          console.log(`Active players count is already zero, cannot decrement.`);
+          console.log(`User email ${email} is not authenticated.`);
         }
-      } else {
-        console.log(`Route does not match included routes.`);
+      } catch (error: any) {
+        console.error(`Error during leave event: ${error.message}`);
       }
     });
 

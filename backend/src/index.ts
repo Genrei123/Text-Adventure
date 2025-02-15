@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import cors from 'cors';
 import corsOptions from './config/cors';
-import express, { Request, Response } from 'express';
+import express from 'express';
 import session from 'express-session';
 import database from './service/database';
 import routes from './routes/auth/routes';
@@ -14,6 +14,7 @@ import chatRoutes from './routes/chat/chatRoutes';
 import User from './model/user/user';
 import coinRoutes from './routes/coins/coinRoutes';
 import { createServer } from './websocket/socket';
+import statsRoutes from './routes/statistics/statsRoutes'; // Import the new stats route
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -44,6 +45,7 @@ app.use('/shop', shopRoutes);
 app.use('/webhook', webhookRoutes);
 app.use('/gameplay', coinRoutes);
 app.use('/ai', chatRoutes);
+app.use('/statistics/statsRoutes', statsRoutes); // Use the new stats route
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);

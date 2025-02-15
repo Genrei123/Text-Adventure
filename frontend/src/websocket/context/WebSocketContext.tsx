@@ -24,9 +24,11 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
   const location = useLocation();
 
   useEffect(() => {
+    const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
     if (includedRoutes.includes(location.pathname)) {
       console.log(`Emitting join event for route: ${location.pathname}`);
-      socket.emit('join', { route: location.pathname });
+      socket.emit('join', { route: location.pathname, token });
 
       const handlePlayerCount = (data: PlayerCountData) => {
         console.log(`Received playerCount event: ${data.activePlayers}`);
@@ -37,14 +39,14 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }
 
       const handleBeforeUnload = () => {
         console.log(`Emitting leave event for route: ${location.pathname}`);
-        socket.emit('leave', { route: location.pathname });
+        socket.emit('leave', { route: location.pathname, token });
       };
 
       window.addEventListener('beforeunload', handleBeforeUnload);
 
       return () => {
         console.log(`Emitting leave event for route: ${location.pathname}`);
-        socket.emit('leave', { route: location.pathname });
+        socket.emit('leave', { route: location.pathname, token });
         socket.off('playerCount', handlePlayerCount);
         window.removeEventListener('beforeunload', handleBeforeUnload);
       };
