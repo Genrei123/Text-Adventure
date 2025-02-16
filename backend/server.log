@@ -1,1 +1,60 @@
 2025-02-15T17:20:31.822Z [INFO]: New socket connected: 2XUOEgrpUowQz9xeAAAB
+2025-02-16T17:18:57.368Z [INFO]: New socket connected: 8xKENiVGKO5U3SLSAAAB
+2025-02-16T17:19:17.296Z [INFO]: Socket disconnected: 8xKENiVGKO5U3SLSAAAB
+2025-02-16T17:19:20.692Z [INFO]: New socket connected: Tc3MwbDHbglB-HE_AAAD
+2025-02-16T17:19:35.020Z [INFO]: Socket disconnected: Tc3MwbDHbglB-HE_AAAD
+2025-02-16T17:19:35.529Z [INFO]: New socket connected: xuS1RlG5XV-gmJq8AAAF
+2025-02-16T17:19:43.288Z [INFO]: New connection from route: /home
+2025-02-16T17:19:43.289Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImprcmJuOTlAZ21haWwuY29tIiwiaWQiOjEyMSwiaWF0IjoxNzM5NzI2MzgzLCJleHAiOjE3Mzk3Mjk5ODN9.h16SVHx5fdkl0QyNegZT7MkdpHfiNxDqYFKWjHtQXJw
+2025-02-16T17:19:43.301Z [INFO]: Disconnection from route: /home
+2025-02-16T17:19:43.303Z [INFO]: New connection from route: /home
+2025-02-16T17:19:43.304Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImprcmJuOTlAZ21haWwuY29tIiwiaWQiOjEyMSwiaWF0IjoxNzM5NzI2MzgzLCJleHAiOjE3Mzk3Mjk5ODN9.h16SVHx5fdkl0QyNegZT7MkdpHfiNxDqYFKWjHtQXJw
+2025-02-16T17:19:43.755Z [INFO]: User jkrbn99@gmail.com left. Active players: 0
+2025-02-16T17:19:44.211Z [INFO]: Total players in database: 40
+2025-02-16T17:19:44.212Z [INFO]: User jkrbn99@gmail.com joined. Active players: 1
+2025-02-16T17:19:44.437Z [INFO]: Total players in database: 40
+2025-02-16T17:19:44.438Z [INFO]: User jkrbn99@gmail.com joined. Active players: 1
+2025-02-16T17:20:12.098Z [INFO]: Disconnection from route: /home
+2025-02-16T17:20:13.873Z [INFO]: Session ended for jkrbn99@gmail.com:
+2025-02-16T17:20:13.874Z [INFO]: User jkrbn99@gmail.com left. Active players: 0
+2025-02-16T17:20:14.068Z [INFO]: New connection from route: /home
+2025-02-16T17:20:14.069Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImprcmJuOTlAZ21haWwuY29tIiwiaWQiOjEyMSwiaWF0IjoxNzM5NzI2MzgzLCJleHAiOjE3Mzk3Mjk5ODN9.h16SVHx5fdkl0QyNegZT7MkdpHfiNxDqYFKWjHtQXJw
+2025-02-16T17:20:14.073Z [INFO]: Disconnection from route: /home
+2025-02-16T17:20:14.076Z [INFO]: New connection from route: /home
+2025-02-16T17:20:14.076Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImprcmJuOTlAZ21haWwuY29tIiwiaWQiOjEyMSwiaWF0IjoxNzM5NzI2MzgzLCJleHAiOjE3Mzk3Mjk5ODN9.h16SVHx5fdkl0QyNegZT7MkdpHfiNxDqYFKWjHtQXJw
+2025-02-16T17:20:14.523Z [INFO]: User jkrbn99@gmail.com left. Active players: 0
+2025-02-16T17:20:14.967Z [INFO]: Total players in database: 40
+2025-02-16T17:20:14.968Z [INFO]: User jkrbn99@gmail.com joined. Active players: 1
+2025-02-16T17:20:15.189Z [INFO]: Total players in database: 40
+2025-02-16T17:20:15.189Z [INFO]: User jkrbn99@gmail.com joined. Active players: 1
+2025-02-16T17:20:34.664Z [INFO]: Disconnection from route: /home
+2025-02-16T17:20:34.668Z [INFO]: New connection from route: /profile
+2025-02-16T17:20:34.669Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImprcmJuOTlAZ21haWwuY29tIiwiaWQiOjEyMSwiaWF0IjoxNzM5NzI2MzgzLCJleHAiOjE3Mzk3Mjk5ODN9.h16SVHx5fdkl0QyNegZT7MkdpHfiNxDqYFKWjHtQXJw
+2025-02-16T17:20:36.443Z [INFO]: Session ended for jkrbn99@gmail.com:
+2025-02-16T17:20:36.444Z [INFO]: User jkrbn99@gmail.com left. Active players: 0
+2025-02-16T17:20:36.681Z [INFO]: Total players in database: 40
+2025-02-16T17:20:36.682Z [INFO]: User jkrbn99@gmail.com joined. Active players: 1
+2025-02-16T17:20:44.778Z [INFO]: Disconnection from route: /profile
+2025-02-16T17:20:44.781Z [INFO]: New connection from route: /home
+2025-02-16T17:20:44.781Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImprcmJuOTlAZ21haWwuY29tIiwiaWQiOjEyMSwiaWF0IjoxNzM5NzI2MzgzLCJleHAiOjE3Mzk3Mjk5ODN9.h16SVHx5fdkl0QyNegZT7MkdpHfiNxDqYFKWjHtQXJw
+2025-02-16T17:20:45.002Z [INFO]: Session ended for jkrbn99@gmail.com:
+2025-02-16T17:20:45.002Z [INFO]: User jkrbn99@gmail.com left. Active players: 0
+2025-02-16T17:20:45.240Z [INFO]: Total players in database: 40
+2025-02-16T17:20:45.240Z [INFO]: User jkrbn99@gmail.com joined. Active players: 1
+2025-02-16T17:20:57.011Z [INFO]: New socket connected: 01_gkyTteDSMuI9NAAAH
+2025-02-16T17:20:57.233Z [INFO]: New connection from route: /home
+2025-02-16T17:20:57.233Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImprcmJuOTlAZ21haWwuY29tIiwiaWQiOjEyMSwiaWF0IjoxNzM5NzI2MzgzLCJleHAiOjE3Mzk3Mjk5ODN9.h16SVHx5fdkl0QyNegZT7MkdpHfiNxDqYFKWjHtQXJw
+2025-02-16T17:20:57.328Z [INFO]: Disconnection from route: /home
+2025-02-16T17:20:57.330Z [INFO]: New connection from route: /home
+2025-02-16T17:20:57.331Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImprcmJuOTlAZ21haWwuY29tIiwiaWQiOjEyMSwiaWF0IjoxNzM5NzI2MzgzLCJleHAiOjE3Mzk3Mjk5ODN9.h16SVHx5fdkl0QyNegZT7MkdpHfiNxDqYFKWjHtQXJw
+2025-02-16T17:20:59.006Z [INFO]: User jkrbn99@gmail.com joined. Active players: 1
+2025-02-16T17:20:59.072Z [INFO]: User jkrbn99@gmail.com left. Active players: 1
+2025-02-16T17:20:59.122Z [INFO]: User jkrbn99@gmail.com joined. Active players: 1
+2025-02-16T17:21:02.933Z [INFO]: Disconnection from route: /home
+2025-02-16T17:21:02.937Z [INFO]: Socket disconnected: 01_gkyTteDSMuI9NAAAH
+2025-02-16T17:21:03.157Z [INFO]: User jkrbn99@gmail.com left. Active players: 1
+2025-02-16T17:21:04.450Z [INFO]: New socket connected: 0Ohl68944RTn9Ns1AAAJ
+2025-02-16T17:21:04.462Z [INFO]: Disconnection from route: /home
+2025-02-16T17:21:04.686Z [INFO]: User jkrbn99@gmail.com left. Active players: 1
+2025-02-16T17:21:05.190Z [INFO]: Socket disconnected: 0Ohl68944RTn9Ns1AAAJ
+2025-02-16T17:21:05.634Z [INFO]: New socket connected: EF0xJA_Y516ecBDjAAAL

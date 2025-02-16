@@ -16,6 +16,7 @@ import coinRoutes from './routes/coins/coinRoutes';
 import { createServer } from './websocket/socket';
 import statsRoutes from './routes/statistics/statsRoutes'; // Import the new stats route
 import playerActivityRoutes from './routes/statistics/playerActivityRoutes'; // Import the new player activity route
+import './utils/unbanScheduler';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -30,10 +31,10 @@ declare module 'express-session' {
 
 // Middleware setup
 app.use(cors(corsOptions));
-app.use(session({ 
-  secret: process.env.SESSION_SECRET || 'your_secret_key', 
-  resave: false, 
-  saveUninitialized: true 
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your_secret_key',
+  resave: false,
+  saveUninitialized: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -46,15 +47,16 @@ app.use('/shop', shopRoutes);
 app.use('/webhook', webhookRoutes);
 app.use('/gameplay', coinRoutes);
 app.use('/ai', chatRoutes);
-app.use('/statistics/statsRoutes', statsRoutes); // Use the new stats route
-app.use('/statistics/playerActivityRoutes', playerActivityRoutes); // Use the new player activity route
+app.use('/statistics/statsRoutes', statsRoutes);
+app.use('/statistics/playerActivityRoutes', playerActivityRoutes);
+app.use('/admin', banRoutes);
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
 app.use('/auth', authRouter);
 
 const server = createServer(app);
-server.listen(PORT, async () => { 
+server.listen(PORT, async () => {
   try {
     await database.authenticate();
     console.log('Connection to the database has been established successfully.');
