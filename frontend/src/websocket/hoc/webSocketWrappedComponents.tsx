@@ -12,3 +12,5 @@ export default {
   UserProfileWithWebSocket,
   GameScreenWithWebSocket,
 };
+
+// The function of this file is to wrap the components with the WebSocketProvider HOC.

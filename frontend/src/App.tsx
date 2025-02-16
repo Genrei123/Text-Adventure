@@ -18,9 +18,6 @@ import NotFound from './auth/components/NotFound';
 import GameDetails from './game-details/GameDetails';
 import { WebSocketProvider } from './websocket/context/WebSocketContext';
 
-
-
-
 function App() {
   const [username, setUsername] = useState<string | null>(null);
 
@@ -38,6 +35,12 @@ function App() {
     setUsername(null);
   };
 
+  const WebSocketRoutes = ({ children }: { children: React.ReactNode }) => (
+    <WebSocketProvider>
+      {children}
+    </WebSocketProvider>
+  );
+
   return (
     <Router>
       <Routes>
@@ -48,15 +51,15 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/email-confirmation" element={<EmailConfirmation />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
-        <Route path="/home" element={<WebSocketProvider><Homepage onLogout={handleLogout} /></WebSocketProvider>} />
-        <Route path="/profile" element={<WebSocketProvider><UserProfile /></WebSocketProvider>} />
-        <Route path="/game" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
-        <Route path="/subscription" element={<Subscription />} />
+        <Route path="/home" element={<WebSocketRoutes><Homepage onLogout={handleLogout} /></WebSocketRoutes>} />
+        <Route path="/profile" element={<WebSocketRoutes><UserProfile /></WebSocketRoutes>} />
+        <Route path="/game" element={<WebSocketRoutes><GameScreen /></WebSocketRoutes>} />
+        <Route path="/subscription" element={<WebSocketRoutes><Subscription /></WebSocketRoutes>} />
         <Route path="/forbidden" element={<Forbidden />} />
         <Route path="/server-error" element={<ServerError />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
-        <Route path="/game-details" element={<GameDetails />} />
+        <Route path="/game-details" element={<WebSocketRoutes><GameDetails /></WebSocketRoutes>} />
       </Routes>
     </Router>
   );

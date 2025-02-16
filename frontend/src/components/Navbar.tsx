@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import socketIOClient from 'socket.io-client';
+
+const socket = socketIOClient('http://localhost:3000'); // Ensure this points to the backend server
 
 const Navbar = () => {
   const [username, setUsername] = useState<string | null>(null);
@@ -7,20 +10,20 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      // Fetch in local storage
-      const token = localStorage.getItem("username");
-      if (!token) {
+      // Fetch email from local storage
+      const email = localStorage.getItem("email");
+      if (!email) {
         return;
       }
-      setUsername(token);
+      setUsername(email);
     };
 
-
     // Parse username from the query string
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(window.location.search);
     const usernameParam = params.get('username');
     if (usernameParam) {
       setUsername(decodeURIComponent(usernameParam));
+      localStorage.setItem("email", decodeURIComponent(usernameParam)); // Ensure email is stored
     }
 
     fetchUserData();
@@ -28,12 +31,14 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      // const response = await axios.get('/auth/logout');
-      // const data = response.data;
-      // window.location.href = data.redirectUrl;
+      const token = localStorage.getItem('token');
+      const email = localStorage.getItem('email');
+      if (token && email) {
+        socket.emit('leave', { route: window.location.pathname, email, token });
+      }
 
       // Clear local storage
-      localStorage.removeItem("username");
+      localStorage.removeItem("email");
       localStorage.removeItem("token");
 
       window.location.href = "/login";

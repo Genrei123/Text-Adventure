@@ -52,7 +52,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         const data = response.data;
         if (data.token) {
           localStorage.setItem('token', data.token);
-          localStorage.setItem('username', data.user.email);
+          localStorage.setItem('email', data.user.email); // Store email in local storage
+          console.log(localStorage.getItem('email')); // Confirm email is stored
           onLogin(data.user.email);
           toast.success('Login successful!');
           navigate('/home');
