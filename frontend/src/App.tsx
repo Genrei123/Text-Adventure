@@ -17,7 +17,8 @@ import Unauthorized from './auth/components/Unauthorized';
 import NotFound from './auth/components/NotFound';
 import GameDetails from './game-details/GameDetails';
 import { WebSocketProvider } from './websocket/context/WebSocketContext';
-
+import GameCreation  from './GameCreation/GameCreation';
+import AdventureEditor from './GameCreation/Editing Page/Editor';
 
 
 
@@ -51,6 +52,8 @@ function App() {
         <Route path="/home" element={<WebSocketProvider><Homepage onLogout={handleLogout} /></WebSocketProvider>} />
         <Route path="/profile" element={<WebSocketProvider><UserProfile /></WebSocketProvider>} />
         <Route path="/game" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
+        <Route path ="/editingpage" element ={< AdventureEditor/>} />
+        <Route path ="/gamecreation" element={<GameCreation onBack={() => {}} onNext={() => {}} onSkip={() => {}} />} />
         <Route path="/subscription" element={<Subscription />} />
         <Route path="/forbidden" element={<Forbidden />} />
         <Route path="/server-error" element={<ServerError />} />
