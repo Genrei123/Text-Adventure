@@ -13,7 +13,6 @@ const Navbar = () => {
         return;
       }
       setUsername(token);
-      console.log("Token:", token);
     };
 
 

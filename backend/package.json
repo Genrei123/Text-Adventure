@@ -54,6 +54,7 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "emailjs-com": "^3.2.0",
     "express-jwt": "^8.4.1",
@@ -61,7 +62,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
     "nodemailer": "^6.10.0",
-    "openai": "^4.83.0",
+    "openai": "^4.84.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.13.1",
@@ -72,6 +73,7 @@
     "socket.io-client": "^4.8.1",
     "tiktoken": "^1.0.18",
     "uuid": "^11.0.5",
+    "winston": "^3.17.0",
     "ws": "^8.18.0",
     "xendit-node": "^6.0.0"
   }

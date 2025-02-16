@@ -15,9 +15,6 @@ if (rootElement) {
     <React.StrictMode>
       <div style={{ backgroundColor: '#1e1e1e' }}>
         <App />
-        {[...Array(10)].map((_, i) => (
-          <br key={i} />
-        ))}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
         </div>
         <Footer />

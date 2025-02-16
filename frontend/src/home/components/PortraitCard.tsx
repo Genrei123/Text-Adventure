@@ -1,7 +1,17 @@
 import React from 'react';
 import { samplePortraitCardData } from "../types/Story"; // Adjust path as needed
+import { useNavigate } from 'react-router-dom';
 
 const PortraitCard: React.FC = () => {
+    const navigate = useNavigate();
+
+    function handleClick(): void {
+
+        // TODO
+        navigate('/game-details');
+        
+    }
+
     return (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'center' }}>
             {samplePortraitCardData.map(({ title, description, summary, genre, imageUrl }, index) => (
@@ -134,6 +144,7 @@ const PortraitCard: React.FC = () => {
                         </div>
 
                         <button
+                            onClick={handleClick}
                             style={{
                                 marginTop: '16px',
                                 padding: '8px 16px',

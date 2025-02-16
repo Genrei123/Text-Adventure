@@ -10,28 +10,32 @@ import Homepage from './home/Homepage';
 import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import Subscription from './subscription/Subscription';
+import EmailConfirmation from './auth/components/EmailConfirmation';
+import Forbidden from './auth/components/Forbidden';
+import ServerError from './auth/components/ServerError';
+import Unauthorized from './auth/components/Unauthorized';
+import NotFound from './auth/components/NotFound';
+import GameDetails from './game-details/GameDetails';
+import { WebSocketProvider } from './websocket/context/WebSocketContext';
 import GameCreation  from './GameCreation/GameCreation';
 import AdventureEditor from './GameCreation/Editing Page/Editor';
 
 
 
 function App() {
-  // Add proper typing for username
   const [username, setUsername] = useState<string | null>(null);
 
-  // Add proper typing for user parameter
-  const handleLogin = (user: string) => {
+  const handleLogin = (user: string): void => {
     setUsername(user);
   };
 
-  // Add proper typing for user parameter and isSocialLogin
-  const handleRegister = (user: string, isSocialLogin: boolean) => {
+  const handleRegister = (user: string, isSocialLogin: boolean): void => {
     if (isSocialLogin) {
       setUsername(user);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     setUsername(null);
   };
 
@@ -39,17 +43,23 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path ="/login" element={<LoginScreen onLogin={handleLogin} />} />
-        <Route path ="/register" element={<Register onRegister={handleRegister} />} />
-        <Route path ="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/login" element={<LoginScreen onLogin={handleLogin} />} />
+        <Route path="/register" element={<Register onRegister={handleRegister} />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/email-confirmation" element={<EmailConfirmation />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
-        <Route path ="/home" element ={<Homepage onLogout={handleLogout} />} />
-        <Route path ="/profile" element ={<UserProfile />} />
-        <Route path ="/game" element ={<GameScreen />} />
-        <Route path ="/subscription" element ={<Subscription />} />
+        <Route path="/home" element={<WebSocketProvider><Homepage onLogout={handleLogout} /></WebSocketProvider>} />
+        <Route path="/profile" element={<WebSocketProvider><UserProfile /></WebSocketProvider>} />
+        <Route path="/game" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
         <Route path ="/editingpage" element ={< AdventureEditor/>} />
         <Route path ="/gamecreation" element={<GameCreation onBack={() => {}} onNext={() => {}} onSkip={() => {}} />} />
+        <Route path="/subscription" element={<Subscription />} />
+        <Route path="/forbidden" element={<Forbidden />} />
+        <Route path="/server-error" element={<ServerError />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
+        <Route path="/game-details" element={<GameDetails />} />
       </Routes>
     </Router>
   );
