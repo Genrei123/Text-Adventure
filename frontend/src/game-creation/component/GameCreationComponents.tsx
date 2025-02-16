@@ -61,7 +61,7 @@ export const SkipToEditor: React.FC<SkipToEditorProps> = ({ onSkip }) => {
 
   const handleSkip = () => {
     onSkip();
-    navigate('/editingpage');
+    navigate('/editing-page');
   };
 
   return (

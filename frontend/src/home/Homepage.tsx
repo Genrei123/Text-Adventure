@@ -94,7 +94,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
 
           {/* Start Adventure Section */}
           <StartAdventure 
-            onCreateStory={() => navigate("/create-story")}
+            onCreateStory={() => navigate("/game-creation")}
             onBrowse={() => navigate("/browse-stories")}
           />
 

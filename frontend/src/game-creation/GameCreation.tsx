@@ -64,7 +64,7 @@ export const GameCreation: React.FC<GameCreationProps> = ({ onSkip }) => {
    */
   const handleSubmit = () => {
     if (!validateStep()) return;
-    navigate('/editingpage', { state: formData });
+    navigate('/editing-page', { state: formData });
   };
 
   /**
