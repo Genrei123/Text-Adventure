@@ -6,6 +6,7 @@ import corsOptions from '../config/cors';
 import { verifyToken } from '../controllers/auth/authController'; // Import verifyToken function
 import User from '../model/user/user'; // Import User model
 import { activeUserEmails } from '../shared/activeUser'; // Import activeUserEmails
+import { JoinPayload, PlayerCount, SessionData } from '../interfaces/websocket/websocketInterfaces'; // Import interfaces
 import winston from 'winston';
 
 // Initialize Winston Logger
@@ -17,22 +18,6 @@ const logger = winston.createLogger({
   ),
   transports: [new winston.transports.Console(), new winston.transports.File({ filename: 'server.log' })],
 });
-
-interface JoinPayload {
-  route: string;
-  email: string;
-  token: string;
-}
-
-interface PlayerCount {
-  activePlayers: number;
-}
-
-interface SessionData {
-  startTime: Date;
-  endTime?: Date;
-  interactions: string[];
-}
 
 export const playerSessions: Map<string, SessionData> = new Map(); // Export playerSessions
 const userSockets: Map<string, Set<string>> = new Map(); // Track multiple sockets per user
