@@ -5,7 +5,7 @@ import includedRoutes from '../config/websocketConfig';
 import corsOptions from '../config/cors';
 import { verifyToken } from '../controllers/auth/authController'; // Import verifyToken function
 import User from '../model/user/user'; // Import User model
-import { activeUserEmails } from '../shared/activeUser'; // Import activeUserEmails
+import { activeUserEmails } from '../shared/websocket/activeUser'; // Import activeUserEmails
 import { JoinPayload, PlayerCount, SessionData } from '../interfaces/websocket/websocketInterfaces'; // Import interfaces
 import winston from 'winston';
 
