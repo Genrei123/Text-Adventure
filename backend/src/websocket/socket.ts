@@ -77,6 +77,7 @@ export function createServer(app: Express) {
 
           if (userSockets.get(userEmail)?.size === 1) {
             activePlayers++;
+            activeUserEmails.add(userEmail); // Add to activeUserEmails
             io.emit('playerCount', { activePlayers } as PlayerCount);
             await logPlayerStats();
 
@@ -123,6 +124,7 @@ export function createServer(app: Express) {
             
             if (userSockets.get(userEmail)?.size === 0) {
               activePlayers--;
+              activeUserEmails.delete(userEmail); // Remove from activeUserEmails
               io.emit('playerCount', { activePlayers } as PlayerCount);
               userSockets.delete(userEmail);
 
@@ -153,6 +155,7 @@ export function createServer(app: Express) {
           
           if (sockets.size === 0) {
             activePlayers--;
+            activeUserEmails.delete(userEmail); // Remove from activeUserEmails
             io.emit('playerCount', { activePlayers } as PlayerCount);
             userSockets.delete(userEmail);
             playerSessions.delete(userEmail);

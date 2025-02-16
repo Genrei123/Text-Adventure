@@ -1,1 +1,67 @@
 2025-02-15T17:20:31.822Z [INFO]: New socket connected: 2XUOEgrpUowQz9xeAAAB
+2025-02-16T03:51:26.239Z [INFO]: New socket connected: LOq8ujonaJxDI7xRAAAB
+2025-02-16T03:51:26.253Z [INFO]: New connection from route: /home
+2025-02-16T03:51:26.253Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2MzczOTUsImV4cCI6MTczOTY0MDk5NX0.b11Ed1FQGGT8nkKiYdeIrfBWSn8_IhtOfdJ-RpYEAL4
+2025-02-16T03:51:26.259Z [WARN]: Invalid token or user email missing.
+2025-02-16T03:51:26.360Z [INFO]: Disconnection from route: /home
+2025-02-16T03:51:26.365Z [INFO]: New connection from route: /home
+2025-02-16T03:51:26.366Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2MzczOTUsImV4cCI6MTczOTY0MDk5NX0.b11Ed1FQGGT8nkKiYdeIrfBWSn8_IhtOfdJ-RpYEAL4
+2025-02-16T03:51:26.370Z [WARN]: Invalid token or user email missing.
+2025-02-16T03:51:26.371Z [WARN]: Invalid token or user email missing.
+2025-02-16T03:53:25.225Z [INFO]: New socket connected: RqVblNlFAyzkXU3AAAAB
+2025-02-16T03:53:49.554Z [INFO]: Disconnection from route: /home
+2025-02-16T03:53:49.560Z [WARN]: Invalid token or user email missing.
+2025-02-16T03:53:50.967Z [INFO]: Socket disconnected: RqVblNlFAyzkXU3AAAAB
+2025-02-16T03:56:26.904Z [INFO]: New socket connected: ZsGR3BduMc-DxhDgAAAD
+2025-02-16T03:56:26.998Z [INFO]: New connection from route: /home
+2025-02-16T03:56:27.016Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2MzczOTUsImV4cCI6MTczOTY0MDk5NX0.b11Ed1FQGGT8nkKiYdeIrfBWSn8_IhtOfdJ-RpYEAL4
+2025-02-16T03:56:27.027Z [WARN]: Invalid token or user email missing.
+2025-02-16T03:56:27.096Z [INFO]: Disconnection from route: /home
+2025-02-16T03:56:27.098Z [INFO]: New connection from route: /home
+2025-02-16T03:56:27.099Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2MzczOTUsImV4cCI6MTczOTY0MDk5NX0.b11Ed1FQGGT8nkKiYdeIrfBWSn8_IhtOfdJ-RpYEAL4
+2025-02-16T03:56:27.101Z [WARN]: Invalid token or user email missing.
+2025-02-16T03:56:27.101Z [WARN]: Invalid token or user email missing.
+2025-02-16T03:57:08.046Z [INFO]: Disconnection from route: /home
+2025-02-16T03:57:08.048Z [WARN]: Invalid token or user email missing.
+2025-02-16T03:57:08.206Z [INFO]: Socket disconnected: ZsGR3BduMc-DxhDgAAAD
+2025-02-16T03:57:08.640Z [INFO]: New socket connected: GMMQKruszh73WOj0AAAF
+2025-02-16T03:57:23.338Z [INFO]: New connection from route: /home
+2025-02-16T03:57:23.338Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2NzgyNDMsImV4cCI6MTczOTY4MTg0M30.T7z7dUCcnBHDHfnBF_YjzrM2-l95OE50iJsSmxUZPMo
+2025-02-16T03:57:23.355Z [INFO]: Disconnection from route: /home
+2025-02-16T03:57:23.360Z [INFO]: New connection from route: /home
+2025-02-16T03:57:23.361Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2NzgyNDMsImV4cCI6MTczOTY4MTg0M30.T7z7dUCcnBHDHfnBF_YjzrM2-l95OE50iJsSmxUZPMo
+2025-02-16T03:57:23.789Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0
+2025-02-16T03:57:24.242Z [INFO]: Total players in database: 40
+2025-02-16T03:57:24.243Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1
+2025-02-16T03:57:24.465Z [INFO]: Total players in database: 40
+2025-02-16T03:57:24.466Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1
+2025-02-16T03:59:32.849Z [INFO]: Disconnection from route: /home
+2025-02-16T03:59:32.872Z [INFO]: Socket disconnected: GMMQKruszh73WOj0AAAF
+2025-02-16T03:59:32.900Z [INFO]: Cleaned up session for Ervhynedalugdog@gmail.com
+2025-02-16T03:59:33.683Z [INFO]: New socket connected: V5vP7l2K2GNS83G_AAAH
+2025-02-16T03:59:33.733Z [INFO]: New connection from route: /home
+2025-02-16T03:59:33.734Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2NzgyNDMsImV4cCI6MTczOTY4MTg0M30.T7z7dUCcnBHDHfnBF_YjzrM2-l95OE50iJsSmxUZPMo
+2025-02-16T03:59:33.760Z [INFO]: Disconnection from route: /home
+2025-02-16T03:59:33.763Z [INFO]: New connection from route: /home
+2025-02-16T03:59:33.763Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2NzgyNDMsImV4cCI6MTczOTY4MTg0M30.T7z7dUCcnBHDHfnBF_YjzrM2-l95OE50iJsSmxUZPMo
+2025-02-16T03:59:34.647Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0
+2025-02-16T03:59:35.095Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0
+2025-02-16T03:59:35.516Z [INFO]: Total players in database: 40
+2025-02-16T03:59:35.516Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1
+2025-02-16T03:59:35.544Z [INFO]: Total players in database: 40
+2025-02-16T03:59:35.544Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1
+2025-02-16T04:06:49.821Z [INFO]: New socket connected: GJhkJ7XaPegX4XGKAAAB
+2025-02-16T04:07:08.133Z [INFO]: Disconnection from route: /home
+2025-02-16T04:07:08.173Z [INFO]: Socket disconnected: GJhkJ7XaPegX4XGKAAAB
+2025-02-16T04:07:08.372Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0
+2025-02-16T04:07:08.883Z [INFO]: New socket connected: L7ozBJYnu4MWQXCjAAAD
+2025-02-16T04:07:08.929Z [INFO]: New connection from route: /home
+2025-02-16T04:07:08.932Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2NzgyNDMsImV4cCI6MTczOTY4MTg0M30.T7z7dUCcnBHDHfnBF_YjzrM2-l95OE50iJsSmxUZPMo
+2025-02-16T04:07:09.068Z [INFO]: Disconnection from route: /home
+2025-02-16T04:07:09.072Z [INFO]: New connection from route: /home
+2025-02-16T04:07:09.072Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3Mzk2NzgyNDMsImV4cCI6MTczOTY4MTg0M30.T7z7dUCcnBHDHfnBF_YjzrM2-l95OE50iJsSmxUZPMo
+2025-02-16T04:07:09.385Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0
+2025-02-16T04:07:09.849Z [INFO]: Total players in database: 40
+2025-02-16T04:07:09.860Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1
+2025-02-16T04:07:10.094Z [INFO]: Total players in database: 40
+2025-02-16T04:07:10.153Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1
