@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, initiateGameSession } from "../../service/chat/chatService";
+ 
 
 export const getChatHistoryController = async (req: Request, res: Response) => {
     try {

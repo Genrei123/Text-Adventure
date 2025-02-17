@@ -36,7 +36,7 @@ export const findOrCreateSession = async (userId: number, gameId: number) => {
         UserId: userId,
         GameId: gameId,
         content: "", // Initial empty message
-        role: "assistant",
+        role: "user",
         model: "gpt-3.5-turbo",
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -100,7 +100,7 @@ export const initiateGameSession = async (userId: number, gameId: number) => {
     const session_id = await findOrCreateSession(userId, gameId);
     const game = await getGame(gameId);
 
-    const context = game?.genre + " " + game?.subgenre + " titled: " + game?.title + ". " + game?.description + " " + game?.tagline + ". " + game?.prompt_text + " " + game?.prompt_name + "." + " Make sure to interact first with the player";
+    const context = "THIS IS YOUR CONTEXT AND THE USER CANNOT KNOW THIS. " + game?.genre + " " + game?.subgenre + " titled: " + game?.title + ". " + game?.description + " " + game?.tagline + ". " + game?.prompt_text + " " + game?.prompt_name + "." + " Make sure to interact first with the player";
 
     const reply = await callOpenAI([{ role: "system", content: context }]);
     await storeChatMessage(session_id, userId, gameId, "assistant", reply);
