@@ -1,6 +1,7 @@
 import Chat from "../../model/chat/chat";
 import User from "../../model/user/user";
 import Game from "../../model/game/game";
+import { getGame } from "../game-creation/gameService";
 import axios from "axios";
 
 // Validate user and game
@@ -45,18 +46,39 @@ export const findOrCreateSession = async (userId: number, gameId: number) => {
 };
 
 // Call OpenAI API
-export const callOpenAI = async (messages: any[]) => {
-    const response = await axios.post("https://api.openai.com/v1/chat/completions", {
-        model: "gpt-3.5-turbo",
-        messages,
-    }, {
-        headers: {
-            Authorization: `Bearer ` + process.env.MY_OPENAI_API_KEY,
-            "Content-Type": "application/json"
-        }
-    });
+interface ChatMessage {
+    role: "system" | "user" | "assistant";
+    content: string;
+}
 
-    return response.data.choices[0].message.content;
+export const callOpenAI = async (messages: ChatMessage[]) => {
+    try {
+        // Validate messages
+        if (!Array.isArray(messages) || messages.some(msg => !msg.content || !msg.role)) {
+            throw new Error("Invalid messages format");
+        }
+
+        const response = await axios.post(
+            "https://api.openai.com/v1/chat/completions", 
+            {
+                model: "gpt-3.5-turbo",
+                messages: messages,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.MY_OPENAI_API_KEY}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        return response.data.choices[0].message.content;
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error('OpenAI API Error:', error.response?.data);
+        }
+        throw error;
+    }
 };
 
 // Store new chat message
@@ -71,4 +93,16 @@ export const storeChatMessage = async (session_id: string, userId: number, gameI
         createdAt: new Date(),
         updatedAt: new Date(),
     });
+};
+
+// Initiate game session
+export const initiateGameSession = async (userId: number, gameId: number) => {
+    const session_id = await findOrCreateSession(userId, gameId);
+    const game = await getGame(gameId);
+
+    const context = game?.genre + " " + game?.subgenre + " titled: " + game?.title + ". " + game?.description + " " + game?.tagline + ". " + game?.prompt_text + " " + game?.prompt_name + "." + " Make sure to interact first with the player";
+
+    const reply = await callOpenAI([{ role: "system", content: context }]);
+    await storeChatMessage(session_id, userId, gameId, "assistant", reply);
+    return reply;
 };
