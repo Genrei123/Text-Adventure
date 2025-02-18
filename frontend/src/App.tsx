@@ -17,6 +17,11 @@ import Unauthorized from './auth/components/Unauthorized';
 import NotFound from './auth/components/NotFound';
 import GameDetails from './game-details/GameDetails';
 import { WebSocketProvider } from './websocket/context/WebSocketContext';
+import GameCreation  from './game-creation/GameCreation';
+import AdventureEditor from './game-creation/Editing Page/Editor';
+
+
+
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
@@ -51,10 +56,12 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/email-confirmation" element={<EmailConfirmation />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
-        <Route path="/home" element={<WebSocketRoutes><Homepage onLogout={handleLogout} /></WebSocketRoutes>} />
-        <Route path="/profile" element={<WebSocketRoutes><UserProfile /></WebSocketRoutes>} />
-        <Route path="/game" element={<WebSocketRoutes><GameScreen /></WebSocketRoutes>} />
-        <Route path="/subscription" element={<WebSocketRoutes><Subscription /></WebSocketRoutes>} />
+        <Route path="/home" element={<WebSocketProvider><Homepage onLogout={handleLogout} /></WebSocketProvider>} />
+        <Route path="/profile" element={<WebSocketProvider><UserProfile /></WebSocketProvider>} />
+        <Route path="/game" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
+        <Route path ="/editing-page" element ={< AdventureEditor/>} />
+        <Route path ="/game-creation" element={<GameCreation onBack={() => {}} onNext={() => {}} onSkip={() => {}} />} />
+        <Route path="/subscription" element={<Subscription />} />
         <Route path="/forbidden" element={<Forbidden />} />
         <Route path="/server-error" element={<ServerError />} />
         <Route path="/unauthorized" element={<Unauthorized />} />

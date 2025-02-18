@@ -17,6 +17,7 @@ blending traditional storytelling with cutting-edge AI technology.
 ## Goal
 - To create an engaging narrative and story for the player
 - To leverage current AI model capabilities in game narration
+- To see and understand if there is an interest in a AI game
 
 
 ## Tech Stack
