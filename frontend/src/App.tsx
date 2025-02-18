@@ -22,6 +22,7 @@ import AdventureEditor from './game-creation/Editing Page/Editor';
 
 
 
+
 function App() {
   const [username, setUsername] = useState<string | null>(null);
 
@@ -38,6 +39,12 @@ function App() {
   const handleLogout = (): void => {
     setUsername(null);
   };
+
+  const WebSocketRoutes = ({ children }: { children: React.ReactNode }) => (
+    <WebSocketProvider>
+      {children}
+    </WebSocketProvider>
+  );
 
   return (
     <Router>
@@ -59,7 +66,7 @@ function App() {
         <Route path="/server-error" element={<ServerError />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
-        <Route path="/game-details" element={<GameDetails />} />
+        <Route path="/game-details" element={<WebSocketRoutes><GameDetails /></WebSocketRoutes>} />
       </Routes>
     </Router>
   );
