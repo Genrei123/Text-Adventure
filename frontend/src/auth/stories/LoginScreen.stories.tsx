@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
-import LoginScreen from './LoginScreen';
+import LoginScreen from '../LoginScreen';
 
 export default {
   title: 'Components/LoginScreen',
