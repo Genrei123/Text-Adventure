@@ -15,7 +15,8 @@ const Comment: React.FC<CommentProps> = ({ userName, comment, story, onGoToGame 
             <div className="flex items-center">
                 <FaUserCircle size={40} className="mr-3 text-black" />
                 <div className="flex-1 text-left">
-                    <h5 className="text-white font-semibold">{userName} <h5 className="text-[#C9B57B] italic"> From "{story}"</h5></h5>
+                    <h5 className="text-white font-semibold">{userName} </h5>
+                    <h5 className="text-[#C9B57B] font-semibold italic"> From "{story}"</h5>
                     <p className="text-[#B28F4C]">{comment}</p>
                 </div>
                 <div 
