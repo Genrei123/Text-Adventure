@@ -1,25 +1,46 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Search, ChevronDown } from "lucide-react";
 
 const Navbar = () => {
   const [username, setUsername] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedPopularity, setSelectedPopularity] = useState("all");
+
   const navigate = useNavigate();
+  const location = useLocation(); // Get current route
+
+  const isHomePage = location.pathname === "/home"; // Check if on the home page
+
+  // Sample data - palitan nyo nalang mga lods
+  const genres = [
+    "Fantasy",
+    "Dark Fantasy",
+    "High Fantasy",
+    "Medieval",
+    "Magic",
+  ];
+  const tags = ["Adventure", "Dragons", "Magic System", "Kingdom", "Quest"];
+  const popularityOptions = [
+    { label: "Past Day", value: "1day" },
+    { label: "Past Moon", value: "30days" },
+    { label: "Past Year", value: "1year" },
+    { label: "All Time", value: "all" },
+  ];
 
   useEffect(() => {
     const fetchUserData = async () => {
-      // Fetch in local storage
       const token = localStorage.getItem("username");
-      if (!token) {
-        return;
-      }
+      if (!token) return;
       setUsername(token);
-      console.log("Token:", token);
     };
 
-
-    // Parse username from the query string
     const params = new URLSearchParams(location.search);
-    const usernameParam = params.get('username');
+    const usernameParam = params.get("username");
     if (usernameParam) {
       setUsername(decodeURIComponent(usernameParam));
     }
@@ -27,36 +48,43 @@ const Navbar = () => {
     fetchUserData();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      // const response = await axios.get('/auth/logout');
-      // const data = response.data;
-      // window.location.href = data.redirectUrl;
-
-      // Clear local storage
-      localStorage.removeItem("username");
-      localStorage.removeItem("token");
-
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout failed", error);
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      const sampleStories = [
+        //eto rin palitan nalang mga lods
+        "The Lost Scrolls of Aldor",
+        "Legends of the Crystal Keep",
+        "The Last Sage",
+        "Realm of Ancient Magic",
+      ];
+      setSuggestions(
+        sampleStories.filter((story) =>
+          story.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    } else {
+      setSuggestions([]);
     }
+  }, [searchQuery]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("username");
+    localStorage.removeItem("token");
+    window.location.href = "/login";
   };
 
   return (
-    <>
-      <nav className="bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
+    <nav className="bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
+      <div className="flex flex-col space-y-4">
+        {/* Top Bar */}
         <div className="flex justify-between items-center">
           <div className="text-xl font-cinzel text-[#C8A97E]">Sage.AI</div>
-          {/* Remove comment if the searchbar is now done */}
-          {/* <SearchBar /> */}
           <div className="flex items-center space-x-2">
             {username ? (
               <>
                 <span className="font-playfair text-[#E5D4B3]">
                   Welcome, {username}
                 </span>
-                
                 <button
                   className="bg-[#8B4513] hover:bg-[#723A10] px-3 py-1 rounded text-sm font-medium text-[#E5D4B3] border border-[#C8A97E]"
                   onClick={handleLogout}
@@ -79,8 +107,136 @@ const Navbar = () => {
             )}
           </div>
         </div>
-      </nav>
-    </>
+
+        {/* Search Bar - Visible only on the Home Page */}
+        {isHomePage && (
+          <>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search the ancient scrolls..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full p-2 pl-10 rounded bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
+              />
+              <Search
+                className="absolute left-3 top-2.5 text-[#8B4513]"
+                size={20}
+              />
+              {suggestions.length > 0 && (
+                <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded mt-1 shadow-lg">
+                  {suggestions.map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22]"
+                      onClick={() => setSearchQuery(suggestion)}
+                    >
+                      {suggestion}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Filters Toggle */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center text-[#C8A97E] hover:text-[#E5D4B3]"
+            >
+              Filter Scrolls
+              <ChevronDown
+                className={`ml-1 transform transition-transform ${
+                  showFilters ? "rotate-180" : ""
+                }`}
+                size={20}
+              />
+            </button>
+
+            {/* Filters Section */}
+            {showFilters && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#2A1F17] p-4 rounded border border-[#C8A97E]">
+                {/* Genres */}
+                <div className="space-y-2">
+                  <h3 className="font-cinzel text-[#C8A97E]">
+                    Schools of Magic
+                  </h3>
+                  {genres.map((genre) => (
+                    <div key={genre} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={genre}
+                        checked={selectedGenres.includes(genre)}
+                        onChange={() =>
+                          setSelectedGenres((prev) =>
+                            prev.includes(genre)
+                              ? prev.filter((g) => g !== genre)
+                              : [...prev, genre]
+                          )
+                        }
+                        className="mr-2 accent-[#C8A97E]"
+                      />
+                      <label htmlFor={genre} className="text-[#E5D4B3]">
+                        {genre}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Tags */}
+                <div className="space-y-2">
+                  <h3 className="font-cinzel text-[#C8A97E]">
+                    Mystical Attributes
+                  </h3>
+                  {tags.map((tag) => (
+                    <div key={tag} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={tag}
+                        checked={selectedTags.includes(tag)}
+                        onChange={() =>
+                          setSelectedTags((prev) =>
+                            prev.includes(tag)
+                              ? prev.filter((t) => t !== tag)
+                              : [...prev, tag]
+                          )
+                        }
+                        className="mr-2 accent-[#C8A97E]"
+                      />
+                      <label htmlFor={tag} className="text-[#E5D4B3]">
+                        {tag}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Popularity */}
+                <div className="space-y-2">
+                  <h3 className="font-cinzel text-[#C8A97E]">
+                    Time Chronicles
+                  </h3>
+                  {popularityOptions.map((option) => (
+                    <div key={option.value} className="flex items-center">
+                      <input
+                        type="radio"
+                        id={option.value}
+                        name="popularity"
+                        value={option.value}
+                        checked={selectedPopularity === option.value}
+                        onChange={(e) => setSelectedPopularity(e.target.value)}
+                        className="mr-2 accent-[#C8A97E]"
+                      />
+                      <label htmlFor={option.value} className="text-[#E5D4B3]">
+                        {option.label}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </nav>
   );
 };
 
