@@ -5,6 +5,7 @@ import axiosInstance from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import PasswordInput from '../../components/PasswordInput';
 
 /**
  * Interface for Register component props
@@ -228,18 +229,15 @@ const Register: React.FC<RegisterProps> = ({ }) => {
             {/* Password Field */}
             <div>
               <label className="block text-sm font-cinzel text-white mb-2">Password</label>
-              <input
-                type="password"
+              <PasswordInput
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
                   setErrors({ ...errors, password: undefined });
                 }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.password ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
+                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${
+                  errors.password ? 'border-red-500' : 'border-[#8B7355]'
+                }`}
                 placeholder="Your secret incantation"
               />
               {errors.password && (
@@ -250,18 +248,15 @@ const Register: React.FC<RegisterProps> = ({ }) => {
             {/* Confirm Password Field */}
             <div>
               <label className="block text-sm font-cinzel text-white mb-2">Confirm Password</label>
-              <input
-                type="password"
+              <PasswordInput
                 value={confirmPassword}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
                   setErrors({ ...errors, confirmPassword: undefined });
                 }}
-                className={`
-                  w-full px-3 py-2 bg-[#3D2E22] border
-                  rounded text-sm text-white placeholder-[#8B7355]
-                  ${errors.confirmPassword ? 'border-red-500' : 'border-[#8B7355]'}
-                `}
+                className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${
+                  errors.confirmPassword ? 'border-red-500' : 'border-[#8B7355]'
+                }`}
                 placeholder="Repeat your mystical phrase"
               />
               {errors.confirmPassword && (
