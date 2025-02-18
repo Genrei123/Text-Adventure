@@ -9,6 +9,7 @@ import { activeUserEmails } from '../shared/websocket/activeUser'; // Import act
 import { JoinPayload, PlayerCount, SessionData } from '../interfaces/websocket/websocketInterfaces'; // Import interfaces
 import winston from 'winston';
 import Session from '../model/session'; // Import Session model
+import axios from 'axios'; // Import axios
 
 // Initialize Winston Logger
 const logger = winston.createLogger({
@@ -27,11 +28,14 @@ export function createServer(app: Express) {
   const server = createHttpServer(app);
   const io = new Server(server, { cors: corsOptions });
 
-  let activePlayers = 0;
-
   const logPlayerStats = async () => {
-    const totalPlayers = await User.count();
-    logger.info(`Total players in database: ${totalPlayers}`);
+    try {
+      const response = await axios.get('http://localhost:3000/statistics/player-stats');
+      const activePlayers = response.data.activePlayers;
+      logger.info(`Active players: ${activePlayers}`);
+    } catch (error) {
+      logger.error('Error fetching active player count:', error);
+    }
   };
 
   io.on('connection', (socket: Socket) => {
@@ -64,16 +68,17 @@ export function createServer(app: Express) {
           userSockets.get(userEmail)?.add(socket.id);
 
           if (userSockets.get(userEmail)?.size === 1) {
-            activePlayers++;
             activeUserEmails.add(userEmail); // Add to activeUserEmails
-            io.emit('playerCount', { activePlayers } as PlayerCount);
+            io.emit('playerCount', { activePlayers: activeUserEmails.size } as PlayerCount);
             await logPlayerStats();
 
-            playerSessions.set(userEmail, { startTime: new Date(), sessionData: { interactions: {}, gamesCreated: {}, gamesPlayed: {}, visitedPages: {} } });
-            logger.info(`Session created for ${userEmail}`);
+            if (!playerSessions.has(userEmail)) {
+              playerSessions.set(userEmail, { startTime: new Date(), sessionData: { interactions: {}, gamesCreated: {}, gamesPlayed: {}, visitedPages: {} } });
+              logger.info(`Session created for ${userEmail}`);
+            }
           }
 
-          logger.info(`User ${userEmail} joined. Active players: ${activePlayers}`);
+          logger.info(`User ${userEmail} joined. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
         } else {
           logger.warn(`Route does not match included routes.`);
         }
@@ -129,9 +134,8 @@ export function createServer(app: Express) {
             userSockets.get(userEmail)?.delete(socket.id);
             
             if (userSockets.get(userEmail)?.size === 0) {
-              activePlayers--;
               activeUserEmails.delete(userEmail); // Remove from activeUserEmails
-              io.emit('playerCount', { activePlayers } as PlayerCount);
+              io.emit('playerCount', { activePlayers: activeUserEmails.size } as PlayerCount);
               userSockets.delete(userEmail);
 
               const session = playerSessions.get(userEmail);
@@ -152,7 +156,7 @@ export function createServer(app: Express) {
             }
           }
 
-          logger.info(`User ${userEmail} left. Active players: ${activePlayers}`);
+          logger.info(`User ${userEmail} left. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
         } else {
           logger.warn(`Route does not match included routes.`);
         }
@@ -169,9 +173,8 @@ export function createServer(app: Express) {
           sockets.delete(socket.id);
           
           if (sockets.size === 0) {
-            activePlayers--;
             activeUserEmails.delete(userEmail); // Remove from activeUserEmails
-            io.emit('playerCount', { activePlayers } as PlayerCount);
+            io.emit('playerCount', { activePlayers: activeUserEmails.size } as PlayerCount);
             userSockets.delete(userEmail);
 
             const session = playerSessions.get(userEmail);
