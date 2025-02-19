@@ -54,6 +54,7 @@ const Navbar = () => {
           <div className="text-xl font-cinzel text-[#C8A97E]">Sage.AI</div>
           {/* Remove comment if the searchbar is now done */}
           {/* <SearchBar /> */}
+          
           <div className="flex items-center space-x-2">
             {username ? (
               <>

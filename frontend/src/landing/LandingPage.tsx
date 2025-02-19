@@ -17,7 +17,7 @@ const LandingPage: React.FC = () => {
     return (
         <>
             <div className="flex justify-center items-center h-[990px] bg-cover bg-center fade-in" style={{ backgroundImage: `url(${background})` }}>
-                <div ref={contentRef} className="text-center opacity-100 flex flex-col justify-center items-center mx-[5%] -translate-y-1/10 h-[1332px]">
+                <div ref={contentRef} className="text-center opacity-100 flex flex-col justify-center items-center mx-[5%] -translate-y-[105px] h-[1332px]">
                     <img src="/SageAI.png" alt="logo" className="w-[90%] h-auto responsive-logo" />
                     <br></br>
                     <h1 className="font-Medieval text-[150%] text-white uppercase mx-[10%] text-shadow-md responsive-text" style={{ textShadow: '2px 2px 4px #000000', fontFamily: 'Medieval' }}>
