@@ -15,7 +15,7 @@ const YourLikes: React.FC = () => {
     };
 
     return (
-        <div style={styles.scrollContainer}>
+        <div className="max-h-96 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent fade-in custom-scrollbar">
             {likes.map((like, index) => {
                 const isExpanded = expandedItems.has(index);
                 const truncatedDescription =
@@ -24,192 +24,68 @@ const YourLikes: React.FC = () => {
                         : like.description;
 
                 return (
-                    <div key={index} style={styles.container}>
-                        <img style={styles.image} src="/placeholder.png" alt={like.title} />
-                        <div style={styles.content}>
-                            <div style={styles.header}>
-                                <p style={styles.username}>{like.username}</p>
-                                <p style={styles.date}>{like.dateCreated}</p>
+                    <div key={index} className="flex flex-col md:flex-row bg-[#563C2D] rounded-xl p-4 mb-4">
+                        <div className="flex-1 p-2">
+                            <div className="flex justify-between text-gold-500">
+                                <p className="text-white">{like.username}</p>
+                                <p className="text-white">{like.dateCreated}</p>
                             </div>
-                            <h2 style={styles.title}>{like.title}</h2>
-                            <div style={styles.stats}>
-                                <img src="/Star.svg" alt="Stars" style={styles.icon} /> {like.stars}
-                                <img src="/Comments.svg" alt="Comments" style={styles.icon} /> {like.comments}
-                                <img src="/Favorites.svg" alt="Favorites" style={styles.icon} /> {like.favorites}
+                            <h2 className="text-2xl font-cinzel text-[#B28F4C] font-bold truncate md:whitespace-nowrap">{like.title}</h2>
+                            <div className="flex gap-3 text-white my-2">
+                                <div className="flex items-center gap-1"><img src="/Star.svg" alt="Stars" className="w-5 h-5" /> {like.stars}</div>
+                                <div className="flex items-center gap-1"><img src="/Comments.svg" alt="Comments" className="w-5 h-5" /> {like.comments}</div>
+                                <div className="flex items-center gap-1"><img src="/Favorites.svg" alt="Favorites" className="w-5 h-5" /> {like.favorites}</div>
                             </div>
-                            <div style={styles.descriptionContainer}>
-                                <p
-                                    style={{
-                                        ...styles.description,
-                                        whiteSpace: isExpanded ? "normal" : "nowrap",
-                                    }}
-                                >
-                                    {truncatedDescription}
-                                </p>
-                                <button
-                                    onClick={() => toggleDescription(index)}
-                                    style={styles.readMoreButton}
-                                >
-                                    {isExpanded ? "Show Less" : "Read More"}
-                                </button>
+                            <div className="flex justify-between items-center overflow-hidden my-2">
+                                <p className={`text-white ${isExpanded ? "whitespace-normal" : "truncate"}`}>{truncatedDescription}</p>
+                                <button onClick={() => toggleDescription(index)} className="text-[#2F2118] font-bold ml-2 cursor-pointer">{isExpanded ? "Show Less" : "Read More"}</button>
                             </div>
-                            <div style={styles.genres}>
-                                <strong style={styles.genreLabel}>Genre:</strong>
+                            <div className="text-white flex gap-2 my-2">
+                                <strong>Genre:</strong>
                                 {like.genres.map((genre, genreIndex) => (
-                                    <span key={genreIndex} style={styles.genre}>
-                                        {genre}
-                                        {genreIndex < like.genres.length - 1 ? "," : ""}
-                                    </span>
+                                    <span key={genreIndex} className="mx-1">{genre}{genreIndex < like.genres.length - 1 ? "," : ""}</span>
                                 ))}
                             </div>
-                            <div style={styles.buttonContainer}>
-                                <button style={styles.button}>Explore</button>
+                            <div className="flex justify-end">
+                                <button className="bg-[#B28F4C] text-gold-500 px-4 py-2 rounded-xl">Explore</button>
                             </div>
                         </div>
                     </div>
                 );
             })}
         </div>
+        
     );
 };
 
-const styles = {
-    scrollContainer: {  
-        maxHeight: "400px",
-        overflowY: "auto" as "auto",
-        margin: "2px", // Added margin
-        padding: "10px", // Added padding to separate data from scroll
-        // For Firefox
-        scrollbarColor: "#634630 transparent", // For Firefox
-        "&::-webkit-scrollbar": {
-            width: "8px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            borderRadius: "10px",
-        },
-        "&::-webkit-scrollbar-track": {
-            backgroundColor: "transparent",
-        },
-        "@media (max-width: 600px)": {
-            maxHeight: "200px", // Adjusted height for mobile view
-        },
-    },
-    container: {
-        display: "flex",
-        marginBottom: "10px", // Reduced margin to make the card smaller
-        flexDirection: "column" as "column",
-        padding: "10px", // Added padding to make the card smaller
-        backgroundColor: "#634630",
-        borderRadius: "20px", // Changed to rounded rectangle
-        "@media (min-width: 600px)": {
-            flexDirection: "row" as "row",
-        },
-    },
-    image: {
-        width: "100%",
-        height: "auto",
-        objectFit: "cover" as "cover",
-        marginRight: "0px",
-        display: "none",
-        borderRadius: "20px", // Changed to rounded rectangle
-        "@media (min-width: 600px)": {
-            width: "100px", // Reduced width to make the card smaller
-            height: "150px", // Reduced height to make the card smaller
-            display: "block",
-        },
-    },
-    content: {
-        flex: "1 0 auto",
-        padding: "10px",
-        overflow: "hidden",
-    },
-    header: {
-        display: "flex",
-        justifyContent: "space-between",
-    },
-    username: {
-        color: "#B28F4C",
-    },
-    date: {
-        color: "white",
-    },
-    title: {
-        display: "flex",
-        justifyContent: "flex-start",
-        margin: "10px 0 10px 10px",
-        fontSize: "2em", // Reduced font size to make the card smaller
-        fontFamily: "Cinzel, serif",
-        color: "#B28F4C",
-        whiteSpace: "nowrap" as "nowrap",
-        overflow: "hidden" as "hidden",
-        textOverflow: "ellipsis" as "ellipsis",
-        "@media (min-width: 600px)": {
-            fontSize: "2em", // Reduced font size to make the card smaller
-        },
-    },
-    stats: {
-        display: "flex",
-        justifyContent: "flex-start",
-        color: "white",
-        gap: "10px",
-        marginBottom: "3px",
-    },
-    icon: {
-        width: "20px",
-        height: "20px",
-    },
-    descriptionContainer: {
-        position: "relative" as "relative",
-        overflow: "hidden" as "hidden",
-        margin: "10px 0",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    description: {
-        display: "flex",
-        justifyContent: "flex-start",
-        marginBottom: "3px",
-        overflow: "hidden" as "hidden",
-        textOverflow: "ellipsis" as "ellipsis",
-        color: "white",
-        flex: "1",
-    },
-    readMoreButton: {
-        backgroundColor: "",
-        color: "#B28F4C",
-        border: "none",
-        // Reduced padding to make the button smaller
-        cursor: "pointer" as "pointer",
-        marginLeft: "10px",
-        },
-        genres: {
-        display: "flex",
-        justifyContent: "flex-start",
-        color: "#ffffff",
-        margin: "10px 0", // Adjusted margin for better placement
-        },
-        genreLabel: {
-        marginRight: "10px",
-        },
-        genre: {
-        margin: "0 5px",
-        },
-        buttonContainer: {
-        display: "flex",
-        justifyContent: "flex-end",
-        marginTop: "10px", // Adjusted margin for better placement
-        },
-        button: {
-        backgroundColor: "#1e1e1e",
-        color: "#B28F4C",
-        border: "none",
-        padding: "10px 20px",
-        cursor: "pointer" as "pointer",
-        borderRadius: "20px", // Changed to rounded rectangle
-        alignSelf: "flex-end", // Align the button to the end
-    },
-};
+const styles = `
+.custom-scrollbar::-webkit-scrollbar {
+    width: 12px;
+}
 
+.custom-scrollbar::-webkit-scrollbar-track {
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #B28F4C;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #B28F4C;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+`;
 export default YourLikes;

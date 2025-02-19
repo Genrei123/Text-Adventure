@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PasswordInput from '../../components/PasswordInput';
 
 interface LoginProps {
   onLogin: (username: string) => void;
@@ -52,7 +53,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         const data = response.data;
         if (data.token) {
           localStorage.setItem('token', data.token);
-          localStorage.setItem('username', data.user.email);
+          localStorage.setItem('email', data.user.email); // Store email in local storage
+          console.log(localStorage.getItem('email')); // Confirm email is stored
           onLogin(data.user.email);
           toast.success('Login successful!');
           navigate('/home');
@@ -115,8 +117,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
             <div>
               <label className="block text-sm font-cinzel text-white mb-2">Password</label>
-              <input
-                type="password"
+              <PasswordInput
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"

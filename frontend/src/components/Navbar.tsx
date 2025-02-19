@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, ChevronDown } from "lucide-react";
+import socketIOClient from 'socket.io-client';
+
+const socket = socketIOClient(import.meta.env.SITE_URL);
 
 const Navbar = () => {
   const [username, setUsername] = useState<string | null>(null);
@@ -12,11 +15,9 @@ const Navbar = () => {
   const [selectedPopularity, setSelectedPopularity] = useState("all");
 
   const navigate = useNavigate();
-  const location = useLocation(); // Get current route
+  const location = useLocation();
+  const isHomePage = location.pathname === "/home";
 
-  const isHomePage = location.pathname === "/home"; // Check if on the home page
-
-  // Sample data - palitan nyo nalang mga lods
   const genres = [
     "Fantasy",
     "Dark Fantasy",
@@ -34,15 +35,17 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem("username");
-      if (!token) return;
-      setUsername(token);
+      const email = localStorage.getItem("email");
+      if (email) {
+        setUsername(email);
+      }
     };
 
-    const params = new URLSearchParams(location.search);
-    const usernameParam = params.get("username");
+    const params = new URLSearchParams(window.location.search);
+    const usernameParam = params.get('username');
     if (usernameParam) {
       setUsername(decodeURIComponent(usernameParam));
+      localStorage.setItem("email", decodeURIComponent(usernameParam));
     }
 
     fetchUserData();
@@ -51,7 +54,6 @@ const Navbar = () => {
   useEffect(() => {
     if (searchQuery.length > 0) {
       const sampleStories = [
-        //eto rin palitan nalang mga lods
         "The Lost Scrolls of Aldor",
         "Legends of the Crystal Keep",
         "The Last Sage",
@@ -67,10 +69,20 @@ const Navbar = () => {
     }
   }, [searchQuery]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("token");
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const email = localStorage.getItem('email');
+      if (token && email) {
+        socket.emit('leave', { route: window.location.pathname, email, token });
+      }
+
+      localStorage.removeItem("email");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
   };
 
   return (
