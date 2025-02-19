@@ -1,6 +1,6 @@
 import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
+import GameHeader from '../components/GameHeader';
 
 const GameScreen: React.FC = () => {
     const [message, setMessage] = useState('');
@@ -73,7 +73,7 @@ const GameScreen: React.FC = () => {
     return (
         <>
         <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-            <Navbar/>
+            <GameHeader/>
             <Sidebar/>
             <br/>
             <br/>
