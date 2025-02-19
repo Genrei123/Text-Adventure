@@ -5,7 +5,7 @@ const Sidebar: React.FC = () => {
     return (
         <>
             {/* Desktop Sidebar */}
-            <div className="hidden md:block w-1/15 h-10 p-6 fixed top-16 left-0 md:w-1/15 md:h-[calc(127vh-4rem)] md:p-6 z-50">
+            <div className="hidden md:block w-1/15 h-10 p-6 fixed top-16 left-0 md:w-1/15 md:h-[calc(127vh-4rem)] md:p-6 z-49">
                 <ul className="space-y-2 md:space-y-0 md:flex md:flex-col">
                     <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
                         <Link to="/home">
