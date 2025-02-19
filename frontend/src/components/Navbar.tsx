@@ -78,7 +78,56 @@ const Navbar = () => {
       <div className="flex flex-col space-y-4">
         {/* Top Bar */}
         <div className="flex justify-between items-center">
-          <div className="text-xl font-cinzel text-[#C8A97E]">Sage.AI</div>
+          <div className="hidden md:block text-xl font-cinzel text-[#C8A97E]">
+            Sage.AI
+          </div>
+
+          {/* Search Bar and Filter Button - Visible only on the Home Page */}
+          {isHomePage && (
+            <div className="flex items-center space-x-2">
+              <div className="relative w-[120%]">
+                <input
+                  type="text"
+                  placeholder="Search the ancient scrolls..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-[100%] p-2 pl-10 rounded bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
+                />
+                <Search
+                  className="absolute left-3 top-2.5 text-[#8B4513]"
+                  size={20}
+                />
+                {suggestions.length > 0 && (
+                  <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded mt-1 shadow-lg">
+                    {suggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22]"
+                        onClick={() => setSearchQuery(suggestion)}
+                      >
+                        {suggestion}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Filters Toggle */}
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center text-[#C8A97E] hover:text-[#E5D4B3]"
+              >
+                Filter
+                <ChevronDown
+                  className={`ml-1 transform transition-transform ${
+                    showFilters ? "rotate-180" : ""
+                  }`}
+                  size={20}
+                />
+              </button>
+            </div>
+          )}
+
           <div className="flex items-center space-x-2">
             {username ? (
               <>
@@ -108,132 +157,82 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Search Bar - Visible only on the Home Page */}
-        {isHomePage && (
-          <>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search the ancient scrolls..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full p-2 pl-10 rounded bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
-              />
-              <Search
-                className="absolute left-3 top-2.5 text-[#8B4513]"
-                size={20}
-              />
-              {suggestions.length > 0 && (
-                <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded mt-1 shadow-lg">
-                  {suggestions.map((suggestion, index) => (
-                    <div
-                      key={index}
-                      className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22]"
-                      onClick={() => setSearchQuery(suggestion)}
-                    >
-                      {suggestion}
-                    </div>
-                  ))}
+        {/* Filters Section */}
+        {showFilters && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#2A1F17] p-4 rounded border border-[#C8A97E]">
+            {/* Genres */}
+            <div className="space-y-2">
+              <h3 className="font-cinzel text-[#C8A97E]">Schools of Magic</h3>
+              {genres.map((genre) => (
+                <div key={genre} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={genre}
+                    checked={selectedGenres.includes(genre)}
+                    onChange={() =>
+                      setSelectedGenres((prev) =>
+                        prev.includes(genre)
+                          ? prev.filter((g) => g !== genre)
+                          : [...prev, genre]
+                      )
+                    }
+                    className="mr-2 accent-[#C8A97E]"
+                  />
+                  <label htmlFor={genre} className="text-[#E5D4B3]">
+                    {genre}
+                  </label>
                 </div>
-              )}
+              ))}
             </div>
 
-            {/* Filters Toggle */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center text-[#C8A97E] hover:text-[#E5D4B3]"
-            >
-              Filter Scrolls
-              <ChevronDown
-                className={`ml-1 transform transition-transform ${
-                  showFilters ? "rotate-180" : ""
-                }`}
-                size={20}
-              />
-            </button>
-
-            {/* Filters Section */}
-            {showFilters && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#2A1F17] p-4 rounded border border-[#C8A97E]">
-                {/* Genres */}
-                <div className="space-y-2">
-                  <h3 className="font-cinzel text-[#C8A97E]">
-                    Schools of Magic
-                  </h3>
-                  {genres.map((genre) => (
-                    <div key={genre} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={genre}
-                        checked={selectedGenres.includes(genre)}
-                        onChange={() =>
-                          setSelectedGenres((prev) =>
-                            prev.includes(genre)
-                              ? prev.filter((g) => g !== genre)
-                              : [...prev, genre]
-                          )
-                        }
-                        className="mr-2 accent-[#C8A97E]"
-                      />
-                      <label htmlFor={genre} className="text-[#E5D4B3]">
-                        {genre}
-                      </label>
-                    </div>
-                  ))}
+            {/* Tags */}
+            <div className="space-y-2">
+              <h3 className="font-cinzel text-[#C8A97E]">
+                Mystical Attributes
+              </h3>
+              {tags.map((tag) => (
+                <div key={tag} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={tag}
+                    checked={selectedTags.includes(tag)}
+                    onChange={() =>
+                      setSelectedTags((prev) =>
+                        prev.includes(tag)
+                          ? prev.filter((t) => t !== tag)
+                          : [...prev, tag]
+                      )
+                    }
+                    className="mr-2 accent-[#C8A97E]"
+                  />
+                  <label htmlFor={tag} className="text-[#E5D4B3]">
+                    {tag}
+                  </label>
                 </div>
+              ))}
+            </div>
 
-                {/* Tags */}
-                <div className="space-y-2">
-                  <h3 className="font-cinzel text-[#C8A97E]">
-                    Mystical Attributes
-                  </h3>
-                  {tags.map((tag) => (
-                    <div key={tag} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={tag}
-                        checked={selectedTags.includes(tag)}
-                        onChange={() =>
-                          setSelectedTags((prev) =>
-                            prev.includes(tag)
-                              ? prev.filter((t) => t !== tag)
-                              : [...prev, tag]
-                          )
-                        }
-                        className="mr-2 accent-[#C8A97E]"
-                      />
-                      <label htmlFor={tag} className="text-[#E5D4B3]">
-                        {tag}
-                      </label>
-                    </div>
-                  ))}
+            {/* Popularity */}
+            <div className="space-y-2">
+              <h3 className="font-cinzel text-[#C8A97E]">Time Chronicles</h3>
+              {popularityOptions.map((option) => (
+                <div key={option.value} className="flex items-center">
+                  <input
+                    type="radio"
+                    id={option.value}
+                    name="popularity"
+                    value={option.value}
+                    checked={selectedPopularity === option.value}
+                    onChange={(e) => setSelectedPopularity(e.target.value)}
+                    className="mr-2 accent-[#C8A97E]"
+                  />
+                  <label htmlFor={option.value} className="text-[#E5D4B3]">
+                    {option.label}
+                  </label>
                 </div>
-
-                {/* Popularity */}
-                <div className="space-y-2">
-                  <h3 className="font-cinzel text-[#C8A97E]">
-                    Time Chronicles
-                  </h3>
-                  {popularityOptions.map((option) => (
-                    <div key={option.value} className="flex items-center">
-                      <input
-                        type="radio"
-                        id={option.value}
-                        name="popularity"
-                        value={option.value}
-                        checked={selectedPopularity === option.value}
-                        onChange={(e) => setSelectedPopularity(e.target.value)}
-                        className="mr-2 accent-[#C8A97E]"
-                      />
-                      <label htmlFor={option.value} className="text-[#E5D4B3]">
-                        {option.label}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </nav>
