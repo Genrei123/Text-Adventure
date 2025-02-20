@@ -17,6 +17,7 @@ import { createServer } from './websocket/socket';
 import statsRoutes from './routes/statistics/statsRoutes'; // Import the new stats route
 import playerActivityRoutes from './routes/statistics/playerActivityRoutes'; // Import the new player activity route
 import gameRoutes from './routes/game/gameRoutes';
+import paymentRoutes from './routes/transaction/shopRoutes';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -50,6 +51,7 @@ app.use('/ai', chatRoutes);
 app.use('/statistics/statsRoutes', statsRoutes); // Use the new stats route
 app.use('/statistics/playerActivityRoutes', playerActivityRoutes); // Use the new player activity route
 app.use('/game', gameRoutes);
+app.use('/payments', paymentRoutes);
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
