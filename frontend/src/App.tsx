@@ -12,6 +12,7 @@ import GameScreen from './game/GameScreen';
 import Subscription from './subscription/Subscription';
 import GameCreation  from './GameCreation/GameCreation';
 import AdventureEditor from './GameCreation/Editing Page/Editor';
+import ReviewPage from './review/ReviewPage';
 
 
 
@@ -50,6 +51,7 @@ function App() {
         <Route path ="/subscription" element ={<Subscription />} />
         <Route path ="/editingpage" element ={< AdventureEditor/>} />
         <Route path ="/gamecreation" element={<GameCreation onBack={() => {}} onNext={() => {}} onSkip={() => {}} />} />
+        <Route path ="/review" element ={< ReviewPage title={''} subtitle={''} reads={0} saves={0} comments={0} image={''}/>} />
       </Routes>
     </Router>
   );

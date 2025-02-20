@@ -19,7 +19,7 @@ export const TextInput: React.FC<TextInputProps> = ({ label, value, onChange, er
         id="input-field"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`flex shrink-0 max-w-full shadow-lg bg-stone-800 h-[78px] rounded-full w-[911px] text-[#311F17] text-3xl pl-7 max-md:h-[50px] max-md:w-full max-md:text-xl max-md:pl-4
+        className={`flex shrink-0 max-w-full shadow-lg bg-stone-800 h-[78px] rounded-full w-[911px] text-[#FFFFFF] text-3xl pl-7 max-md:h-[50px] max-md:w-full max-md:text-xl max-md:pl-4
           ${error ? 'border-2 border-red-500' : ''}`}
         aria-label={label}
       />
