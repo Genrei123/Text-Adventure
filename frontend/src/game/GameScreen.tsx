@@ -1,18 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
+import GameHeader from '../components/GameHeader';
 
 const GameScreen: React.FC = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [showScroll, setShowScroll] = useState(false);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const [chatMessages, setChatMessages] = useState<Array<{content: string, isUser: boolean, timestamp: string}>>([]);
+
+    useEffect(() => {
+        if (textareaRef.current) {
+            const textarea = textareaRef.current;
+            setShowScroll(textarea.scrollHeight > textarea.clientHeight);
+        }
+    }, [message]);
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit(e as any);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setSuccess('');
 
-        // Frontend validation
         if (!message.trim()) {
             setError('Message cannot be empty.');
             return;
@@ -24,85 +40,54 @@ const GameScreen: React.FC = () => {
             role: 'user',
             content: message,
             GameId: 1,
-            UserId: 70, // Replace with dynamic user ID if needed
+            UserId: 70,
         };
 
-        // Log the payload for debugging
         console.log('Payload:', payload);
 
         try {
-            // TODO! Send the message to the backend
+            const newUserMessage = {
+                content: message,
+                isUser: true,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            setChatMessages(prevMessages => [...prevMessages, newUserMessage]);
+
+            setTimeout(() => {
+                const aiResponse = {
+                    content: "This is a simulated AI response.",
+                    isUser: false,
+                    timestamp: new Date().toLocaleTimeString()
+                };
+                setChatMessages(prevMessages => [...prevMessages, aiResponse]);
+            }, 1000);
 
             setSuccess('Message sent successfully!');
             setMessage('');
         } catch (err) {
             console.error('Error sending message:', err);
-            setError(
-                'An unexpected error occurred. Please try again.'
-            );
+            setError('An unexpected error occurred. Please try again.');
         }
     };
 
     return (
         <>
         <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-            {/* <nav className="bg-[#1e1e1e] py-3.5 px-4 shadow-[0_10px_10px_0_rgba(0,0,0,0.75)] z-50">
-            <div className="flex justify-between items-center">
-                <div className="text-2xl font-cinzel text-[#C8A97E]">
-                    Sage.AI
-                </div>
-                <div className="text-2xl font-cinzel text-white font-bold absolute left-1/4 transform -translate-x-1/2 hidden md:block md:whitespace-nowrap overflow-hidden text-ellipsis">
-                    HIDDEN TAVERN
-                </div>
-                <div className="flex items-center space-x-4 mr-10">
-                    <img src="/Tokens.svg" alt="Placeholder" className="w-8 h-8 rounded-full" />
-                    <span className="text-xl font-cinzel text-white">14</span>
-                </div>
-            </div>
-            </nav> */}
-            <Navbar/>
+            <GameHeader/>
             <Sidebar/>
             <br/>
             <br/>
             <br/>
             <div className="flex-grow flex justify-center items-center mt-[-5%]">
                 <div className="bg- text-white w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto max-h-[calc(1.5em*30)] scrollbar-hide" style={{ scrollbarColor: '#634630 #1E1E1E' }}>
-                    <p className="text-left first-letter:ml-10 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        My name is Gian Higino Fungo. I'm a BSCS student studying at Caloocan City. My house is in Bagong Silang, and I live with my family. I attend classes at the university, and I study diligently to achieve my goals. I don't smoke, but I occasionally drink coffee to keep me awake during late-night study sessions.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        I'm in bed by 11 PM, and I make sure I get eight hours of sleep, no matter what. After having a glass of warm milk and doing about twenty minutes of stretches before going to bed, I usually have no problems sleeping until morning. Just like a baby, I wake up without any fatigue or stress in the morning.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        My daily routine involves attending lectures, working on programming projects, and collaborating with my classmates on various assignments. I'm passionate about technology and continuously strive to improve my skills and knowledge.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        In my free time, I enjoy reading tech blogs, experimenting with new coding languages, and exploring innovative solutions to real-world problems. This not only helps me stay updated with the latest trends but also fuels my creativity and problem-solving abilities.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        I believe that a balanced life is essential for success. I make time for relaxation and hobbies, such as playing video games, going for a run, or spending quality time with my family and friends. This helps me recharge and maintain a positive outlook on life.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        As a BSCS student, I am committed to making a difference in the field of technology. I aspire to contribute to innovative projects that can positively impact society and improve people's lives. With determination and perseverance, I am confident that I can achieve my goals and make a meaningful contribution to the tech industry.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
-                    <p className="text-left first-letter:ml-10 mt-4 font-playfair text-sm md:text-lg tracking-[0.1em] leading-[183%] fade-scroll text-xs md:text-sm">
-                        This is how I approach my life and studies, and I believe it is what brings me fulfillment and happiness. Although I face challenges along the way, I am confident in my abilities to overcome them and succeed.
-                    </p>
+                    {chatMessages.map((msg, index) => (
+                        <div key={index} className={`mb-4 ${msg.isUser ? 'text-right' : 'text-left'}`}>
+                            <p className={`inline-block p-2 rounded-lg ${msg.isUser ? 'bg-[#311F17] text-white' : 'bg-[#634630] text-[#E5D4B3]'}`}>
+                                {msg.content}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
             <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
@@ -132,23 +117,30 @@ const GameScreen: React.FC = () => {
                         <span>See</span>
                     </button>
                 </div>
-                <div className="w-full flex items-center bg-[#311F17] rounded-2xl focus-within:outline-none">
-                    <input 
-                        type="text" 
-                        className="w-full h-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none" 
+                <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
+                    <textarea 
+                        ref={textareaRef}
+                        className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${
+                            showScroll ? 'overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent' : 'overflow-y-hidden'
+                        }`}
                         placeholder="Type your text here..." 
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        rows={1}
+                        style={{
+                            minHeight: '56px',
+                            height: `${Math.min(message.split('\n').length * 24 + 32, 192)}px`
+                        }}
                     />
-                    <button className="p-4 bg-transparent rounded-r-2xl relative group" onClick={handleSubmit}>
+                    <button className="p-4 bg-transparent rounded-r-2xl relative group self-start" onClick={handleSubmit}>
                         <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
-                        <img src="/Enter-After.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
+                        <img src="/Enter-after.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
                     </button>
                 </div>
                 {error && <p className="text-red-500 mt-2">{error}</p>}
                 {success && <p className="text-green-500 mt-2">{success}</p>}
             </div>
-
         </div>
         </>
     );
