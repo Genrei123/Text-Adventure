@@ -90,6 +90,36 @@ export const getUserRatingsById = async (req: Request, res: Response) => {
     }
 };
 
+export const getUserCommentsByUsername = async (req: Request, res: Response) => {
+
+    try {
+        const user = await UserService.getUserByUsername(req.params.username);
+        if (user) {
+            const comments = await getUserComments(user.id);
+            res.json(comments);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch user comments'  });
+    }
+};
+
+export const getUserRatingsByUsername = async (req: Request, res: Response) => {
+    try {
+        const user = await UserService.getUserByUsername(req.params.username);
+        if (user) {
+            const ratings = await getUserRatings(user.id);
+            res.json(ratings);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user ratings' });
+    }
+};
+
 
 
 

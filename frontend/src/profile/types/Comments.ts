@@ -9,4 +9,11 @@ interface Comment {
       title: string;
       id: number;
     };
+    User: {
+        username: string;
+        id: number;
+
+    }
+
+
 }

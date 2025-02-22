@@ -4,24 +4,22 @@ import Rating from '../../model/game/rating';
 import User from '../../model/user/user';
 import { sequelize } from '../../service/database';
 
-export const getGameDetails = async (id: number): Promise<Game> => {
-    const game = await Game.findByPk(id, {
-        include: [
-            {
-                model: Rating,
-                attributes: [
-                    [sequelize.fn('AVG', sequelize.col('score')), 'averageRating'],
-                    [sequelize.fn('COUNT', sequelize.col('id')), 'totalRatings']
-                ]
-            }
+export const getGameDetails = async (gameId: number) => {
+    return await Game.findOne({
+        where: { id: gameId },
+        include: [{
+            model: Rating,
+            attributes: [
+                [sequelize.fn('AVG', sequelize.col('score')), 'averageRating'],
+                [sequelize.fn('COUNT', sequelize.col('Ratings.id')), 'totalRatings']
+            ],
+            required: false // Use LEFT JOIN
+        }],
+        group: [
+            'Game.id', // Group by the primary key of the Game table
+            'Ratings.id' // Include Ratings.id in the GROUP BY clause if needed
         ]
     });
-
-    if (!game) {
-        throw new Error(`Game with id ${id} not found`);
-    }
-
-    return game;
 };
 
 export const getGameComments = async (id: number): Promise<Comment[]> => {

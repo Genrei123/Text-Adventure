@@ -1,6 +1,7 @@
 import { FaUserCircle } from "react-icons/fa";
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../config/axiosConfig';
+import { useParams } from "react-router-dom";
 
 interface CommentProps {
     userName: string;
@@ -34,12 +35,24 @@ const YourComments = () => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [userId, setUserId] = useState<number | null>();
+    const { username, id } = useParams<{ username?: string; id?: string }>();
+
+    if (!username && !id) {
+        return (
+            <div className="flex justify-center items-center p-4">
+                <div className="text-red-500">No username or ID provided</div>
+            </div>
+        );
+    }
   
     useEffect(() => {
       const fetchComments = async () => {
         try {
-          const response = await axiosInstance.get('/admin/comments/112');
+          const endpoint = username 
+            ? `/admin/users/username/${username}/comments`
+            : `/game/${id}/comments`;
+          const response = await axiosInstance.get(endpoint);
+
           setComments(response.data);
           setLoading(false);
         } catch (err) {
@@ -85,7 +98,7 @@ const YourComments = () => {
           >
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-[#B39C7D] font-medium">
-                {comment.Game.title}
+                {comment.Game?.title || comment.User?.username}
               </h3>
               <span className="text-[#ffffff]/60 text-sm">
                 {new Date(comment.createdAt).toLocaleDateString()}
