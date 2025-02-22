@@ -21,12 +21,9 @@ import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import GameDetails from './game-details/GameDetails';
 import Subscription from './subscription/Subscription';
-
 // Game Creation Components
 import GameCreation from './game-creation/GameCreation';
 import AdventureEditor from './game-creation/Editing Page/Editor';
-
-// WebSocket Components
 import { WebSocketProvider } from './websocket/context/WebSocketContext';
 import ActivePlayerCount from './websocket/components/ActivePlayerCount';
 

@@ -8956,3 +8956,567 @@
 2025-02-22T17:20:39.703Z [INFO]: Disconnection from route: /home
 2025-02-22T17:20:39.703Z [INFO]: Email received: genreycristobal03@gmail.com
 2025-02-22T17:20:39.706Z [WARN]: Invalid token or user email missing.
+=======
+2025-02-22T13:36:37.731Z [INFO]: New socket connected: m7qjMej2utBMVvt0AAAB
+2025-02-22T13:36:37.779Z [INFO]: New connection from route: /home
+2025-02-22T13:36:37.783Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzEzMDYsImV4cCI6MTc0MDIzNDkwNn0.ORP1GmyibGrO1iTh85SuEn04mY5qayw2LY9R4dUkeVU
+2025-02-22T13:36:37.783Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:36:37.886Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:36:37.888Z [INFO]: Disconnection from route: /home
+2025-02-22T13:36:37.889Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:36:37.894Z [INFO]: New connection from route: /home
+2025-02-22T13:36:37.894Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzEzMDYsImV4cCI6MTc0MDIzNDkwNn0.ORP1GmyibGrO1iTh85SuEn04mY5qayw2LY9R4dUkeVU
+2025-02-22T13:36:37.896Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:36:37.901Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:36:45.876Z [WARN]: No session found for Ervhynedalugdog@gmail.com during leave event
+2025-02-22T13:36:45.947Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:36:45 PM
+2025-02-22T13:36:46.055Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T13:36:46.056Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:36:46.057Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:36:46 PM
+2025-02-22T13:36:46.136Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T13:36:46.143Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:36:46 PM
+2025-02-22T13:36:52.527Z [INFO]: Disconnection from route: /home
+2025-02-22T13:36:52.528Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:36:52.622Z [INFO]: Socket disconnected: m7qjMej2utBMVvt0AAAB
+2025-02-22T13:36:52.932Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:36:52 PM
+2025-02-22T13:36:53.380Z [INFO]: Cleaned up session for Ervhynedalugdog@gmail.com
+2025-02-22T13:36:53.429Z [INFO]: New socket connected: avmhVpteGqLU3CctAAAD
+2025-02-22T13:36:53.555Z [INFO]: New connection from route: /home
+2025-02-22T13:36:53.568Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzEzMDYsImV4cCI6MTc0MDIzNDkwNn0.ORP1GmyibGrO1iTh85SuEn04mY5qayw2LY9R4dUkeVU
+2025-02-22T13:36:53.569Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:36:53.604Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:36:53.605Z [INFO]: Disconnection from route: /home
+2025-02-22T13:36:53.605Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:36:53.608Z [INFO]: New connection from route: /home
+2025-02-22T13:36:53.611Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzEzMDYsImV4cCI6MTc0MDIzNDkwNn0.ORP1GmyibGrO1iTh85SuEn04mY5qayw2LY9R4dUkeVU
+2025-02-22T13:36:53.614Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:36:53.618Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:36:54.089Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:36:54 PM
+2025-02-22T13:36:54.996Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T13:36:55.001Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:36:55.003Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:36:55 PM
+2025-02-22T13:36:55.130Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T13:36:55.132Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:36:55 PM
+2025-02-22T13:37:03.012Z [INFO]: Disconnection from route: /home
+2025-02-22T13:37:03.013Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:37:03.197Z [INFO]: Socket disconnected: avmhVpteGqLU3CctAAAD
+2025-02-22T13:37:03.465Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:37:03 PM
+2025-02-22T13:37:03.676Z [INFO]: Cleaned up session for Ervhynedalugdog@gmail.com
+2025-02-22T13:37:03.761Z [INFO]: New socket connected: -Ef2uXRzUOvz1x6xAAAF
+2025-02-22T13:37:36.744Z [INFO]: New connection from route: /home
+2025-02-22T13:37:36.745Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzE0NTYsImV4cCI6MTc0MDIzNTA1Nn0.sQZrqRThjCnfvbyEPsG4Il1Y7Hsy7kT-biqdOUAZfI8
+2025-02-22T13:37:36.746Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:37:36.806Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:37:36.808Z [INFO]: Disconnection from route: /home
+2025-02-22T13:37:36.809Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:37:36.813Z [INFO]: New connection from route: /home
+2025-02-22T13:37:36.813Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzE0NTYsImV4cCI6MTc0MDIzNTA1Nn0.sQZrqRThjCnfvbyEPsG4Il1Y7Hsy7kT-biqdOUAZfI8
+2025-02-22T13:37:36.814Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:37:36.816Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:37:37.154Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T13:37:37.155Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:37:37.156Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:37:37 PM
+2025-02-22T13:37:38.003Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T13:37:38.004Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:37:38 PM
+2025-02-22T13:37:38.400Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:37:38.402Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 9:37:38 PM
+2025-02-22T13:42:53.945Z [INFO]: New socket connected: DQD9gR_nk3ypNlCgAAAB
+2025-02-22T13:43:31.066Z [INFO]: New connection from route: /home
+2025-02-22T13:43:31.067Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzE4MTAsImV4cCI6MTc0MDIzNTQxMH0.SpzCu-jh7ec5oUsoNKxCQ393mSaqZpH6UzG75X4Qjhg
+2025-02-22T13:43:31.068Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:43:31.126Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:43:31.129Z [INFO]: Disconnection from route: /home
+2025-02-22T13:43:31.130Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:43:31.133Z [INFO]: New connection from route: /home
+2025-02-22T13:43:31.134Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzE4MTAsImV4cCI6MTc0MDIzNTQxMH0.SpzCu-jh7ec5oUsoNKxCQ393mSaqZpH6UzG75X4Qjhg
+2025-02-22T13:43:31.134Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:43:31.136Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:43:31.757Z [WARN]: No session found for Ervhynedalugdog@gmail.com during leave event
+2025-02-22T13:43:31.790Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:43:31 PM
+2025-02-22T13:43:32.370Z [INFO]: Active players: 1
+2025-02-22T13:43:32.371Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:43:32.371Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:43:32 PM
+2025-02-22T13:43:32.656Z [INFO]: Active players: 1
+2025-02-22T13:43:32.657Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:43:32 PM
+2025-02-22T13:43:52.717Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /profile
+2025-02-22T13:43:52.725Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /profile
+2025-02-22T13:44:53.956Z [INFO]: New socket connected: tC0NaG35NlYh8ymGAAAB
+2025-02-22T13:45:21.941Z [INFO]: New socket connected: ofpzukahhURVr19yAAAB
+2025-02-22T13:47:08.525Z [INFO]: New connection from route: /home
+2025-02-22T13:47:08.526Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:47:08.526Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:47:08.566Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:47:08.572Z [INFO]: Disconnection from route: /home
+2025-02-22T13:47:08.577Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:47:08.583Z [INFO]: New connection from route: /home
+2025-02-22T13:47:08.584Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:47:08.585Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:47:08.591Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:47:09.143Z [WARN]: No session found for Ervhynedalugdog@gmail.com during leave event
+2025-02-22T13:47:09.221Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:47:09 PM
+2025-02-22T13:47:09.719Z [INFO]: Active players: 1
+2025-02-22T13:47:09.721Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:47:09.722Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:47:09 PM
+2025-02-22T13:47:10.098Z [INFO]: Active players: 1
+2025-02-22T13:47:10.101Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:47:10 PM
+2025-02-22T13:47:15.019Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /profile
+2025-02-22T13:47:15.020Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /profile
+2025-02-22T13:47:19.888Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /game
+2025-02-22T13:47:19.888Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /game
+2025-02-22T13:47:21.984Z [INFO]: Disconnection from route: /home
+2025-02-22T13:47:21.985Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:47:22.826Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:47:22.828Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:47:22 PM
+2025-02-22T13:47:47.009Z [INFO]: New connection from route: /home
+2025-02-22T13:47:47.010Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:47:47.010Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:47:47.043Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:47:47.046Z [INFO]: Disconnection from route: /home
+2025-02-22T13:47:47.053Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:47:47.060Z [INFO]: New connection from route: /home
+2025-02-22T13:47:47.061Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:47:47.061Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:47:47.157Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:47:50.893Z [WARN]: No session found for Ervhynedalugdog@gmail.com during leave event
+2025-02-22T13:47:50.895Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:47:50 PM
+2025-02-22T13:47:51.232Z [INFO]: Active players: 1
+2025-02-22T13:47:51.233Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:47:51.234Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:47:51 PM
+2025-02-22T13:47:51.409Z [INFO]: Active players: 1
+2025-02-22T13:47:51.410Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:47:51 PM
+2025-02-22T13:49:15.053Z [INFO]: Disconnection from route: /home
+2025-02-22T13:49:15.061Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:15.068Z [INFO]: New connection from route: /subscription
+2025-02-22T13:49:15.069Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:15.070Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:15.076Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:49:15.077Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:49:15.077Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:49:15.077Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:15.080Z [INFO]: New connection from route: /subscription
+2025-02-22T13:49:15.080Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:15.081Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:15.083Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:49:15.083Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:49:18.662Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:49:18 PM
+2025-02-22T13:49:19.054Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:49:19.056Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 9:49:19 PM
+2025-02-22T13:49:19.061Z [INFO]: Active players: 1
+2025-02-22T13:49:19.061Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:49:19.062Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:49:19 PM
+2025-02-22T13:49:19.368Z [INFO]: Active players: 1
+2025-02-22T13:49:19.370Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:49:19 PM
+2025-02-22T13:49:26.942Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:49:26.943Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:26.965Z [INFO]: New connection from route: /subscription
+2025-02-22T13:49:26.965Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:26.966Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:26.970Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:49:26.970Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:49:26.972Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:49:26.972Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:26.974Z [INFO]: New connection from route: /subscription
+2025-02-22T13:49:26.975Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:26.975Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:26.978Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:49:26.978Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:49:27.668Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:49:27.669Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:49:27 PM
+2025-02-22T13:49:27.669Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:49:27.670Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:49:27 PM
+2025-02-22T13:49:27.718Z [INFO]: Active players: 0
+2025-02-22T13:49:27.719Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:49:27.720Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:49:27 PM
+2025-02-22T13:49:27.722Z [INFO]: Active players: 0
+2025-02-22T13:49:27.723Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:49:27 PM
+2025-02-22T13:49:34.230Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:49:34.231Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:34.236Z [INFO]: New connection from route: /game
+2025-02-22T13:49:34.236Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:34.237Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:34.239Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /game
+2025-02-22T13:49:34.239Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /game
+2025-02-22T13:49:34.239Z [INFO]: Disconnection from route: /game
+2025-02-22T13:49:34.239Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:34.242Z [INFO]: New connection from route: /game
+2025-02-22T13:49:34.242Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:34.243Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:34.246Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /game
+2025-02-22T13:49:34.247Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /game
+2025-02-22T13:49:34.668Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:49:34 PM
+2025-02-22T13:49:35.113Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:49:35.114Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:49:35 PM
+2025-02-22T13:49:35.118Z [INFO]: Active players: 0
+2025-02-22T13:49:35.120Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:49:35.122Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:49:35 PM
+2025-02-22T13:49:35.127Z [INFO]: Active players: 0
+2025-02-22T13:49:35.128Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:49:35 PM
+2025-02-22T13:49:36.714Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /profile
+2025-02-22T13:49:36.725Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /profile
+2025-02-22T13:49:37.960Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T13:49:37.963Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T13:49:40.195Z [INFO]: Disconnection from route: /game
+2025-02-22T13:49:40.201Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:40.213Z [INFO]: New connection from route: /subscription
+2025-02-22T13:49:40.213Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:40.214Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:40.230Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:49:40.230Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:49:40.231Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:49:40.231Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:40.236Z [INFO]: New connection from route: /subscription
+2025-02-22T13:49:40.236Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:40.237Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:40.243Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:49:40.244Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:49:40.709Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:49:40 PM
+2025-02-22T13:49:41.126Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:49:41.130Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 9:49:41 PM
+2025-02-22T13:49:41.135Z [INFO]: Active players: 1
+2025-02-22T13:49:41.136Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:49:41.138Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:49:41 PM
+2025-02-22T13:49:41.142Z [INFO]: Active players: 1
+2025-02-22T13:49:41.144Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:49:41 PM
+2025-02-22T13:49:59.766Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:49:59.766Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:59.789Z [INFO]: New connection from route: /home
+2025-02-22T13:49:59.790Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:59.791Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:59.794Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T13:49:59.795Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T13:49:59.833Z [INFO]: Disconnection from route: /home
+2025-02-22T13:49:59.838Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:59.843Z [INFO]: New connection from route: /home
+2025-02-22T13:49:59.857Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:49:59.859Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:49:59.874Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T13:49:59.875Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T13:50:01.824Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /profile
+2025-02-22T13:50:01.825Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /profile
+2025-02-22T13:50:03.733Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /game
+2025-02-22T13:50:03.759Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /game
+2025-02-22T13:50:03.803Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:50:03 PM
+2025-02-22T13:50:04.139Z [INFO]: Active players: 1
+2025-02-22T13:50:04.140Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:50:04 PM
+2025-02-22T13:50:04.481Z [INFO]: Active players: 1
+2025-02-22T13:50:04.482Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:50:04 PM
+2025-02-22T13:50:05.160Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:50:05.161Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 9:50:05 PM
+2025-02-22T13:50:12.213Z [INFO]: Disconnection from route: /home
+2025-02-22T13:50:12.216Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:12.288Z [INFO]: New connection from route: /subscription
+2025-02-22T13:50:12.300Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:50:12.300Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:12.331Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:50:12.333Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:50:12.333Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:12.377Z [INFO]: New connection from route: /subscription
+2025-02-22T13:50:12.379Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:50:12.381Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:12.402Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:50:12.663Z [WARN]: No session found for Ervhynedalugdog@gmail.com during leave event
+2025-02-22T13:50:12.665Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:50:12 PM
+2025-02-22T13:50:12.726Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:50:12 PM
+2025-02-22T13:50:13.177Z [INFO]: Active players: 1
+2025-02-22T13:50:13.178Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:50:13.179Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:50:13 PM
+2025-02-22T13:50:13.182Z [INFO]: Active players: 1
+2025-02-22T13:50:13.183Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:50:13 PM
+2025-02-22T13:50:30.539Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:50:30.545Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:30.605Z [INFO]: New connection from route: /profile
+2025-02-22T13:50:30.608Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:50:30.610Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:30.622Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /profile
+2025-02-22T13:50:30.623Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /profile
+2025-02-22T13:50:30.624Z [INFO]: Disconnection from route: /profile
+2025-02-22T13:50:30.625Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:30.632Z [INFO]: New connection from route: /profile
+2025-02-22T13:50:30.633Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:50:30.635Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:30.639Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /profile
+2025-02-22T13:50:30.640Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /profile
+2025-02-22T13:50:32.020Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /game
+2025-02-22T13:50:32.021Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /game
+2025-02-22T13:50:34.055Z [INFO]: Disconnection from route: /profile
+2025-02-22T13:50:34.056Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:34.086Z [INFO]: New connection from route: /subscription
+2025-02-22T13:50:34.087Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:50:34.087Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:34.091Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:50:34.092Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:50:34.092Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:50:34.093Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:34.097Z [INFO]: New connection from route: /subscription
+2025-02-22T13:50:34.104Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:50:34.106Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:34.111Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:50:34.112Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:50:35.389Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:50:35.391Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:50:35 PM
+2025-02-22T13:50:35.439Z [INFO]: Active players: 0
+2025-02-22T13:50:35.440Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:50:35.441Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:50:35 PM
+2025-02-22T13:50:35.460Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:50:35.461Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:50:35 PM
+2025-02-22T13:50:35.463Z [INFO]: Active players: 0
+2025-02-22T13:50:35.464Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:50:35.464Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:50:35 PM
+2025-02-22T13:50:35.678Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:50:35.679Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:50:35 PM
+2025-02-22T13:50:35.765Z [INFO]: Active players: 0
+2025-02-22T13:50:35.766Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:50:35.767Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:50:35 PM
+2025-02-22T13:50:35.775Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:50:35.777Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:50:35 PM
+2025-02-22T13:50:35.811Z [INFO]: Active players: 0
+2025-02-22T13:50:35.814Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:50:35.815Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:50:35 PM
+2025-02-22T13:50:38.769Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:50:38.770Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:38.838Z [INFO]: New connection from route: /home
+2025-02-22T13:50:38.867Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:50:38.962Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:39.017Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T13:50:39.019Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T13:50:39.019Z [INFO]: Disconnection from route: /home
+2025-02-22T13:50:39.026Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:39.032Z [INFO]: New connection from route: /home
+2025-02-22T13:50:39.034Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:50:39.034Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:50:39.042Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T13:50:39.044Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T13:50:39.666Z [INFO]: Active players: 0
+2025-02-22T13:50:39.666Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:50:39 PM
+2025-02-22T13:50:39.679Z [INFO]: Active players: 0
+2025-02-22T13:50:39.680Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:50:39 PM
+2025-02-22T13:50:39.817Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:50:39.819Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:50:39 PM
+2025-02-22T13:50:40.009Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:50:40 PM
+2025-02-22T13:51:02.645Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:51:07.679Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:51:10.643Z [INFO]: Disconnection from route: /home
+2025-02-22T13:51:10.644Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:10.656Z [INFO]: New connection from route: /subscription
+2025-02-22T13:51:10.656Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:51:10.657Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:10.676Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:51:10.677Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:51:10.678Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:10.686Z [INFO]: New connection from route: /subscription
+2025-02-22T13:51:10.687Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:51:10.694Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:10.700Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:51:12.859Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:51:12.861Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:13.019Z [INFO]: New connection from route: /game
+2025-02-22T13:51:13.020Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:51:13.020Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:13.023Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:51:13.024Z [INFO]: Disconnection from route: /game
+2025-02-22T13:51:13.024Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:13.028Z [INFO]: New connection from route: /game
+2025-02-22T13:51:13.028Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:51:13.029Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:13.049Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:51:14.923Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:51:14 PM
+2025-02-22T13:51:14.934Z [WARN]: No session found for Ervhynedalugdog@gmail.com during leave event
+2025-02-22T13:51:14.939Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:51:14 PM
+2025-02-22T13:51:15.340Z [WARN]: No session found for Ervhynedalugdog@gmail.com during leave event
+2025-02-22T13:51:15.343Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:51:15 PM
+2025-02-22T13:51:15.345Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:51:15 PM
+2025-02-22T13:51:15.674Z [INFO]: Active players: 1
+2025-02-22T13:51:15.675Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:51:15.675Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:51:15 PM
+2025-02-22T13:51:15.680Z [INFO]: Active players: 1
+2025-02-22T13:51:15.681Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:51:15 PM
+2025-02-22T13:51:15.705Z [INFO]: Active players: 1
+2025-02-22T13:51:15.707Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:51:15 PM
+2025-02-22T13:51:16.068Z [INFO]: Active players: 1
+2025-02-22T13:51:16.069Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:51:16 PM
+2025-02-22T13:51:27.419Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /profile
+2025-02-22T13:51:27.419Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /profile
+2025-02-22T13:51:32.052Z [INFO]: Disconnection from route: /game
+2025-02-22T13:51:32.052Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:32.065Z [INFO]: New connection from route: /subscription
+2025-02-22T13:51:32.065Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:51:32.065Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:32.092Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:51:32.094Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:51:32.097Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:51:32.100Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:32.106Z [INFO]: New connection from route: /subscription
+2025-02-22T13:51:32.107Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:51:32.108Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:51:32.111Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:51:32.112Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:51:35.555Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:51:35 PM
+2025-02-22T13:51:35.686Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:51:35.687Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 9:51:35 PM
+2025-02-22T13:51:35.730Z [INFO]: Active players: 1
+2025-02-22T13:51:35.731Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:51:35.732Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:51:35 PM
+2025-02-22T13:51:35.959Z [INFO]: Active players: 1
+2025-02-22T13:51:35.961Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:51:35 PM
+2025-02-22T13:54:40.060Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:54:40.061Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:54:40.071Z [INFO]: New connection from route: /subscription
+2025-02-22T13:54:40.071Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:54:40.072Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:54:40.074Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:54:40.074Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:54:40.074Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:54:40.074Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:54:40.076Z [INFO]: New connection from route: /subscription
+2025-02-22T13:54:40.076Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:54:40.076Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:54:40.078Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:54:40.078Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:54:43.181Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:54:43.182Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 9:54:43 PM
+2025-02-22T13:54:43.208Z [INFO]: Active players: 1
+2025-02-22T13:54:43.208Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:54:43.208Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:54:43 PM
+2025-02-22T13:54:43.294Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:54:43.295Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 9:54:43 PM
+2025-02-22T13:54:43.415Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:54:43.418Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:54:43.446Z [INFO]: Socket disconnected: ofpzukahhURVr19yAAAB
+2025-02-22T13:54:43.446Z [WARN]: No session found for Ervhynedalugdog@gmail.com during disconnect event
+2025-02-22T13:54:43.478Z [INFO]: Active players: 0
+2025-02-22T13:54:43.480Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:54:43.480Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:54:43 PM
+2025-02-22T13:54:43.751Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:54:43 PM
+2025-02-22T13:54:44.251Z [INFO]: New socket connected: VeN7ybnuKQ-TCbNGAAAD
+2025-02-22T13:54:44.349Z [INFO]: New connection from route: /subscription
+2025-02-22T13:54:44.357Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:54:44.359Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:54:44.365Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:54:44.365Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:54:44.366Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:54:44.366Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:54:44.369Z [INFO]: New connection from route: /subscription
+2025-02-22T13:54:44.370Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzIwMjgsImV4cCI6MTc0MDIzNTYyOH0.4cC-UG6CLyVBVFpzd0nmyNiLtp4Qek3xqldFCZGFQoE
+2025-02-22T13:54:44.371Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:54:44.372Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:54:44.373Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:54:44.915Z [INFO]: Active players: 1
+2025-02-22T13:54:44.916Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:54:44 PM
+2025-02-22T13:54:44.942Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T13:54:44.943Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 9:54:44 PM
+2025-02-22T13:54:44.948Z [INFO]: Active players: 1
+2025-02-22T13:54:44.949Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:54:44.949Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 9:54:44 PM
+2025-02-22T13:54:45.971Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T13:54:45.972Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T13:54:47.819Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /profile
+2025-02-22T13:54:47.820Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /profile
+2025-02-22T13:54:48.902Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /game
+2025-02-22T13:54:48.903Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /game
+2025-02-22T13:54:50.623Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:54:50.628Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:54:52.599Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /game
+2025-02-22T13:54:52.599Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /game
+2025-02-22T13:54:54.126Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /profile
+2025-02-22T13:54:54.134Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /profile
+2025-02-22T13:55:05.764Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /subscription
+2025-02-22T13:55:05.772Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /subscription
+2025-02-22T13:55:11.335Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /game
+2025-02-22T13:55:11.339Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /game
+2025-02-22T13:55:21.303Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T13:55:21.303Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T13:55:22.251Z [INFO]: Disconnection from route: /subscription
+2025-02-22T13:55:22.252Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:55:22.414Z [INFO]: Socket disconnected: VeN7ybnuKQ-TCbNGAAAD
+2025-02-22T13:55:22.878Z [INFO]: New socket connected: KQej9yDu4JZmyGH4AAAF
+2025-02-22T13:55:24.998Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:55:24 PM
+2025-02-22T13:55:25.279Z [INFO]: Cleaned up session for Ervhynedalugdog@gmail.com
+2025-02-22T13:56:49.905Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:04.418Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:07.193Z [INFO]: Socket disconnected: KQej9yDu4JZmyGH4AAAF
+2025-02-22T13:57:07.722Z [INFO]: New socket connected: j_Zn0AcIPnHu5ff8AAAH
+2025-02-22T13:57:31.314Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:33.825Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:34.599Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:37.072Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:37.610Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:38.370Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:39.040Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:41.729Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:57:46.809Z [INFO]: Socket disconnected: j_Zn0AcIPnHu5ff8AAAH
+2025-02-22T13:57:47.341Z [INFO]: New socket connected: 24rSuZDTfICF70kJAAAJ
+2025-02-22T13:58:42.778Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:59:00.932Z [INFO]: Socket disconnected: 24rSuZDTfICF70kJAAAJ
+2025-02-22T13:59:01.603Z [INFO]: New socket connected: ffzTR-aoRZ50D4XyAAAL
+2025-02-22T13:59:01.705Z [INFO]: New connection from route: /home
+2025-02-22T13:59:01.706Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzI3MjIsImV4cCI6MTc0MDIzNjMyMn0.208UccQV3ElX7ncnuyblHLWG7LXNuRiYq8TySlMEIRw
+2025-02-22T13:59:01.706Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:59:01.725Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:59:01.729Z [INFO]: Disconnection from route: /home
+2025-02-22T13:59:01.729Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:59:01.731Z [INFO]: New connection from route: /home
+2025-02-22T13:59:01.731Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzI3MjIsImV4cCI6MTc0MDIzNjMyMn0.208UccQV3ElX7ncnuyblHLWG7LXNuRiYq8TySlMEIRw
+2025-02-22T13:59:01.731Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:59:01.733Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T13:59:04.060Z [INFO]: Disconnection from route: /home
+2025-02-22T13:59:04.061Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T13:59:04.167Z [WARN]: No session found for Ervhynedalugdog@gmail.com during leave event
+2025-02-22T13:59:04.167Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:59:04 PM
+2025-02-22T13:59:04.232Z [INFO]: Socket disconnected: ffzTR-aoRZ50D4XyAAAL
+2025-02-22T13:59:04.611Z [INFO]: New socket connected: P4k3of6q6KcPmyy1AAAN
+2025-02-22T13:59:04.741Z [WARN]: No session found for Ervhynedalugdog@gmail.com during leave event
+2025-02-22T13:59:04.744Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 9:59:04 PM
+2025-02-22T13:59:04.749Z [INFO]: Active players: 0
+2025-02-22T13:59:04.749Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T13:59:04.750Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:59:04 PM
+2025-02-22T13:59:04.822Z [INFO]: Active players: 0
+2025-02-22T13:59:04.822Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 9:59:04 PM
+2025-02-22T13:59:13.685Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T13:59:13.685Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T14:02:34.035Z [INFO]: New socket connected: Qo_S2QhVreHngnf9AAAT
+2025-02-22T14:02:42.082Z [INFO]: Socket disconnected: P4k3of6q6KcPmyy1AAAN
+2025-02-22T14:02:42.087Z [INFO]: Socket disconnected: Qo_S2QhVreHngnf9AAAT
+2025-02-22T14:02:42.657Z [INFO]: New socket connected: wVaag69kJibpxO-LAAAW
+2025-02-22T14:02:42.670Z [INFO]: New socket connected: yoFGo7XQ5AkAnRAoAAAX
+2025-02-22T14:02:42.747Z [INFO]: Socket disconnected: yoFGo7XQ5AkAnRAoAAAX
+2025-02-22T14:02:49.712Z [INFO]: Socket disconnected: wVaag69kJibpxO-LAAAW
+2025-02-22T14:02:50.230Z [INFO]: New socket connected: LVZdQDeEkIkqvWpeAAAa
+2025-02-22T14:02:50.236Z [INFO]: New socket connected: At2tZ8RjU9SiPN10AAAb
+2025-02-22T14:02:50.268Z [INFO]: Socket disconnected: At2tZ8RjU9SiPN10AAAb
+2025-02-22T14:04:30.960Z [INFO]: New socket connected: ywgMezM_njgPnr4XAAAd
+2025-02-22T14:04:32.925Z [INFO]: Disconnection from route: /login
+2025-02-22T14:04:32.926Z [INFO]: Email received: null
+2025-02-22T14:04:32.926Z [WARN]: Invalid token or user email missing.
+2025-02-22T14:04:32.936Z [INFO]: Socket disconnected: ywgMezM_njgPnr4XAAAd
+2025-02-22T14:04:32.943Z [INFO]: New socket connected: TSDDrZryMb8GgS-6AAAf
+2025-02-22T14:04:39.303Z [INFO]: Socket disconnected: LVZdQDeEkIkqvWpeAAAa
+2025-02-22T14:04:39.307Z [INFO]: Socket disconnected: TSDDrZryMb8GgS-6AAAf
+2025-02-22T14:04:39.789Z [INFO]: New socket connected: BywSNh_NwWxsRzzpAAAi
+2025-02-22T14:04:54.929Z [INFO]: Disconnection from route: /login
+2025-02-22T14:04:54.930Z [INFO]: Email received: null
+2025-02-22T14:04:54.930Z [WARN]: Invalid token or user email missing.
+2025-02-22T14:04:54.955Z [INFO]: Socket disconnected: BywSNh_NwWxsRzzpAAAi
+2025-02-22T14:04:54.972Z [INFO]: New socket connected: OyEYvbvOQbNyVwvPAAAk
+2025-02-22T14:04:54.979Z [INFO]: Socket disconnected: OyEYvbvOQbNyVwvPAAAk
+2025-02-22T14:06:14.480Z [INFO]: New socket connected: fy4wZ0tIviGMS_wKAAAn
+2025-02-22T14:06:14.513Z [INFO]: Socket disconnected: fy4wZ0tIviGMS_wKAAAn
+2025-02-22T14:06:31.890Z [INFO]: New socket connected: UeWJV_HTSb_E5eX_AAAp
+2025-02-22T14:06:33.003Z [INFO]: New connection from route: /home
+2025-02-22T14:06:33.003Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzMwOTQsImV4cCI6MTc0MDIzNjY5NH0.uKNTS2VINsYCiXpCiLbgaVXwG5eclV_L73LFiHk7HQ0
+2025-02-22T14:06:33.003Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T14:06:33.028Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T14:06:33.029Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T14:06:33.029Z [INFO]: Disconnection from route: /home
+2025-02-22T14:06:33.030Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T14:06:33.032Z [INFO]: New connection from route: /home
+2025-02-22T14:06:33.032Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzMwOTQsImV4cCI6MTc0MDIzNjY5NH0.uKNTS2VINsYCiXpCiLbgaVXwG5eclV_L73LFiHk7HQ0
+2025-02-22T14:06:33.032Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T14:06:33.034Z [INFO]: Visited page added for Ervhynedalugdog@gmail.com: /home
+2025-02-22T14:06:33.034Z [INFO]: Interaction logged for Ervhynedalugdog@gmail.com: page_visit, page: /home
+2025-02-22T14:06:36.383Z [INFO]: Active players: 0
+2025-02-22T14:06:36.383Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 10:06:36 PM
+2025-02-22T14:06:36.452Z [INFO]: Active players: 0
+2025-02-22T14:06:36.452Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 2/22/2025, 10:06:36 PM
+2025-02-22T14:06:36.676Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T14:06:36.676Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 10:06:36 PM
+2025-02-22T14:06:39.573Z [WARN]: No session found for Ervhynedalugdog@gmail.com 

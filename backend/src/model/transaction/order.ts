@@ -51,7 +51,7 @@ Order.init({
     received_coins: { type: DataTypes.INTEGER, allowNull: true },
 }, {
     sequelize,
-    modelName: "Order",
+    modelName: "Orders",
 });
 
 export default Order;
