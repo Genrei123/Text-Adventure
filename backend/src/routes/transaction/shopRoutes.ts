@@ -2,7 +2,7 @@ import express from 'express';
 import { createCustomer } from '../../service/transaction/Subscription/customerService';
 import { createPaymentMethod } from '../../service/transaction/Subscription/paymentMethodService';
 import { createSubscriptionPlan } from '../../service/transaction/Subscription/subscriptionService';
-import { buyItem, getCoins, deductCoins } from '../../controllers/transaction/shopController';
+import { buyItem, getCoinsByEmail, deductCoins } from '../../controllers/transaction/shopController';
 import { handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
 
 const router = express.Router();

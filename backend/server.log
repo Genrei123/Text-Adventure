@@ -6181,3 +6181,112 @@
 2025-02-18T14:18:34.269Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/18/2025, 10:18:34 PM
 2025-02-18T14:18:34.316Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
 2025-02-18T14:18:34.317Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/18/2025, 10:18:34 PM
+2025-02-22T15:02:32.927Z [INFO]: New socket connected: STnvWBqpT29ac77jAAAB
+2025-02-22T15:02:32.940Z [INFO]: New connection from route: /game
+2025-02-22T15:02:32.941Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzU2MDIsImV4cCI6MTc0MDIzOTIwMn0.GiMLhCpBmuuacQOFj_uakkK082sv-5Gr44pabcfVAd0
+2025-02-22T15:02:32.941Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:02:33.050Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:02:36.281Z [INFO]: New socket connected: o_-VEObaJo1w4N5uAAAD
+2025-02-22T15:02:36.287Z [INFO]: Disconnection from route: /game
+2025-02-22T15:02:36.288Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:02:38.394Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 11:02:38 PM
+2025-02-22T15:02:39.000Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T15:02:39.003Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T15:02:39.007Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 11:02:39 PM
+2025-02-22T15:07:44.940Z [INFO]: New socket connected: xNacJt_qCBJ_X6_EAAAB
+2025-02-22T15:07:47.916Z [INFO]: New socket connected: O94Lpd7MkbJjBkgIAAAD
+2025-02-22T15:10:03.943Z [INFO]: New socket connected: 6r566RSqG3eMhu7FAAAC
+2025-02-22T15:10:03.947Z [INFO]: New socket connected: bu3BIzdetA6nnTS3AAAD
+2025-02-22T15:10:11.930Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:10:13.029Z [INFO]: Disconnection from route: /game
+2025-02-22T15:10:13.030Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:10:13.245Z [INFO]: Socket disconnected: 6r566RSqG3eMhu7FAAAC
+2025-02-22T15:10:13.291Z [INFO]: Socket disconnected: bu3BIzdetA6nnTS3AAAD
+2025-02-22T15:10:13.646Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 11:10:13 PM
+2025-02-22T15:10:13.862Z [INFO]: New socket connected: yVfrSc3xO2FHRz77AAAF
+2025-02-22T15:10:21.136Z [INFO]: New connection from route: /home
+2025-02-22T15:10:21.137Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzcwMjEsImV4cCI6MTc0MDI0MDYyMX0.MPo9gnpNRRqZftDrAQAz3E9f-Bd_fFuyNkKYzF9l8Gs
+2025-02-22T15:10:21.137Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:10:21.160Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:10:21.173Z [INFO]: Disconnection from route: /home
+2025-02-22T15:10:21.178Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:10:21.232Z [INFO]: New connection from route: /home
+2025-02-22T15:10:21.236Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzcwMjEsImV4cCI6MTc0MDI0MDYyMX0.MPo9gnpNRRqZftDrAQAz3E9f-Bd_fFuyNkKYzF9l8Gs
+2025-02-22T15:10:21.237Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:10:21.242Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:10:21.523Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T15:10:21.525Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T15:10:21.525Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 11:10:21 PM
+2025-02-22T15:10:21.996Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T15:10:21.997Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 11:10:21 PM
+2025-02-22T15:10:22.287Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T15:10:22.288Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 11:10:22 PM
+2025-02-22T15:10:23.466Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:15:25.737Z [INFO]: Disconnection from route: /home
+2025-02-22T15:15:25.740Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:15:25.760Z [INFO]: Socket disconnected: yVfrSc3xO2FHRz77AAAF
+2025-02-22T15:15:25.761Z [WARN]: No session found for Ervhynedalugdog@gmail.com during disconnect event
+2025-02-22T15:15:26.451Z [INFO]: New socket connected: qg8nnF3tzlMtZaGLAAAH
+2025-02-22T15:15:26.504Z [INFO]: New connection from route: /game
+2025-02-22T15:15:26.506Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzcwMjEsImV4cCI6MTc0MDI0MDYyMX0.MPo9gnpNRRqZftDrAQAz3E9f-Bd_fFuyNkKYzF9l8Gs
+2025-02-22T15:15:26.506Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:15:26.538Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:15:26.539Z [INFO]: Disconnection from route: /game
+2025-02-22T15:15:26.540Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:15:26.554Z [INFO]: New connection from route: /game
+2025-02-22T15:15:26.559Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzcwMjEsImV4cCI6MTc0MDI0MDYyMX0.MPo9gnpNRRqZftDrAQAz3E9f-Bd_fFuyNkKYzF9l8Gs
+2025-02-22T15:15:26.559Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:15:26.569Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:15:28.452Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 11:15:28 PM
+2025-02-22T15:15:28.717Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T15:15:28.718Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T15:15:28.718Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 11:15:28 PM
+2025-02-22T15:15:29.025Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T15:15:29.026Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 11:15:29 PM
+2025-02-22T15:15:29.313Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T15:15:29.313Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 11:15:29 PM
+2025-02-22T15:15:45.289Z [INFO]: Disconnection from route: /game
+2025-02-22T15:15:45.292Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:15:45.345Z [INFO]: Socket disconnected: qg8nnF3tzlMtZaGLAAAH
+2025-02-22T15:15:45.351Z [WARN]: No session found for Ervhynedalugdog@gmail.com during disconnect event
+2025-02-22T15:15:45.832Z [INFO]: New socket connected: NM4yydWXHc_qmXZqAAAJ
+2025-02-22T15:15:46.000Z [INFO]: New connection from route: /game
+2025-02-22T15:15:46.005Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzcwMjEsImV4cCI6MTc0MDI0MDYyMX0.MPo9gnpNRRqZftDrAQAz3E9f-Bd_fFuyNkKYzF9l8Gs
+2025-02-22T15:15:46.006Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:15:46.028Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:15:46.029Z [INFO]: Disconnection from route: /game
+2025-02-22T15:15:46.029Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:15:46.035Z [INFO]: New connection from route: /game
+2025-02-22T15:15:46.036Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzcwMjEsImV4cCI6MTc0MDI0MDYyMX0.MPo9gnpNRRqZftDrAQAz3E9f-Bd_fFuyNkKYzF9l8Gs
+2025-02-22T15:15:46.037Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:15:46.040Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:15:48.810Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 11:15:48 PM
+2025-02-22T15:15:48.943Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T15:15:48.944Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T15:15:48.945Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 11:15:48 PM
+2025-02-22T15:15:49.102Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T15:15:49.103Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 11:15:49 PM
+2025-02-22T15:15:49.346Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
+2025-02-22T15:15:49.347Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/22/2025, 11:15:49 PM
+2025-02-22T15:16:30.431Z [INFO]: Disconnection from route: /game
+2025-02-22T15:16:30.432Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:16:30.453Z [INFO]: Socket disconnected: NM4yydWXHc_qmXZqAAAJ
+2025-02-22T15:16:30.480Z [WARN]: No session found for Ervhynedalugdog@gmail.com during disconnect event
+2025-02-22T15:16:31.008Z [INFO]: New socket connected: vAr5rkj3Rj8_ArxsAAAL
+2025-02-22T15:16:31.083Z [INFO]: New connection from route: /game
+2025-02-22T15:16:31.084Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzcwMjEsImV4cCI6MTc0MDI0MDYyMX0.MPo9gnpNRRqZftDrAQAz3E9f-Bd_fFuyNkKYzF9l8Gs
+2025-02-22T15:16:31.084Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:16:31.212Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:16:31.213Z [INFO]: Disconnection from route: /game
+2025-02-22T15:16:31.213Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:16:31.215Z [INFO]: New connection from route: /game
+2025-02-22T15:16:31.215Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IkVydmh5bmVkYWx1Z2RvZ0BnbWFpbC5jb20iLCJpZCI6MTIyLCJpYXQiOjE3NDAyMzcwMjEsImV4cCI6MTc0MDI0MDYyMX0.MPo9gnpNRRqZftDrAQAz3E9f-Bd_fFuyNkKYzF9l8Gs
+2025-02-22T15:16:31.216Z [INFO]: Email received: Ervhynedalugdog@gmail.com
+2025-02-22T15:16:31.219Z [WARN]: No session found for Ervhynedalugdog@gmail.com
+2025-02-22T15:16:33.538Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 11:16:33 PM
+2025-02-22T15:16:33.765Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 11:16:33 PM
+2025-02-22T15:16:33.824Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T15:16:33.825Z [INFO]: Session created for Ervhynedalugdog@gmail.com
+2025-02-22T15:16:33.825Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 11:16:33 PM
+2025-02-22T15:16:33.871Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T15:16:33.873Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/22/2025, 11:16:33 PM

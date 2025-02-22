@@ -38,21 +38,17 @@ const getUserDetailsByEmail = async (email: string) => {
 };
 
 // Fetch coin balance
-export const getCoins = async (req: Request, res: Response) => {
-  const userId = parseInt(req.params.userId);
-
+export const getCoinsByEmail = async (req: Request, res: Response) => {
   try {
-    const user = await User.findByPk(userId, {
-      attributes: ['totalCoins'],
-    });
-
-    if (user) {
-      res.json({ coins: user.totalCoins });
-    } else {
-      res.status(404).json({ error: 'User not found' });
-    }
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+      const email = req.params.email;
+      const user = await User.findOne({ where: { email } });
+      if (user) {
+          res.json({ totalCoins: user.totalCoins });
+      } else {
+          res.status(404).json({ message: 'User not found' });
+      }
+  } catch (error) {
+      res.status(500).json({ message: 'Error fetching user data', error });
   }
 };
 
