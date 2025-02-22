@@ -61,7 +61,7 @@ const GameDetails: React.FC = () => {
             <br />
             <div className="w-7/10 h-[40%] bg-[#634630] mt-10 rounded-2xl mx-[10%] relative overflow-hidden border-4 border-[#634630]">
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                <img src={game.imageUrl} alt={game.title} className="rounded-2xl w-full h-full object-cover" />
+                <img src={game.imageUrl || "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1200&h=800&fit=crop"} alt={game.title} className="rounded-2xl w-full h-full object-cover" />
 
                 {/* Bottom content */}
                 <div className="absolute bottom-4 left-4 bg-opacity-50 text-white px-4 py-2 rounded-lg">

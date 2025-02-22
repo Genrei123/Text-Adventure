@@ -7,7 +7,7 @@ interface User {
     admin: boolean;
 }
 
-interface LoginResponse {
+export interface LoginResponse {
     message: string;
     token: string;
     user: User;
