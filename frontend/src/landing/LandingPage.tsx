@@ -10,13 +10,15 @@ const LandingPage: React.FC = () => {
         const interval = setInterval(() => {
             index = (index + 1) % backgrounds.length;
             setBackground(backgrounds[index]);
-        }, 8000);
+        }, 2500);
         return () => clearInterval(interval);
     }, []);
 
     return (
         <>
-            <div className="flex justify-center items-center h-[990px] bg-cover bg-center fade-in" style={{ backgroundImage: `url(${background})` }}>
+            <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-black to-transparent"></div>
+            <div className="flex justify-center items-center h-[950px] bg-cover bg-center fade-in relative" style={{ backgroundImage: `url(${background})` }}>
+                <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black to-transparent"></div>
                 <div ref={contentRef} className="text-center opacity-100 flex flex-col justify-center items-center mx-[5%] -translate-y-[105px] h-[1332px]">
                     <img src="/SageAI.png" alt="logo" className="w-[90%] h-auto responsive-logo" />
                     <br></br>
@@ -26,17 +28,18 @@ const LandingPage: React.FC = () => {
                     <br></br>
                     <div className="flex gap-2.5 mt-5">
                         <button 
-                            className="bg-[#1e1e1e] text-white py-5 px-7 rounded-md cursor-pointer relative overflow-hidden transition duration-300 ml-[10%] border-2 border-black hover:shadow-[0_0_30px_#b28f4c] hover:scale-110"
+                            className="font-cinzel bg-[#1e1e1e] text-white py-5 px-10 rounded-lg cursor-pointer relative overflow-hidden transition duration-300 ml-[10%] hover:shadow-[0_0_30px_#b28f4c] hover:scale-110 hover:bg-[#b28f4c] hover:text-black hover:font-bold transform-gpu -skew-x-12 hover:skew-x-0 hover:stroke-[#b28f4c] stroke-[#b28f4c]"
                             onClick={() => window.location.href = '/login'}
                         >
-                            GATES OF REALM
-                        </button>
-                        <br></br>
+                            gates of realm
+                            <div className="absolute right-0 top-0 h-full w-4 bg-[#b28f4c] transform translate-x-1/2"></div>                        </button>
+                        <div className="w-5"></div> {/* Added space between buttons */}
                         <button 
-                            className="bg-[#1e1e1e] text-white py-5 px-7 rounded-md cursor-pointer relative overflow-hidden transition duration-300 mr-[10%] border-2 border-black hover:shadow-[0_0_30px_#b28f4c] hover:scale-110"
+                            className="font-cinzel bg-[#1e1e1e] text-white py-5 px-10 rounded-lg cursor-pointer relative overflow-hidden transition duration-300 mr-[10%] hover:shadow-[0_0_30px_#b28f4c] hover:scale-110 hover:bg-[#b28f4c] hover:text-black hover:font-bold transform-gpu -skew-x-12 hover:skew-x-0 hover:stroke-[#b28f4c]"
                             onClick={() => window.location.href = '/register'}
                         >
-                            ENTER THE WORLD
+                            enter the world
+                            <div className="absolute right-0 top-0 h-full w-4 bg-[#b28f4c] transform translate-x-1/2"></div>
                         </button>
                     </div>
                 </div>
