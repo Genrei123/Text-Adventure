@@ -11,7 +11,7 @@
 
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   <script>
-    const socket = io(`${process.env.SITE_URL}/statistics/statsRoutes/player-stats`); // Adjust the URL to match your backend
+    const socket = io(`https://text-adventure-production.up.railway.app/statistics/statsRoutes/player-stats`); // Adjust the URL to match your backend
 
     socket.on('playerCount', (data) => {
       document.getElementById('playerCount').innerText = `Active players: ${data.activePlayers}`;
