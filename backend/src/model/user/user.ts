@@ -1,7 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../../service/database";
+import sequelize from "../../service/database"; // This should resolve to the exported sequelize
 
-// Define the attributes of the User model
 interface UserAttributes {
     id: number;
     username: string;
@@ -20,10 +19,8 @@ interface UserAttributes {
     updatedAt: Date;
 }
 
-// Define the creation attributes for the User model
 interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'emailVerified' | 'resetPasswordToken' | 'resetPasswordExpires' | 'totalCoins' | 'verificationToken' | 'verificationTokenExpires'> {}
 
-// Extend the Model class with the User attributes
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
     public id!: number;
     public username!: string;
@@ -44,86 +41,28 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
 
 User.init(
     {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true,
-        },
-        username: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-            validate: {
-                isEmail: true,
-            },
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        private: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: true,
-        },
-        model: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            defaultValue: 'gpt-4',
-        },
-        admin: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-        },
-        emailVerified: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-        },
-        resetPasswordToken: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        resetPasswordExpires: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
-        totalCoins: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 0,
-        },
-        verificationToken: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        verificationTokenExpires: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
+        id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+        username: { type: DataTypes.STRING, allowNull: false, unique: true },
+        email: { type: DataTypes.STRING, allowNull: false, unique: true, validate: { isEmail: true } },
+        password: { type: DataTypes.STRING, allowNull: false },
+        private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+        model: { type: DataTypes.STRING, allowNull: false, defaultValue: 'gpt-4' },
+        admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+        emailVerified: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+        resetPasswordToken: { type: DataTypes.STRING, allowNull: true },
+        resetPasswordExpires: { type: DataTypes.DATE, allowNull: true },
+        totalCoins: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        verificationToken: { type: DataTypes.STRING, allowNull: true },
+        verificationTokenExpires: { type: DataTypes.DATE, allowNull: true },
+        createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+        updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     },
-  {
-    sequelize,
-    modelName: 'User', // Optionally set the model name explicitly
-    tableName: 'Users', // Ensure the table name matches the database
-    timestamps: true, // Enable timestamps
-  }
+    {
+        sequelize, // Use the imported sequelize
+        modelName: 'User',
+        tableName: 'Users',
+        timestamps: true,
+    }
 );
 
 export default User;

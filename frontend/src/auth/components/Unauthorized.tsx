@@ -9,7 +9,7 @@ const Unauthorized: React.FC = () => {
       <h1 className="text-4xl md:text-6xl font-cinzel mb-4">Unrecognized Traveler</h1>
       <p className="text-xl md:text-2xl font-playfair mb-8">Your aura is unfamiliar to these lands</p>
       <button 
-        onClick={() => navigate('/login')}
+        onClick={() => navigate('/home')}
         className="px-6 py-3 bg-[#311F17] text-white font-playfair text-lg rounded-lg hover:bg-[#4A2E22] transition duration-300 flex items-center space-x-2"
       >
         <img src="/scroll.svg" alt="Scroll" className="w-6 h-6" />

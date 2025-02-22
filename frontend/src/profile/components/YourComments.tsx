@@ -1,6 +1,7 @@
-import React from "react";
 import { FaUserCircle } from "react-icons/fa";
-import comments from "../types/Comments"; // Update the path to your Comments.ts file.
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../../config/axiosConfig';
+import { useParams } from "react-router-dom";
 
 interface CommentProps {
     userName: string;
@@ -30,51 +31,84 @@ const Comment: React.FC<CommentProps> = ({ userName, comment, story, onGoToGame 
     );
 };
 
-const YourComments: React.FC = () => {
-    return (
-        <div className="max-h-[400px] overflow-y-auto m-2 p-2 scrollbar-thin scrollbar-thumb-[#B28F4C] scrollbar-track-transparent sm:max-h-[400px] custom-scrollbar fade-in">
-        {comments.map((commentData, index) => (
-            <Comment
-                key={index}
-                userName={commentData.userName}
-                comment={commentData.comment}
-                story={commentData.story}
-                onGoToGame={commentData.onGoToGame} 
-            />
-            ))}
+const YourComments = () => {
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const { username, id } = useParams<{ username?: string; id?: string }>();
+
+    if (!username && !id) {
+        return (
+            <div className="flex justify-center items-center p-4">
+                <div className="text-red-500">No username or ID provided</div>
+            </div>
+        );
+    }
+  
+    useEffect(() => {
+      const fetchComments = async () => {
+        try {
+          const endpoint = username 
+            ? `/admin/users/username/${username}/comments`
+            : `/game/${id}/comments`;
+          const response = await axiosInstance.get(endpoint);
+
+          setComments(response.data);
+          setLoading(false);
+        } catch (err) {
+          setError('Failed to load comments');
+          setLoading(false);
+          console.error('Error fetching comments:', err);
+        }
+      };
+  
+      fetchComments();
+    }, []);
+  
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center p-4">
+          <div className="text-[#B39C7D]">Loading comments...</div>
         </div>
+      );
+    }
+  
+    if (error) {
+      return (
+        <div className="flex justify-center items-center p-4">
+          <div className="text-red-500">{error}</div>
+        </div>
+      );
+    }
+  
+    if (comments.length === 0) {
+      return (
+        <div className="flex justify-center items-center p-4">
+          <div className="text-[#B39C7D]/80">No comments yet.</div>
+        </div>
+      );
+    }
+  
+    return (
+      <div className="space-y-4">
+        {comments.map((comment) => (
+          <div
+            key={comment.id}
+            className="bg-[#2e2e2e] rounded-lg p-4 shadow-lg border border-[#3A3A3A] hover:border-[#B39C7D] transition-colors duration-300"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="text-[#B39C7D] font-medium">
+                {comment.Game?.title || comment.User?.username}
+              </h3>
+              <span className="text-[#ffffff]/60 text-sm">
+                {new Date(comment.createdAt).toLocaleDateString()}
+              </span>
+            </div>
+            <p className="text-[#ffffff]/80">{comment.content}</p>
+          </div>
+        ))}
+      </div>
     );
-};
-
-const styles = `
-.custom-scrollbar::-webkit-scrollbar {
-    width: 12px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #B28F4C;
-    border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #B28F4C;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.fade-in {
-    animation: fadeIn 1s ease-in-out;
-}
-`;
-
-export default YourComments;
+  };
+  
+  export default YourComments;

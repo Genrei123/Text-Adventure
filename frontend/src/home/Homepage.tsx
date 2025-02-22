@@ -100,11 +100,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
 
           {/* Game List Section */}
           <GameList />
-
-          {/* Logout Button */}
-          <button onClick={onLogout} className="mt-4 p-2 bg-red-500 text-white rounded">
-            Logout
-          </button>
         </div>
       </div>
     </div>

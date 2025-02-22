@@ -4,6 +4,6 @@ import { handleChatRequestController, getChatHistoryController } from '../../con
 const router = Router();
 
 router.post('/chat', handleChatRequestController);
-router.get('/get-chat', getChatHistoryController);
+router.post('/get-chat', getChatHistoryController);
 
 export default router;
