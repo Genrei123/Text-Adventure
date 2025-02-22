@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React from 'react';
 
 // Auth Components
 import LoginScreen from './auth/LoginScreen';
@@ -26,6 +27,7 @@ import GameCreation from './game-creation/GameCreation';
 import AdventureEditor from './game-creation/Editing Page/Editor';
 import { WebSocketProvider } from './websocket/context/WebSocketContext';
 import ActivePlayerCount from './websocket/components/ActivePlayerCount';
+import BanTestPage from './pages/BanTestPage';
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
@@ -112,6 +114,7 @@ function App() {
         {/* Utility Routes */}
         <Route path="/subscription" element={<Subscription />} />
         <Route path="/active-players" element={<ActivePlayerCount />} />
+        <Route path="/ban-test" element={<BanTestPage />} />
         
         {/* Error Routes */}
         <Route path="/forbidden" element={<Forbidden />} />
