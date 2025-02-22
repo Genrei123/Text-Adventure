@@ -3,7 +3,7 @@ import socketIOClient from 'socket.io-client';
 import { useLocation } from 'react-router-dom';
 import includedRoutes from '../../../../backend/src/config/websocketConfig'; // Adjust the import path as needed
 
-const socket = socketIOClient(import.meta.env.SITE_URL); // Ensure this points to the backend server
+const socket = socketIOClient(import.meta.env.BASE_URL); // Ensure this points to the backend server
 
 interface WebSocketContextProps {
   playerCount: number;
