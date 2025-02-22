@@ -9,9 +9,16 @@ interface UserDetails {
     totalCoins: number;
     createdAt: string;
     updatedAt: string;
-
-    // ADD BIO
-    // ADD PROFILE PICTURE
-    // ADD GAMES CREATED
-    // ADD WHERE USER COMMENTED
-  }
+    
+    // Bio property
+    bio: string | null;
+    
+    // Profile picture property (typically stored as a URL or path)
+    profilePicture: string | null;
+    
+    // Games created by the user (array of game objects/IDs)
+    gamesCreated: number[] | null;
+    
+    // Comments made by the user (array of comment references/IDs)
+    commentedOn: number[] | null;
+}
