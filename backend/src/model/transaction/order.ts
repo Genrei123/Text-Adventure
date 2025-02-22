@@ -12,7 +12,7 @@ interface OrderAttributes {
     paid_amount: number;
     createdAt: Date;
     updatedAt: Date;
-    UserId: number;
+    userId: number;
     received_coins: number;
 }
 
@@ -29,7 +29,7 @@ class Order extends Model<OrderAttributes, OrderCreationAttributes> implements O
     public paid_amount!: number;
     public createdAt!: Date;
     public updatedAt!: Date;
-    public UserId!: number;
+    public userId!: number;
     public received_coins!: number;
 }
 
@@ -71,7 +71,7 @@ Order.init({
         allowNull: false,
         defaultValue: DataTypes.NOW,
     },
-    UserId: {
+    userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -87,11 +87,11 @@ Order.init({
     },
 }, {
     sequelize,
-    modelName: "Order",
+    modelName: "Orders",
 });
 
 // Define the relationship between Order and User
-Order.belongsTo(User, { foreignKey: "UserId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-User.hasMany(Order, { foreignKey: "UserId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+Order.belongsTo(User, { foreignKey: "userId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+User.hasMany(Order, { foreignKey: "userId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
 export default Order;
