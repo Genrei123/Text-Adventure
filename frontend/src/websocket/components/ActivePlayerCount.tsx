@@ -8,7 +8,7 @@ const ActivePlayerCount: React.FC = () => {
   useEffect(() => {
     const fetchPlayerCount = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.BASE_URL}/statistics/statsRoutes/player-stats`);
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/statistics/statsRoutes/player-stats`);
         setPlayerCount(response.data.activePlayers);
         console.log(`Active players: ${response.data.activePlayers}`);
       } catch (error) {
