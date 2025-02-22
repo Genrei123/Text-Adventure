@@ -35,10 +35,14 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const email = localStorage.getItem("email");
-      if (email) {
-        setUsername(email);
+      const storedUserData = localStorage.getItem('userData');
+      if (!storedUserData) {
+          return null;
       }
+
+      const userData = JSON.parse(storedUserData);
+      const username = userData.username;
+      setUsername(username);
     };
 
     const params = new URLSearchParams(window.location.search);
