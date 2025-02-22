@@ -4,10 +4,18 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import YourComments from '../profile/components/YourComments.tsx';
 import samplePortraitCardData from '../home/types/Story.ts'; // Adjust the import path accordingly
+import { useNavigate } from 'react-router-dom';
 
 const GameDetails: React.FC = () => {
+    const navigate = useNavigate();
+
     const [activeTab, setActiveTab] = useState("comments");
     const story = samplePortraitCardData[0]; // Displaying the first story as an example
+
+    function handleClick(): void {
+        // TODO
+        navigate('/game');
+    }
 
     return (
         <div className="w-full h-[150vh] bg-cover bg-center bg-[url('path/to/your/image.jpg')]">
@@ -49,7 +57,8 @@ const GameDetails: React.FC = () => {
                 </div>
 
                 {/* Play Game Button */}
-                <button className="bg-[#1e1e1e] text-white px-4 py-1 rounded-lg hover:bg-white hover:text-black transition">
+                <button className="bg-[#1e1e1e] text-white px-4 py-1 rounded-lg hover:bg-white hover:text-black transition"
+                onClick={handleClick}>
                 Play Game
                 </button>
                 </div>
