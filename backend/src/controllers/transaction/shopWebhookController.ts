@@ -93,7 +93,7 @@ Product ID: ${product_id}`);
           created_at: new Date(),
         },
         paid_amount: amount,
-        userId: user.id,
+        UserId: user.id,
         createdAt: new Date(),
         updatedAt: new Date(),
         received_coins: item.coins
