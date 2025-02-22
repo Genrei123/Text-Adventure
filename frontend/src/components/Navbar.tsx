@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Search, ChevronDown } from "lucide-react";
 import socketIOClient from 'socket.io-client';
 
-const socket = socketIOClient(import.meta.env.SITE_URL);
+const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
 const Navbar = () => {
   const [username, setUsername] = useState<string | null>(null);
