@@ -71,11 +71,13 @@ function App() {
           } 
         />
         <Route 
-          path="/profile" 
+          path="/:username" 
           element={
-            <WebSocketProvider>
-              <UserProfile />
-            </WebSocketProvider>
+            <ProtectedRoute>
+              <WebSocketProvider>
+                <UserProfile />
+              </WebSocketProvider>
+            </ProtectedRoute>
           } 
         />
         

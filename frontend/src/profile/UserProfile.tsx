@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from "../components/Sidebar";
 import Cropper, { ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
@@ -17,6 +18,9 @@ export default function ProfilePage() {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const cropperRef = useRef<ReactCropperElement>(null); // Correctly typing the cropper ref
   const [copied, setCopied] = useState(false);
+  const { username } = useParams<{ username: string }>();
+
+  const navigate = useNavigate();
 
   const handleCopyUsername = () => {
     const usernameElement = document.querySelector('h1') as HTMLElement;
@@ -34,29 +38,20 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
+    const fetchUserProfile = async () => {
       try {
-        // Get stored user data from localStorage
-        const storedUserData = localStorage.getItem('userData');
-        
-        if (!storedUserData) {
-          console.error('No user data found in localStorage');
-          return;
-        }
-  
-        const userData = JSON.parse(storedUserData);
-        const userId = userData.id;
-  
-        const response = await axios.get<UserDetails>(`/admin/users/${userId}`);
-        console.log('User details:', response.data);
+        const response = await axios.get(`/admin/users/username/${username}`);
         setUserDetails(response.data);
+        
       } catch (error) {
-        console.error('Error fetching user details:', error);
+        console.error('Error fetching user profile:', error);
+        // Give 404
+        navigate('/forbidden');
       }
     };
-  
-    fetchUserDetails();
-  }, []);
+
+    fetchUserProfile();
+  }, [username]);
 
   const handleImageUpload = () => {
     const input = document.createElement("input");
