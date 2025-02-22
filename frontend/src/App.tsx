@@ -59,7 +59,7 @@ function App() {
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route path="/home" element={ <ProtectedRoute> <WebSocketProvider> <Homepage onLogout={handleLogout} />  </WebSocketProvider> </ProtectedRoute>} />
         <Route path="/profile" element={<WebSocketProvider><UserProfile /></WebSocketProvider>} />
-        <Route path="/game" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
+        <Route path="/game/:id" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
         <Route path ="/editing-page" element ={< AdventureEditor/>} />
         <Route path ="/game-creation" element={<GameCreation onBack={() => {}} onNext={() => {}} onSkip={() => {}} />} />
         <Route path="/subscription" element={<Subscription />} />
@@ -67,7 +67,7 @@ function App() {
         <Route path="/server-error" element={<ServerError />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
-        <Route path="/game-details" element={<WebSocketRoutes><GameDetails /></WebSocketRoutes>} />
+        <Route path="/game-details/:id" element={<ProtectedRoute> <WebSocketRoutes><GameDetails /></WebSocketRoutes> </ProtectedRoute>} />
         <Route path="/active-players" element={<ActivePlayerCount />} />
       </Routes>
     </Router>

@@ -5,7 +5,7 @@ import "cropperjs/dist/cropper.css";
 import YourGames from "./components/YourGames";
 import YourComments from "./components/YourComments";
 import YourLikes from "./components/YourLikes";
-import axios from 'axios';
+import axios from '../../config/axiosConfig';
 import Navbar from "../components/Navbar";
 
 export default function ProfilePage() {
@@ -14,7 +14,7 @@ export default function ProfilePage() {
   const [showCropModal, setShowCropModal] = useState(false);
   const [showBioModal, setShowBioModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [userDetails, setUserDetails] = useState<{ username: string; email: string; bio?: string } | null>(null);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const cropperRef = useRef<ReactCropperElement>(null); // Correctly typing the cropper ref
   const [copied, setCopied] = useState(false);
 
@@ -36,10 +36,19 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const userId = 64; // Replace with dynamic user ID if needed
-        //const response = await axios.get(`http://localhost:3000/users/${userId}?timestamp=${new Date().getTime()}`);
-        const response = await axios.get(`/users/${userId}?timestamp=${new Date().getTime()}`);
-        console.log('User details:', response.data); // Log the response data
+        // Get stored user data from localStorage
+        const storedUserData = localStorage.getItem('userData');
+        
+        if (!storedUserData) {
+          console.error('No user data found in localStorage');
+          return;
+        }
+  
+        const userData = JSON.parse(storedUserData);
+        const userId = userData.id;
+  
+        const response = await axios.get<UserDetails>(`/admin/users/${userId}`);
+        console.log('User details:', response.data);
         setUserDetails(response.data);
       } catch (error) {
         console.error('Error fetching user details:', error);
