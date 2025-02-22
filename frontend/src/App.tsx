@@ -22,6 +22,7 @@ import AdventureEditor from './game-creation/Editing Page/Editor';
 // import { PlayerTrackingProvider } from './websocket/context/PlayerTrackingProvider';
 // import { PlayerInteractionProvider } from './websocket/context/PlayerInteractionProvider';
 import ActivePlayerCount from './websocket/components/ActivePlayerCount';
+import ProtectedRoute from './auth/components/ProtectedRoute';
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
@@ -56,7 +57,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/email-confirmation" element={<EmailConfirmation />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
-        <Route path="/home" element={ <WebSocketProvider> <Homepage onLogout={handleLogout} />  </WebSocketProvider>} />
+        <Route path="/home" element={ <ProtectedRoute> <WebSocketProvider> <Homepage onLogout={handleLogout} />  </WebSocketProvider> </ProtectedRoute>} />
         <Route path="/profile" element={<WebSocketProvider><UserProfile /></WebSocketProvider>} />
         <Route path="/game" element={<WebSocketProvider><GameScreen /></WebSocketProvider>} />
         <Route path ="/editing-page" element ={< AdventureEditor/>} />

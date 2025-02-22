@@ -5,6 +5,7 @@ import axiosInstance from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PasswordInput from '../../components/PasswordInput';
+import { isAxiosError } from 'axios';
 
 interface LoginProps {
   onLogin: (username: string) => void;
@@ -44,32 +45,43 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      setIsProcessing(true);
-      toast.info('Logging in...');
+    if (!validateForm()) return;
 
-      try {
-        const response = await axiosInstance.post('/auth/login', { email, password });
-        const data = response.data;
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('email', data.user.email);
-          console.log(localStorage.getItem('email'));
-          onLogin(data.user.email);
-          toast.success('Login successful!');
-          navigate('/home');
+    setIsProcessing(true);
+    toast.info('Logging in...');
+
+    try {
+        const response = await axiosInstance.post<LoginResponse>('/auth/login', { 
+            email, 
+            password 
+        });
+        
+        const { token, user } = response.data;
+        
+        // Store auth data
+        localStorage.setItem('token', token);
+        localStorage.setItem('email', user.email);
+        
+        // Optional: store more user data if needed
+        localStorage.setItem('userData', JSON.stringify(user));
+        
+        onLogin(user.email);
+        toast.success('Login successful!');
+        navigate('/home');
+        
+    } catch (error) {
+        if (isAxiosError(error)) {
+            const message = error.response?.data?.message || 'Login failed. Please try again.';
+            setErrors({ general: message });
+            toast.error(message);
         } else {
-          setErrors({ general: data.message });
-          toast.error(data.message);
+            setErrors({ general: 'An unexpected error occurred' });
+            toast.error('An unexpected error occurred');
         }
-      } catch (error) {
-        setErrors({ general: 'Login failed. Please try again.' });
-        toast.error(`Login failed. ${(error as any).response?.data?.message}`);
-      } finally {
+    } finally {
         setIsProcessing(false);
-      }
     }
-  };
+};
 
   const handleSocialLogin = async (provider: string) => {
     setIsProcessing(true);
