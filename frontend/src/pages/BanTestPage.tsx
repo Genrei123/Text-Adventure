@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { BanForm } from '../components/BanForm';
 import { BannedPlayersList } from '../components/BannedPlayersList';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../components/BanManagement.css';
 
 const BanTestPage = () => {
@@ -49,18 +51,45 @@ const BanTestPage = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBanId, setSelectedBanId] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(5);
 
   const handleBan = (newBan) => {
     console.log(`Banning player: ${newBan.username}`);
     setBans([...bans, newBan]);
     console.log(`Player ${newBan.username} banned successfully`);
+    toast.success(`Player ${newBan.username} banned successfully`);
   };
 
-  const handleUnban = async (banId) => {
+  const handleUnban = (banId) => {
+    setSelectedBanId(banId);
+    setShowModal(true);
+    setCountdown(5);
+
+    const interval = setInterval(() => {
+      setCountdown(prevCountdown => {
+        if (prevCountdown === 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prevCountdown - 1;
+      });
+    }, 1000);
+  };
+
+  const confirmUnban = () => {
+    if (selectedBanId) {
+      performUnban(selectedBanId);
+      setShowModal(false);
+    }
+  };
+
+  const performUnban = async (banId) => {
     console.log(`Unbanning player with ID: ${banId}`);
-    await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds
     setBans(bans.filter(ban => ban.id !== banId));
     console.log(`Player with ID ${banId} unbanned successfully`);
+    toast.success(`Player with ID ${banId} unbanned successfully`);
   };
 
   const filteredBans = bans
@@ -76,6 +105,7 @@ const BanTestPage = () => {
 
   return (
     <div className="ban-test-page">
+      <ToastContainer />
       <h1 className="text-3xl font-bold mb-6">Ban Management</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-[#2e2e2e] p-6 rounded-lg shadow-lg">
@@ -103,6 +133,32 @@ const BanTestPage = () => {
           <BannedPlayersList bans={filteredBans} onUnban={handleUnban} />
         </div>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-[#2e2e2e] p-6 rounded-lg shadow-lg">
+            <p className="text-white mb-4">Are you sure you want to unban this player?</p>
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-[#B39C7D]">You can confirm in {countdown} seconds</span>
+            </div>
+            <div className="flex justify-end">
+              <button
+                className="px-4 py-2 bg-[#B39C7D] text-[#1e1e1e] rounded hover:bg-[#ffffff] transition-colors duration-300"
+                disabled={countdown > 0}
+                onClick={confirmUnban}
+              >
+                Yes
+              </button>
+              <button
+                className="px-4 py-2 bg-[#B39C7D] text-[#1e1e1e] rounded hover:bg-[#ffffff] transition-colors duration-300 ml-2"
+                onClick={() => setShowModal(false)}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

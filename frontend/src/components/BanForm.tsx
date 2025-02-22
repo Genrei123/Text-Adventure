@@ -20,11 +20,13 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     // Validation
     if (!formData.username) {
       console.error('[BAN ERROR] Username required');
+      toast.error('Username is required');
       return;
     }
     
     if (formData.banType === 'temporary' && !formData.endDate) {
       console.error('[BAN ERROR] End date required for temporary bans');
+      toast.error('End date is required for temporary bans');
       return;
     }
 
