@@ -9520,3 +9520,21 @@
 2025-02-22T14:06:36.676Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
 2025-02-22T14:06:36.676Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 2/22/2025, 10:06:36 PM
 2025-02-22T14:06:39.573Z [WARN]: No session found for Ervhynedalugdog@gmail.com 
+2025-02-22T17:30:29.921Z [INFO]: New socket connected: JgF4DnM0d5XifV4EAAAB
+2025-02-22T17:30:58.768Z [INFO]: New connection from route: /home
+2025-02-22T17:30:58.768Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxMTIsImlhdCI6MTc0MDIzNjE4MSwiZXhwIjoxNzQwMjM5NzgxfQ.k6NR4rBRHPT6qGH5eWk86gdo_PMMpZMan1DHNtv7Ifg
+2025-02-22T17:30:58.770Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-02-22T17:30:58.774Z [WARN]: Invalid token or user email missing.
+2025-02-22T17:30:58.775Z [WARN]: No session found for genreycristobal03@gmail.com
+2025-02-22T17:30:58.775Z [INFO]: Disconnection from route: /home
+2025-02-22T17:30:58.776Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-02-22T17:30:58.777Z [INFO]: New connection from route: /home
+2025-02-22T17:30:58.778Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxMTIsImlhdCI6MTc0MDIzNjE4MSwiZXhwIjoxNzQwMjM5NzgxfQ.k6NR4rBRHPT6qGH5eWk86gdo_PMMpZMan1DHNtv7Ifg
+2025-02-22T17:30:58.778Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-02-22T17:30:58.779Z [WARN]: No session found for genreycristobal03@gmail.com
+2025-02-22T17:30:58.779Z [WARN]: Invalid token or user email missing.
+2025-02-22T17:30:58.779Z [WARN]: Invalid token or user email missing.
+2025-02-22T17:31:22.131Z [INFO]: Disconnection from route: /home
+2025-02-22T17:31:22.131Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-02-22T17:31:22.133Z [WARN]: Invalid token or user email missing.
+2025-02-22T17:31:22.848Z [INFO]: Socket disconnected: JgF4DnM0d5XifV4EAAAB
