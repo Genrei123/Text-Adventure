@@ -17,6 +17,7 @@ import { createServer } from './websocket/socket';
 import statsRoutes from './routes/statistics/statsRoutes'; // Import the new stats route
 import playerActivityRoutes from './routes/statistics/playerActivityRoutes'; // Import the new player activity route
 import gameRoutes from './routes/game/gameRoutes';
+import { initializeModels } from './service/models';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -58,7 +59,8 @@ app.use('/auth', authRouter);
 const server = createServer(app);
 server.listen(PORT, async () => { 
   try {
-    await database.authenticate();
+    //await database.authenticate();
+    await initializeModels();
     console.log('Connection to the database has been established successfully.');
     await User.sync({ alter: true });
     console.log('User table has been synchronized.');
