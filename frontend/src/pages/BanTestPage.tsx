@@ -50,6 +50,8 @@ const BanTestPage = () => {
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchDate, setSearchDate] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [showModal, setShowModal] = useState(false);
   const [selectedBanId, setSelectedBanId] = useState<string | null>(null);
@@ -92,12 +94,38 @@ const BanTestPage = () => {
     toast.success(`Player with ID ${banId} unbanned successfully`);
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (value) {
+      const filteredSuggestions = bans
+        .map(ban => ban.username)
+        .filter(username => username.toLowerCase().includes(value.toLowerCase()));
+      setSuggestions(filteredSuggestions);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchDate(e.target.value);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchTerm(suggestion);
+    setSuggestions([]);
+  };
+
   const filteredBans = bans
-    .filter(ban =>
-      ban.username.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter(ban => 
+      ban.username.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (!searchDate || (ban.endDate && ban.endDate.startsWith(searchDate)))
     )
     .sort((a, b) => {
-      if (!a.endDate || !b.endDate) return 0;
+      if (!a.endDate && !b.endDate) return 0;
+      if (!a.endDate) return sortOrder === 'asc' ? 1 : -1;
+      if (!b.endDate) return sortOrder === 'asc' ? -1 : 1;
       const dateA = new Date(a.endDate).getTime();
       const dateB = new Date(b.endDate).getTime();
       return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
@@ -118,9 +146,29 @@ const BanTestPage = () => {
             type="text"
             placeholder="Search by username"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             className="w-full p-2 mb-4 rounded bg-[#1e1e1e] text-[#ffffff]"
           />
+          <input
+            type="date"
+            placeholder="Search by end date"
+            value={searchDate}
+            onChange={handleDateChange}
+            className="w-full p-2 mb-4 rounded bg-[#1e1e1e] text-[#ffffff]"
+          />
+          {suggestions.length > 0 && (
+            <ul className="bg-[#2e2e2e] rounded-lg shadow-lg p-2">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  className="cursor-pointer p-2 hover:bg-[#1e1e1e] text-[#ffffff]"
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="flex justify-between items-center mb-4">
             <span className="text-[#B39C7D]">Sort by remaining days:</span>
             <button
