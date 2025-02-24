@@ -22,27 +22,27 @@ const BanTestPage = () => {
     },
     {
       id: '3',
-      username: 'test_user3',
+      username: 'Eman',
       reason: 'server_rules',
       banType: 'temporary',
       endDate: '2024-11-30T00:00'
     },
     {
       id: '4',
-      username: 'test_user4',
+      username: 'Ronan_Gala',
       reason: 'cheating',
       banType: 'permanent'
     },
     {
       id: '5',
-      username: 'test_user5',
+      username: 'Kevski',
       reason: 'other',
       banType: 'temporary',
       endDate: '2024-10-31T00:00'
     },
     {
       id: '6',
-      username: 'test_user6',
+      username: 'Genrey_desu',
       reason: 'abusive language',
       banType: 'temporary',
       endDate: '2024-09-30T00:00'

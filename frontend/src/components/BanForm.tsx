@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 
 type BanReason = 'spamming' | 'hacked' | 'server_rules' | 'cheating' | 'other' | 'abusive language';
 
@@ -11,7 +12,8 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     username: '',
     reason: 'spamming' as BanReason,
     banType: 'temporary' as 'temporary' | 'permanent',
-    endDate: ''
+    endDate: '',
+    otherReason: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,16 +26,30 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
       return;
     }
     
-    if (formData.banType === 'temporary' && !formData.endDate) {
-      console.error('[BAN ERROR] End date required for temporary bans');
-      toast.error('End date is required for temporary bans');
-      return;
+    if (formData.banType === 'temporary') {
+      if (!formData.endDate) {
+        console.error('[BAN ERROR] End date required for temporary bans');
+        toast.error('End date is required for temporary bans');
+        return;
+      }
+
+      const endDate = new Date(formData.endDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set to the start of the day
+      if (endDate < today) {
+        console.error('[BAN ERROR] End date cannot be in the past');
+        toast.error('End date cannot be in the past');
+        return;
+      }
     }
+
+    const reason = formData.reason === 'other' ? formData.otherReason : formData.reason;
 
     // Mock API call
     const newBan = {
       id: Math.random().toString(36).substr(2, 9),
       ...formData,
+      reason,
       timestamp: new Date().toISOString()
     };
     onBan(newBan);
@@ -43,9 +59,12 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
       username: '',
       reason: 'spamming',
       banType: 'temporary',
-      endDate: ''
+      endDate: '',
+      otherReason: ''
     });
   };
+
+  const todayDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -78,8 +97,8 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
           <label className="block text-[#B39C7D] mb-2">Other Reason:</label>
           <input
             type="text"
-            value={formData.reason}
-            onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+            value={formData.otherReason}
+            onChange={(e) => setFormData({ ...formData, otherReason: e.target.value })}
             className="w-full p-2 rounded bg-[#1e1e1e] text-[#ffffff]"
           />
         </div>
@@ -101,6 +120,7 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
           <input
             type="date"
             value={formData.endDate}
+            min={todayDate} // Set the minimum date to today
             onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
             className="w-full p-2 rounded bg-[#1e1e1e] text-[#ffffff]"
           />
