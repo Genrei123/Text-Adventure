@@ -15,7 +15,6 @@ import User from './model/user/user';
 import coinRoutes from './routes/coins/coinRoutes';
 import { createServer } from './websocket/socket';
 import statsRoutes from './routes/statistics/statsRoutes'; // Import the new stats route
-import playerActivityRoutes from './routes/statistics/playerActivityRoutes'; // Import the new player activity route
 import gameRoutes from './routes/game/gameRoutes';
 import { initializeModels } from './service/models';
 import paymentRoutes from './routes/transaction/shopRoutes';
@@ -50,7 +49,6 @@ app.use('/webhook', webhookRoutes);
 app.use('/gameplay', coinRoutes);
 app.use('/ai', chatRoutes);
 app.use('/statistics/statsRoutes', statsRoutes); // Use the new stats route
-app.use('/statistics/playerActivityRoutes', playerActivityRoutes); // Use the new player activity route
 app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
 

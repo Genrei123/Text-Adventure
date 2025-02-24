@@ -274,19 +274,27 @@ export const checkAuth = async (req: Request, res: Response): Promise<void> => {
 };
 
 // New function to verify the token and return the user
-export const verifyToken = async (token: string): Promise<User | null> => {
+// New function to verify the token and return the user
+export const verifyToken = async (req: Request, res: Response): Promise<void> => {
+    const { token } = req.body;
+
     try {
         if (!token) {
-            throw new Error('Token is missing');
+            res.status(400).json({ message: 'Token is missing' });
+            return;
         }
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string };
         const user = await User.findOne({ where: { email: decoded.email } });
+
         if (!user) {
-            throw new Error('User not found');
+            res.status(401).json({ message: 'User not found' });
+            return;
         }
-        return user;
+
+        res.status(200).json({ valid: true, message: 'Token is valid' });
     } catch (error: any) {
         console.error('Token verification error:', error.message);
-        return null;
+        res.status(401).json({ valid: false, message: 'Invalid token' });
     }
 };
