@@ -18,6 +18,7 @@ import statsRoutes from './routes/statistics/statsRoutes'; // Import the new sta
 import gameRoutes from './routes/game/gameRoutes';
 import { initializeModels } from './service/models';
 import paymentRoutes from './routes/transaction/shopRoutes';
+import sessionRoutes from './routes/statistics/sessionRoutes'; // Import the session routes
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -51,6 +52,7 @@ app.use('/ai', chatRoutes);
 app.use('/statistics/statsRoutes', statsRoutes); // Use the new stats route
 app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
+app.use("/sessions", sessionRoutes); // Add the session routes
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
