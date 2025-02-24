@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { searchUsers } from '../api/banApi';
 
 type BanReason = 'spamming' | 'hacked' | 'server_rules' | 'cheating' | 'other' | 'abusive language';
 
@@ -15,6 +16,23 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     endDate: '',
     otherReason: ''
   });
+  const [userSuggestions, setUserSuggestions] = useState<{ id: number, username: string }[]>([]);
+
+  useEffect(() => {
+    if (formData.username) {
+      const fetchUsers = async () => {
+        try {
+          const users = await searchUsers(formData.username);
+          setUserSuggestions(users);
+        } catch (error) {
+          console.error('Error fetching user suggestions:', error);
+        }
+      };
+      fetchUsers();
+    } else {
+      setUserSuggestions([]);
+    }
+  }, [formData.username]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +41,13 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     if (!formData.username) {
       console.error('[BAN ERROR] Username required');
       toast.error('Username is required');
+      return;
+    }
+
+    const selectedUser = userSuggestions.find(user => user.username === formData.username);
+    if (!selectedUser) {
+      console.error('[BAN ERROR] Invalid username');
+      toast.error('Invalid username');
       return;
     }
     
@@ -48,6 +73,7 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     // Mock API call
     const newBan = {
       id: Math.random().toString(36).substr(2, 9),
+      userId: selectedUser.id,
       ...formData,
       reason,
       timestamp: new Date().toISOString()
@@ -76,6 +102,19 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
           onChange={(e) => setFormData({ ...formData, username: e.target.value })}
           className="w-full p-2 rounded bg-[#1e1e1e] text-[#ffffff]"
         />
+        {userSuggestions.length > 0 && (
+          <ul className="bg-[#2e2e2e] rounded-lg shadow-lg p-2 mt-2">
+            {userSuggestions.map((user) => (
+              <li
+                key={user.id}
+                onClick={() => setFormData({ ...formData, username: user.username })}
+                className="cursor-pointer p-2 hover:bg-[#1e1e1e] text-[#ffffff]"
+              >
+                {user.username}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div>
         <label className="block text-[#B39C7D] mb-2">Reason:</label>

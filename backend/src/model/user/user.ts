@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../../service/database"; // This should resolve to the exported sequelize
+import sequelize from "../../service/database";
 
 interface UserAttributes {
     id: number;
@@ -58,7 +58,7 @@ User.init(
         updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     },
     {
-        sequelize, // Use the imported sequelize
+        sequelize,
         modelName: 'User',
         tableName: 'Users',
         timestamps: true,

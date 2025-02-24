@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchBans } from '../api/banApi';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'react-toastify';
 
@@ -11,7 +12,6 @@ type BanRecord = {
 };
 
 interface BannedPlayersListProps {
-  bans: BanRecord[];
   onUnban: (banId: string) => void;
 }
 
@@ -24,7 +24,17 @@ const reasonColors = {
   other: '#87CEEB'
 };
 
-export const BannedPlayersList: React.FC<BannedPlayersListProps> = ({ bans, onUnban }) => {
+export const BannedPlayersList: React.FC<BannedPlayersListProps> = ({ onUnban }) => {
+  const [bans, setBans] = useState<BanRecord[]>([]);
+
+  useEffect(() => {
+    const getBans = async () => {
+      const data = await fetchBans();
+      setBans(data);
+    };
+    getBans();
+  }, []);
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Banned Players ({bans.length})</h2>
