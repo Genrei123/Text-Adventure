@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, X, LogOut} from "lucide-react";
 import socketIOClient from 'socket.io-client';
 
 const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
@@ -14,7 +14,11 @@ const Navbar = () => {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedPopularity, setSelectedPopularity] = useState("all");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const isMobile = windowWidth < 768; // Define mobile breakpoint
+  
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -37,6 +41,10 @@ const Navbar = () => {
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
+      // Collapse search on resize to desktop
+      if (window.innerWidth >= 768 && isSearchExpanded) {
+        setIsSearchExpanded(false);
+      }
     };
 
     window.addEventListener('resize', handleResize);
@@ -45,7 +53,7 @@ const Navbar = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [isSearchExpanded]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -67,7 +75,15 @@ const Navbar = () => {
     }
 
     fetchUserData();
+    
   }, []);
+
+  // Focus search input when expanded
+  useEffect(() => {
+    if (isSearchExpanded && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchExpanded]);
 
   useEffect(() => {
     if (searchQuery.length > 0) {
@@ -103,9 +119,45 @@ const Navbar = () => {
     }
   };
 
+  const toggleSearch = () => {
+    setIsSearchExpanded(!isSearchExpanded);
+    if (!isSearchExpanded) {
+      setShowFilters(false); // Close filters when opening search
+    }
+  };
+
   // Get the appropriate placeholder text based on screen width
   const getPlaceholderText = () => {
     return windowWidth < 640 ? "Search" : "Search the ancient scrolls...";
+  };
+
+  // Generate initials for the profile circle
+  const getInitials = () => {
+    if (!username) return "?";
+    return username
+      .split(" ")
+      .map((name) => name[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  // Get a consistent color based on username (extra code for fun)
+  const getProfileColor = () => {
+    if (!username) return "#8B4513";
+    
+    // Simple hash function to generate a color
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+      hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    // Convert to hex color (keeping it in brown/gold palette)
+    const hue = Math.abs(hash) % 60 + 30; // 30-90 range (browns/golds)
+    const saturation = 70 + (Math.abs(hash) % 30); // 70-100%
+    const lightness = 40 + (Math.abs(hash) % 20); // 40-60%
+    
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
 
   return (
@@ -113,82 +165,187 @@ const Navbar = () => {
       <div className="flex flex-col space-y-4">
         {/* Top Bar */}
         <div className="flex justify-between items-center">
-          <div className="hidden md:block text-xl font-cinzel text-[#C8A97E]">
-            Sage.AI
-          </div>
+          {/* Logo - Hidden when search is expanded on mobile */}
+          {!(isMobile && isSearchExpanded) && (
+            <div className="flex items-center">
+              <img 
+                src="/SageAI.png" 
+                alt="Sage.AI Logo" 
+                className="h-10" 
+                onClick={() => navigate("/home")}
+                style={{ cursor: 'pointer' }}
+              />
+            </div>
+          )}
 
           {/* Search Bar and Filter Button - Visible only on the Home Page */}
           {isHomePage && (
-            <div className="flex items-center space-x-2">
-              <div className="relative w-40 sm:w-52 md:w-80 lg:w-96">
-                <input
-                  type="text"
-                  placeholder={getPlaceholderText()}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full p-2 pl-10 rounded-full bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
-                />
-                <Search
-                  className="absolute left-3 top-2.5 text-[#8B4513]"
-                  size={20}
-                />
-                {suggestions.length > 0 && (
-                  <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-full mt-1 shadow-lg overflow-hidden">
-                    {suggestions.map((suggestion, index) => (
-                      <div
-                        key={index}
-                        className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22]"
-                        onClick={() => setSearchQuery(suggestion)}
+            <div className={`flex items-center space-x-2 ${isMobile && isSearchExpanded ? 'w-full' : ''}`}>
+              {isMobile ? (
+                /* Mobile Search Icon/Expanded Search */
+                <div className={`transition-all duration-300 ${isSearchExpanded ? 'w-full' : 'w-auto'}`}>
+                  {isSearchExpanded ? (
+                    <div className="flex items-center w-full relative">
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full p-2 pl-10 rounded-full bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
+                      />
+                      <Search
+                        className="absolute left-3 top-2.5 text-[#8B4513]"
+                        size={20}
+                      />
+                      <button
+                        onClick={toggleSearch}
+                        className="absolute right-12 top-2.5 text-[#8B4513]"
                       >
-                        {suggestion}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                        <X size={20} />
+                      </button>
+                      <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className="absolute right-3 top-2.5 text-[#8B4513]"
+                      >
+                        <ChevronDown
+                          className={`transform transition-transform ${
+                            showFilters ? "rotate-180" : ""
+                          }`}
+                          size={20}
+                        />
+                      </button>
+                      {suggestions.length > 0 && (
+                        <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 top-10 shadow-lg overflow-hidden">
+                          {suggestions.map((suggestion, index) => (
+                            <div
+                              key={index}
+                              className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22]"
+                              onClick={() => setSearchQuery(suggestion)}
+                            >
+                              {suggestion}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={toggleSearch}
+                      className="p-2 rounded-full bg-[#E5D4B3] border-2 border-[#C8A97E] text-[#8B4513]"
+                      aria-label="Search"
+                    >
+                      <Search size={20} />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                /* Desktop Search */
+                <div className="relative w-40 sm:w-52 md:w-80 lg:w-96">
+                  <input
+                    type="text"
+                    placeholder={getPlaceholderText()}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full p-2 pl-10 rounded-full bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
+                  />
+                  <Search
+                    className="absolute left-3 top-2.5 text-[#8B4513]"
+                    size={20}
+                  />
+                  {suggestions.length > 0 && (
+                    <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 shadow-lg overflow-hidden">
+                      {suggestions.map((suggestion, index) => (
+                        <div
+                          key={index}
+                          className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22]"
+                          onClick={() => setSearchQuery(suggestion)}
+                        >
+                          {suggestion}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
-              {/* Filters Toggle */}
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center text-[#C8A97E] hover:text-[#E5D4B3]"
-              >
-                Filter
-                <ChevronDown
-                  className={`ml-1 transform transition-transform ${
-                    showFilters ? "rotate-180" : ""
-                  }`}
-                  size={20}
-                />
-              </button>
+              {/* Filters Toggle for Desktop */}
+              {!isMobile && (
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center text-[#C8A97E] hover:text-[#E5D4B3]"
+                >
+                  Filter
+                  <ChevronDown
+                    className={`ml-1 transform transition-transform ${
+                      showFilters ? "rotate-180" : ""
+                    }`}
+                    size={20}
+                  />
+                </button>
+              )}
             </div>
           )}
-          <div className="flex items-center space-x-2">
-            {username ? (
-              <>
-                <span className="font-playfair text-[#E5D4B3]">
-                  Welcome, {username}
-                </span>
-                <button
-                  className="bg-[#8B4513] hover:bg-[#723A10] px-3 py-1 rounded text-sm font-medium text-[#E5D4B3] border border-[#C8A97E]"
-                  onClick={handleLogout}
-                >
-                  Leave Realm
-                </button>
-              </>
-            ) : (
-              <>
-                <span className="font-playfair text-[#E5D4B3]">
-                  Not logged in
-                </span>
-                <button
-                  className="bg-[#C8A97E] hover:bg-[#B39671] px-3 py-1 rounded text-sm font-medium text-[#1E1E1E] border border-[#E5D4B3]"
-                  onClick={() => navigate("/login")}
-                >
-                  Enter Realm
-                </button>
-              </>
-            )}
-          </div>
+
+          {/* Theme toggle and User section - Hidden when search is expanded on mobile */}
+          {!(isMobile && isSearchExpanded) && (
+            <div className="flex items-center space-x-2">
+
+
+              {/* User Profile/Login */}
+              {username ? (
+                <div className="flex items-center space-x-2">
+                  {isMobile ? (
+                    /* Mobile: Profile Circle */
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-sm"
+                      style={{ backgroundColor: getProfileColor() }}
+                      title={username}
+                    >
+                      {getInitials()}
+                    </div>
+                  ) : (
+                    /* Desktop: Username */
+                    <span className="font-playfair text-[#E5D4B3]">
+                      Welcome, {username}
+                    </span>
+                  )}
+                  
+                  {/* Logout Button */}
+                  {isMobile ? (
+                    <button
+                      className="p-2 rounded-full bg-[#8B4513] hover:bg-[#723A10] text-[#E5D4B3] border border-[#C8A97E]"
+                      onClick={handleLogout}
+                      title="Leave Realm"
+                    >
+                      <LogOut size={18} />
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-[#8B4513] hover:bg-[#723A10] px-3 py-1 rounded text-sm font-medium text-[#E5D4B3] border border-[#C8A97E]"
+                      onClick={handleLogout}
+                    >
+                      Leave Realm
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <>
+                  {!isMobile && (
+                    <span className="font-playfair text-[#E5D4B3]">
+                      Not logged in
+                    </span>
+                  )}
+                  <button
+                    className="bg-[#C8A97E] hover:bg-[#B39671] px-3 py-1 rounded text-sm font-medium text-[#1E1E1E] border border-[#E5D4B3]"
+                    onClick={() => navigate("/login")}
+                  >
+                    {isMobile ? "Enter" : "Enter Realm"}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Filters Section */}
