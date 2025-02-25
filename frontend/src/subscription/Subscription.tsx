@@ -1,164 +1,64 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import OfferModal from './OfferModal';
 
 const Subscription: React.FC = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState(null);
+
+    const handlePlanClick = (plan) => {
+        setSelectedPlan(plan);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedPlan(null);
+    };
+
     return (
         <>
-        <Navbar/>
-        
-        <div style={{ backgroundImage: 'url(Billings.png)', backgroundSize: 'cover', minHeight: '100vh', padding: '1rem' }}>
-            <Sidebar/>
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                <h2 style={{ textAlign: 'center', color: 'white', marginBottom: '1rem', marginTop: '5rem', fontSize: '3rem', fontFamily: 'Cinzel Decorative, serif' }}>
-                    find your path
-                </h2>
-                <h4 style={{ textAlign: 'center', color: 'white', marginTop: '1rem', fontSize: '1rem', fontFamily: 'Cinzel Decorative, serif' }}>
-                    unlock your full potential 
-                </h4>
-                <br></br>
-                    
-                    <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                        <div style={{ flex: '0 0 300px', backgroundColor: 'white', height: '600px', maxWidth: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', margin: '1rem', border: '4px solid #563C2D', transition: 'transform 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}>
-                            <img src="/Freemium.png" alt="Basic Plan" style={{ width: '100%', height: 'auto' }} />
-                            <h1 style={{ color: '#B28F4C', textAlign: 'center', paddingTop: '1rem', fontFamily: 'Cinzel Decorative, serif', fontWeight: 'bolder', fontSize: '1.5rem' }}>freedom sword</h1>
-                            <p style={{ color: 'black', textAlign: 'center', padding: '0 1rem' }}>Begin your journey with 2000 tokens worth of free prompts and basic world access.</p>
-                            <h2 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', fontFamily: 'Playfair Display, serif', fontWeight: 'bold' }}>FREE</h2>
-                            <button style={{ width: '90%', backgroundColor: 'green', color: 'white', padding: '1rem', border: 'none', cursor: 'pointer', borderRadius: '10px', marginBottom: '5%' }}>CURRENT PATH</button>
-                        </div>
-                        <div style={{ flex: '0 0 300px', backgroundColor: 'white', height: '600px', maxWidth: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', margin: '1rem', border: '4px solid #563C2D', transition: 'transform 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }} onClick={() => { document.getElementById('billingModal').style.display = 'block'; document.getElementById('modalOverlay').style.display = 'block'; }}>
-                            <img src="/Adventurer.png" alt="Standard Plan" style={{ width: '100%', height: 'auto' }} />
-                            <h1 style={{ color: '#B28F4C', textAlign: 'center', paddingTop: '1rem', fontFamily: 'Cinzel Decorative, serif', fontWeight: 'bolder', fontSize: '1.5rem' }}>adventurer's entry</h1>
-                            <p style={{ color: 'black', textAlign: 'center', padding: '0 1rem' }}> Gain extra tokens, extended prompt limits, and access to enhanced character options.</p>
-                            <h2 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', fontFamily: 'Playfair Display, serif', fontWeight: 'bold' }}>₱100/mo</h2>
-                            <button style={{ width: '90%', backgroundColor: 'black', color: 'white', padding: '1rem', border: 'none', cursor: 'pointer', borderRadius: '10px', marginBottom: '5%' }}>EMBARK ON YOUR PATH</button>
-                        </div>
-                        <div style={{ flex: '0 0 300px', backgroundColor: 'white', height: '600px', maxWidth: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', margin: '1rem', border: '4px solid #563C2D', transition: 'transform 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }} onClick={() => { document.getElementById('billingModal').style.display = 'block'; document.getElementById('modalOverlay').style.display = 'block'; }}>
-                            <img src="/Hero.png" alt="Premium Plan" style={{ width: '100%', height: 'auto' }} />
-                            <h1 style={{ color: '#B28F4C', textAlign: 'center', paddingTop: '1rem', fontFamily: 'Cinzel Decorative, serif', fontWeight: 'bolder', fontSize: '1.5rem' }}>hero's journey</h1>
-                            <p style={{ color: 'black', textAlign: 'center', padding: '0 1rem' }}>Enjoy unlimited prompts, customizable characters, ad-free storytelling, and access to exclusive worlds.</p>
-                            <h2 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', fontFamily: 'Playfair Display, serif', fontWeight: 'bold' }}>₱250/mo</h2>
-                            <button style={{ width: '90%', backgroundColor: 'black', color: 'white', padding: '1rem', border: 'none', cursor: 'pointer', borderRadius: '10px', marginBottom: '5%' }}>BECOME A HERO</button>
-                        </div>
-                        <div style={{ flex: '0 0 300px', backgroundColor: 'white', height: '600px', maxWidth: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', margin: '1rem', border: '4px solid #563C2D', transition: 'transform 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }} onClick={() => { document.getElementById('billingModal').style.display = 'block'; document.getElementById('modalOverlay').style.display = 'block'; }}>
-                            <img src="/Legend.png" alt="Ultimate Plan" style={{ width: '100%', height: 'auto' }} />
-                            <h1 style={{ color: '#B28F4C', textAlign: 'center', paddingTop: '1rem', fontFamily: 'Cinzel Decorative, serif', fontWeight: 'bolder', fontSize: '1.5rem' }}>legend's legacy</h1>
-                            <p style={{ color: 'black', textAlign: 'center', padding: '0 1rem' }}>Unlock ultimate features including early access to new worlds, personalized storylines, and priority support.</p>
-                            <h2 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', fontFamily: 'Playfair Display, serif', fontWeight: 'bold' }}>₱500/mo</h2>
-                            <button style={{ width: '90%', backgroundColor: 'black', color: 'white', padding: '1rem', border: 'none', cursor: 'pointer', borderRadius: '10px', marginBottom: '5%' }}>FORGE YOUR LEGACY</button>
-                        </div>
+            <Navbar />
+            <div className="bg-cover min-h-screen p-4" style={{ backgroundImage: 'url(Billings.png)' }}>
+                <Sidebar />
+                <div className="max-w-7xl mx-auto text-center text-white">
+                    <h2 className="text-3xl md:text-5xl font-cinzel my-10">Find Your Path</h2>
+                    <h4 className="text-lg md:text-xl font-cinzel mb-6">Unlock Your Full Potential</h4>
 
-                    <div id="billingModal" style={{ display: 'none', position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#1e1e1e', padding: '2rem', borderRadius: '10px', boxShadow: '0 0 10px rgba(0,0,0,0.5)', zIndex: 1000, border: '5px solid #634630' }}>
-                        <button onClick={() => { document.getElementById('billingModal').style.display = 'none'; document.getElementById('modalOverlay').style.display = 'none'; }} style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#a38b6d' }}>×</button>
-                        <h2 style={{ textAlign: 'center', marginBottom: '1rem', color: '#634630', fontSize: '2rem', fontFamily: 'Cinzel Decorative, serif' }}>billing information</h2>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630', float: 'left' }}>Name:</label>
-                            <input type="text" placeholder="The name whispered in legends" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630', float: 'left'  }}>Email:</label>
-                            <input type="email" placeholder="Where to send your quest updates" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630' , float: 'left' }}>Address:</label>
-                            <input type="text" placeholder="Your secret incantation" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630' , float: 'left' }}>Subscription:</label>
-                            <input type="text" id="subscriptionInput" readOnly placeholder="Selected subscription" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630' , float: 'left' }}>Password:</label>
-                            <input type="password" placeholder="your mystical phrase" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <input type="checkbox" id="eula" />
-                            <label htmlFor="eula" style={{ color: 'white' }}> I agree on terms</label>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                            <div style={{ width: '45%', height: '50px', backgroundColor: '#ccc', borderRadius: '10px' }}></div>
-                            <div style={{ width: '45%', height: '50px', backgroundColor: '#ccc', borderRadius: '10px' }}></div>
-                        </div>
-                        <button style={{ width: '100%', padding: '1rem', backgroundColor: '#B39C7D', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '10px' }}>SUBMIT</button>
+                    <div className="flex flex-wrap justify-center gap-8 mt-6">
+                        {[
+                            { title: "Freedom Sword", desc: "Begin your journey with 2000 tokens worth of free prompts and basic world access.", price: "FREE", img: "/Freemium.png", btnText: "CURRENT PATH", btnColor: "bg-green-600" },
+                            { title: "Adventurer's Entry", desc: "Gain extra tokens, extended prompt limits, and access to enhanced character options.", price: "₱100/mo", img: "/Adventurer.png", btnText: "EMBARK ON YOUR PATH", btnColor: "bg-black" },
+                            { title: "Hero's Journey", desc: "Enjoy unlimited prompts, customizable characters, ad-free storytelling, and access to exclusive worlds.", price: "₱250/mo", img: "/Hero.png", btnText: "BECOME A HERO", btnColor: "bg-black" },
+                            { title: "Legend's Legacy", desc: "Unlock ultimate features including early access to new worlds, personalized storylines, and priority support.", price: "₱500/mo", img: "/Legend.png", btnText: "FORGE YOUR LEGACY", btnColor: "bg-black" }
+                        ].map((plan, index) => (
+                            <div key={index} className="bg-white w-72 p-6 rounded-lg shadow-lg border-4 border-[#563C2D] transform transition-transform hover:scale-110" onClick={() => handlePlanClick(plan)}>
+                                <img src={plan.img} alt={plan.title} className="w-full" />
+                                <h1 className="text-[#B28F4C] text-center text-xl font-bold font-cinzel mt-4">{plan.title}</h1>
+                                <p className="text-black text-center p-2">{plan.desc}</p>
+                                <h2 className="text-black text-center text-2xl font-bold font-playfair">{plan.price}</h2>
+                                <button className={`w-full text-white p-2 rounded-md mt-4 ${plan.btnColor}`}>{plan.btnText}</button>
+                            </div>
+                        ))}
                     </div>
-                    <style>{`
-                        @media (max-width: 600px) {
-                            #billingModal {
-                                height: 90% !important;
-                                width: 90%   !important;
-                                padding: 0.5rem !important;
-                            }
-                            #billingModal h2 {
-                                font-size: 1.2rem !important;
-                            }
-                            #billingModal input {
-                                padding: 0.2rem !important;
-                            }
-                            #billingModal button {
-                                font-size: 0.8rem !important;
-                                padding: 0.4rem !important;
-                            }
-                            #billingModal label {
-                                font-size: 0.8rem !important;
-                            }
-                            #billingModal #eula {
-                                transform: scale(0.8) !important;
-                            }
-                            #billingModal div[style*="width: '45%'"] {
-                                height: 40px !important;
-                            }
-                        }
-                    `}</style>
-                    <div id="modalOverlay" style={{ display: 'none', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 999 }}></div>
-                    <script>
-                        {`
-                            const cards = document.querySelectorAll('div[style*="flex: 0 0 300px"]');
-                            const modal = document.getElementById('billingModal');
-                            const overlay = document.getElementById('modalOverlay');
-                            cards.forEach(card => {
-                                card.addEventListener('click', () => {
-                                    modal.style.display = 'block';
-                                    overlay.style.display = 'block';
-                                });
-                            });
-                            overlay.addEventListener('click', () => {
-                                modal.style.display = 'none';
-                                overlay.style.display = 'none';
-                            });
-                        `}
-                    </script>
-                    </div>
-                    <style>{`
-                        @media (max-width: 600px) {
-                            div[style*="flex: 0 0 300px"] {
-                                flex: 0 0 100% !important;
-                                height: auto !important;
-                                flex-direction: column !important;
-                                align-items: center !important;
-                                overflow: hidden !important;
-                            }
-                            div[style*="flex: 0 0 300px"] img {
-                                width: 100% !important;
-                                height: auto !important;
-                            }
-                            div[style*="flex: 0 0 300px"] h1, 
-                            div[style*="flex: 0 0 300px"] p, 
-                            div[style*="flex: 0 0 300px"] h2, 
-                            div[style*="flex: 0 0 300px"] button {
-                                width: 90% !important;
-                                text-align: center !important;
-                                padding-left: 0 !important;
-                            }
-                            div[style*="flex: 0 0 300px"] button {
-                                margin-bottom: 5% !important;
-                            }
-                        }
-                    `}</style>
-            </div>               
-        </div>
+                </div>
+            </div>
+            {isModalOpen && (
+                <OfferModal
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                    offerType={selectedPlan.title}
+                    subcontext={selectedPlan.desc}
+                    features={["Feature 1", "Feature 2", "Feature 3"]}
+                    plans={[
+                        { duration: "1 Month", credit: "1000 tokens", cost: "₱100" },
+                        { duration: "3 Months", credit: "3000 tokens", cost: "₱250" },
+                        { duration: "1 Year", credit: "12000 tokens", cost: "₱900" }
+                    ]}
+                />
+            )}
         </>
-        
-        
     );
 };
 
