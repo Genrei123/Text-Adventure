@@ -1,34 +1,38 @@
 import { Request, Response } from "express";
-import { createSession, addPageVisit } from "../../service/session/sessionService";
+import { createSession, addPageVisit, clearSession } from "../../service/session/sessionService";
 
-/**
- * Controller to handle creating a new session.
- * @param req - The request object.
- * @param res - The response object.
- */
-export async function createSessionController(req: Request, res: Response): Promise<void> {
+export const createSessionController = async (req: Request, res: Response) => {
+  try {
     const { email } = req.body;
+    console.log("Received createSession request:", req.body);
+    const session = await createSession(email);
+    res.status(201).json(session);
+  } catch (error) {
+    console.error("Error creating session:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
-    try {
-        const newSession = await createSession(email);
-        res.status(201).json(newSession);
-    } catch (error: any) {
-        res.status(500).json({ error: error.message });
-    }
-}
-
-/**
- * Controller to handle adding a page visit to a session.
- * @param req - The request object.
- * @param res - The response object.
- */
-export async function addPageVisitController(req: Request, res: Response): Promise<void> {
+export const addPageVisitController = async (req: Request, res: Response) => {
+  try {
     const { sessionId, page } = req.body;
+    console.log("Received addPageVisit request:", req.body);
+    const session = await addPageVisit(sessionId, page);
+    res.status(200).json(session);
+  } catch (error) {
+    console.error("Error adding page visit:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
-    try {
-        const updatedSession = await addPageVisit(sessionId, page);
-        res.status(200).json(updatedSession);
-    } catch (error: any) {
-        res.status(500).json({ error: error.message });
-    }
-}
+export const clearSessionController = async (req: Request, res: Response) => {
+  try {
+    const { sessionId, visitedPages } = req.body;
+    console.log("Received clearSession request:", req.body);
+    await clearSession(sessionId, visitedPages);
+    res.status(200).json({ message: "Session cleared successfully" });
+  } catch (error) {
+    console.error("Error clearing session:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

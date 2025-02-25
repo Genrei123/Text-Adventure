@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Auth Components
@@ -27,12 +27,30 @@ import AdventureEditor from './game-creation/Editing Page/Editor';
 import { WebSocketProvider } from './websocket/context/WebSocketContext';
 import ActivePlayerCount from './websocket/components/ActivePlayerCount';
 
+// Session Components
+import SessionTracker from './sessions/components/SessionTracker';
+import { clearSession } from './sessions/api-calls/visitedPagesSession';
+
 function App() {
   const [username, setUsername] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [visitedPages, setVisitedPages] = useState<string[]>([]);
 
   // Auth handlers
   const handleLogin = (user: string): void => setUsername(user);
-  const handleLogout = (): void => setUsername(null);
+  const handleLogout = async (): Promise<void> => {
+    if (sessionId) {
+      try {
+        await clearSession(sessionId, visitedPages);
+        console.log('Session cleared');
+      } catch (error) {
+        console.error('Error clearing session:', error);
+      }
+    }
+    setUsername(null);
+    setSessionId(null);
+    setVisitedPages([]);
+  };
   const handleRegister = (user: string, isSocialLogin: boolean): void => {
     if (isSocialLogin) setUsername(user);
   };
@@ -44,6 +62,14 @@ function App() {
 
   return (
     <Router>
+      {username && (
+        <SessionTracker
+          email={username}
+          setSessionId={setSessionId}
+          visitedPages={visitedPages}
+          setVisitedPages={setVisitedPages}
+        />
+      )}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
