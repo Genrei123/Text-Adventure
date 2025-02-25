@@ -1,4 +1,3 @@
-// backend/src/controllers/banController.ts
 export const createBan = async (req: Request, res: Response) => {
   try {
     const ban = await Ban.create(req.body);

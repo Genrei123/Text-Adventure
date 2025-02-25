@@ -5,6 +5,7 @@ import User from '../user/user';
 interface BanAttributes {
     id: number;
     userId: number;
+    username: string; // Add username field
     reason: string;
     banType: 'temporary' | 'permanent';
     endDate?: Date;
@@ -18,6 +19,7 @@ interface BanCreationAttributes extends Optional<BanAttributes, 'id' | 'endDate'
 class Ban extends Model<BanAttributes, BanCreationAttributes> implements BanAttributes {
     public id!: number;
     public userId!: number;
+    public username!: string; // Add username field
     public reason!: string;
     public banType!: 'temporary' | 'permanent';
     public endDate?: Date;
@@ -29,6 +31,7 @@ class Ban extends Model<BanAttributes, BanCreationAttributes> implements BanAttr
 Ban.init({
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     userId: { type: DataTypes.INTEGER, allowNull: false },
+    username: { type: DataTypes.STRING, allowNull: false }, // Add username field
     reason: { type: DataTypes.STRING, allowNull: false },
     banType: { 
         type: DataTypes.ENUM('permanent', 'temporary'),

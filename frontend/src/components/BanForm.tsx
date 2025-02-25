@@ -75,6 +75,7 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     try {
       const newBan = await createBan({
         userId: selectedUser.id,
+        username: selectedUser.username, // Add username field
         reason,
         banType: formData.banType,
         endDate: formData.banType === 'temporary' ? formData.endDate : null,

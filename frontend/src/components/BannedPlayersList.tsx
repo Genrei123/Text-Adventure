@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 type BanRecord = {
   id: string;
+  userId: number;
   username: string;
   reason: string;
   banType: 'temporary' | 'permanent';
@@ -42,7 +43,7 @@ export const BannedPlayersList: React.FC<BannedPlayersListProps> = ({ onUnban })
         {bans.map((ban) => (
           <div key={ban.id} className="ban-item bg-[#1e1e1e] p-4 rounded-lg mb-2 flex justify-between items-center">
             <div className="text-left"> {/* Ensure text is aligned to the left */}
-              <span className="block text-[#B39C7D] font-semibold text-lg">{ban.username}</span>
+              <span className="block text-[#B39C7D] font-semibold text-lg">{ban.username}</span> {/* Display username */}
               <span className="block text-[#ffffff] text-sm" style={{ color: reasonColors[ban.reason] }}>{ban.reason}</span>
               <span className="block text-[#ffffff] text-sm">{ban.banType}</span>
               {ban.endDate && (
