@@ -16,6 +16,7 @@ import ServerError from './auth/components/ServerError';
 import Unauthorized from './auth/components/Unauthorized';
 import NotFound from './auth/components/NotFound';
 import GameDetails from './game-details/GameDetails';
+import AdminDashboard from './Admin/AdminDashboard';
 
 
 
@@ -42,6 +43,8 @@ function App() {
   return (
     <Router>
       <Routes>
+
+        {/* user side */}
         <Route path="/" element={<LandingPage />} />
         <Route path ="/login" element={<LoginScreen onLogin={handleLogin} />} />
         <Route path ="/register" element={<Register onRegister={handleRegister} />} />
@@ -58,6 +61,9 @@ function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/game-details" element={<GameDetails />} />
+
+        {/* admin side */}
+        <Route path="/Admin/Dashboard" element={<AdminDashboard />} />
 
       </Routes>
     </Router>
