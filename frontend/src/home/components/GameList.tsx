@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
+import axios from '../../../config/axiosConfig';
+import { useNavigate } from 'react-router-dom';
 
 interface Game {
   id: string;
   title: string;
-  description: string;
-  genre: string[];
-  imageUrl: string;
+  description?: string;
+  genre?: string[];
+  imageUrl?: string;
   rating?: number;
   playCount?: number;
 }
 
 const GameList: React.FC = () => {
+  const navigate = useNavigate();
   const [games, setGames] = useState<Game[]>([
     {
       id: '1',
@@ -21,22 +24,46 @@ const GameList: React.FC = () => {
       imageUrl: 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       rating: 4.5,
       playCount: 1200
-    },
-    // Add more sample games
+    }
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<'rating' | 'playCount' | 'title'>('rating');
 
-  const allGenres = Array.from(new Set(games.flatMap(game => game.genre)));
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const response = await axios.get<Game[]>('/game');
+        if (response.data.length > 0) {
+          // Ensuring cards are created even if only 'title' exists
+          const formattedGames = response.data.map((game) => ({
+            id: game.id,
+            title: game.title,
+            description: game.description || 'No description available',
+            genre: game.genre || [],
+            imageUrl: game.imageUrl || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            rating: game.rating ?? 0,
+            playCount: game.playCount ?? 0
+          }));
+          setGames(formattedGames);
+        }
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      }
+    };
+
+    fetchGames();
+  }, []);
+
+  const allGenres = Array.from(new Set(games.flatMap(game => game.genre || [])));
 
   const filteredGames = games
     .filter(game => {
       const matchesSearch = game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          game.description.toLowerCase().includes(searchTerm.toLowerCase());
+                          (game.description && game.description.toLowerCase().includes(searchTerm.toLowerCase()));
       const matchesGenres = selectedGenres.length === 0 || 
-                           selectedGenres.some(genre => game.genre.includes(genre));
+                           selectedGenres.some(genre => game.genre?.includes(genre));
       return matchesSearch && matchesGenres;
     })
     .sort((a, b) => {
@@ -114,10 +141,7 @@ const GameList: React.FC = () => {
       <div className="bg-[#1e1e1e] w-full p-4 max-h-[1240px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#C8A97E] scrollbar-track-[#2A2A2A]">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
           {filteredGames.map(game => (
-            <div 
-              key={game.id} 
-              className="relative group cursor-pointer"
-            >
+            <div onClick={() => navigate(`/game-details/${game.id}`)} key={game.id} className="relative group cursor-pointer">
               <div className="relative h-[400px] rounded-lg overflow-hidden shadow-2xl">
                 {/* Dark Overlay */}
                 <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-all duration-300"></div>
@@ -135,20 +159,8 @@ const GameList: React.FC = () => {
                     {game.title}
                   </h3>
                   <p className="text-lg font-playfair text-[#FFFBEA] mb-4">
-                    {game.description}
+                    {/*game.description*/}
                   </p>
-                  
-                  {/* Genre Tags */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {game.genre.map(g => (
-                      <span 
-                        key={g} 
-                        className="px-3 py-1 bg-[#C8A97E]/20 border border-[#C8A97E] text-[#F1E3C6] rounded-lg text-sm font-cinzel"
-                      >
-                        {g}
-                      </span>
-                    ))}
-                  </div>
 
                   {/* Stats */}
                   <div className="flex justify-between items-center">

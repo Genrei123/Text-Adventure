@@ -1,6 +1,6 @@
 import express from "express";
 import User from "../../model/user/user";
-import { activeUserEmails } from "../../shared/activeUser"; // Import activeUserEmails
+import { activeUserEmails } from "../../shared/websocket/activeUser"; // Import activeUserEmails
 
 const router = express.Router();
 
