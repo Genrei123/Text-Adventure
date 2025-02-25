@@ -25,13 +25,26 @@ const reasonColors = {
   other: '#87CEEB'
 };
 
+/**
+ * BannedPlayersList component to display the list of banned players.
+ * @param onUnban - Callback function to handle the unban action.
+ */
 export const BannedPlayersList: React.FC<BannedPlayersListProps> = ({ onUnban }) => {
   const [bans, setBans] = useState<BanRecord[]>([]);
 
+  /**
+   * Fetches the list of banned players from the server.
+   * This function is called when the component is mounted.
+   */
   useEffect(() => {
     const getBans = async () => {
-      const data = await fetchBans();
-      setBans(data);
+      try {
+        const data = await fetchBans();
+        setBans(data);
+      } catch (error) {
+        console.error('Error fetching bans:', error);
+        toast.error('Error fetching bans');
+      }
     };
     getBans();
   }, []);

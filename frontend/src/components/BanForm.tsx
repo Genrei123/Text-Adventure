@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { searchUsers, createBan } from '../api/banApi';
+import { searchUsers, createBan, fetchBans } from '../api/banApi'; // Import fetchBans
 
 type BanReason = 'spamming' | 'hacked' | 'server_rules' | 'cheating' | 'other' | 'abusive language';
 
@@ -8,6 +8,10 @@ interface BanFormProps {
   onBan: (newBan: any) => void;
 }
 
+/**
+ * BanForm component for banning a player.
+ * @param onBan - Callback function to handle the ban action.
+ */
 export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
   const [formData, setFormData] = useState({
     username: '',
@@ -19,6 +23,10 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
   const [userSuggestions, setUserSuggestions] = useState<{ id: number, username: string }[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
+  /**
+   * Fetches user suggestions based on the entered username.
+   * This function is called whenever the username in the form changes.
+   */
   useEffect(() => {
     if (formData.username) {
       const fetchUsers = async () => {
@@ -36,6 +44,11 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     }
   }, [formData.username]);
 
+  /**
+   * Handles the form submission to create a new ban.
+   * This function validates the form data, creates a new ban, and resets the form.
+   * @param e - The form submission event.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -84,7 +97,8 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
       toast.success(`Player ${formData.username} banned successfully`);
       onBan(newBan);
       // Refresh bans list
-      fetchBans(); 
+      const updatedBans = await fetchBans();
+      onBan(updatedBans);
     } catch (error) {
       toast.error(`Failed to create ban: ${error.response?.data?.message || error.message}`);
       console.error('[BanForm] Submit error:', error);
@@ -101,6 +115,11 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     setUserSuggestions([]);
   };
 
+  /**
+   * Handles the click event on a user suggestion.
+   * This function sets the selected username in the form and clears the suggestions.
+   * @param username - The selected username.
+   */
   const handleSuggestionClick = (username: string) => {
     setFormData({ ...formData, username });
     setUserSuggestions([]);

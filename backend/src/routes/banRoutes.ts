@@ -3,6 +3,11 @@ import { createBan, updateBan, getAllBans, getTemporaryBans, getPermanentBans, d
 
 const router = express.Router();
 
+/**
+ * Route to create a new ban.
+ * @route POST /api/bans
+ * @access Admin
+ */
 router.post('/', async (req, res) => {
     try {
         const ban = await createBan(req.body);
@@ -12,6 +17,11 @@ router.post('/', async (req, res) => {
     }
 });
 
+/**
+ * Route to update a ban with a comment.
+ * @route PUT /api/bans/:id
+ * @access Admin
+ */
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -23,6 +33,11 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+/**
+ * Route to fetch all bans.
+ * @route GET /api/bans
+ * @access Admin
+ */
 router.get('/', async (req, res) => {
     try {
         const bans = await getAllBans();
@@ -32,6 +47,11 @@ router.get('/', async (req, res) => {
     }
 });
 
+/**
+ * Route to fetch temporary bans.
+ * @route GET /api/bans/temporary
+ * @access Admin
+ */
 router.get('/temporary', async (req, res) => {
     try {
         const bans = await getTemporaryBans();
@@ -41,6 +61,11 @@ router.get('/temporary', async (req, res) => {
     }
 });
 
+/**
+ * Route to fetch permanent bans.
+ * @route GET /api/bans/permanent
+ * @access Admin
+ */
 router.get('/permanent', async (req, res) => {
     try {
         const bans = await getPermanentBans();
@@ -50,6 +75,11 @@ router.get('/permanent', async (req, res) => {
     }
 });
 
+/**
+ * Route to delete a ban by ID.
+ * @route DELETE /api/bans/:id
+ * @access Admin
+ */
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -60,7 +90,11 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-// New route to search users
+/**
+ * Route to search users by username.
+ * @route GET /api/bans/users/search
+ * @access Admin
+ */
 router.get('/users/search', async (req, res) => {
     try {
         const { term } = req.query;

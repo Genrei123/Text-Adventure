@@ -1,3 +1,8 @@
+/**
+ * Controller to create a new ban.
+ * @param req - The request object.
+ * @param res - The response object.
+ */
 export const createBan = async (req: Request, res: Response) => {
   try {
     const ban = await Ban.create(req.body);
@@ -12,6 +17,11 @@ export const createBan = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Controller to fetch all bans.
+ * @param req - The request object.
+ * @param res - The response object.
+ */
 export const getBans = async (req: Request, res: Response) => {
   try {
     const bans = await Ban.findAll({
