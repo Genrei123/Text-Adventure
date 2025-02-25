@@ -86,6 +86,8 @@ const GameScreen: React.FC = () => {
             message
         };
 
+        setMessage(''); // Clear message input
+
         try {
             // Temporarily show user's message with current time
             const tempUserMessage = {
