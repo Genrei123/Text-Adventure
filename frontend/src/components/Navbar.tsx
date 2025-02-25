@@ -10,13 +10,14 @@ const Navbar = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedPopularity, setSelectedPopularity] = useState("all");
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const navigate = useNavigate();
-  const location = useLocation(); // Get current route
+  const location = useLocation();
 
-  const isHomePage = location.pathname === "/home"; // Check if on the home page
+  const isHomePage = location.pathname === "/home";
 
-  // Sample data - palitan nyo nalang mga lods
+  // Sample data
   const genres = [
     "Fantasy",
     "Dark Fantasy",
@@ -31,6 +32,19 @@ const Navbar = () => {
     { label: "Past Year", value: "1year" },
     { label: "All Time", value: "all" },
   ];
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    
+    // Clean up event listener
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -51,7 +65,6 @@ const Navbar = () => {
   useEffect(() => {
     if (searchQuery.length > 0) {
       const sampleStories = [
-        //eto rin palitan nalang mga lods
         "The Lost Scrolls of Aldor",
         "Legends of the Crystal Keep",
         "The Last Sage",
@@ -73,6 +86,11 @@ const Navbar = () => {
     window.location.href = "/login";
   };
 
+  // Get the appropriate placeholder text based on screen width
+  const getPlaceholderText = () => {
+    return windowWidth < 640 ? "Search" : "Search the ancient scrolls...";
+  };
+
   return (
     <nav className="bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
       <div className="flex flex-col space-y-4">
@@ -85,20 +103,20 @@ const Navbar = () => {
           {/* Search Bar and Filter Button - Visible only on the Home Page */}
           {isHomePage && (
             <div className="flex items-center space-x-2">
-              <div className="relative w-[120%]">
+              <div className="relative w-40 sm:w-52 md:w-80 lg:w-96">
                 <input
                   type="text"
-                  placeholder="Search the ancient scrolls..."
+                  placeholder={getPlaceholderText()}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-[100%] p-2 pl-10 rounded bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
+                  className="w-full p-2 pl-10 rounded-full bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
                 />
                 <Search
                   className="absolute left-3 top-2.5 text-[#8B4513]"
                   size={20}
                 />
                 {suggestions.length > 0 && (
-                  <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded mt-1 shadow-lg">
+                  <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-full mt-1 shadow-lg overflow-hidden">
                     {suggestions.map((suggestion, index) => (
                       <div
                         key={index}
