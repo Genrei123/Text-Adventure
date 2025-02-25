@@ -21,6 +21,10 @@ import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import GameDetails from './game-details/GameDetails';
 import Subscription from './subscription/Subscription';
+
+// Work in Progress Components [EXPERIMENTAL - Do not include in main app!]
+import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
+
 // Game Creation Components
 import GameCreation from './game-creation/GameCreation';
 import AdventureEditor from './game-creation/Editing Page/Editor';
@@ -108,6 +112,9 @@ function App() {
             </ProtectedRoute>
           } 
         />
+
+        {/* Work in Progress Routes */}
+        <Route path="/image-generator" element={<ImageGeneratorScreen />} />
         
         {/* Utility Routes */}
         <Route path="/subscription" element={<Subscription />} />
