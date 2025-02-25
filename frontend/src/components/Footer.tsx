@@ -18,7 +18,7 @@ const Footer = () => {
           <p className="text-lg md:text-xl text-white font-cinzel">One's intuition and knowledge</p>
           <p className="text-lg md:text-xl text-white font-cinzel">Bred Series @2024</p>
         </div>
-        <img src="/owl.png" alt="Owl" className="hidden md:block absolute right-40 top-[-210px] h-[700px] z-0" />
+        <img src="/owl.png" alt="Owl" className="hidden md:block absolute right-40 top-[-80px] h-[550px] z-0" />
           {/* Right-side links */}
           <div className="flex flex-col items-center md:items-start md:absolute md:right-40 md:top-24 text-lg md:text-xl font-playfair mt-4 md:mt-0">
         <p className="mb-2 cursor-pointer hover:underline hover:text-white">About Us</p>

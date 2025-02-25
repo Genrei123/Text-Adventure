@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, ChevronDown } from "lucide-react";
+import socketIOClient from 'socket.io-client';
+
+const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
 const Navbar = () => {
   const [username, setUsername] = useState<string | null>(null);
@@ -16,8 +19,6 @@ const Navbar = () => {
   const location = useLocation();
 
   const isHomePage = location.pathname === "/home";
-
-  // Sample data
   const genres = [
     "Fantasy",
     "Dark Fantasy",
@@ -48,15 +49,21 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem("username");
-      if (!token) return;
-      setUsername(token);
+      const storedUserData = localStorage.getItem('userData');
+      if (!storedUserData) {
+          return null;
+      }
+
+      const userData = JSON.parse(storedUserData);
+      const username = userData.username;
+      setUsername(username);
     };
 
-    const params = new URLSearchParams(location.search);
-    const usernameParam = params.get("username");
+    const params = new URLSearchParams(window.location.search);
+    const usernameParam = params.get('username');
     if (usernameParam) {
       setUsername(decodeURIComponent(usernameParam));
+      localStorage.setItem("email", decodeURIComponent(usernameParam));
     }
 
     fetchUserData();
@@ -80,10 +87,20 @@ const Navbar = () => {
     }
   }, [searchQuery]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("token");
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const email = localStorage.getItem('email');
+      if (token && email) {
+        socket.emit('leave', { route: window.location.pathname, email, token });
+      }
+
+      localStorage.removeItem("email");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
   };
 
   // Get the appropriate placeholder text based on screen width
@@ -145,7 +162,6 @@ const Navbar = () => {
               </button>
             </div>
           )}
-
           <div className="flex items-center space-x-2">
             {username ? (
               <>
