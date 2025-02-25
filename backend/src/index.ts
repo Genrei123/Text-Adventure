@@ -55,6 +55,7 @@ app.use('/statistics/playerActivityRoutes', playerActivityRoutes); // Use the ne
 app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/bans', banRoutes);
+app.use('/api/bans', banRoutes);  // Fixes 404 for /api/bans
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);

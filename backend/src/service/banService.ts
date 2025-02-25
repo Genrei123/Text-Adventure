@@ -5,6 +5,7 @@ import User from '../model/user/user';
 export const createBan = async (banData: any) => {
     try {
         const ban = await Ban.create(banData);
+        console.log('Ban created successfully:', ban);
         return ban;
     } catch (error) {
         console.error('Error creating ban:', error);

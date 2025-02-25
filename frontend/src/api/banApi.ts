@@ -26,6 +26,6 @@ export const deleteBan = async (banId) => {
 
 // New function to search users
 export const searchUsers = async (term) => {
-    const response = await api.get(`/users/search?term=${term}`);
+    const response = await api.get(`/bans/users/search?term=${term}`);
     return response.data;
 };

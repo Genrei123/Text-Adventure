@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { searchUsers } from '../api/banApi';
+import { searchUsers, createBan } from '../api/banApi';
 
 type BanReason = 'spamming' | 'hacked' | 'server_rules' | 'cheating' | 'other' | 'abusive language';
 
@@ -17,6 +17,7 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     otherReason: ''
   });
   const [userSuggestions, setUserSuggestions] = useState<{ id: number, username: string }[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (formData.username) {
@@ -26,6 +27,7 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
           setUserSuggestions(users);
         } catch (error) {
           console.error('Error fetching user suggestions:', error);
+          toast.error('Error fetching user suggestions');
         }
       };
       fetchUsers();
@@ -34,7 +36,7 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
     }
   }, [formData.username]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validation
@@ -70,15 +72,22 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
 
     const reason = formData.reason === 'other' ? formData.otherReason : formData.reason;
 
-    // Mock API call
-    const newBan = {
-      id: Math.random().toString(36).substr(2, 9),
-      userId: selectedUser.id,
-      ...formData,
-      reason,
-      timestamp: new Date().toISOString()
-    };
-    onBan(newBan);
+    try {
+      const newBan = await createBan({
+        userId: selectedUser.id,
+        reason,
+        banType: formData.banType,
+        endDate: formData.banType === 'temporary' ? formData.endDate : null,
+      });
+      console.log('Ban created successfully:', newBan);
+      toast.success(`Player ${formData.username} banned successfully`);
+      onBan(newBan);
+      // Refresh bans list
+      fetchBans(); 
+    } catch (error) {
+      toast.error(`Failed to create ban: ${error.response?.data?.message || error.message}`);
+      console.error('[BanForm] Submit error:', error);
+    }
 
     // Reset form
     setFormData({
@@ -88,13 +97,19 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
       endDate: '',
       otherReason: ''
     });
+    setUserSuggestions([]);
+  };
+
+  const handleSuggestionClick = (username: string) => {
+    setFormData({ ...formData, username });
+    setUserSuggestions([]);
   };
 
   const todayDate = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
+      <div className="relative">
         <label className="block text-[#B39C7D] mb-2">Username:</label>
         <input
           type="text"
@@ -103,11 +118,11 @@ export const BanForm: React.FC<BanFormProps> = ({ onBan }) => {
           className="w-full p-2 rounded bg-[#1e1e1e] text-[#ffffff]"
         />
         {userSuggestions.length > 0 && (
-          <ul className="bg-[#2e2e2e] rounded-lg shadow-lg p-2 mt-2">
+          <ul className="absolute z-10 bg-[#2e2e2e] rounded-lg shadow-lg p-2 mt-2 w-full">
             {userSuggestions.map((user) => (
               <li
                 key={user.id}
-                onClick={() => setFormData({ ...formData, username: user.username })}
+                onClick={() => handleSuggestionClick(user.username)}
                 className="cursor-pointer p-2 hover:bg-[#1e1e1e] text-[#ffffff]"
               >
                 {user.username}

@@ -3,7 +3,7 @@ import { createBan, updateBan, getAllBans, getTemporaryBans, getPermanentBans, d
 
 const router = express.Router();
 
-router.post('/bans', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const ban = await createBan(req.body);
         res.status(201).json(ban);
@@ -12,7 +12,7 @@ router.post('/bans', async (req, res) => {
     }
 });
 
-router.put('/bans/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { comment } = req.body;
@@ -23,7 +23,7 @@ router.put('/bans/:id', async (req, res) => {
     }
 });
 
-router.get('/bans', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const bans = await getAllBans();
         res.status(200).json(bans);
@@ -32,7 +32,7 @@ router.get('/bans', async (req, res) => {
     }
 });
 
-router.get('/bans/temporary', async (req, res) => {
+router.get('/temporary', async (req, res) => {
     try {
         const bans = await getTemporaryBans();
         res.status(200).json(bans);
@@ -41,7 +41,7 @@ router.get('/bans/temporary', async (req, res) => {
     }
 });
 
-router.get('/bans/permanent', async (req, res) => {
+router.get('/permanent', async (req, res) => {
     try {
         const bans = await getPermanentBans();
         res.status(200).json(bans);
@@ -50,7 +50,7 @@ router.get('/bans/permanent', async (req, res) => {
     }
 });
 
-router.delete('/bans/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         await deleteBan(Number(id));
