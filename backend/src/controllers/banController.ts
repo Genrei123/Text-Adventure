@@ -1,3 +1,7 @@
+import Ban from '../model/ban/ban';
+import User from '../model/user/user';
+import { Request, Response } from 'express';
+
 /**
  * Controller to create a new ban.
  * @param req - The request object.
@@ -10,9 +14,10 @@ export const createBan = async (req: Request, res: Response) => {
     res.status(201).json(ban);
   } catch (error) {
     console.error('[BanController] Create error:', error);
+    const err = error as { errors?: { message: string }[] };
     res.status(400).json({ 
       error: 'Invalid ban data',
-      details: error.errors?.map((e: any) => e.message) 
+      details: err.errors?.map(e => e.message) 
     });
   }
 };
