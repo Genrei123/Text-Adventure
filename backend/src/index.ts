@@ -17,6 +17,12 @@ import { createServer } from './websocket/socket';
 import statsRoutes from './routes/statistics/statsRoutes'; // Import the new stats route
 import playerActivityRoutes from './routes/statistics/playerActivityRoutes'; // Import the new player activity route
 import gameRoutes from './routes/game/gameRoutes';
+import { initializeModels } from './service/models';
+import paymentRoutes from './routes/transaction/shopRoutes';
+import nihRoutes from './routes/game/nih-game/nihRoutes';
+import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation
+import banRoutes from './routes/banRoutes';
+
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -50,6 +56,12 @@ app.use('/ai', chatRoutes);
 app.use('/statistics/statsRoutes', statsRoutes); // Use the new stats route
 app.use('/statistics/playerActivityRoutes', playerActivityRoutes); // Use the new player activity route
 app.use('/game', gameRoutes);
+app.use('/payments', paymentRoutes);
+app.use('/nih', nihRoutes);
+app.use('/openai', openaiRoute); // Image generation
+app.use('/bans', banRoutes);
+app.use('/api/bans', banRoutes);  // Fixes 404 for /api/bans
+
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
@@ -58,7 +70,8 @@ app.use('/auth', authRouter);
 const server = createServer(app);
 server.listen(PORT, async () => { 
   try {
-    await database.authenticate();
+    //await database.authenticate();
+    await initializeModels();
     console.log('Connection to the database has been established successfully.');
     await User.sync({ alter: true });
     console.log('User table has been synchronized.');

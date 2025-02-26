@@ -15,7 +15,8 @@ const sequelize = new Sequelize(DATABASE_URI, {
             rejectUnauthorized: false,
         },
     },
-    logging: false, // Disable logging
+    logging: false,
 });
 
+export { sequelize };
 export default sequelize;

@@ -81,7 +81,7 @@ const Register: React.FC<RegisterProps> = ({ }) => {
   
   return (
     // register design
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: `url(${('/Register.png')})` }}>
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: `url(${('/register.gif')})` }}>
       <img src={('/fadeLogin.png')} className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block" />
       <div className="w-1/2 flex items-center justify-center">
       </div>

@@ -1,0 +1,42 @@
+.ban-test-page {
+  padding: 20px;
+  max-width: 80%;
+  margin: 0 auto;
+  background-color: #1e1e1e;
+  color: #e5d4b3;
+}
+
+.bans-list {
+  margin-top: 20px;
+  border: 1px solid #444;
+  padding: 10px;
+  max-height: 400px; /* Limit the height */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.ban-item {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+  text-align: left; /* Ensure text is aligned to the left */
+}
+
+.ban-item button {
+  margin-left: auto;
+}
+
+/* Custom scrollbar styles */
+.bans-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bans-list::-webkit-scrollbar-thumb {
+  background-color: #B39C7D;
+  border-radius: 4px;
+}
+
+.bans-list::-webkit-scrollbar-track {
+  background-color: #1e1e1e;
+}

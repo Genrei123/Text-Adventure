@@ -2,10 +2,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Sidebar: React.FC = () => {
+
+    const storedUserData = localStorage.getItem('userData');
+    if (!storedUserData) {
+        return null;
+    }
+
+    const userData = JSON.parse(storedUserData);
+    const username = userData.username;
     return (
         <>
             {/* Desktop Sidebar */}
-            <div className="hidden md:block w-1/15 h-10 p-6 fixed top-16 left-0 md:w-1/15 md:h-[calc(127vh-4rem)] md:p-6 z-50">
+            <div className="hidden md:block w-1/15 h-10 p-6 fixed top-16 left-0 md:w-1/15 md:h-[calc(127vh-4rem)] md:p-6 z-49">
                 <ul className="space-y-2 md:space-y-0 md:flex md:flex-col">
                     <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
                         <Link to="/home">
@@ -16,7 +24,7 @@ const Sidebar: React.FC = () => {
                     
                     <br />
                     <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
-                        <Link to="/profile">
+                        <Link to={`/${username}`}>
                             <img src="/Settings.svg" className="w-9 h-9 group-hover:opacity-0" />
                             <img src="/Settings-After.svg" className="w-9 h-9 absolute top-0 left-3 opacity-0 group-hover:opacity-100" />
                         </Link>
