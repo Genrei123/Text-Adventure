@@ -1,56 +1,16 @@
 import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axiosInstance from '../../config/axiosConfig';
-import Sidebar from '../components/Sidebar';
-import GameHeader from '../components/GameHeader';
+import axiosInstance from '../../../config/axiosConfig';
+import Sidebar from '../../components/Sidebar';
+import GameHeader from '../../components/GameHeader';
 
-const GameScreen: React.FC = () => {
-    const { id: gameId } = useParams();
-    const [userId, setUserId] = useState<number | null>(null);
-    const [message, setMessage] = useState('');
+const ImageGeneratorScreen: React.FC = () => {
+    const [prompt, setPrompt] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [showScroll, setShowScroll] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const chatContainerRef = useRef<HTMLDivElement>(null);
-    const [chatMessages, setChatMessages] = useState<Array<{ content: string, isUser: boolean, timestamp: string }>>([]);
-
-    useEffect(() => {
-        const userData = localStorage.getItem('userData');
-        if (userData) {
-            try {
-                const parsedData = JSON.parse(userData);
-                if (parsedData.id) {
-                    setUserId(parsedData.id);
-                }
-            } catch (error) {
-                console.error('Error parsing userData from localStorage:', error);
-            }
-        }
-    }, []);
-
-    useEffect(() => {
-        if (!userId || !gameId) return;
-
-        const fetchChatMessages = async () => {
-            try {
-                const response = await axiosInstance.post('/ai/get-chat', {
-                    userId,
-                    gameId: parseInt(gameId, 10)
-                });
-                const formattedMessages = response.data.map((msg: any) => ({
-                    content: msg.content,
-                    isUser: msg.role === 'user',
-                    timestamp: new Date(msg.createdAt).toLocaleTimeString()
-                }));
-                setChatMessages(formattedMessages);
-            } catch (error) {
-                console.error('Error fetching chat messages:', error);
-            }
-        };
-
-        fetchChatMessages();
-    }, [userId, gameId]);
+    const [chatMessages, setChatMessages] = useState<Array<{ content: string, isUser: boolean, timestamp: string, imageUrl?: string }>>([]);
 
     useEffect(() => {
         if (chatContainerRef.current) {
@@ -70,69 +30,40 @@ const GameScreen: React.FC = () => {
         setError('');
         setSuccess('');
 
-        if (!message.trim()) {
-            setError('Message cannot be empty.');
-            return;
-        }
-
-        if (!userId || !gameId) {
-            setError('User ID or Game ID not found. Please log in again.');
+        if (!prompt.trim()) {
+            setError('Prompt cannot be empty.');
             return;
         }
 
         const payload = {
-            userId,
-            gameId: parseInt(gameId, 10),
-            message
+            prompt
         };
 
-        setMessage(''); // Clear message input
-
         try {
-            // Temporarily show user's message with current time
+            // Temporarily show user's prompt with current time
             const tempUserMessage = {
-                content: message,
+                content: prompt,
                 isUser: true,
                 timestamp: new Date().toLocaleTimeString()
             };
             setChatMessages(prevMessages => [...prevMessages, tempUserMessage]); // Append to bottom
 
-            const response = await axiosInstance.post('/ai/chat', payload);
+            const response = await axiosInstance.post('/openai/generate-image', payload);
 
             const aiResponse = {
-                content: response.data.ai_response.content || "This is a simulated AI response.",
+                content: response.data.imageUrl || "Image generation failed.",
                 isUser: false,
-                timestamp: response.data.ai_response.createdAt
-                    ? new Date(response.data.ai_response.createdAt).toLocaleTimeString()
-                    : new Date().toLocaleTimeString()
+                timestamp: new Date().toLocaleTimeString(),
+                imageUrl: response.data.imageUrl
             };
 
             // Replace temp user message with backend data if available
-            if (response.data.user_message && response.data.user_message.createdAt) {
-                setChatMessages(prevMessages => {
-                    const updatedMessages = prevMessages.slice(0, -1); // Remove temp message
-                    return [
-                        ...updatedMessages,
-                        {
-                            content: response.data.user_message.content,
-                            isUser: true,
-                            timestamp: new Date(response.data.user_message.createdAt).toLocaleTimeString()
-                        },
-                        {
-                            content: response.data.ai_response.content,
-                            isUser: false,
-                            timestamp: new Date(response.data.ai_response.createdAt).toLocaleTimeString()
-                        }
-                    ];
-                });
-            } else {
-                setChatMessages(prevMessages => [...prevMessages.slice(0, -1), aiResponse]);
-            }
+            setChatMessages(prevMessages => [...prevMessages.slice(0, -1), aiResponse]);
 
-            setSuccess('Message sent successfully!');
-            setMessage('');
+            setSuccess('Image generated successfully!');
+            setPrompt('');
         } catch (err) {
-            console.error('Error sending message:', err);
+            console.error('Error generating image:', err);
             setError('An unexpected error occurred. Please try again.');
         }
     };
@@ -155,6 +86,9 @@ const GameScreen: React.FC = () => {
                             <p className={`inline-block p-2 rounded-lg ${msg.isUser ? 'bg-[#311F17] text-white' : 'bg-[#634630] text-[#E5D4B3]'}`}>
                                 {msg.content}
                             </p>
+                            {msg.imageUrl && (
+                                <img src={msg.imageUrl} alt="Generated" className="max-w-full h-auto mt-2 rounded-lg" />
+                            )}
                             <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
                         </div>
                     ))}
@@ -167,14 +101,14 @@ const GameScreen: React.FC = () => {
                         className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${
                             showScroll ? 'overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent' : 'overflow-y-hidden'
                         }`}
-                        placeholder="Type your text here..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        placeholder="Type your prompt here..."
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
                         onKeyDown={handleKeyDown}
                         rows={1}
                         style={{
                             minHeight: '56px',
-                            height: `${Math.min(message.split('\n').length * 24 + 32, 192)}px`
+                            height: `${Math.min(prompt.split('\n').length * 24 + 32, 192)}px`
                         }}
                     />
                     <button className="p-4 bg-transparent rounded-r-2xl relative group self-start" onClick={handleSubmit}>
@@ -189,4 +123,4 @@ const GameScreen: React.FC = () => {
     );
 };
 
-export default GameScreen;
+export default ImageGeneratorScreen;
