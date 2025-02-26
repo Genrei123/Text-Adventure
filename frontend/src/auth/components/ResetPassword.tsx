@@ -4,6 +4,7 @@ import '../../App.css';
 import axios from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PasswordInput from './PasswordInput';
 
 const ResetPassword: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -68,22 +69,18 @@ const ResetPassword: React.FC = () => {
       <div className="w-full max-w-md p-8 space-y-6 bg-[#3D2E22] rounded-xl">
         <h2 className="text-2xl font-bold text-white text-center">Reset Password</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="password"
+          <PasswordInput
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
             placeholder="New password"
-            required
             disabled={isProcessing}
           />
-          <input
-            type="password"
+          <PasswordInput
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
             placeholder="Confirm password"
-            required
             disabled={isProcessing}
           />
           <button

@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaGoogle } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ValidatedInput from './ValidatedInput';
+import { ValidationUtils } from '../utils/ValidationUtils';
+import { isAxiosError } from 'axios';
+import { LoginResponse } from '../types/User'; // Adjust the import path based on your folder structure
 
 interface LoginProps {
   onLogin: (username: string) => void;
@@ -22,50 +26,73 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
 
+  // Check if user is already logged in when component mounts
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // User is already logged in, redirect to /home
+      navigate('/home');
+    }
+  }, [navigate]);
+
   const validateForm = (): boolean => {
-    const newErrors: ValidationErrors = {};
-
-    if (!email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email format is invalid';
+    // Validate email
+    const emailValidation = ValidationUtils.email(email);
+    if (!emailValidation.isValid) {
+      toast.error(emailValidation.message);
+      return false;
     }
 
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    // Validate password
+    const passwordValidation = ValidationUtils.login_password(password);
+    if (!passwordValidation.isValid) {
+      toast.error(passwordValidation.message);
+      return false;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      setIsProcessing(true);
-      toast.info('Logging in...');
+    
+    // Validate form before proceeding
+    if (!validateForm()) {
+      return;
+    }
 
-      try {
-        const response = await axiosInstance.post('/auth/login', { email, password });
-        const data = response.data;
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('username', data.user.email);
-          onLogin(data.user.email);
-          toast.success('Login successful!');
-          navigate('/home');
-        } else {
-          setErrors({ general: data.message });
-          toast.error(data.message);
-        }
-      } catch (error) {
-        setErrors({ general: 'Login failed. Please try again.' });
-        toast.error(`Login failed. ${(error as any).response?.data?.message}`);
-      } finally {
-        setIsProcessing(false);
+    setIsProcessing(true);
+    toast.info('Logging in...');
+
+    try {
+      const response = await axiosInstance.post<LoginResponse>('/auth/login', { 
+        email, 
+        password 
+      });
+      
+      const { token, user } = response.data;
+      
+      // Store auth data
+      localStorage.setItem('token', token);
+      localStorage.setItem('email', user.email);
+      
+      // Store user data
+      localStorage.setItem('userData', JSON.stringify(user));
+      
+      onLogin(user.email); // Assuming onLogin expects email, adjust if it should be username
+      toast.success('Login successful!');
+      navigate('/home');
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const message = error.response?.data?.message || 'Login failed. Please try again.';
+        setErrors({ general: message });
+        toast.error(message);
+      } else {
+        setErrors({ general: 'An unexpected error occurred' });
+        toast.error('An unexpected error occurred');
       }
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -73,59 +100,66 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     setIsProcessing(true);
     toast.info(`Connecting to ${provider}...`);
 
-    // Clear any previous errors
     setErrors({});
-
-    // Clear tokens
     localStorage.removeItem('token');
     localStorage.removeItem('username');
 
     try {
-        // Ensure clean URL construction
-        const authUrl = `${import.meta.env.VITE_SITE_URL}/auth/${provider.toLowerCase()}`;
-        window.location.href = authUrl;
+      const authUrl = `${import.meta.env.VITE_SITE_URL}/auth/${provider.toLowerCase()}`;
+      window.location.href = authUrl;
     } catch (error) {
-        console.error(`Error during ${provider} login:`, error);
-        toast.error(`Failed to log in with ${provider}.`);
-        setIsProcessing(false);
+      console.error(`Error during ${provider} login:`, error);
+      toast.error(`Failed to log in with ${provider}.`);
+      setIsProcessing(false);
     }
   };
 
   return (
-    <div className="animate-fade-in transform 10s ">
-      <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: `url(${('/Login.jpg')})`, transition: 'opacity 1s ease-in-out' }}>
-      <img src={('/fadeLogin.png')} className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block" style={{ transition: 'opacity 1s ease-in-out' }} />
-      {/* Left Side - Logo */}
-      <div className="hidden md:block md:w-1/2 flex items-center justify-center h-screen" style={{ transition: 'opacity 1s ease-in-out' }}></div>
-      {/* Right Side - Login Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center md:justify-end p-4 md:p-0 mt-0 md:mt-0 md:mr-[250px] z-10" style={{ transition: 'opacity 1s ease-in-out' }}>
-        <div className="w-full max-w-[90%] md:w-[480px] relative" style={{ transition: 'opacity 1s ease-in-out' }}>
-        <h2 className="text-4xl font-cinzel text-white mb-12 text-center md:animate-none" style={{ transition: 'opacity 1s ease-in-out' }}>Gates of Realm</h2>
-        <form onSubmit={handleSubmit} className="space-y-6" style={{ transition: 'opacity 1s ease-in-out' }}>
-          <div>
-          <label className="block text-sm font-cinzel text-white mb-2">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
-            placeholder="Your email"
-            style={{ transition: 'opacity 1s ease-in-out' }}
-          />
+    <div className="animate-fade-in transform 10s">
+      <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" 
+           style={{ backgroundImage: `url(${('/Login.jpg')})`, transition: 'opacity 1s ease-in-out' }}>
+        <img src={('/fadeLogin.png')} 
+             className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block" 
+             style={{ transition: 'opacity 1s ease-in-out' }} />
+        {/* Left Side - Logo */}
+        <div className="hidden md:block md:w-1/2 flex items-center justify-center h-screen" 
+             style={{ transition: 'opacity 1s ease-in-out' }}></div>
+        {/* Right Side - Login Form */}
+        <div className="w-full md:w-1/2 flex items-center justify-center md:justify-end p-4 md:p-0 mt-0 md:mt-0 md:mr-[250px] z-10" 
+             style={{ transition: 'opacity 1s ease-in-out' }}>
+          <div className="w-full max-w-[90%] md:w-[480px] relative" 
+               style={{ transition: 'opacity 1s ease-in-out' }}>
+            <h2 className="text-4xl font-cinzel text-white mb-12 text-center md:animate-none" 
+                style={{ transition: 'opacity 1s ease-in-out' }}>Gates of Realm</h2>
+            <form onSubmit={handleSubmit} className="space-y-6" 
+                  style={{ transition: 'opacity 1s ease-in-out' }}>
+              <div>
+                <label className="block text-sm font-cinzel text-white mb-2">Email</label>
+                <ValidatedInput
+                  type="email"
+                  value={email}
+                  onChange={(value) => setEmail(value)}
+                  className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
+                  placeholder="Your email"
+                />
+                {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-cinzel text-white mb-2">Password</label>
-                <input
-                  type="password"
+                <ValidatedInput
+                  type="login_password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(value) => setPassword(value)}
                   className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
                   placeholder="Your password"
                 />
                 {errors.password && <p className="mt-1 text-sm text-red-400">{errors.password}</p>}
               </div>
-              <button type="submit" className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel" disabled={isProcessing}>
+
+              <button type="submit" 
+                      className="w-full py-2 bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded font-cinzel" 
+                      disabled={isProcessing}>
                 Enter the Realm
               </button>
             </form>
@@ -133,12 +167,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <div className="mt-8">
               <div className="text-center text-sm text-[#8B7355] mb-4">Enter Using</div>
               <div className="flex justify-center space-x-4">
-                <button onClick={() => handleSocialLogin('Google')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
+                <button onClick={() => handleSocialLogin('Google')} 
+                        className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" 
+                        disabled={isProcessing}>
                   <FaGoogle className="text-[#8B7355]" size={30} />
                 </button>
-                {/* <button onClick={() => handleSocialLogin('Facebook')} className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50" disabled={isProcessing}>
-                  <FaFacebook className="text-[#8B7355]" size={20} />
-                </button> */}
               </div>
             </div>
 
