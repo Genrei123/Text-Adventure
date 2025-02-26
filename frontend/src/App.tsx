@@ -33,7 +33,9 @@ import GameCreation from './game-creation/GameCreation';
 import AdventureEditor from './game-creation/Editing Page/Editor';
 import { WebSocketProvider } from './websocket/context/WebSocketContext';
 import ActivePlayerCount from './websocket/components/ActivePlayerCount';
+import NihGameScreen from './game/NihGameScreen';
 import BanTestPage from './pages/BanTestPage';
+
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
@@ -56,6 +58,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginScreen onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onRegister={handleRegister} />} />
+        <Route path="/game/nih/:id" element={<NihGameScreen />} />
         
         {/* Auth Related Routes */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
