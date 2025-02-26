@@ -20,7 +20,9 @@ import Homepage from './home/Homepage';
 import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import GameDetails from './game-details/GameDetails';
+import AdminDashboard from './Admin/AdminDashboard';
 import Subscription from './subscription/Subscription';
+
 
 // Work in Progress Components [EXPERIMENTAL - Do not include in main app!]
 import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
@@ -49,7 +51,6 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginScreen onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onRegister={handleRegister} />} />
@@ -125,6 +126,9 @@ function App() {
         <Route path="/server-error" element={<ServerError />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/game-details" element={<GameDetails />} />
+        {/* admin side */}
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
