@@ -6,6 +6,7 @@ import Rating from "../model/game/rating";
 import Order from "../model/transaction/order";
 import Item from "../model/transaction/ItemModel"; // Adjust path if needed
 import Chat from "../model/chat/chat";
+import Ban from '../model/ban/ban';
 import defineAssociations from "../model/associations";
 
 export const initializeModels = async () => {
@@ -18,6 +19,7 @@ export const initializeModels = async () => {
         Order;
         Item;
         Chat;
+        Ban;
 
         // Define associations
         defineAssociations();
@@ -32,4 +34,4 @@ export const initializeModels = async () => {
 };
 
 // Export models for use elsewhere
-export { User, Game, Comment, Rating, Order, Item, Chat };
+export { User, Game, Comment, Rating, Order, Item, Chat, Ban };
