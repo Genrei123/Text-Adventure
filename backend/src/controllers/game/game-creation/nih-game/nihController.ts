@@ -29,23 +29,55 @@ const gameState: { [playerId: string]: PlayerState } = {
 const locations: { [id: string]: Location } = {
   village: {
     id: "village",
-    name: "Village Square",
-    description: "A bustling square surrounded by quaint houses.",
-    exits: { north: "forest", east: "river" }
+    name: "Small Village",
+    description: "A quiet village with a few modest homes. An unsettling feeling hangs in the air, as if something is amiss.",
+    exits: { north: "trapped_room" },
+    events: ["Villagers warn about the abandoned mansion", "Strange sounds in the distance"],
   },
-  forest: {
-    id: "forest",
-    name: "Dark Forest",
-    description: "A dense forest with towering trees.",
-    exits: { south: "village" }
+  trapped_room: {
+    id: "trapped_room",
+    name: "Abandoned Room",
+    description: "A dark, decrepit room with shattered furniture. The door is locked shut, preventing any escape.",
+    exits: { north: "endless_hallway", south: "village" },
+    events: ["Simoun introduces himself", "Room starts crumbling"],
   },
-  river: {
-    id: "river",
-    name: "Riverbank",
-    description: "A calm river flows gently through the land.",
-    exits: { west: "village" }
-  }
+  endless_hallway: {
+    id: "endless_hallway",
+    name: "Endless Hallway",
+    description: "An eerie corridor stretching far beyond sight. The air is heavy, and an unsettling presence lingers.",
+    exits: { forward: "kitchen", back: "trapped_room" },
+    events: ["The hallway shifts", "The spirit appears and attacks"],
+  },
+  kitchen: {
+    id: "kitchen",
+    name: "Cursed Kitchen",
+    description: "A dimly lit kitchen bathed in moonlight, yet an unbearable heat fills the air.",
+    exits: { east: "endless_hallway", south: "blood_flooded_chamber" },
+    events: ["Simoun helps find the key", "The blood curse activates"],
+  },
+  blood_flooded_chamber: {
+    id: "blood_flooded_chamber",
+    name: "Blood-Filled Chamber",
+    description: "A vast room drowning in thick, crimson liquid. The walls are lined with lifeless husks.",
+    exits: { down: "wraith_sanctuary" },
+    events: ["Simoun attacks", "Kalen collapses from horror"],
+  },
+  wraith_sanctuary: {
+    id: "wraith_sanctuary",
+    name: "Wraith's Lair",
+    description: "A cursed sanctum where the tormented wraith reveals its true, horrifying form.",
+    exits: { portal: "real_world" },
+    events: ["Nih possesses Kalen", "The gate to the real world opens"],
+  },
+  real_world: {
+    id: "real_world",
+    name: "The Real World",
+    description: "A sudden return to reality... but has the nightmare truly ended?",
+    exits: {},
+    events: ["To be continued..."],
+  },
 };
+
 
 // Define ChatMessage type locally to match your service (or import it if exposed)
 interface ChatMessage {
@@ -199,32 +231,110 @@ export const useItem = async (req: Request, res: Response): Promise<Json> => {
 };
 
 export const getInventory = async (req: Request, res: Response) => {
+  try {
+    const playerId = parseInt(req.params.playerId || "1", 10);
+    const gameId = parseInt(req.params.gameId || "1", 10);
+    console.log(`Fetching for playerId: ${playerId}, gameId: ${gameId}`);
+
+    // Validate user and game
+    await validateUserAndGame(playerId, gameId);
+
+    const playerKey = `player${playerId}`;
+    
+    // Check if the player exists in string format (for backward compatibility)
+    if (!gameState[playerKey] && gameState["player1"] && playerId === 1) {
+      // Copy the existing player1 state to ensure we use the right format
+      gameState[playerKey] = { ...gameState["player1"] };
+    }
+    
+    // Initialize player state if not exists with the default rusty key
+    if (!gameState[playerKey]) {
+      console.log(`Initializing state for ${playerKey}`);
+      gameState[playerKey] = {
+        locationId: "village",
+        inventory: [
+          { id: "key1", name: "Rusty Key", description: "An old key that might unlock something.", usableOn: ["door"] }
+        ]
+      };
+    }
+    
+    // Make sure the player has the rusty key if inventory is empty
+    if (gameState[playerKey].inventory.length === 0) {
+      gameState[playerKey].inventory.push(
+        { id: "key1", name: "Rusty Key", description: "An old key that might unlock something.", usableOn: ["door"] }
+      );
+    }
+
+    const inventory = gameState[playerKey].inventory;
+    console.log('Inventory:', inventory);
+
+    res.status(200).json({
+      message: "Inventory retrieved successfully",
+      inventory
+    });
+  } catch (error: unknown) {
+    console.error("Error in getInventory:", error instanceof Error ? `${error.message} ${error.stack}` : error);
+    res.status(500).json({ message: "Internal server error", error: error instanceof Error ? error.message : 'Unknown error' });
+  }
+};
+
+  export const getGameState = async (req: Request, res: Response): Promise<Json> => {
     try {
       const playerId = parseInt(req.params.playerId || "1", 10);
       const gameId = parseInt(req.params.gameId || "1", 10);
-      console.log(`Fetching for playerId: ${playerId}, gameId: ${gameId}`);
-  
+      
       // Validate user and game
       await validateUserAndGame(playerId, gameId);
-  
-      // Initialize player state if not exists
-      if (!gameState[`player${playerId}`]) {
-        console.log(`Initializing state for player${playerId}`);
-        gameState[`player${playerId}`] = {
-          locationId: "village",
-          inventory: [] // Start with empty inventory, or add default items
+      
+      // Reference to the global gameState and locations objects
+      // Make sure these are accessible in this scope
+      const playerKey = `player${playerId}`;
+      
+      // Check if player exists in game state
+      if (!gameState[playerKey]) {
+        // Initialize player if they don't exist
+        gameState[playerKey] = {
+          locationId: "village", // This will still be invalid until fixed
+          inventory: []
         };
       }
-  
-      const inventory = gameState[`player${playerId}`].inventory;
-      console.log('Inventory:', inventory);
-  
+      
+      const playerState = gameState[playerKey];
+      const currentLocationId = playerState.locationId;
+      
+      // Get location details (will be null if location doesn't exist)
+      const locationDetails = locations[currentLocationId] || {
+        id: currentLocationId,
+        name: "Unknown Location",
+        description: "This location doesn't exist in the game world.",
+        exits: {},
+        events: []
+      };
+      
+      // Prepare response with detailed state information
       res.status(200).json({
-        message: "Inventory retrieved successfully",
-        inventory
+        message: "Game state retrieved successfully",
+        player: {
+          id: playerId,
+          gameId: gameId
+        },
+        state: {
+          locationId: currentLocationId,
+          locationValid: !!locations[currentLocationId],
+          locationDetails: locationDetails,
+          inventory: playerState.inventory,
+          inventoryCount: playerState.inventory.length
+        },
+        availableLocations: Object.keys(locations),
+        debug: {
+          currentStateEntry: JSON.stringify(playerState)
+        }
       });
-    } catch (error: unknown) {
-      console.error("Error in getInventory:", error instanceof Error ? `${error.message} ${error.stack}` : error);
-      res.status(500).json({ message: "Internal server error", error: error instanceof Error ? error.message : 'Unknown error' });
+    } catch (error) {
+      console.error("Error in getGameState:", error);
+      res.status(500).json({ 
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   };

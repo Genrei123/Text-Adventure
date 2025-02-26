@@ -4,6 +4,7 @@ export interface Location {
     name: string;
     description: string;
     exits: { [direction: string]: string }; // e.g., { "north": "forest", "south": "village" }
+    events: string[];
 }
   
   // Item interface
