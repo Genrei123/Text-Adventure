@@ -22,6 +22,8 @@ import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import GameDetails from './game-details/GameDetails';
 import AdminDashboard from './Admin/AdminDashboard';
+import AdminPlayerList from './Admin/AdminPlayerList';
+import BannedList from './Admin/AdminBannedList';
 import Subscription from './subscription/Subscription';
 
 
@@ -134,6 +136,8 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route path="/game-details" element={<GameDetails />} />
         {/* admin side */}
+        <Route path="/Admin/Banned" element={<BannedList/>} />
+        <Route path="/Admin/PlayerList" element={<AdminPlayerList />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
