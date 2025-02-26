@@ -33,6 +33,7 @@ const locations: { [id: string]: Location } = {
     description: "A quiet village with a few modest homes. An unsettling feeling hangs in the air, as if something is amiss.",
     exits: { north: "trapped_room" },
     events: ["Villagers warn about the abandoned mansion", "Strange sounds in the distance"],
+    interactables: [], // No door here
   },
   trapped_room: {
     id: "trapped_room",
@@ -40,6 +41,7 @@ const locations: { [id: string]: Location } = {
     description: "A dark, decrepit room with shattered furniture. The door is locked shut, preventing any escape.",
     exits: { north: "endless_hallway", south: "village" },
     events: ["Simoun introduces himself", "Room starts crumbling"],
+    interactables: ["door"], // Door is present
   },
   endless_hallway: {
     id: "endless_hallway",
@@ -47,36 +49,10 @@ const locations: { [id: string]: Location } = {
     description: "An eerie corridor stretching far beyond sight. The air is heavy, and an unsettling presence lingers.",
     exits: { forward: "kitchen", back: "trapped_room" },
     events: ["The hallway shifts", "The spirit appears and attacks"],
-  },
-  kitchen: {
-    id: "kitchen",
-    name: "Cursed Kitchen",
-    description: "A dimly lit kitchen bathed in moonlight, yet an unbearable heat fills the air.",
-    exits: { east: "endless_hallway", south: "blood_flooded_chamber" },
-    events: ["Simoun helps find the key", "The blood curse activates"],
-  },
-  blood_flooded_chamber: {
-    id: "blood_flooded_chamber",
-    name: "Blood-Filled Chamber",
-    description: "A vast room drowning in thick, crimson liquid. The walls are lined with lifeless husks.",
-    exits: { down: "wraith_sanctuary" },
-    events: ["Simoun attacks", "Kalen collapses from horror"],
-  },
-  wraith_sanctuary: {
-    id: "wraith_sanctuary",
-    name: "Wraith's Lair",
-    description: "A cursed sanctum where the tormented wraith reveals its true, horrifying form.",
-    exits: { portal: "real_world" },
-    events: ["Nih possesses Kalen", "The gate to the real world opens"],
-  },
-  real_world: {
-    id: "real_world",
-    name: "The Real World",
-    description: "A sudden return to reality... but has the nightmare truly ended?",
-    exits: {},
-    events: ["To be continued..."],
+    interactables: [], // No door
   },
 };
+
 
 
 // Define ChatMessage type locally to match your service (or import it if exposed)
@@ -172,13 +148,14 @@ export const useItem = async (req: Request, res: Response): Promise<Json> => {
     }
 
     // Check if player exists
-    if (!gameState[`player${playerId}`]) {
+    const playerKey = `player${playerId}`;
+    if (!gameState[playerKey]) {
       return res.status(404).json({ message: "Player not found" });
     }
 
     // Get player's inventory and current location
-    const inventory = gameState[`player${playerId}`].inventory;
-    const currentLocationId = gameState[`player${playerId}`].locationId;
+    const inventory = gameState[playerKey].inventory;
+    const currentLocationId = gameState[playerKey].locationId;
     const currentLocation = locations[currentLocationId];
 
     // Find the item in inventory
@@ -188,15 +165,23 @@ export const useItem = async (req: Request, res: Response): Promise<Json> => {
     }
     const item = inventory[itemIndex];
 
-    // Basic item usage logic
+    // Validate item usage based on location
     let resultMessage = `${item.name} was used.`;
     if (target) {
+      // Check if the target is valid in the current location
+      if (!currentLocation.interactables || !currentLocation.interactables.includes(target)) {
+        return res.status(400).json({ message: `There is no ${target} here to use ${item.name} on.` });
+      }
+
+      // Check if the item can be used on the target
       if (item.usableOn && item.usableOn.includes(target)) {
         resultMessage = `${item.name} was used on ${target} successfully.`;
         inventory.splice(itemIndex, 1); // Remove item after use
       } else {
         return res.status(400).json({ message: `${item.name} cannot be used on ${target}` });
       }
+    } else {
+      return res.status(400).json({ message: "A target is required to use this item." });
     }
 
     // Get or create session
@@ -205,12 +190,12 @@ export const useItem = async (req: Request, res: Response): Promise<Json> => {
     // Get conversation history for context
     const history: ChatMessage[] = await getConversationHistory(sessionId, playerId, gameId);
 
-    // Prepare prompt for AI narrator with explicit ChatMessage type
+    // Prepare prompt for AI narrator
     const prompt: ChatMessage[] = [
       ...history,
       {
-        role: "system", // Explicitly set as "system"
-        content: `The player is in ${currentLocation.name} with inventory: ${inventory.map(i => i.name).join(", ") || "nothing"}. They use ${item.name}${target ? ` on ${target}` : ""}. Describe what happens next in an engaging, narrative style.`
+        role: "system",
+        content: `The player is in ${currentLocation.name} with inventory: ${inventory.map(i => i.name).join(", ") || "nothing"}. They use ${item.name} on ${target}. Describe what happens next in an engaging, narrative style.`
       }
     ];
 
@@ -221,7 +206,7 @@ export const useItem = async (req: Request, res: Response): Promise<Json> => {
     // Respond with the result
     res.status(200).json({
       message: resultMessage,
-      inventory: gameState[`player${playerId}`].inventory,
+      inventory: gameState[playerKey].inventory,
       narration
     });
   } catch (error) {

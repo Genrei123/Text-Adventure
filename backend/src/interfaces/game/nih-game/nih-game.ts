@@ -5,6 +5,7 @@ export interface Location {
     description: string;
     exits: { [direction: string]: string }; // e.g., { "north": "forest", "south": "village" }
     events: string[];
+    interactables?: string[]; // New field for usable targets
 }
   
   // Item interface

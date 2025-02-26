@@ -5,32 +5,6 @@ import Sidebar from '../components/Sidebar';
 import GameHeader from '../components/GameHeader';
 import ActionButton from './components/ActionButton'; // Adjust path as needed
 
-interface GameMessage {
-  content: string;
-  isUser: boolean;
-  timestamp: string;
-}
-
-interface Item {
-  id: string;
-  name: string;
-  description: string;
-  usableOn: string[];
-}
-
-interface Location {
-  id: string;
-  name: string;
-  description: string;
-  exits: { [key: string]: string };
-}
-
-interface GameState {
-  locationId: string;
-  locationDetails: Location;
-  inventory: Item[];
-}
-
 const NihGameScreen: React.FC = () => {
   const { id: gameId } = useParams();
   const [playerId, setPlayerId] = useState<number | null>(null);
