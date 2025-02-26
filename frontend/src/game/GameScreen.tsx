@@ -1,76 +1,155 @@
-import React, { useState } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axiosInstance from '../../config/axiosConfig';
 import Sidebar from '../components/Sidebar';
 import GameHeader from '../components/GameHeader';
 
 const GameScreen: React.FC = () => {
+    const { id: gameId } = useParams();
+    const [userId, setUserId] = useState<number | null>(null);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [chatMessages, setChatMessages] = useState<Array<{content: string, isUser: boolean, timestamp: string}>>([]);
+    const [showScroll, setShowScroll] = useState(false);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const chatContainerRef = useRef<HTMLDivElement>(null);
+    const [chatMessages, setChatMessages] = useState<Array<{ content: string, isUser: boolean, timestamp: string }>>([]);
+
+    useEffect(() => {
+        const userData = localStorage.getItem('userData');
+        if (userData) {
+            try {
+                const parsedData = JSON.parse(userData);
+                if (parsedData.id) {
+                    setUserId(parsedData.id);
+                }
+            } catch (error) {
+                console.error('Error parsing userData from localStorage:', error);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!userId || !gameId) return;
+
+        const fetchChatMessages = async () => {
+            try {
+                const response = await axiosInstance.post('/ai/get-chat', {
+                    userId,
+                    gameId: parseInt(gameId, 10)
+                });
+                const formattedMessages = response.data.map((msg: any) => ({
+                    content: msg.content,
+                    isUser: msg.role === 'user',
+                    timestamp: new Date(msg.createdAt).toLocaleTimeString()
+                }));
+                setChatMessages(formattedMessages);
+            } catch (error) {
+                console.error('Error fetching chat messages:', error);
+            }
+        };
+
+        fetchChatMessages();
+    }, [userId, gameId]);
+
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight; // Scroll to bottom
+        }
+    }, [chatMessages]);
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSubmit(e as any);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setSuccess('');
 
-        // Frontend validation
         if (!message.trim()) {
             setError('Message cannot be empty.');
             return;
         }
 
+        if (!userId || !gameId) {
+            setError('User ID or Game ID not found. Please log in again.');
+            return;
+        }
+
         const payload = {
-            session_id: 'abc123',
-            model: 'gpt-4',
-            role: 'user',
-            content: message,
-            GameId: 1,
-            UserId: 70, // Replace with dynamic user ID if needed
+            userId,
+            gameId: parseInt(gameId, 10),
+            message
         };
 
-        // Log the payload for debugging
-        console.log('Payload:', payload);
+        setMessage(''); // Clear message input
 
         try {
-            // TODO! Send the message to the backend
-            // For now, we'll just add the message to the chat
-            const newUserMessage = {
+            // Temporarily show user's message with current time
+            const tempUserMessage = {
                 content: message,
                 isUser: true,
                 timestamp: new Date().toLocaleTimeString()
             };
-            setChatMessages(prevMessages => [...prevMessages, newUserMessage]);
+            setChatMessages(prevMessages => [...prevMessages, tempUserMessage]); // Append to bottom
 
-            // Simulate a response from the AI
-            setTimeout(() => {
-                const aiResponse = {
-                    content: "This is a simulated AI response.",
-                    isUser: false,
-                    timestamp: new Date().toLocaleTimeString()
-                };
-                setChatMessages(prevMessages => [...prevMessages, aiResponse]);
-            }, 1000);
+            const response = await axiosInstance.post('/ai/chat', payload);
+
+            const aiResponse = {
+                content: response.data.ai_response.content || "This is a simulated AI response.",
+                isUser: false,
+                timestamp: response.data.ai_response.createdAt
+                    ? new Date(response.data.ai_response.createdAt).toLocaleTimeString()
+                    : new Date().toLocaleTimeString()
+            };
+
+            // Replace temp user message with backend data if available
+            if (response.data.user_message && response.data.user_message.createdAt) {
+                setChatMessages(prevMessages => {
+                    const updatedMessages = prevMessages.slice(0, -1); // Remove temp message
+                    return [
+                        ...updatedMessages,
+                        {
+                            content: response.data.user_message.content,
+                            isUser: true,
+                            timestamp: new Date(response.data.user_message.createdAt).toLocaleTimeString()
+                        },
+                        {
+                            content: response.data.ai_response.content,
+                            isUser: false,
+                            timestamp: new Date(response.data.ai_response.createdAt).toLocaleTimeString()
+                        }
+                    ];
+                });
+            } else {
+                setChatMessages(prevMessages => [...prevMessages.slice(0, -1), aiResponse]);
+            }
 
             setSuccess('Message sent successfully!');
             setMessage('');
         } catch (err) {
             console.error('Error sending message:', err);
-            setError(
-                'An unexpected error occurred. Please try again.'
-            );
+            setError('An unexpected error occurred. Please try again.');
         }
     };
 
     return (
-        <>
         <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-            <GameHeader/>
-            <Sidebar/>
-            <br/>
-            <br/>
-            <br/>
+            <GameHeader />
+            <Sidebar />
+            <br />
+            <br />
+            <br />
             <div className="flex-grow flex justify-center items-center mt-[-5%]">
-                <div className="bg- text-white w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto max-h-[calc(1.5em*30)] scrollbar-hide" style={{ scrollbarColor: '#634630 #1E1E1E' }}>
+                <div
+                    ref={chatContainerRef}
+                    className="bg- text-white w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto max-h-[calc(1.5em*30)] scrollbar-hide"
+                    style={{ scrollbarColor: '#634630 #1E1E1E' }}
+                >
                     {chatMessages.map((msg, index) => (
                         <div key={index} className={`mb-4 ${msg.isUser ? 'text-right' : 'text-left'}`}>
                             <p className={`inline-block p-2 rounded-lg ${msg.isUser ? 'bg-[#311F17] text-white' : 'bg-[#634630] text-[#E5D4B3]'}`}>
@@ -82,41 +161,23 @@ const GameScreen: React.FC = () => {
                 </div>
             </div>
             <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
-                <div className="flex space-x-2">
-                    <button className="p-2 text-white rounded relative group">
-                        <img src="/Settings.svg" alt="Icon" className="w-6 h-6 group-hover:opacity-0" />
-                        <img src="/Settings-After.svg" alt="Icon Hover" className="w-6 h-6 absolute top-2 left-2 opacity-0 group-hover:opacity-100" />
-                    </button>
-                    <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
-                        <img src="/Story.svg" alt="Icon 2" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
-                        <img src="/Story-after.svg" alt="Icon 2 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
-                        <span>Story</span>
-                    </button>
-                    <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
-                        <img src="/Do.svg" alt="Icon 3" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
-                        <img src="/Do-after.svg" alt="Icon 3 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
-                        <span>Do</span>
-                    </button>
-                    <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
-                        <img src="/Say.svg" alt="Icon 4" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
-                        <img src="/Say-after.svg" alt="Icon 4 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
-                        <span>Say</span>
-                    </button>
-                    <button className="p-2 text-white rounded flex items-center space-x-2 bg-transparent group hover:bg-[#311F17] transition duration-300 text-sm md:text-base relative">
-                        <img src="/See.svg" alt="Icon 5" className="w-5 h-5 md:w-6 md:h-6 group-hover:opacity-0" />
-                        <img src="/See-after.svg" alt="Icon 5 Hover" className="w-5 h-5 md:w-6 md:h-6 absolute top-2 left-0 opacity-0 group-hover:opacity-100" />
-                        <span>See</span>
-                    </button>
-                </div>
-                <div className="w-full flex items-center bg-[#311F17] rounded-2xl focus-within:outline-none">
-                    <input 
-                        type="text" 
-                        className="w-full h-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none" 
-                        placeholder="Type your text here..." 
+                <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
+                    <textarea
+                        ref={textareaRef}
+                        className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${
+                            showScroll ? 'overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent' : 'overflow-y-hidden'
+                        }`}
+                        placeholder="Type your text here..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        rows={1}
+                        style={{
+                            minHeight: '56px',
+                            height: `${Math.min(message.split('\n').length * 24 + 32, 192)}px`
+                        }}
                     />
-                    <button className="p-4 bg-transparent rounded-r-2xl relative group" onClick={handleSubmit}>
+                    <button className="p-4 bg-transparent rounded-r-2xl relative group self-start" onClick={handleSubmit}>
                         <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
                         <img src="/Enter-after.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
                     </button>
@@ -125,7 +186,6 @@ const GameScreen: React.FC = () => {
                 {success && <p className="text-green-500 mt-2">{success}</p>}
             </div>
         </div>
-        </>
     );
 };
 

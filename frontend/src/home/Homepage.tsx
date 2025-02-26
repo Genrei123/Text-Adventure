@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import axios from '../../config/axiosConfig';
-import Footer from '../components/Footer';
-import SearchBar from '../components/Searchbar';
-import Sidebar from '../components/Sidebar';
-import PortraitCard from './components/PortraitCard';
-import BookCard from './components/BookCard';
-import Navbar from '../components/Navbar';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
+import Carousel from "./components/Carousel";
+import YourJourney from "./components/YourJourney";
+import StartAdventure from "./components/StartAdventure";
+import GameList from "./components/GameList";
 
 interface HomepageProps {
   onLogout: () => void;
@@ -18,124 +17,92 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [card, setCard] = useState<string | null>(null);
 
+  const carouselData = [
+    {
+      image:
+        "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1200&h=800&fit=crop",
+      title: "Medieval Fantasy",
+      description: "Embark on an epic journey through enchanted realms",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=1200&h=800&fit=crop",
+      title: "Mystical Adventures",
+      description: "Discover ancient secrets and magical powers",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      title: "Dragon's Lair",
+      description: "Face legendary creatures in this thrilling quest",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1642248595032-d3a156fc5ec3?w=1200&h=800&fit=crop",
+      title: "Ancient Kingdoms",
+      description: "Rule your own realm in this epic saga",
+    },
+    {
+      image:
+        "https://images.unsplash.com/photo-1616091216791-a5205c5b336a?w=1200&h=800&fit=crop",
+      title: "Magic Academy",
+      description: "Master the arts of magic and sorcery",
+    },
+  ];
+
   useEffect(() => {
     const fetchUserData = async () => {
       // Fetch in local storage
-      const token = localStorage.getItem('username');
+      const token = localStorage.getItem('token');
       if (!token) {
         return;
       }
-
       setUsername(token);
-      console.log('Token:', token);
     };
-
 
     fetchUserData();
 
-    // Parse username from the query string
     const params = new URLSearchParams(location.search);
-    const usernameParam = params.get('username');
+    const usernameParam = params.get("username");
     if (usernameParam) {
       setUsername(decodeURIComponent(usernameParam));
-      localStorage.setItem('username', usernameParam);
+      localStorage.setItem("username", usernameParam);
     }
   }, [location]);
-    
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-      <Navbar/>
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="flex flex-row w-full">
-            <Sidebar/>
+      {/* Fixed Navbar */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Navbar />
+      </div>
+
+      {/* Main layout */}
+      <div className="flex flex-col w-full h-full pt-16 z-100">
+        {/* Just render Sidebar directly - it has its own positioning */}
+        <Sidebar />
+
+        {/* Main content */}
+        <div className="w-full">
+          {/* Carousel Section */}
+          <div className="w-[95%] max-w-full mx-auto px-6 md:px-12 my-16">
+            <Carousel slides={carouselData} />
           </div>
 
-        {!PortraitCard && (
-          <div>
-            <h1 className="text-4xl font-bold font-cinzel text-[#C8A97E] mb-4">
-              Welcome to Sage.AI
-            </h1>
-            <p className="text-xl font-playfair text-[#E5D4B3]">
-              {username ? `Hello, ${username}! Your adventure begins now.` : 'Please log in to start your journey.'}
-            </p>
-          </div>
-        )}
-      </div>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <div className="flex justify-center w-full px-4 md:px-0 items-center">
-        <h2 className="text-2xl font-cinzel text-[#C8A97E] mr-4">your journey</h2>
-        <div className="w-full md:w-[60%] h-1 bg-[#C8A97E]"></div>
-        <div className="flex justify-end space-x-4 md:flex-row flex-col md:items-center items-end">
-          <button
-            className="p-2 relative group w-12 h-12 md:w-10 md:h-10"
-            onClick={() => setCard("portrait")}
-          >
-            <img src="Any.svg" alt="Button 1" className="w-full h-full" />
-            <img
-              src="Any-After.svg"
-              alt="Hover Button 1"
-              className="w-[70%] h-[70%] absolute top-1.5 left-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            />
-          </button>
-          <button
-            className="p-2 relative group w-12 h-12 md:w-10 md:h-10"
-            onClick={() => setCard("landscape")}
-          >
-            <img src="filter2.svg" alt="Button 2" className="w-full h-full" />
-            <img
-              src="filter2-after.svg"
-              alt="Hover Button 2"
-              className="w-[70%] h-[70%] absolute top-1.5 left-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            />
-          </button>
+          {/* Your Journey Section */}
+          <YourJourney setCard={setCard} />
+
+          {/* Start Adventure Section */}
+          <StartAdventure 
+            onCreateStory={() => navigate("/game-creation")}
+            onBrowse={() => navigate("/browse-stories")}
+          />
+
+          {/* Game List Section */}
+          <GameList />
         </div>
       </div>
-      {/* placeholder for memories */}
-      
-      <div className="bg-[#1e1e1e] w-[90%] p-4 mx-auto my-10 max-h-[1240px] overflow-x-auto scrollbar-thin scrollbar-thinner">
-      <div className="flex justify-end space-x-4">
-              </div>
-              <br></br>
-            <PortraitCard />
-            
-        </div>
-        <style>
-          {`
-          /* Custom scrollbar styles */
-          .scrollbar-thin::-webkit-scrollbar {
-            height: 8px;
-          }
-          .scrollbar-thin::-webkit-scrollbar-track {
-            background: transparent;
-          }
-          .scrollbar-thin::-webkit-scrollbar-thumb {
-            background-color: #B28F4C;
-            border-radius: 10px;
-            border: 2px solid transparent;
-          }
-          /* Custom Scrollbar Styles */
-          .scrollbar-thinner::-webkit-scrollbar {
-            width: 4px; /* Adjust width */
-            height: 4px; /* Adjust height for horizontal scrollbar */
-          }
-
-          .scrollbar-thinner::-webkit-scrollbar-thumb {
-            background-color: #C8A97E; /* Thumb color */
-            border-radius: 10px; /* Round edges */
-          }
-
-          .scrollbar-thinner::-webkit-scrollbar-track {
-            background-color: transparent; /* Track color */
-          }
-
-        `}
-        </style>
     </div>
-
   );
 };
 
