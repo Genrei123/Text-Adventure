@@ -42,7 +42,7 @@ const GameScreen: React.FC = () => {
                     content: msg.content,
                     isUser: msg.role === 'user',
                     timestamp: new Date(msg.createdAt).toLocaleTimeString()
-                })); // No reverse here, keep oldest first
+                }));
                 setChatMessages(formattedMessages);
             } catch (error) {
                 console.error('Error fetching chat messages:', error);
@@ -85,6 +85,8 @@ const GameScreen: React.FC = () => {
             gameId: parseInt(gameId, 10),
             message
         };
+
+        setMessage(''); // Clear message input
 
         try {
             // Temporarily show user's message with current time

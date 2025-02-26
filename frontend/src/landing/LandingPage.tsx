@@ -33,7 +33,7 @@ const LandingPage: React.FC = () => {
                         >
                             gates of realm
                             <div className="absolute right-0 top-0 h-full w-4 bg-[#b28f4c] transform translate-x-1/2"></div>                        </button>
-                        <div className="w-5"></div> {/* Added space between buttons */}
+                        <div className  ="w-5"></div> {/* Added space between buttons */}
                         <button 
                             className="font-cinzel bg-[#1e1e1e] text-white py-5 px-10 rounded-lg cursor-pointer relative overflow-hidden transition duration-300 mr-[10%] hover:shadow-[0_0_30px_#b28f4c] hover:scale-110 hover:bg-[#b28f4c] hover:text-black hover:font-bold transform-gpu -skew-x-12 hover:skew-x-0 hover:stroke-[#b28f4c]"
                             onClick={() => window.location.href = '/register'}
