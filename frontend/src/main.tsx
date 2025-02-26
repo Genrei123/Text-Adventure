@@ -1,27 +1,12 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
 import App from './App';
-import emailjs from 'emailjs-com';
-import Footer from './components/Footer';
-import "./App.css";
+import './index.css'; // Import global styles
 
-emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
-
-const rootElement = document.getElementById('root');
-
-if (rootElement) {
-  createRoot(rootElement).render(
-    <React.StrictMode>
-      <div style={{ backgroundColor: '#1e1e1e' }}>
-        <App />
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-        </div>
-        <Footer />
-      </div>
-      
-    </React.StrictMode>
-  );
-} else {
-  console.error('Root element not found');
-}
+const container = document.getElementById('root');
+const root = createRoot(container!); // createRoot(container!) if you use TypeScript
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

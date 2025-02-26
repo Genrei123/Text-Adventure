@@ -20,6 +20,9 @@ import gameRoutes from './routes/game/gameRoutes';
 import { initializeModels } from './service/models';
 import paymentRoutes from './routes/transaction/shopRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
+import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation
+import banRoutes from './routes/banRoutes';
+
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -55,6 +58,10 @@ app.use('/statistics/playerActivityRoutes', playerActivityRoutes); // Use the ne
 app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/nih', nihRoutes);
+app.use('/openai', openaiRoute); // Image generation
+app.use('/bans', banRoutes);
+app.use('/api/bans', banRoutes);  // Fixes 404 for /api/bans
+
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
