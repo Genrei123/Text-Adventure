@@ -290,3 +290,71 @@ export const verifyToken = async (token: string): Promise<User | null> => {
         return null;
     }
 };
+
+export const checkUsername = async (req: Request, res: Response): Promise<void> => {
+    const { username } = req.body;
+    
+    try {
+        const existingUser = await User.findOne({ where: { username } });
+        
+        if (!existingUser) {
+            res.json({ available: true });
+            return;
+        }
+
+        // Generate base suggestions
+        const baseSuggestions = [
+            // Random number between 100-999
+            `${username}${Math.floor(Math.random() * 900) + 100}`,
+            // Random underscore and number
+            `${username}_${Math.floor(Math.random() * 90) + 10}`,
+            // Current year with random letter
+            `${username}.${String.fromCharCode(65 + Math.floor(Math.random() * 26))}${new Date().getFullYear().toString().slice(2)}`
+        ];
+
+        // Check all suggestions at once and generate new ones if they exist
+        let validSuggestions: string[] = [];
+        let attempts = 0;
+        const maxAttempts = 10;
+
+        while (validSuggestions.length < 3 && attempts < maxAttempts) {
+            const currentSuggestion = baseSuggestions[validSuggestions.length];
+            const exists = await User.findOne({ where: { username: currentSuggestion } });
+            
+            if (!exists) {
+                validSuggestions.push(currentSuggestion);
+            } else {
+                // If suggestion exists, create a new one
+                const newSuggestion = `${username}${Math.floor(Math.random() * 9000) + 1000}`;
+                const newExists = await User.findOne({ where: { username: newSuggestion } });
+                if (!newExists) {
+                    validSuggestions.push(newSuggestion);
+                }
+            }
+            attempts++;
+        }
+
+        res.json({
+            available: false,
+            suggestions: validSuggestions
+        });
+    } catch (error) {
+        console.error('Error checking username:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+export const checkEmail = async (req: Request, res: Response): Promise<void> => {
+    const { email } = req.body;
+    
+    try {
+        const existingUser = await User.findOne({ where: { email } });
+        
+        res.json({
+            available: !existingUser
+        });
+    } catch (error) {
+        console.error('Error checking email:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
