@@ -17,6 +17,8 @@ import Unauthorized from './auth/components/Unauthorized';
 import NotFound from './auth/components/NotFound';
 import GameDetails from './game-details/GameDetails';
 import AdminDashboard from './Admin/AdminDashboard';
+import AdminPlayerList from './Admin/AdminPlayerList';
+import BannedList from './Admin/AdminBannedList';
 
 
 
@@ -64,6 +66,8 @@ function App() {
 
         {/* admin side */}
         <Route path="/Admin/Dashboard" element={<AdminDashboard />} />
+        <Route path="/Admin/Banned" element={<BannedList/>} />
+        <Route path="/Admin/PlayerList" element={<AdminPlayerList />} />
 
       </Routes>
     </Router>
