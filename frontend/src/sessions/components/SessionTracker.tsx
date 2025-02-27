@@ -19,11 +19,11 @@ const SessionTracker: React.FC<SessionTrackerProps> = ({ email, setSessionId, vi
         const session = await createSession(email);
         setLocalSessionId(session.id);
         setSessionId(session.id);
-        console.log('Session created:', {
-          id: session.id,
-          email: session.email,
-          startTime: session.startTime,
-        });
+        //console.log('Session created:', {
+        //  id: session.id,
+        //  email: session.email,
+        //  startTime: session.startTime,
+        //});
 
         // Store session ID in local storage
         localStorage.setItem('sessionId', session.id);
@@ -45,7 +45,7 @@ const SessionTracker: React.FC<SessionTrackerProps> = ({ email, setSessionId, vi
         if (lastVisitedPage !== location.pathname) {
           const updatedVisitedPages = [...visitedPages, location.pathname];
           setVisitedPages(updatedVisitedPages);
-          console.log('Visited pages:', updatedVisitedPages.join(', '));
+          //console.log('Visited pages:', updatedVisitedPages.join(', '));
 
           // Update visited pages in local storage
           localStorage.setItem('visitedPages', JSON.stringify(updatedVisitedPages));
