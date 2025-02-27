@@ -1,6 +1,6 @@
 export interface SessionData {
-    interactions: string[];
-    gamesCreated: string[];
-    gamesPlayed: string[];
-    visitedPages: string[];
-}
+    interactions: any[];
+    gamesCreated: any[];
+    gamesPlayed: any[];
+    visitedPages?: Record<string, number>; // Add this line
+  }

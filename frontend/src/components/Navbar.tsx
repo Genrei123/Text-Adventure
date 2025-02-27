@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, ChevronDown } from "lucide-react";
 import socketIOClient from 'socket.io-client';
+import { addPageVisits } from '../sessions/api-calls/visitedPagesSession'; // Import addPageVisits and trackPageVisit
 
 const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
@@ -77,12 +78,24 @@ const Navbar = () => {
     try {
       const token = localStorage.getItem('token');
       const email = localStorage.getItem('email');
+      const sessionId = localStorage.getItem('sessionId'); // Retrieve session ID from local storage
+      const pages = JSON.parse(localStorage.getItem('visitedPages') || '[]'); // Retrieve visited pages from local storage
+      const localStorageData = localStorage.getItem('sessionData') || '{}'; // Retrieve session data from local storage
+
       if (token && email) {
         socket.emit('leave', { route: window.location.pathname, email, token });
       }
 
+      if (sessionId && pages.length > 0) {
+        // Add page visits before logging out
+        await addPageVisits(sessionId, pages, localStorageData);
+      }
+
       localStorage.removeItem("email");
       localStorage.removeItem("token");
+      localStorage.removeItem("sessionId");
+      localStorage.removeItem("visitedPages");
+      localStorage.removeItem("sessionData");
       window.location.href = "/login";
     } catch (error) {
       console.error("Logout failed", error);

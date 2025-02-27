@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createSession, addPageVisit, clearSession } from "../../service/session/sessionService";
+import { createSession, addPageVisits, clearSession } from "../../service/session/sessionService";
 
 export const createSessionController = async (req: Request, res: Response) => {
   try {
@@ -15,9 +15,9 @@ export const createSessionController = async (req: Request, res: Response) => {
 
 export const addPageVisitController = async (req: Request, res: Response) => {
   try {
-    const { sessionId, page } = req.body;
+    const { sessionId, pages, localStorageData } = req.body; // Include localStorageData
     console.log("Received addPageVisit request:", req.body);
-    const session = await addPageVisit(sessionId, page);
+    const session = await addPageVisits(sessionId, pages, localStorageData); // Pass localStorageData
     res.status(200).json(session);
   } catch (error) {
     console.error("Error adding page visit:", error);
@@ -30,7 +30,7 @@ export const clearSessionController = async (req: Request, res: Response) => {
     const { sessionId, visitedPages } = req.body;
     console.log("Received clearSession request:", req.body);
     await clearSession(sessionId, visitedPages);
-    res.status(200).json({ message: "Session cleared successfully" });
+    res.status(200).json({ message: "Session ended successfully" });
   } catch (error) {
     console.error("Error clearing session:", error);
     res.status(500).json({ error: "Internal Server Error" });

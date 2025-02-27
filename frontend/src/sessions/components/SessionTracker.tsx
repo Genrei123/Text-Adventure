@@ -24,25 +24,37 @@ const SessionTracker: React.FC<SessionTrackerProps> = ({ email, setSessionId, vi
           email: session.email,
           startTime: session.startTime,
         });
+
+        // Store session ID in local storage
+        localStorage.setItem('sessionId', session.id);
+
+        // Initialize visited pages in local storage
+        localStorage.setItem('visitedPages', JSON.stringify([]));
       } catch (error) {
         console.error('Error starting session:', error);
       }
     };
 
     startSession();
-  }, [email]);
+  }, [email, setSessionId]);
 
   useEffect(() => {
     const trackPageVisit = () => {
       if (sessionId) {
-        const updatedVisitedPages = [...visitedPages, location.pathname];
-        setVisitedPages(updatedVisitedPages);
-        console.log('Visited pages:', updatedVisitedPages.join(', '));
+        const lastVisitedPage = visitedPages[visitedPages.length - 1];
+        if (lastVisitedPage !== location.pathname) {
+          const updatedVisitedPages = [...visitedPages, location.pathname];
+          setVisitedPages(updatedVisitedPages);
+          console.log('Visited pages:', updatedVisitedPages.join(', '));
+
+          // Update visited pages in local storage
+          localStorage.setItem('visitedPages', JSON.stringify(updatedVisitedPages));
+        }
       }
     };
 
     trackPageVisit();
-  }, [location.pathname, sessionId]);
+  }, [location.pathname, sessionId, visitedPages, setVisitedPages]);
 
   return null;
 };
