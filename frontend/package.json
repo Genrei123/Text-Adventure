@@ -14,6 +14,10 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.6",
+    "@mui/material": "^6.4.6",
     "@react-three/drei": "^9.121.5",
     "@react-three/fiber": "^8.17.14",
     "@types/lodash": "^4.17.15",
@@ -39,6 +43,7 @@
     "react-router-dom": "^7.2.0",
     "react-slick": "^0.30.3",
     "react-toastify": "^11.0.3",
+    "recharts": "^2.15.1",
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.8.1",
     "three": "^0.173.0"
