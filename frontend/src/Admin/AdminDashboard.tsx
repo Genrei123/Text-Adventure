@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeftRight, Users, UserPlus, BookOpen, 
-  BarChart3, Ban, Plus, CheckCircle, AlertCircle, Clock 
+  BarChart3, Ban, Plus, CheckCircle, AlertCircle, Clock, Trash2
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Paper, TextField, Button, Chip, Checkbox, IconButton } from '@mui/material';
 import MetricCard from './MetricCard';
 import SidebarItem from './SidebarItem';
+import BanForm from '../components/BanForm'; // Update the import path
+import BannedPlayersList from '../components/BannedPlayersList'; // Update the import path
 
 // Mock data
 const activeUsersData = [
@@ -44,6 +46,7 @@ const AdminDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [newTask, setNewTask] = useState('');
   const [tasks, setTasks] = useState(initialTasks);
+  const [bans, setBans] = useState([]);
 
   const handleAddTask = () => {
     if (newTask.trim()) {
@@ -54,6 +57,14 @@ const AdminDashboard: React.FC = () => {
 
   const handleDeleteTask = (taskId: number) => {
     setTasks(tasks.filter(task => task.id !== taskId));
+  };
+
+  const handleBan = (newBan) => {
+    setBans([...bans, newBan]);
+  };
+
+  const handleUnban = (banId) => {
+    setBans(bans.filter(ban => ban.id !== banId));
   };
 
   return (
@@ -231,14 +242,26 @@ const AdminDashboard: React.FC = () => {
                       <span className={`flex-1 ml-2 ${task.completed ? 'line-through text-gray-400' : ''}`}>
                         {task.text}
                       </span>
-                      <IconButton onClick={() => handleDeleteTask(task.id)} color="secondary">
-                        <AlertCircle className="w-5 h-5" />
+                      <IconButton onClick={() => handleDeleteTask(task.id)} color="error">
+                        <Trash2 className="w-5 h-5" />
                       </IconButton>
                     </div>
                   ))}
                 </div>
               </Paper>
             </div>
+          </div>
+        )}
+
+        {activeSection === 'banned' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Paper className="p-6 rounded-xl shadow-sm">
+              <h2 className="text-2xl font-semibold mb-4">Ban a Player</h2>
+              <BanForm onBan={handleBan} />
+            </Paper>
+            <Paper className="p-6 rounded-xl shadow-sm">
+              <BannedPlayersList bans={bans} onUnban={handleUnban} />
+            </Paper>
           </div>
         )}
 
