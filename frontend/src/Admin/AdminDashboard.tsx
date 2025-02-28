@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { 
   ArrowLeftRight, Users, UserPlus, BookOpen, 
-  BarChart3, Ban, Plus, CheckCircle, AlertCircle, Clock, Trash2
+  BarChart3, Ban, Plus, CheckCircle, AlertCircle, Clock, Trash2, Wifi, WifiOff, UserCheck, UserX
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Paper, TextField, Button, Chip, Checkbox, IconButton } from '@mui/material';
 import MetricCard from './MetricCard';
 import SidebarItem from './SidebarItem';
-import BanForm from '../components/BanForm'; // Update the import path
-import BannedPlayersList from '../components/BannedPlayersList'; // Update the import path
+import BanForm from '../components/BanForm';
+import BannedPlayersList from '../components/BannedPlayersList';
 
 // Mock data
 const activeUsersData = [
@@ -39,6 +39,64 @@ const initialTasks = [
   { id: 1, text: "Prepare Monthly Financial Report", completed: false },
   { id: 2, text: "Review Player Ban Appeals", completed: true },
   { id: 3, text: "Update Game Content Schedule", completed: false },
+];
+
+const playerStats = {
+  totalRegistered: 4876,
+  activePlayers: 2345,
+  offlinePlayers: 2531,
+  activeSessions: 1892,
+};
+
+const playerList = [
+  {
+    username: "PP_Namias",
+    subscription: "Premium",
+    status: "online",
+    registered: "2025-03-01"
+  },
+  {
+    username: "Catchers",
+    subscription: "Basic",
+    status: "offline",
+    registered: "2025-02-14"
+  },
+  {
+    username: "PP_Namias99",
+    subscription: "Pro",
+    status: "online",
+    registered: "2025-03-01"
+  },
+  {
+    username: "Zyciann",
+    subscription: "Free",
+    status: "offline",
+    registered: "2025-02-25"
+  },
+  {
+    username: "warriorph",
+    subscription: "Premium",
+    status: "offline",
+    registered: "2025-02-25"
+  },
+  {
+    username: "caps_002",
+    subscription: "Basic",
+    status: "offline",
+    registered: "2025-02-25"
+  },
+  {
+    username: "mika76",
+    subscription: "Pro",
+    status: "offline",
+    registered: "2025-02-25"
+  },
+  {
+    username: "NANyopo",
+    subscription: "Free",
+    status: "offline",
+    registered: "2025-02-26"
+  },
 ];
 
 const AdminDashboard: React.FC = () => {
@@ -265,7 +323,84 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Banned Players and Player List Sections (same as before) */}
+        {activeSection === 'players' && (
+          <div className="space-y-6">
+            {/* Player Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <MetricCard 
+                title="Total Registered" 
+                value={playerStats.totalRegistered}
+                icon={<UserPlus className="w-6 h-6" />}
+              />
+              <MetricCard 
+                title="Active Players" 
+                value={playerStats.activePlayers}
+                percentChange={2.6}
+                icon={<UserCheck className="w-6 h-6" />}
+              />
+              <MetricCard 
+                title="Offline Players" 
+                value={playerStats.offlinePlayers}
+                icon={<UserX className="w-6 h-6" />}
+              />
+              <MetricCard 
+                title="Active Sessions" 
+                value={playerStats.activeSessions}
+                icon={<Wifi className="w-6 h-6" />}
+              />
+            </div>
+
+            {/* Player List Table */}
+            <Paper className="p-6 rounded-xl shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-semibold">Player Directory</h3>
+                <Button variant="text" color="primary">
+                  Export Data
+                </Button>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Table Header */}
+                <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-gray-50 rounded-lg">
+                  <div className="col-span-5 font-medium">Username</div>
+                  <div className="col-span-3 font-medium">Status</div>
+                  <div className="col-span-2 font-medium">Subscription</div>
+                  <div className="col-span-2 font-medium">Registered</div>
+                </div>
+
+                {/* Table Body */}
+                {playerList.map((player, index) => (
+                  <div key={index} className="grid grid-cols-12 gap-4 items-center p-4 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div className="col-span-5 font-medium">{player.username}</div>
+                    <div className="col-span-3">
+                      <Chip
+                        label={player.status}
+                        size="small"
+                        color={player.status === 'online' ? 'success' : 'default'}
+                        icon={player.status === 'online' ? 
+                          <Wifi className="w-4 h-4" /> : 
+                          <WifiOff className="w-4 h-4" />}
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <Chip
+                        label={player.subscription}
+                        size="small"
+                        color={
+                          player.subscription === 'Premium' ? 'primary' :
+                          player.subscription === 'Pro' ? 'secondary' : 'default'
+                        }
+                      />
+                    </div>
+                    <div className="col-span-2 text-sm text-gray-500">
+                      {new Date(player.registered).toLocaleDateString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Paper>
+          </div>
+        )}
       </div>
     </div>
   );
