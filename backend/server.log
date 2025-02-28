@@ -6181,3 +6181,357 @@
 2025-02-18T14:18:34.269Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 2/18/2025, 10:18:34 PM
 2025-02-18T14:18:34.316Z [INFO]: Session ended for Ervhynedalugdog@gmail.com:
 2025-02-18T14:18:34.317Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 2/18/2025, 10:18:34 PM
+2025-02-20T01:23:13.290Z [INFO]: New socket connected: y3acBAey8i55gIWFAAAB
+2025-02-20T01:23:31.273Z [INFO]: New connection from route: /home
+2025-02-20T01:23:31.274Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMDE0NjExLCJleHAiOjE3NDAwMTgyMTF9.vDttqvnbWO9as9jpE_waDhDE_RBEDDISdDJf61RRN3s
+2025-02-20T01:23:31.275Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-20T01:23:31.286Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-20T01:23:31.290Z [INFO]: Disconnection from route: /home
+2025-02-20T01:23:31.291Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-20T01:23:31.295Z [INFO]: New connection from route: /home
+2025-02-20T01:23:31.296Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMDE0NjExLCJleHAiOjE3NDAwMTgyMTF9.vDttqvnbWO9as9jpE_waDhDE_RBEDDISdDJf61RRN3s
+2025-02-20T01:23:31.297Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-20T01:23:31.301Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-20T01:23:31.614Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-20T01:23:31.615Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-20T01:23:31.704Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/20/2025, 9:23:31 AM
+2025-02-20T01:23:31.900Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-20T01:23:31.901Z [INFO]: User mawrk19@gmail.com joined. Active players: 0 as of 2/20/2025, 9:23:31 AM
+2025-02-20T01:23:32.174Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-20T01:23:32.175Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/20/2025, 9:23:32 AM
+2025-02-20T01:35:07.993Z [INFO]: Disconnection from route: /home
+2025-02-20T01:35:08.015Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-20T01:35:08.193Z [INFO]: Disconnection from route: /home
+2025-02-20T01:35:08.194Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-20T01:35:08.255Z [WARN]: Invalid token or user email missing.
+2025-02-20T01:35:08.261Z [WARN]: Invalid token or user email missing.
+2025-02-20T01:35:08.374Z [INFO]: Socket disconnected: y3acBAey8i55gIWFAAAB
+2025-02-22T14:24:12.529Z [INFO]: New socket connected: KRRAWGrVh1wBqtnhAAAB
+2025-02-22T14:24:15.097Z [INFO]: Socket disconnected: KRRAWGrVh1wBqtnhAAAB
+2025-02-22T14:24:15.899Z [INFO]: New socket connected: orGGQAiS6VkKQM0-AAAD
+2025-02-22T14:24:21.292Z [INFO]: New connection from route: /home
+2025-02-22T14:24:21.293Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMjM0MjYxLCJleHAiOjE3NDAyMzc4NjF9.0Wmi3tDSJKZOlcQax_4aNJ0kVHHoNX6BT9D1SNQeXY8
+2025-02-22T14:24:21.296Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-22T14:24:21.312Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-22T14:24:21.314Z [INFO]: Disconnection from route: /home
+2025-02-22T14:24:21.315Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-22T14:24:21.336Z [INFO]: New connection from route: /home
+2025-02-22T14:24:21.338Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMjM0MjYxLCJleHAiOjE3NDAyMzc4NjF9.0Wmi3tDSJKZOlcQax_4aNJ0kVHHoNX6BT9D1SNQeXY8
+2025-02-22T14:24:21.338Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-22T14:24:21.342Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-22T14:24:21.860Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T14:24:21.861Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-22T14:24:21.958Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/22/2025, 10:24:21 PM
+2025-02-22T14:24:22.233Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T14:24:22.234Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/22/2025, 10:24:22 PM
+2025-02-22T14:24:22.472Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-22T14:24:22.473Z [INFO]: User mawrk19@gmail.com left. Active players: 1 as of 2/22/2025, 10:24:22 PM
+2025-02-22T14:24:28.925Z [INFO]: Disconnection from route: /home
+2025-02-22T14:24:28.927Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-22T14:24:29.250Z [WARN]: No session found for mawrk19@gmail.com during leave event
+2025-02-22T14:24:29.251Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/22/2025, 10:24:29 PM
+2025-02-22T14:29:34.587Z [INFO]: Socket disconnected: orGGQAiS6VkKQM0-AAAD
+2025-02-22T14:29:35.383Z [INFO]: New socket connected: b3NMzm_ZUuY395k6AAAF
+2025-02-22T14:35:45.200Z [INFO]: New connection from route: /home
+2025-02-22T14:35:45.205Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMjM0MjYxLCJleHAiOjE3NDAyMzc4NjF9.0Wmi3tDSJKZOlcQax_4aNJ0kVHHoNX6BT9D1SNQeXY8
+2025-02-22T14:35:45.207Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-22T14:35:45.324Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-22T14:35:45.325Z [INFO]: Disconnection from route: /home
+2025-02-22T14:35:45.325Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-22T14:35:45.328Z [INFO]: New connection from route: /home
+2025-02-22T14:35:45.328Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMjM0MjYxLCJleHAiOjE3NDAyMzc4NjF9.0Wmi3tDSJKZOlcQax_4aNJ0kVHHoNX6BT9D1SNQeXY8
+2025-02-22T14:35:45.328Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-22T14:35:45.330Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-22T14:35:45.923Z [INFO]: Disconnection from route: /home
+2025-02-22T14:35:45.924Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-22T14:35:50.322Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T14:35:50.323Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-22T14:35:50.324Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/22/2025, 10:35:50 PM
+2025-02-22T14:35:50.570Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-22T14:35:50.570Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/22/2025, 10:35:50 PM
+2025-02-22T14:35:50.654Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/22/2025, 10:35:50 PM
+2025-02-22T14:35:50.918Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-22T14:35:50.919Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/22/2025, 10:35:50 PM
+2025-02-22T14:47:54.398Z [INFO]: Socket disconnected: b3NMzm_ZUuY395k6AAAF
+2025-02-23T15:13:13.054Z [INFO]: New socket connected: 4HJtzYdDVCaCXbBSAAAB
+2025-02-23T15:13:16.462Z [INFO]: Socket disconnected: 4HJtzYdDVCaCXbBSAAAB
+2025-02-23T15:13:17.054Z [INFO]: New socket connected: BzyJ7YlltxYLpmxgAAAD
+2025-02-23T15:13:20.191Z [INFO]: New connection from route: /home
+2025-02-23T15:13:20.191Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzNjAwLCJleHAiOjE3NDAzMjcyMDB9.h9YELXPc45MbOQ0BywyL6CVE0ToBFmLkrJ6INYWnb-4
+2025-02-23T15:13:20.192Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:13:20.198Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:13:20.200Z [INFO]: Disconnection from route: /home
+2025-02-23T15:13:20.201Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:13:20.204Z [INFO]: New connection from route: /home
+2025-02-23T15:13:20.205Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzNjAwLCJleHAiOjE3NDAzMjcyMDB9.h9YELXPc45MbOQ0BywyL6CVE0ToBFmLkrJ6INYWnb-4
+2025-02-23T15:13:20.205Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:13:20.210Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:13:20.515Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:13:20.516Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-23T15:13:20.582Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:13:20 PM
+2025-02-23T15:13:21.147Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:13:21.147Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:13:21 PM
+2025-02-23T15:13:21.415Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-23T15:13:21.415Z [INFO]: User mawrk19@gmail.com left. Active players: 1 as of 2/23/2025, 11:13:21 PM
+2025-02-23T15:13:22.640Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:13:24.461Z [INFO]: Disconnection from route: /home
+2025-02-23T15:13:24.462Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:13:24.700Z [WARN]: No session found for mawrk19@gmail.com during leave event
+2025-02-23T15:13:24.701Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/23/2025, 11:13:24 PM
+2025-02-23T15:16:20.876Z [INFO]: Socket disconnected: BzyJ7YlltxYLpmxgAAAD
+2025-02-23T15:16:40.125Z [INFO]: New socket connected: rFGm8C6oQRTcbhFTAAAF
+2025-02-23T15:16:40.955Z [INFO]: Socket disconnected: rFGm8C6oQRTcbhFTAAAF
+2025-02-23T15:16:41.479Z [INFO]: New socket connected: KjqW2Q36hAOGf7iMAAAH
+2025-02-23T15:16:44.322Z [INFO]: Socket disconnected: KjqW2Q36hAOGf7iMAAAH
+2025-02-23T15:16:44.694Z [INFO]: New socket connected: vMklqU8YxNE6NQ3HAAAJ
+2025-02-23T15:16:45.369Z [INFO]: Socket disconnected: vMklqU8YxNE6NQ3HAAAJ
+2025-02-23T15:16:45.828Z [INFO]: New socket connected: UbTo9RC6F-dssuZTAAAL
+2025-02-23T15:16:50.708Z [INFO]: New connection from route: /home
+2025-02-23T15:16:50.709Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T15:16:50.709Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:16:50.715Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:16:50.716Z [INFO]: Disconnection from route: /home
+2025-02-23T15:16:50.716Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:16:50.720Z [INFO]: New connection from route: /home
+2025-02-23T15:16:50.720Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T15:16:50.721Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:16:50.725Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:16:50.965Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:16:50.965Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-23T15:16:50.966Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:16:50 PM
+2025-02-23T15:16:51.415Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:16:51.416Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:16:51 PM
+2025-02-23T15:16:51.657Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-23T15:16:51.657Z [INFO]: User mawrk19@gmail.com left. Active players: 1 as of 2/23/2025, 11:16:51 PM
+2025-02-23T15:16:52.718Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:16:55.144Z [INFO]: Disconnection from route: /home
+2025-02-23T15:16:55.144Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:16:55.376Z [WARN]: No session found for mawrk19@gmail.com during leave event
+2025-02-23T15:16:55.376Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/23/2025, 11:16:55 PM
+2025-02-23T15:23:41.655Z [INFO]: New connection from route: /game
+2025-02-23T15:23:41.661Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T15:23:41.663Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:23:41.710Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:23:41.711Z [INFO]: Disconnection from route: /game
+2025-02-23T15:23:41.711Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:23:41.713Z [INFO]: New connection from route: /game
+2025-02-23T15:23:41.713Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T15:23:41.713Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:23:41.716Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:23:45.303Z [WARN]: No session found for mawrk19@gmail.com during leave event
+2025-02-23T15:23:45.304Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/23/2025, 11:23:45 PM
+2025-02-23T15:23:45.321Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:23:45.322Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-23T15:23:45.322Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:23:45 PM
+2025-02-23T15:23:45.324Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:23:45.324Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:23:45 PM
+2025-02-23T15:25:44.564Z [INFO]: Disconnection from route: /game
+2025-02-23T15:25:44.564Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:25:46.643Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-23T15:25:46.643Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/23/2025, 11:25:46 PM
+2025-02-23T15:37:06.856Z [INFO]: New connection from route: /profile
+2025-02-23T15:37:06.857Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T15:37:06.858Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:37:06.866Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:37:06.867Z [INFO]: Disconnection from route: /profile
+2025-02-23T15:37:06.867Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:37:06.870Z [INFO]: New connection from route: /profile
+2025-02-23T15:37:06.871Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T15:37:06.871Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:37:06.873Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:37:07.688Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:37:08.278Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:37:08.928Z [INFO]: Disconnection from route: /profile
+2025-02-23T15:37:08.928Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:37:09.624Z [INFO]: New connection from route: /game
+2025-02-23T15:37:09.625Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T15:37:09.625Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:37:09.627Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:37:09.627Z [INFO]: Disconnection from route: /game
+2025-02-23T15:37:09.628Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:37:09.630Z [INFO]: New connection from route: /game
+2025-02-23T15:37:09.630Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T15:37:09.630Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:37:09.633Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T15:37:11.008Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/23/2025, 11:37:11 PM
+2025-02-23T15:37:11.010Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/23/2025, 11:37:11 PM
+2025-02-23T15:37:11.026Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:37:11.027Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-23T15:37:11.027Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:37:11 PM
+2025-02-23T15:37:11.029Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:37:11.029Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:37:11 PM
+2025-02-23T15:37:11.275Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:37:11.275Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:37:11 PM
+2025-02-23T15:37:11.278Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T15:37:11.278Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/23/2025, 11:37:11 PM
+2025-02-23T15:37:11.511Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-23T15:37:11.512Z [INFO]: User mawrk19@gmail.com left. Active players: 1 as of 2/23/2025, 11:37:11 PM
+2025-02-23T15:59:25.886Z [INFO]: Disconnection from route: /game
+2025-02-23T15:59:25.892Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T15:59:32.198Z [WARN]: No session found for mawrk19@gmail.com during leave event
+2025-02-23T15:59:32.199Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/23/2025, 11:59:32 PM
+2025-02-23T16:00:11.126Z [INFO]: New connection from route: /game
+2025-02-23T16:00:11.127Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T16:00:11.127Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T16:00:11.130Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T16:00:11.130Z [INFO]: Disconnection from route: /game
+2025-02-23T16:00:11.130Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T16:00:11.132Z [INFO]: New connection from route: /game
+2025-02-23T16:00:11.132Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwMzIzODEwLCJleHAiOjE3NDAzMjc0MTB9.gsM67yqVBF0cVTi66-hMkZWoeX7H0szJhIy3jmPyeH8
+2025-02-23T16:00:11.132Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T16:00:11.134Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-23T16:00:13.237Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T16:00:13.237Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-23T16:00:13.238Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/24/2025, 12:00:13 AM
+2025-02-23T16:00:13.676Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-23T16:00:13.676Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/24/2025, 12:00:13 AM
+2025-02-23T16:00:13.898Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-23T16:00:13.899Z [INFO]: User mawrk19@gmail.com left. Active players: 1 as of 2/24/2025, 12:00:13 AM
+2025-02-23T16:02:17.418Z [INFO]: Disconnection from route: /game
+2025-02-23T16:02:17.419Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-23T16:02:17.867Z [INFO]: Socket disconnected: UbTo9RC6F-dssuZTAAAL
+2025-02-23T16:02:17.868Z [WARN]: No session found for mawrk19@gmail.com during disconnect event
+2025-02-23T16:02:19.524Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/24/2025, 12:02:19 AM
+2025-02-25T05:53:26.831Z [INFO]: New socket connected: 8TV90TWmip4d7_hbAAAB
+2025-02-25T05:55:32.651Z [INFO]: Socket disconnected: 8TV90TWmip4d7_hbAAAB
+2025-02-25T05:55:33.491Z [INFO]: New socket connected: 3RK6llkSYUvOSk8wAAAD
+2025-02-25T05:55:35.402Z [INFO]: Socket disconnected: 3RK6llkSYUvOSk8wAAAD
+2025-02-25T05:55:36.115Z [INFO]: New socket connected: Fr9rlhviLRPXxxZKAAAF
+2025-02-25T05:55:37.688Z [INFO]: Socket disconnected: Fr9rlhviLRPXxxZKAAAF
+2025-02-25T05:55:38.399Z [INFO]: New socket connected: KxppbtSIJcxMA16GAAAH
+2025-02-25T05:55:48.768Z [INFO]: New connection from route: /home
+2025-02-25T05:55:48.769Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYyOTQ4LCJleHAiOjE3NDA0NjY1NDh9.cU3VUJsKw36F7_RyxDXDzk10ICnocmJhS_hI0KAw7EY
+2025-02-25T05:55:48.769Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T05:55:48.779Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T05:55:48.781Z [INFO]: Disconnection from route: /home
+2025-02-25T05:55:48.781Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T05:55:48.786Z [INFO]: New connection from route: /home
+2025-02-25T05:55:48.786Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYyOTQ4LCJleHAiOjE3NDA0NjY1NDh9.cU3VUJsKw36F7_RyxDXDzk10ICnocmJhS_hI0KAw7EY
+2025-02-25T05:55:48.787Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T05:55:48.789Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T05:55:49.101Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T05:55:49.102Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-25T05:55:49.183Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 1:55:49 PM
+2025-02-25T05:55:49.548Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T05:55:49.549Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 1:55:49 PM
+2025-02-25T05:55:49.787Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-25T05:55:49.788Z [INFO]: User mawrk19@gmail.com left. Active players: 1 as of 2/25/2025, 1:55:49 PM
+2025-02-25T05:56:00.909Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T05:56:05.586Z [INFO]: Disconnection from route: /home
+2025-02-25T05:56:05.587Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T05:56:07.688Z [WARN]: No session found for mawrk19@gmail.com during leave event
+2025-02-25T05:56:07.689Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/25/2025, 1:56:07 PM
+2025-02-25T05:56:10.302Z [INFO]: New connection from route: /game
+2025-02-25T05:56:10.303Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYyOTQ4LCJleHAiOjE3NDA0NjY1NDh9.cU3VUJsKw36F7_RyxDXDzk10ICnocmJhS_hI0KAw7EY
+2025-02-25T05:56:10.303Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T05:56:10.307Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T05:56:10.308Z [INFO]: Disconnection from route: /game
+2025-02-25T05:56:10.309Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T05:56:10.314Z [INFO]: New connection from route: /game
+2025-02-25T05:56:10.314Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYyOTQ4LCJleHAiOjE3NDA0NjY1NDh9.cU3VUJsKw36F7_RyxDXDzk10ICnocmJhS_hI0KAw7EY
+2025-02-25T05:56:10.315Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T05:56:10.317Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T05:56:10.625Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T05:56:10.626Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-25T05:56:10.626Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 1:56:10 PM
+2025-02-25T05:56:11.135Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T05:56:11.136Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 1:56:11 PM
+2025-02-25T05:56:11.373Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-25T05:56:11.374Z [INFO]: User mawrk19@gmail.com left. Active players: 1 as of 2/25/2025, 1:56:11 PM
+2025-02-25T06:02:08.194Z [INFO]: Disconnection from route: /game
+2025-02-25T06:02:08.222Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:02:08.451Z [INFO]: Socket disconnected: KxppbtSIJcxMA16GAAAH
+2025-02-25T06:02:08.455Z [WARN]: No session found for mawrk19@gmail.com during disconnect event
+2025-02-25T06:02:09.362Z [INFO]: New socket connected: K3wbX42JZjj0pgtZAAAJ
+2025-02-25T06:02:14.154Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/25/2025, 2:02:14 PM
+2025-02-25T06:02:18.726Z [INFO]: Socket disconnected: K3wbX42JZjj0pgtZAAAJ
+2025-02-25T06:02:19.497Z [INFO]: New socket connected: mkcP4FSRpBcjycxnAAAL
+2025-02-25T06:02:49.527Z [INFO]: Socket disconnected: mkcP4FSRpBcjycxnAAAL
+2025-02-25T06:03:06.375Z [INFO]: New socket connected: R68p0akMr_62Nt9JAAAN
+2025-02-25T06:07:21.988Z [INFO]: Socket disconnected: R68p0akMr_62Nt9JAAAN
+2025-02-25T06:07:22.626Z [INFO]: New socket connected: bm7b0lJPmVA2hK4oAAAP
+2025-02-25T06:07:24.452Z [INFO]: Socket disconnected: bm7b0lJPmVA2hK4oAAAP
+2025-02-25T06:07:24.860Z [INFO]: New socket connected: 9TPa-9c-IEaXpb33AAAR
+2025-02-25T06:07:25.839Z [INFO]: Socket disconnected: 9TPa-9c-IEaXpb33AAAR
+2025-02-25T06:07:26.279Z [INFO]: New socket connected: Z45kX75ujPT_aU-CAAAT
+2025-02-25T06:07:34.991Z [INFO]: New connection from route: /home
+2025-02-25T06:07:34.991Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYzNjU0LCJleHAiOjE3NDA0NjcyNTR9.piiXSs9fu0vN1Bj3qjeB7C37YINE-gUN5EzKK7eA7OU
+2025-02-25T06:07:34.992Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:07:35.001Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T06:07:35.002Z [INFO]: Disconnection from route: /home
+2025-02-25T06:07:35.002Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:07:35.014Z [INFO]: New connection from route: /home
+2025-02-25T06:07:35.015Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYzNjU0LCJleHAiOjE3NDA0NjcyNTR9.piiXSs9fu0vN1Bj3qjeB7C37YINE-gUN5EzKK7eA7OU
+2025-02-25T06:07:35.016Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:07:35.027Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T06:07:35.311Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T06:07:35.311Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-25T06:07:35.317Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 2:07:35 PM
+2025-02-25T06:07:35.790Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T06:07:35.791Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 2:07:35 PM
+2025-02-25T06:07:36.034Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-25T06:07:36.034Z [INFO]: User mawrk19@gmail.com left. Active players: 1 as of 2/25/2025, 2:07:36 PM
+2025-02-25T06:07:49.929Z [INFO]: Disconnection from route: /home
+2025-02-25T06:07:49.930Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:07:52.437Z [WARN]: No session found for mawrk19@gmail.com during leave event
+2025-02-25T06:07:52.437Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/25/2025, 2:07:52 PM
+2025-02-25T06:08:01.139Z [INFO]: New connection from route: /home
+2025-02-25T06:08:01.139Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYzNjU0LCJleHAiOjE3NDA0NjcyNTR9.piiXSs9fu0vN1Bj3qjeB7C37YINE-gUN5EzKK7eA7OU
+2025-02-25T06:08:01.140Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:08:01.146Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T06:08:01.146Z [INFO]: Disconnection from route: /home
+2025-02-25T06:08:01.147Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:08:01.150Z [INFO]: New connection from route: /home
+2025-02-25T06:08:01.150Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYzNjU0LCJleHAiOjE3NDA0NjcyNTR9.piiXSs9fu0vN1Bj3qjeB7C37YINE-gUN5EzKK7eA7OU
+2025-02-25T06:08:01.151Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:08:01.157Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T06:08:01.411Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T06:08:01.411Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-25T06:08:01.411Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 2:08:01 PM
+2025-02-25T06:08:01.893Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T06:08:01.894Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 2:08:01 PM
+2025-02-25T06:08:02.132Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-25T06:08:02.133Z [INFO]: User mawrk19@gmail.com left. Active players: 1 as of 2/25/2025, 2:08:02 PM
+2025-02-25T06:08:03.536Z [INFO]: Disconnection from route: /home
+2025-02-25T06:08:03.537Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:08:03.789Z [WARN]: No session found for mawrk19@gmail.com during leave event
+2025-02-25T06:08:03.789Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/25/2025, 2:08:03 PM
+2025-02-25T06:08:06.504Z [INFO]: New connection from route: /home
+2025-02-25T06:08:06.504Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYzNjU0LCJleHAiOjE3NDA0NjcyNTR9.piiXSs9fu0vN1Bj3qjeB7C37YINE-gUN5EzKK7eA7OU
+2025-02-25T06:08:06.504Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:08:06.507Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T06:08:06.509Z [INFO]: Disconnection from route: /home
+2025-02-25T06:08:06.510Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:08:06.512Z [INFO]: New connection from route: /home
+2025-02-25T06:08:06.512Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hd3JrMTlAZ21haWwuY29tIiwiaWQiOjExMSwiaWF0IjoxNzQwNDYzNjU0LCJleHAiOjE3NDA0NjcyNTR9.piiXSs9fu0vN1Bj3qjeB7C37YINE-gUN5EzKK7eA7OU
+2025-02-25T06:08:06.512Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:08:06.514Z [WARN]: No session found for mawrk19@gmail.com
+2025-02-25T06:08:06.759Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T06:08:06.760Z [INFO]: Session created for mawrk19@gmail.com
+2025-02-25T06:08:06.760Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 2:08:06 PM
+2025-02-25T06:08:06.767Z [ERROR]: Error fetching active player count: Request failed with status code 404
+2025-02-25T06:08:06.767Z [INFO]: User mawrk19@gmail.com joined. Active players: 1 as of 2/25/2025, 2:08:06 PM
+2025-02-25T06:08:07.016Z [INFO]: Session ended for mawrk19@gmail.com:
+2025-02-25T06:08:07.016Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/25/2025, 2:08:07 PM
+2025-02-25T06:08:11.887Z [INFO]: Disconnection from route: /home
+2025-02-25T06:08:11.887Z [INFO]: Email received: mawrk19@gmail.com
+2025-02-25T06:08:12.136Z [INFO]: User mawrk19@gmail.com left. Active players: 0 as of 2/25/2025, 2:08:12 PM
+2025-02-25T06:49:36.702Z [INFO]: Socket disconnected: Z45kX75ujPT_aU-CAAAT
+2025-02-25T06:49:37.499Z [INFO]: New socket connected: 5r9Q2EDB639GJQMOAAAV
+2025-02-25T06:49:38.726Z [INFO]: Socket disconnected: 5r9Q2EDB639GJQMOAAAV
+2025-02-25T06:49:39.124Z [INFO]: New socket connected: LPnV9WAKKOnQdLKSAAAX
+2025-02-25T06:49:49.553Z [INFO]: Socket disconnected: LPnV9WAKKOnQdLKSAAAX
+2025-02-25T06:49:49.971Z [INFO]: New socket connected: CTWyACCDOfc7PDtTAAAZ
+2025-02-25T06:49:56.437Z [INFO]: Socket disconnected: CTWyACCDOfc7PDtTAAAZ
+2025-02-25T06:49:56.873Z [INFO]: New socket connected: -IwaIlQhwgRRxVjjAAAb
+2025-02-25T06:49:58.068Z [INFO]: Socket disconnected: -IwaIlQhwgRRxVjjAAAb
+2025-02-25T06:49:58.551Z [INFO]: New socket connected: 7vqNOaK4iqNtH9egAAAd
+2025-02-25T06:52:21.740Z [INFO]: Socket disconnected: 7vqNOaK4iqNtH9egAAAd
+2025-02-25T06:52:43.794Z [INFO]: New socket connected: _rWyegD7AbrNDzRLAAAf
+2025-02-25T12:18:16.989Z [INFO]: Socket disconnected: _rWyegD7AbrNDzRLAAAf
+2025-02-25T12:18:18.134Z [INFO]: New socket connected: YflkNv-aOZpV3VE0AAAh
+2025-02-25T13:05:19.554Z [INFO]: Socket disconnected: YflkNv-aOZpV3VE0AAAh
+2025-02-25T13:05:23.931Z [INFO]: New socket connected: pHmW_I0u7rtww3UiAAAj
+2025-02-26T13:08:31.868Z [INFO]: Socket disconnected: pHmW_I0u7rtww3UiAAAj
+2025-02-26T13:08:32.403Z [INFO]: New socket connected: VoSZi3wYglFmsPx4AAAl
+2025-02-26T13:10:39.742Z [INFO]: Socket disconnected: VoSZi3wYglFmsPx4AAAl
