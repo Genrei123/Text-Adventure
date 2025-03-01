@@ -103,7 +103,7 @@ const GameScreen: React.FC = () => {
             }
         }
     };
-
+    // Testing 123
     // Glowing text animation
     const glowVariants = {
         visible: {
@@ -147,6 +147,7 @@ const GameScreen: React.FC = () => {
             )}
 
             <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col relative">
+                {/* gameoverscreen starts here */}
                 {/* Background with blur animation */}
                 <motion.div 
                     className="absolute inset-0"
@@ -186,6 +187,7 @@ const GameScreen: React.FC = () => {
                         </motion.div>
                     )}
                 </AnimatePresence>
+                {/* gameoverscreen end here */}
 
                 {/* Main content */}
                 <div className="relative z-10">
