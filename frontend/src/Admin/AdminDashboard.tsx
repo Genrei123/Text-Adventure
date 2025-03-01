@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  ArrowLeftRight, Users, UserPlus, Activity, UserX, SortAsc, SortDesc, Search
+  ArrowLeftRight, Users, UserPlus, Activity, UserX, SortAsc, SortDesc, Search, Clock, Trash2, Plus
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Paper, TextField, Button, Chip, FormControl, Select, MenuItem, InputLabel, CircularProgress } from '@mui/material';
@@ -10,6 +10,22 @@ import BanForm from '../components/BanForm';
 import BannedPlayersList from '../components/BannedPlayersList';
 import { fetchDashboardStats, fetchPlayers, fetchGamesCount } from '../api/admin';
 
+// Add above your component declaration
+const mockRecentGames = [
+  {
+    title: "Sample Game 1",
+    excerpt: "This is a sample game description",
+    created: "2 hours ago",
+    status: "draft"
+  },
+  {
+    title: "Sample Game 2",
+    excerpt: "Another sample game description",
+    created: "1 day ago",
+    status: "published"
+  }
+];
+
 const AdminDashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -18,7 +34,7 @@ const AdminDashboard: React.FC = () => {
     activePlayers: 0,
     offlinePlayers: 0,
     activeGames: 0
-  });
+  });]
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,6 +48,20 @@ const AdminDashboard: React.FC = () => {
     total: 0
   });
 
+  // Add state for active users data
+  const [activeUsersData, setActiveUsersData] = useState<Array<{ time: string; users: number }>>([]);
+
+  // Then use in your state initialization
+  const [recentGames, setRecentGames] = useState(mockRecentGames);
+
+  // Add to your state declarations
+  const [tasks, setTasks] = useState<Array<{
+    id: number;
+    text: string;
+    completed: boolean;
+  }>>([]);
+  const [newTask, setNewTask] = useState('');
+
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
@@ -39,9 +69,10 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [dashboardStats, gamesCount] = await Promise.all([
+        const [dashboardStats, gamesCount, gamesResponse] = await Promise.all([
           fetchDashboardStats(),
-          fetchGamesCount()
+          fetchGamesCount(),
+          axios.get('/api/games/recent')
         ]);
 
         setStats({
@@ -66,6 +97,12 @@ const AdminDashboard: React.FC = () => {
           total: playersData.total
         }));
 
+        // Fetch active users data
+        const response = await axios.get('/api/metrics/active-users');
+        setActiveUsersData(response.data);
+
+        setRecentGames(gamesResponse.data);
+
       } catch (error) {
         console.error('Error loading data:', error);
       } finally {
@@ -75,6 +112,22 @@ const AdminDashboard: React.FC = () => {
 
     loadData();
   }, [searchQuery, statusFilter, subscriptionFilter, sortBy, sortOrder, pagination.page]);
+
+  // Add these handler functions
+  const handleAddTask = () => {
+    if (newTask.trim()) {
+      setTasks([...tasks, {
+        id: Date.now(),
+        text: newTask,
+        completed: false
+      }]);
+      setNewTask('');
+    }
+  };
+
+  const handleDeleteTask = (taskId: number) => {
+    setTasks(tasks.filter(task => task.id !== taskId));
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -441,3 +494,19 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
+
+// Add to your games controller
+export const getRecentGames = async (req: Request, res: Response) => {
+  try {
+    const games = await sequelize.query(`
+      SELECT title, description as excerpt, "createdAt" as created, status 
+      FROM games 
+      ORDER BY "createdAt" DESC 
+      LIMIT 5
+    `, { type: QueryTypes.SELECT });
+    
+    res.json(games);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching recent games' });
+  }
+};
