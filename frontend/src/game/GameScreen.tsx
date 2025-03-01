@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import GameHeader from '../components/GameHeader';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const GameScreen: React.FC = () => {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [chatMessages, setChatMessages] = useState<Array<{content: string, isUser: boolean, timestamp: string}>>([]);
+    const [isGameOver, setIsGameOver] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -59,15 +60,73 @@ const GameScreen: React.FC = () => {
 
     useEffect(() => {
         const timer = setTimeout(() => setIsAnimating(false), 5000);
-        return () => clearTimeout(timer);
+        const gameOverTimer = setTimeout(() => setIsGameOver(true), 6000);
+        return () => {
+            clearTimeout(timer);
+            clearTimeout(gameOverTimer);
+        };
     }, []);
+
+    // Game Over animation variants
+    const gameOverVariants = {
+        hidden: {
+            opacity: 0,
+            scale: 0.8
+        },
+        visible: {
+            opacity: 1,
+            scale: 1,
+            transition: {
+                duration: 0.8,
+                ease: "easeInOut"
+            }
+        },
+        exit: {
+            opacity: 0,
+            scale: 0.8,
+            transition: {
+                duration: 0.5
+            }
+        }
+    };
+
+    // Background blur variants
+    const backgroundVariants = {
+        normal: {
+            filter: "blur(50px)"
+        },
+        blurred: {
+            filter: "blur(60px)",
+            transition: {
+                duration: 1.5,
+                ease: "easeInOut"
+            }
+        }
+    };
+
+    // Glowing text animation
+    const glowVariants = {
+        visible: {
+            textShadow: [
+                "0 0 5px #ff0000",
+                "0 0 10px #ff0000",
+                "0 0 20px #ff0000",
+                "0 0 10px #ff0000",
+                "0 0 5px #ff0000"
+            ],
+            transition: {
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+            }
+        }
+    };
 
     return (
         <>
-            {/* door animation for gamescreen */}
+            {/* Door animation for gamescreen */}
             {isAnimating && (
                 <div className="fixed top-0 left-0 w-full h-full z-50 flex justify-center items-center">
-                    {/* Left Rectangle */}
                     <motion.div
                         className="absolute top-0 left-0 w-1/2 h-full bg-black"
                         initial={{ scaleX: 1 }}
@@ -76,7 +135,6 @@ const GameScreen: React.FC = () => {
                         transition={{ duration: 1, ease: "easeInOut" }}
                         style={{ transformOrigin: "left" }}
                     />
-                    {/* Right Rectangle */}
                     <motion.div
                         className="absolute top-0 right-0 w-1/2 h-full bg-black"
                         initial={{ scaleX: 1 }}
@@ -87,18 +145,59 @@ const GameScreen: React.FC = () => {
                     />
                 </div>
             )}
+
             <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col relative">
-                <div className="absolute inset-0">
-                    {/* put the code for fetching story background here */}
-                    <img src="/warhammer.jpg" alt="Background" className="w-full h-full object-cover blur-[50px]" />
-                </div>
+                {/* Background with blur animation */}
+                <motion.div 
+                    className="absolute inset-0"
+                    variants={backgroundVariants}
+                    initial="normal"
+                    animate={isGameOver ? "blurred" : "normal"}
+                >
+		            {/* put the code for fetching story background here */}
+                    <img src="/warhammer.jpg" alt="Background" className="w-full h-full object-cover" />
+                </motion.div>
+
+                {/* Game Over Overlay */}
+                <AnimatePresence>
+                    {isGameOver && (
+                        <motion.div
+                            className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 pointer-events-auto"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <motion.div
+                                className=" p-8 rounded-lg"
+                                variants={gameOverVariants}
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                            >
+                                <motion.h1
+                                    className="text-4xl md:text-6xl font-bold text-red-600 tracking-wider font-cinzel"
+                                    variants={glowVariants}
+                                    animate="visible"
+                                >
+                                    GAME OVER
+                                </motion.h1>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Main content */}
                 <div className="relative z-10">
-                    <GameHeader/>
-                    <Sidebar/>
+                    <div className="z-50">
+                        <GameHeader/>
+                        <Sidebar/>
+                    </div>
                     <br/>
                     <br/>
                     <br/>
                 </div>
+
                 <div className="flex-grow flex justify-center items-start mt-[-5%] pt-4">
                     <div 
                         className="w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto h-[calc(100vh-200px)] scrollbar-hide bg-[#1E1E1E]/50 backdrop-blur-sm text-white"
@@ -114,7 +213,8 @@ const GameScreen: React.FC = () => {
                         ))}
                     </div>
                 </div>
-                <div className="w-full md:w-1/2 mx-auto mt-[-10%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
+
+                <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
                     <div className="flex space-x-2">
                         <button className="p-2 text-white rounded relative group">
                             <img src="/Settings.svg" alt="Icon" className="w-6 h-6 group-hover:opacity-0" />
