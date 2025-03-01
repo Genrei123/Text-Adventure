@@ -256,8 +256,31 @@ const GameScreen: React.FC = () => {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.5 }}
                         >
+                            {/* Full-page Glowing Red Background Animation */}
                             <motion.div
-                                className="p-8 rounded-lg flex flex-col items-center"
+                                className="absolute inset-0 z-0"
+                                style={{
+                                    background: "radial-gradient(circle, rgba(255, 0, 0, 0.3), transparent)",
+                                }}
+                                animate={{
+                                    scale: [1, 1.1, 1],
+                                    opacity: [0.3, 0.6, 0.3],
+                                    background: [
+                                        "radial-gradient(circle, rgba(255, 0, 0, 0.3), transparent)",
+                                        "radial-gradient(circle, rgba(255, 0, 0, 0.5), transparent)",
+                                        "radial-gradient(circle, rgba(255, 0, 0, 0.3), transparent)",
+                                    ],
+                                }}
+                                transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                }}
+                            />
+
+                            {/* Content container centered on top */}
+                            <motion.div
+                                className="relative z-10 flex flex-col items-center"
                                 variants={gameOverVariants}
                                 initial="hidden"
                                 animate="visible"
@@ -271,7 +294,7 @@ const GameScreen: React.FC = () => {
                                     GAME OVER
                                 </motion.h1>
 
-                                {/* Add buttons below the GAME OVER text */}
+                                {/* Buttons */}
                                 <div className="flex space-x-4 mt-8">
                                     {/* Return to Home Button */}
                                     <motion.button
