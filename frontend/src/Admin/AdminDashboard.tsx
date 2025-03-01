@@ -11,6 +11,8 @@ import BannedPlayersList from '../components/BannedPlayersList';
 import { fetchDashboardStats, fetchPlayers, fetchGamesCount } from '../api/admin';
 
 const AdminDashboard: React.FC = () => {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeSection, setActiveSection] = useState('dashboard');
   const [stats, setStats] = useState({
     totalVerified: 0,
     activePlayers: 0,
@@ -29,6 +31,10 @@ const AdminDashboard: React.FC = () => {
     limit: 10,
     total: 0
   });
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -77,7 +83,7 @@ const AdminDashboard: React.FC = () => {
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           {!sidebarCollapsed && <h2 className="text-xl font-bold truncate">Admin Panel</h2>}
           <button 
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            onClick={toggleSidebar}
             className="p-1 hover:bg-gray-800 rounded-lg transition-colors"
           >
             <ArrowLeftRight className="w-5 h-5" />
