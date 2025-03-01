@@ -51,26 +51,16 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     }
   }, [navigate]);
 
-  // Add this effect to your Login component
   useEffect(() => {
-    // Check if this is a redirect from OAuth (Google)
     const urlParams = new URLSearchParams(window.location.search);
-    const username = urlParams.get("username");
-
-    if (username) {
-      // We have a successful OAuth login redirect
-      // Get the token from cookies (or query params if that's how your backend passes it)
-      // Store it in localStorage
-      localStorage.setItem("email", username);
-
-      // Handle your login logic
+    const username = urlParams.get('username');
+    const token = urlParams.get('token');
+    
+    if (username && token) {
+      localStorage.setItem('token', token);
+      localStorage.setItem('email', username);
       onLogin(username);
-
-      // Redirect to home page
-      navigate("/home");
-
-      // Show success toast
-      toast.success("Login successful!");
+      navigate('/home');
     }
   }, [navigate, onLogin]);
 

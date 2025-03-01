@@ -30,7 +30,7 @@ const createAuthRouter = (frontendUrl: string) => {
         const username = user.displayName || user.emails[0]?.value;
         const token = Jwt.sign({ id: user.id, username }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
         res.cookie('token', token, { httpOnly: true });
-        res.redirect(`${frontendUrl}/home?username=${encodeURIComponent(username)}`);
+        res.redirect(`${frontendUrl}/home?username=${encodeURIComponent(username)}&token=${encodeURIComponent(token)}`);
       } else {
         res.redirect('/?error=authentication_failed');
       }
