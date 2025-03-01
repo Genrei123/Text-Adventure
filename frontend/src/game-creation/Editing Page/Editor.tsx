@@ -1,85 +1,98 @@
-import React, { useState } from 'react';
-import { InputField, BannerPrompt, PlayButton, PreviewSection, SavePreviewButtons } from './components/EditorComp';
-import { useLocation } from 'react-router-dom';
+"use client"
 
-interface AdventureEditorProps {}
+import type React from "react"
+import { useState } from "react"
+import { InputField, BannerPrompt, SaveButton } from "./components/EditorComp"
+import { useLocation } from "react-router-dom"
+import Navbar from "../../components/Navbar"
 
-// AdventureEditor component
+type AdventureEditorProps = {}
+
 export const AdventureEditor: React.FC<AdventureEditorProps> = () => {
-  const location = useLocation();
-  const initialFormData = location.state || {};
+  const location = useLocation()
+  const initialFormData = location.state || {}
   const [formData, setFormData] = useState({
-    title: initialFormData.title || '',
-    description: initialFormData.description || '',
-    ending: initialFormData.ending || '',
-    genre: initialFormData.genre || '',
-    bannerPrompt: initialFormData.bannerPrompt || ''
-  });
-  const [imageUrl, setImageUrl] = useState<string>('');
+    title: initialFormData.title || "",
+    description: initialFormData.description || "",
+    ending: initialFormData.ending || "",
+    genre: initialFormData.genre || "",
+    bannerPrompt: initialFormData.bannerPrompt || "",
+  })
+  const [imageUrl, setImageUrl] = useState<string>("")
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleSave = () => {
+    // Implement save functionality here
+    console.log("Saving adventure:", formData)
+    // You can add API calls or state management logic here
+  }
 
   const inputFields = [
     {
-      title: 'Adventure Name',
-      description: 'Selecting a great, striking title will help generate a good adventure.',
-      inputId: 'adventureName',
+      title: "Adventure Name",
+      description: "Selecting a great, striking title will help generate a good adventure.",
+      inputId: "adventureName",
       value: formData.title,
-      onChange: (value: string) => handleChange('title', value)
+      onChange: (value: string) => handleChange("title", value),
     },
     {
-      title: 'Describe your Story',
-      description: 'Provide a brief description of the setting, plot, and characters.',
-      inputId: 'storyDescription',
+      title: "Describe your Story",
+      description: "Provide a brief description of the setting, plot, and characters.",
+      inputId: "storyDescription",
       value: formData.description,
-      onChange: (value: string) => handleChange('description', value)
+      onChange: (value: string) => handleChange("description", value),
     },
     {
-      title: 'How does your story ends?',
-      description: 'Describe the desired conclusion of your adventure.',
-      inputId: 'storyEnding',
+      title: "How does your story end?",
+      description: "Describe the desired conclusion of your adventure.",
+      inputId: "storyEnding",
       value: formData.ending,
-      onChange: (value: string) => handleChange('ending', value)
+      onChange: (value: string) => handleChange("ending", value),
     },
     {
-      title: 'Genre Tags',
-      description: 'Selecting a short, evocative genre will help generate a good adventure.',
-      inputId: 'genreTags',
+      title: "Genre Tags",
+      description: "Selecting a short, evocative genre will help generate a good adventure.",
+      inputId: "genreTags",
       value: formData.genre,
-      onChange: (value: string) => handleChange('genre', value)
+      onChange: (value: string) => handleChange("genre", value),
     },
-  ];
+  ]
 
   return (
-    <>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@400;700&display=swap"
-        rel="stylesheet"
-      />
-      <main className="box-border px-20 py-20 w-full min-h-screen bg-gray-900">
-        <h1 className="pl-12 mb-4 text-6xl font-bold text-left text-white tracking-wide max-md:pl-2.5 max-md:mb-10 max-md:text-5xl max-sm:text-4xl max-sm:text-center">
-          Adventure Editor
+    <div className="min-h-screen bg-[#1a1a1a] text-white font-inter">
+      <Navbar />
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        <h1 className="text-4xl font-cinzel text-white mb-12 tracking-wide border-b border-gray-800 pb-4">
+          ADVENTURE EDITOR
         </h1>
-        <hr className="border-t-2 border-gray-700 w-full mx-auto max-sm:ml-0" />
-        {inputFields.map((field) => (
-          <InputField
-            key={field.inputId}
-            title={field.title}
-            description={field.description}
-            inputId={field.inputId}
-            value={field.value}
-            onChange={field.onChange}
-          />
-        ))}
-        <BannerPrompt value={formData.bannerPrompt} setImageUrl={setImageUrl} />
-        <PlayButton />
-        <PreviewSection imageUrl={imageUrl} title={formData.title} description={formData.description} />
-        <SavePreviewButtons onSave={() => {}} onPreview={() => {}} />
-      </main>
-    </>
-  );
-};
 
-export default AdventureEditor;
+        <div className="space-y-8">
+          {inputFields.map((field) => (
+            <InputField
+              key={field.inputId}
+              title={field.title}
+              description={field.description}
+              inputId={field.inputId}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          ))}
+
+          <BannerPrompt
+            value={formData.bannerPrompt}
+            onChange={(value) => handleChange("bannerPrompt", value)}
+            setImageUrl={setImageUrl}
+          />
+
+          <SaveButton onSave={handleSave} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default AdventureEditor
+

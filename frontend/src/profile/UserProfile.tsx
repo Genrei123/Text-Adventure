@@ -10,7 +10,7 @@ import axios from '../../config/axiosConfig';
 import Navbar from "../components/Navbar";
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("comments");
+  const [activeTab, setActiveTab] = useState("games");
   const [showUserModal, setShowUserModal] = useState(false);
   const [showCropModal, setShowCropModal] = useState(false);
   const [showBioModal, setShowBioModal] = useState(false);

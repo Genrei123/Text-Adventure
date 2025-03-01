@@ -1,75 +1,71 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import type React from "react"
+import { useNavigate } from "react-router-dom"
 
 interface TextInputProps {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  error?: string;
+  label: string
+  value: string
+  onChange: (value: string) => void
+  error?: string
 }
 
 export const TextInput: React.FC<TextInputProps> = ({ label, value, onChange, error }) => {
   return (
-    <div className="flex flex-col">
-      <label htmlFor="input-field" className="self-start mt-4 text-2xl leading-10 text-white tracking-[2.4px] max-md:text-xl">
-        {label}
-      </label>
+    <div className="w-full">
       <input
         type="text"
-        id="input-field"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`flex shrink-0 max-w-full shadow-lg bg-stone-800 h-[78px] rounded-full w-[911px] text-[#FFFFFF] text-3xl pl-7 max-md:h-[50px] max-md:w-full max-md:text-xl max-md:pl-4
-          ${error ? 'border-2 border-red-500' : ''}`}
+        placeholder={label}
+        className="w-full px-6 py-4 bg-[#2a1810]/80 border border-[#3a2a20] rounded-lg text-white text-lg 
+          focus:outline-none focus:ring-2 focus:ring-[#B39C7D] transition-colors placeholder:text-gray-400"
         aria-label={label}
       />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
     </div>
-  );
-};
-
-interface NavigationButtonsProps {
-  onBack: () => void;
-  onNext: () => void;
+  )
 }
 
-export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ onBack, onNext }) => {
+interface NavigationButtonsProps {
+  onBack: () => void
+  onNext: () => void
+  isLastStep: boolean
+}
+
+export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ onBack, onNext, isLastStep }) => {
   return (
-    <div className="flex flex-wrap gap-5 justify-between mt-7 text-2xl text-white tracking-[2.4px] max-md:max-w-full">
+    <div className="flex justify-between items-center gap-4">
       <button
         onClick={onBack}
-        className="px-10 py-1.5 leading-10 whitespace-nowrap bg-[linear-gradient(86deg,#929292_-74.83%,#2C2C2C_37.96%)] rounded-lg max-md:px-5 max-md:py-1 max-md:text-xl"
+        className="px-8 py-3 bg-[#2a2a2a]/80 text-white rounded-lg hover:bg-[#3a3a3a]/80 transition-colors font-medium"
       >
         Back
       </button>
       <button
         onClick={onNext}
-        className="px-10 py-1.5 leading-loose bg-[#B28F4C] rounded-lg max-md:px-5 max-md:py-1 max-md:text-xl"
+        className="px-8 py-3 bg-[#B39C7D] text-white rounded-lg hover:bg-[#8C7A5B] transition-colors font-medium"
       >
-        Next
+        {isLastStep ? "Submit" : "Next"}
       </button>
     </div>
-  );
-};
+  )
+}
 
 interface SkipToEditorProps {
-  onSkip: () => void;
+  onSkip: () => void
 }
 
 export const SkipToEditor: React.FC<SkipToEditorProps> = ({ onSkip }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSkip = () => {
-    onSkip();
-    navigate('/editing-page');
-  };
+    onSkip()
+    navigate("/editing-page")
+  }
 
   return (
-    <button
-      onClick={handleSkip}
-      className="absolute z-0 text-3xl font-light leading-none text-white bottom-[77px] h-[37px] left-1/2 transform -translate-x-1/2 w-[200px] rounded-full text-center max-md:text-xl max-md:h-[30px] max-md:w-[150px]"
-    >
+    <button onClick={handleSkip} className="text-[#B39C7D] hover:text-[#C9B57B] transition-colors text-lg font-light">
       Skip to Editor
     </button>
-  );
-};
+  )
+}
+

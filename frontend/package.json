@@ -41,6 +41,7 @@
     "react-toastify": "^11.0.3",
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.8.1",
+    "tailwindcss-animate": "^1.0.7",
     "three": "^0.173.0"
   },
   "devDependencies": {
