@@ -21,6 +21,7 @@
     "dotenv": "^16.4.7",
     "emailjs-com": "^3.2.0",
     "express": "^4.21.2",
+    "framer-motion": "^12.4.7",
     "mongoose": "^8.9.5",
     "next": "^15.0.3",
     "nodemailer": "^6.10.0",
