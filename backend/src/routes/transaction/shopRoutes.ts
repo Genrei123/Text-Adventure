@@ -2,10 +2,10 @@ import express from 'express';
 import { createCustomer } from '../../service/transaction/Subscription/customerService';
 import { createPaymentMethod } from '../../service/transaction/Subscription/paymentMethodService';
 import { createSubscriptionPlan } from '../../service/transaction/Subscription/subscriptionService';
-import { buyItem, getCoins, deductCoins } from '../../controllers/transaction/shopController';
+import { buyItem, getCoins, deductCoins, getAllItems } from '../../controllers/transaction/shopController';
 import { handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
 
-const router = express.Router();
+const   router = express.Router();
 
 // ============================== Subscription Routes ==============================
 
@@ -64,5 +64,7 @@ router.post('/create-subscription-plan', async (req, res) => {
 router.post('/buy-item', buyItem);
 router.post('/payment', handlePaymentCallback);
 
+// Route for fetching all items
+router.get('/items', getAllItems);
 
 export default router;

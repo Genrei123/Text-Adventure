@@ -11,8 +11,8 @@ import { getChatTokenDetails } from '../../utils/tokenizer'; // Import the corre
 dotenv.config();
 
 // Constants for return URLs
-const SUCCESS_RETURN_URL = 'https://example.com/payment-success';
-const FAILURE_RETURN_URL = 'https://example.com/payment-failure';
+const SUCCESS_RETURN_URL = process.env.SUCCESS_RETURN_URL || 'http://localhost:5173/home';
+const FAILURE_RETURN_URL = process.env.FAILURE_RETURN_URL || 'http://localhost:5173/home';
 
 // Function to generate a random 6-character alphanumeric string
 const generateRandomId = () => {
@@ -26,6 +26,16 @@ export const getItemDetails = async (itemId: string) => {
     throw new Error('Item not found');
   }
   return item;
+};
+
+// Function to fetch all items
+export const getAllItems = async (req: Request, res: Response) => {
+  try {
+    const items = await Item.findAll();
+    res.json(items);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 // Function to fetch user details from the database using email
@@ -131,8 +141,9 @@ export const buyItem = async (req: Request, res: Response) => {
           channelProperties: {
             successReturnUrl: SUCCESS_RETURN_URL,
             failureReturnUrl: FAILURE_RETURN_URL,
+            
           },
-          channelCode: paymentMethod, // 'GCASH' or 'MAYA'
+          channelCode: paymentMethod, // 'GCASH' or 'PAYMAYA'
         },
         reusability: 'ONE_TIME_USE',
         type: 'EWALLET',
@@ -146,7 +157,7 @@ export const buyItem = async (req: Request, res: Response) => {
     const formattedDate = new Date().toLocaleString();
 
     console.log(`-------------- Payment Request Details --------------`)
-console.log(`Status: Success
+    console.log(`Status: Success
 Item ID: ${itemId}
 Item Name: ${item.name}
 User ID: ${user.id}
@@ -158,8 +169,8 @@ Date Created: ${formattedDate}
 Order ID: ${orderId}
 Payment Request ID: ${paymentRequest.id}
 Link To Payment: ${paymentLink}`);
-console.log(`-----------------------------------------------------`);
-console.log(` `);
+    console.log(`-----------------------------------------------------`);
+    console.log(` `);
     res.json({ paymentLink });
   } catch (error: any) {
     const formattedDate = new Date().toLocaleString();
@@ -178,6 +189,7 @@ Error: ${error.message}`);
     console.log(`-----------------------------------------------------`);
     console.log(` `);
     if (error.response) {
+      console.error('Error response data:', error.response.data);
       res.status(error.response.status).json({ error: error.response.data });
     } else if (error.request) {
       res.status(500).json({ error: 'No response received from Xendit API' });
