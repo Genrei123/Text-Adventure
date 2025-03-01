@@ -2,19 +2,35 @@ import multer from 'multer';
 import { Request, Response } from 'express';
 import User from '../../model/user/user';
 
+// Extend the Express Request type to include multer's file property
+interface MulterRequest extends Request {
+    file?: Express.Multer.File; // Use Express.Multer.File type
+}
+
+// Define storage configuration with proper types
 export const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: function (
+        req: Request, // Or MulterRequest if you need file here
+        file: Express.Multer.File,
+        cb: (error: Error | null, destination: string) => void
+    ) {
         cb(null, 'public/images');
     },
-    filename: function (req, file, cb) {
+    filename: function (
+        req: Request, // Or MulterRequest if you need file here
+        file: Express.Multer.File,
+        cb: (error: Error | null, filename: string) => void
+    ) {
         const uniqueName = `${Date.now()}-${file.originalname}`;
         cb(null, uniqueName);
     }
 });
 
+// Configure multer upload
 export const upload = multer({ storage: storage }).single('file');
 
-export const uploadProfileImage = async (req: Request, res: Response) => {
+// Upload profile image handler
+export const uploadProfileImage = async (req: MulterRequest, res: Response) => {
     try {
         if (!req.file) {
             return res.status(400).json({ message: 'No file uploaded' });
@@ -27,10 +43,9 @@ export const uploadProfileImage = async (req: Request, res: Response) => {
         const imageUrl = `/image/${req.file.filename}`;
         const updatedRows = await User.update(
             { image_url: imageUrl },
-            { where: { id: (req.user as any).id } }
+            { where: { id: (req.user as any).id } } // Consider typing req.user properly
         );
 
-        // Optional: Check if the update affected any rows (should be 1)
         if (updatedRows[0] === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
