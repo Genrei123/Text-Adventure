@@ -1,22 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from "../components/Sidebar";
 import Cropper, { ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import YourGames from "./components/YourGames";
 import YourComments from "./components/YourComments";
 import YourLikes from "./components/YourLikes";
-import axios from 'axios';
+import axios from '../../config/axiosConfig';
 import Navbar from "../components/Navbar";
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("comments");
+  const [activeTab, setActiveTab] = useState("games");
   const [showUserModal, setShowUserModal] = useState(false);
   const [showCropModal, setShowCropModal] = useState(false);
   const [showBioModal, setShowBioModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [userDetails, setUserDetails] = useState<{ username: string; email: string; bio?: string } | null>(null);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const cropperRef = useRef<ReactCropperElement>(null); // Correctly typing the cropper ref
   const [copied, setCopied] = useState(false);
+  const { username } = useParams<{ username: string }>();
+
+  const navigate = useNavigate();
 
   const handleCopyUsername = () => {
     const usernameElement = document.querySelector('h1') as HTMLElement;
@@ -34,20 +38,20 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
+    const fetchUserProfile = async () => {
       try {
-        const userId = 64; // Replace with dynamic user ID if needed
-        //const response = await axios.get(`http://localhost:3000/users/${userId}?timestamp=${new Date().getTime()}`);
-        const response = await axios.get(`/users/${userId}?timestamp=${new Date().getTime()}`);
-        console.log('User details:', response.data); // Log the response data
+        const response = await axios.get(`/admin/users/username/${username}`);
         setUserDetails(response.data);
+        
       } catch (error) {
-        console.error('Error fetching user details:', error);
+        console.error('Error fetching user profile:', error);
+        // Give 404
+        navigate('/forbidden');
       }
     };
-  
-    fetchUserDetails();
-  }, []);
+
+    fetchUserProfile();
+  }, [username]);
 
   const handleImageUpload = () => {
     const input = document.createElement("input");
@@ -83,9 +87,9 @@ export default function ProfilePage() {
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen bg-gray-900"
       style={{
-        backgroundImage: "src/assets/UserBG.svg",
+        backgroundImage: "url(/UserBG.svg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
