@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -34,20 +25,19 @@ const userSockets = new Map(); // Track multiple sockets per user
 function createServer(app) {
     const server = (0, http_1.createServer)(app);
     const io = new socket_io_1.Server(server, { cors: cors_1.default });
-    const logPlayerStats = () => __awaiter(this, void 0, void 0, function* () {
+    const logPlayerStats = async () => {
         try {
-            const response = yield axios_1.default.get(`${process.env.SITE_URL}/statistics/statsRoutes/player-stats`);
+            const response = await axios_1.default.get(`${process.env.SITE_URL}/statistics/statsRoutes/player-stats`);
             const activePlayers = response.data.activePlayers;
             logger.info(`Active players: ${activePlayers}`);
         }
         catch (error) {
             logger.error('Error fetching active player count:', error);
         }
-    });
+    };
     io.on('connection', (socket) => {
         logger.info(`New socket connected: ${socket.id}`);
-        socket.on('join', (_a) => __awaiter(this, [_a], void 0, function* ({ route, email, token }) {
-            var _b, _c;
+        socket.on('join', async ({ route, email, token }) => {
             logger.debug(`Join event received: route=${route}, email=${email}, token=${token}`);
             if (!route) {
                 logger.error('Route is missing');
@@ -57,7 +47,7 @@ function createServer(app) {
             logger.info(`Token received: ${token}`);
             logger.info(`Email received: ${email}`);
             try {
-                const user = yield (0, authController_1.verifyToken)(token);
+                const user = await (0, authController_1.verifyToken)(token);
                 if (!user || !user.email) {
                     logger.warn(`Invalid token or user email missing.`);
                     return;
@@ -67,11 +57,11 @@ function createServer(app) {
                     if (!userSockets.has(userEmail)) {
                         userSockets.set(userEmail, new Set());
                     }
-                    (_b = userSockets.get(userEmail)) === null || _b === void 0 ? void 0 : _b.add(socket.id);
-                    if (((_c = userSockets.get(userEmail)) === null || _c === void 0 ? void 0 : _c.size) === 1) {
+                    userSockets.get(userEmail)?.add(socket.id);
+                    if (userSockets.get(userEmail)?.size === 1) {
                         activeUser_1.activeUserEmails.add(userEmail); // Add to activeUserEmails
                         io.emit('playerCount', { activePlayers: activeUser_1.activeUserEmails.size });
-                        yield logPlayerStats();
+                        await logPlayerStats();
                         if (!exports.playerSessions.has(userEmail)) {
                             exports.playerSessions.set(userEmail, { startTime: new Date(), sessionData: { interactions: {}, gamesCreated: {}, gamesPlayed: {}, visitedPages: {} } });
                             logger.info(`Session created for ${userEmail}`);
@@ -86,7 +76,7 @@ function createServer(app) {
             catch (error) {
                 logger.error(`Error during join event: ${error.message}`);
             }
-        }));
+        });
         socket.on('interaction', ({ email, interaction, page }) => {
             logger.debug(`Interaction event received: email=${email}, interaction=${interaction}, page=${page}`);
             const session = exports.playerSessions.get(email);
@@ -111,8 +101,7 @@ function createServer(app) {
                 logger.warn(`No session found for ${email}`);
             }
         });
-        socket.on('leave', (_a) => __awaiter(this, [_a], void 0, function* ({ route, email, token }) {
-            var _b, _c, _d;
+        socket.on('leave', async ({ route, email, token }) => {
             logger.debug(`Leave event received: route=${route}, email=${email}, token=${token}`);
             if (!route) {
                 logger.error('Route is missing');
@@ -121,16 +110,16 @@ function createServer(app) {
             logger.info(`Disconnection from route: ${route}`);
             logger.info(`Email received: ${email}`);
             try {
-                const user = yield (0, authController_1.verifyToken)(token);
+                const user = await (0, authController_1.verifyToken)(token);
                 if (!user || !user.email) {
                     logger.warn(`Invalid token or user email missing.`);
                     return;
                 }
                 const userEmail = user.email;
                 if (websocketConfig_1.default.some(includedRoute => route.includes(includedRoute))) {
-                    if (userSockets.has(userEmail) && ((_b = userSockets.get(userEmail)) === null || _b === void 0 ? void 0 : _b.has(socket.id))) {
-                        (_c = userSockets.get(userEmail)) === null || _c === void 0 ? void 0 : _c.delete(socket.id);
-                        if (((_d = userSockets.get(userEmail)) === null || _d === void 0 ? void 0 : _d.size) === 0) {
+                    if (userSockets.has(userEmail) && userSockets.get(userEmail)?.has(socket.id)) {
+                        userSockets.get(userEmail)?.delete(socket.id);
+                        if (userSockets.get(userEmail)?.size === 0) {
                             activeUser_1.activeUserEmails.delete(userEmail); // Remove from activeUserEmails
                             io.emit('playerCount', { activePlayers: activeUser_1.activeUserEmails.size });
                             userSockets.delete(userEmail);
@@ -138,7 +127,7 @@ function createServer(app) {
                             if (session) {
                                 session.endTime = new Date();
                                 logger.debug(`Final session data for ${userEmail}: ${JSON.stringify(session)}`);
-                                yield session_1.default.create({
+                                await session_1.default.create({
                                     email: userEmail,
                                     startTime: session.startTime,
                                     endTime: session.endTime,
@@ -161,8 +150,8 @@ function createServer(app) {
             catch (error) {
                 logger.error(`Error during leave event: ${error.message}`);
             }
-        }));
-        socket.on('disconnect', () => __awaiter(this, void 0, void 0, function* () {
+        });
+        socket.on('disconnect', async () => {
             logger.info(`Socket disconnected: ${socket.id}`);
             for (const [userEmail, sockets] of userSockets.entries()) {
                 if (sockets.has(socket.id)) {
@@ -175,7 +164,7 @@ function createServer(app) {
                         if (session) {
                             session.endTime = new Date();
                             logger.debug(`Final session data for ${userEmail}: ${JSON.stringify(session)}`);
-                            yield session_1.default.create({
+                            await session_1.default.create({
                                 email: userEmail,
                                 startTime: session.startTime,
                                 endTime: session.endTime,
@@ -191,7 +180,7 @@ function createServer(app) {
                     break;
                 }
             }
-        }));
+        });
     });
     return server;
 }

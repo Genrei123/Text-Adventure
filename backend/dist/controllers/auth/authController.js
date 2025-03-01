@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -23,7 +14,7 @@ const crypto_1 = __importDefault(require("crypto"));
 const generateVerificationToken = () => {
     return crypto_1.default.randomBytes(32).toString('hex');
 };
-const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const register = async (req, res) => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
     try {
         // Validate password
@@ -32,23 +23,23 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return;
         }
         // Check if user already exists
-        const existingUserByEmail = yield user_1.default.findOne({ where: { email } });
+        const existingUserByEmail = await user_1.default.findOne({ where: { email } });
         if (existingUserByEmail) {
             res.status(400).json({ message: 'Email already in use. Please try another email.' });
             return;
         }
-        const existingUserByUsername = yield user_1.default.findOne({ where: { username } });
+        const existingUserByUsername = await user_1.default.findOne({ where: { username } });
         if (existingUserByUsername) {
             res.status(400).json({ message: 'Username already exists. Please try another username.' });
             return;
         }
         // Hash the password
-        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        const hashedPassword = await bcrypt_1.default.hash(password, 10);
         // Generate verification token
         const verificationToken = generateVerificationToken();
         const verificationTokenExpires = new Date(Date.now() + 3600000); // 1 hour from now
         // Create a new user
-        const newUser = yield user_1.default.create({
+        const newUser = await user_1.default.create({
             username,
             email,
             password: hashedPassword,
@@ -62,9 +53,9 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             totalCoins: 0,
         });
         // Send verification email
-        const emailSent = yield (0, emailService_1.sendVerificationEmail)(email, verificationToken, username);
+        const emailSent = await (0, emailService_1.sendVerificationEmail)(email, verificationToken, username);
         if (!emailSent) {
-            yield newUser.destroy(); // Rollback user creation if email sending fails
+            await newUser.destroy(); // Rollback user creation if email sending fails
             res.status(500).json({ message: "Failed to send verification email. Please try again." });
             return;
         }
@@ -86,19 +77,19 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(500).json({ message: "Server error" });
         }
     }
-});
+};
 exports.register = register;
-const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         // Find the user by email
-        const user = yield user_1.default.findOne({ where: { email } });
+        const user = await user_1.default.findOne({ where: { email } });
         if (!user) {
             res.status(401).json({ message: 'Email not found. Please check your email or register.' });
             return;
         }
         // Check if the password is correct
-        const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
+        const isPasswordValid = await bcrypt_1.default.compare(password, user.password);
         if (!isPasswordValid) {
             res.status(401).json({ message: 'Incorrect account credentials. Please try again.' });
             return;
@@ -116,12 +107,12 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.error("Error during login:", error);
         res.status(500).json({ message: "Server error" });
     }
-});
+};
 exports.login = login;
-const verifyEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const verifyEmail = async (req, res) => {
     const { token } = req.params;
     try {
-        const user = yield user_1.default.findOne({ where: { verificationToken: token } });
+        const user = await user_1.default.findOne({ where: { verificationToken: token } });
         if (!user) {
             res.status(400).json({ message: "Invalid verification token" });
             return;
@@ -133,16 +124,16 @@ const verifyEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         user.emailVerified = true;
         user.verificationToken = null;
         user.verificationTokenExpires = null;
-        yield user.save();
+        await user.save();
         res.status(200).json({ message: "Email verified successfully" });
     }
     catch (error) {
         console.error("Error during email verification:", error);
         res.status(500).json({ message: "Server error" });
     }
-});
+};
 exports.verifyEmail = verifyEmail;
-const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const forgotPassword = async (req, res) => {
     console.log('Received forgot password request:', req.body);
     const { email } = req.body;
     try {
@@ -150,7 +141,7 @@ const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
             res.status(400).json({ message: 'Invalid email address' });
             return;
         }
-        const user = yield user_1.default.findOne({ where: { email } });
+        const user = await user_1.default.findOne({ where: { email } });
         if (!user) {
             res.status(400).json({ message: 'If this email exists in our system, you will receive a password reset link' });
             return;
@@ -158,8 +149,8 @@ const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const resetToken = crypto_1.default.randomBytes(32).toString('hex');
         user.resetPasswordToken = resetToken;
         user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour from now
-        yield user.save();
-        const emailSent = yield (0, emailService_1.sendResetPasswordEmail)(email, resetToken);
+        await user.save();
+        const emailSent = await (0, emailService_1.sendResetPasswordEmail)(email, resetToken);
         if (!emailSent) {
             throw new Error('Email sending failed');
         }
@@ -169,9 +160,9 @@ const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
         console.error('Error during forgot password:', error);
         res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
     }
-});
+};
 exports.forgotPassword = forgotPassword;
-const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const resetPassword = async (req, res) => {
     console.log('Reset Password Request:', req.body);
     const { token, newPassword } = req.body;
     try {
@@ -179,7 +170,7 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(400).json({ message: 'Invalid request. Token and new password are required.' });
             return;
         }
-        const user = yield user_1.default.findOne({
+        const user = await user_1.default.findOne({
             where: {
                 resetPasswordToken: token,
                 resetPasswordExpires: {
@@ -195,23 +186,23 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(400).json({ message: "Password must be at least 8 characters long and include uppercase letters, lowercase letters, numbers, and special characters." });
             return;
         }
-        const hashedPassword = yield bcrypt_1.default.hash(newPassword, 10);
+        const hashedPassword = await bcrypt_1.default.hash(newPassword, 10);
         user.password = hashedPassword;
         user.resetPasswordToken = null;
         user.resetPasswordExpires = null;
-        yield user.save();
+        await user.save();
         res.status(200).json({ message: 'Password reset successfully' });
     }
     catch (error) {
         console.error('Reset password error:', error);
         res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
     }
-});
+};
 exports.resetPassword = resetPassword;
-const validateResetToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const validateResetToken = async (req, res) => {
     const { token } = req.body;
     try {
-        const user = yield user_1.default.findOne({
+        const user = await user_1.default.findOne({
             where: {
                 resetPasswordToken: token,
                 resetPasswordExpires: {
@@ -229,23 +220,22 @@ const validateResetToken = (req, res) => __awaiter(void 0, void 0, void 0, funct
         console.error('Error during token validation:', error);
         res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
     }
-});
+};
 exports.validateResetToken = validateResetToken;
-const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const logout = async (req, res) => {
     res.clearCookie('token');
     res.status(200).json({ message: 'Logout successful', redirectUrl: '/login' });
-});
+};
 exports.logout = logout;
-const checkAuth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+const checkAuth = async (req, res) => {
     try {
-        const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
+        const token = req.headers.authorization?.split(' ')[1];
         if (!token) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
         }
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        const user = yield user_1.default.findOne({ where: { email: decoded.email } });
+        const user = await user_1.default.findOne({ where: { email: decoded.email } });
         if (!user) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
@@ -256,16 +246,16 @@ const checkAuth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.error('Error during authentication check:', error);
         res.status(401).json({ message: 'Unauthorized' });
     }
-});
+};
 exports.checkAuth = checkAuth;
 // New function to verify the token and return the user
-const verifyToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
+const verifyToken = async (token) => {
     try {
         if (!token) {
             throw new Error('Token is missing');
         }
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        const user = yield user_1.default.findOne({ where: { email: decoded.email } });
+        const user = await user_1.default.findOne({ where: { email: decoded.email } });
         if (!user) {
             throw new Error('User not found');
         }
@@ -275,12 +265,12 @@ const verifyToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
         console.error('Token verification error:', error.message);
         return null;
     }
-});
+};
 exports.verifyToken = verifyToken;
-const checkUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const checkUsername = async (req, res) => {
     const { username } = req.body;
     try {
-        const existingUser = yield user_1.default.findOne({ where: { username } });
+        const existingUser = await user_1.default.findOne({ where: { username } });
         if (!existingUser) {
             res.json({ available: true });
             return;
@@ -300,14 +290,14 @@ const checkUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const maxAttempts = 10;
         while (validSuggestions.length < 3 && attempts < maxAttempts) {
             const currentSuggestion = baseSuggestions[validSuggestions.length];
-            const exists = yield user_1.default.findOne({ where: { username: currentSuggestion } });
+            const exists = await user_1.default.findOne({ where: { username: currentSuggestion } });
             if (!exists) {
                 validSuggestions.push(currentSuggestion);
             }
             else {
                 // If suggestion exists, create a new one
                 const newSuggestion = `${username}${Math.floor(Math.random() * 9000) + 1000}`;
-                const newExists = yield user_1.default.findOne({ where: { username: newSuggestion } });
+                const newExists = await user_1.default.findOne({ where: { username: newSuggestion } });
                 if (!newExists) {
                     validSuggestions.push(newSuggestion);
                 }
@@ -323,12 +313,12 @@ const checkUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         console.error('Error checking username:', error);
         res.status(500).json({ message: 'Server error' });
     }
-});
+};
 exports.checkUsername = checkUsername;
-const checkEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const checkEmail = async (req, res) => {
     const { email } = req.body;
     try {
-        const existingUser = yield user_1.default.findOne({ where: { email } });
+        const existingUser = await user_1.default.findOne({ where: { email } });
         res.json({
             available: !existingUser
         });
@@ -337,6 +327,6 @@ const checkEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.error('Error checking email:', error);
         res.status(500).json({ message: 'Server error' });
     }
-});
+};
 exports.checkEmail = checkEmail;
 //# sourceMappingURL=authController.js.map

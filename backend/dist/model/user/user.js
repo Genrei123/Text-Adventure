@@ -9,9 +9,9 @@ class User extends sequelize_1.Model {
 }
 User.init({
     id: { type: sequelize_1.DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    username: { type: sequelize_1.DataTypes.STRING, allowNull: false, unique: true },
-    email: { type: sequelize_1.DataTypes.STRING, allowNull: false, unique: true, validate: { isEmail: true } },
+    email: { type: sequelize_1.DataTypes.STRING, allowNull: false, unique: true },
     password: { type: sequelize_1.DataTypes.STRING, allowNull: false },
+    username: { type: sequelize_1.DataTypes.STRING, allowNull: false, unique: true },
     private: { type: sequelize_1.DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     model: { type: sequelize_1.DataTypes.STRING, allowNull: false, defaultValue: 'gpt-4' },
     admin: { type: sequelize_1.DataTypes.BOOLEAN, allowNull: false, defaultValue: false },

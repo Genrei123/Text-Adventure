@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -19,8 +10,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const shopController_1 = require("./shopController"); // Import the getItemDetails function
 dotenv_1.default.config();
 // Webhook handler for payment callbacks at buy item
-const handlePaymentCallback = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+const handlePaymentCallback = async (req, res) => {
     const { data, event } = req.body;
     const { id: product_id, status, reference_id, email, amount, payment_method } = data;
     const webhookToken = req.headers['x-callback-token'];
@@ -36,10 +26,10 @@ const handlePaymentCallback = (req, res) => __awaiter(void 0, void 0, void 0, fu
 Status: ${status}
 Event: ${event}`);
     // Extract the payment method
-    const paymentMethod = ((_a = payment_method === null || payment_method === void 0 ? void 0 : payment_method.ewallet) === null || _a === void 0 ? void 0 : _a.channel_code) || 'Unknown';
+    const paymentMethod = payment_method?.ewallet?.channel_code || 'Unknown';
     console.log(`Payment Method: ${paymentMethod}`);
     // Extract the transaction ID
-    const transactionId = (payment_method === null || payment_method === void 0 ? void 0 : payment_method.id) || 'Unknown';
+    const transactionId = payment_method?.id || 'Unknown';
     console.log(`Transaction ID: ${transactionId}`);
     if (event === 'payment_method.activated') {
         console.log(`Payment method activated for order: ${reference_id}`);
@@ -68,18 +58,18 @@ Product ID: ${product_id}`);
             console.log(`Processing payment for order: ${reference_id}`);
             console.log(`-----------------------------------------------`);
             console.log(` `);
-            const user = yield user_1.default.findOne({ where: { username } });
+            const user = await user_1.default.findOne({ where: { username } });
             if (!user) {
                 console.log(`User not found for order: ${reference_id}`);
                 res.status(404).json({ message: 'User not found' });
                 return;
             }
-            const item = yield (0, shopController_1.getItemDetails)(itemId);
+            const item = await (0, shopController_1.getItemDetails)(itemId);
             // Update user's coins
             user.totalCoins = (user.totalCoins || 0) + item.coins;
-            yield user.save();
+            await user.save();
             // Insert order data into Order table
-            yield order_1.default.create({
+            await order_1.default.create({
                 order_id: reference_id,
                 email: user.email,
                 client_reference_id: transactionId,
@@ -139,6 +129,6 @@ Total Coins Balance: ${user.totalCoins}
         console.log(`Payment status for order ${reference_id}: ${status}`);
         res.status(200).json({ message: `Payment status: ${status}` });
     }
-});
+};
 exports.handlePaymentCallback = handlePaymentCallback;
 //# sourceMappingURL=shopWebhookController.js.map

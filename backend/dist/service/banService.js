@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -22,14 +13,16 @@ const user_1 = __importDefault(require("../model/user/user"));
  * @returns The created ban.
  * @throws Error if the user is not found or if there is an error creating the ban.
  */
-const createBan = (banData) => __awaiter(void 0, void 0, void 0, function* () {
+const createBan = async (banData) => {
     try {
-        const user = yield user_1.default.findByPk(banData.userId);
+        const user = await user_1.default.findByPk(banData.userId);
         if (!user) {
             throw new Error('User not found');
         }
-        const ban = yield ban_1.default.create(Object.assign(Object.assign({}, banData), { username: user.username // Add username field
-         }));
+        const ban = await ban_1.default.create({
+            ...banData,
+            username: user.username // Add username field
+        });
         console.log('Ban created successfully:', ban);
         return ban;
     }
@@ -37,7 +30,7 @@ const createBan = (banData) => __awaiter(void 0, void 0, void 0, function* () {
         console.error('Error creating ban:', error);
         throw new Error('Error creating ban');
     }
-});
+};
 exports.createBan = createBan;
 /**
  * Updates a ban with a comment.
@@ -45,80 +38,80 @@ exports.createBan = createBan;
  * @param comment - The comment to add.
  * @throws Error if there is an error updating the ban.
  */
-const updateBan = (id, comment) => __awaiter(void 0, void 0, void 0, function* () {
+const updateBan = async (id, comment) => {
     try {
-        yield ban_1.default.update({ comment }, { where: { id } });
+        await ban_1.default.update({ comment }, { where: { id } });
         console.log('Ban updated successfully');
     }
     catch (error) {
         console.error('Error updating ban:', error);
         throw new Error('Error updating ban');
     }
-});
+};
 exports.updateBan = updateBan;
 /**
  * Fetches all bans.
  * @returns A list of all bans.
  * @throws Error if there is an error fetching the bans.
  */
-const getAllBans = () => __awaiter(void 0, void 0, void 0, function* () {
+const getAllBans = async () => {
     try {
-        const bans = yield ban_1.default.findAll();
+        const bans = await ban_1.default.findAll();
         return bans;
     }
     catch (error) {
         console.error('Error fetching bans:', error);
         throw new Error('Error fetching bans');
     }
-});
+};
 exports.getAllBans = getAllBans;
 /**
  * Fetches temporary bans.
  * @returns A list of temporary bans.
  * @throws Error if there is an error fetching the temporary bans.
  */
-const getTemporaryBans = () => __awaiter(void 0, void 0, void 0, function* () {
+const getTemporaryBans = async () => {
     try {
-        const bans = yield ban_1.default.findAll({ where: { banType: 'temporary' } });
+        const bans = await ban_1.default.findAll({ where: { banType: 'temporary' } });
         return bans;
     }
     catch (error) {
         console.error('Error fetching temporary bans:', error);
         throw new Error('Error fetching temporary bans');
     }
-});
+};
 exports.getTemporaryBans = getTemporaryBans;
 /**
  * Fetches permanent bans.
  * @returns A list of permanent bans.
  * @throws Error if there is an error fetching the permanent bans.
  */
-const getPermanentBans = () => __awaiter(void 0, void 0, void 0, function* () {
+const getPermanentBans = async () => {
     try {
-        const bans = yield ban_1.default.findAll({ where: { banType: 'permanent' } });
+        const bans = await ban_1.default.findAll({ where: { banType: 'permanent' } });
         return bans;
     }
     catch (error) {
         console.error('Error fetching permanent bans:', error);
         throw new Error('Error fetching permanent bans');
     }
-});
+};
 exports.getPermanentBans = getPermanentBans;
 /**
  * Deletes a ban by ID.
  * @param id - The ID of the ban to delete.
  * @throws Error if there is an error deleting the ban.
  */
-const deleteBan = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteBan = async (id) => {
     try {
-        yield ban_1.default.destroy({ where: { id } });
+        await ban_1.default.destroy({ where: { id } });
         console.log('Ban deleted successfully');
     }
     catch (error) {
         console.error('Error deleting ban:', error);
         throw new Error('Error deleting ban');
     }
-});
+};
 exports.deleteBan = deleteBan;
 /**
  * Searches for users by username.
@@ -126,9 +119,9 @@ exports.deleteBan = deleteBan;
  * @returns A list of users matching the search term.
  * @throws Error if there is an error searching for users.
  */
-const searchUsers = (term) => __awaiter(void 0, void 0, void 0, function* () {
+const searchUsers = async (term) => {
     try {
-        const users = yield user_1.default.findAll({
+        const users = await user_1.default.findAll({
             where: {
                 username: {
                     [sequelize_1.Op.iLike]: `%${term}%`
@@ -142,6 +135,6 @@ const searchUsers = (term) => __awaiter(void 0, void 0, void 0, function* () {
         console.error('Error searching users:', error);
         throw new Error('Error searching users');
     }
-});
+};
 exports.searchUsers = searchUsers;
 //# sourceMappingURL=banService.js.map

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import sequelize from '../service/database';
-import { QueryResult } from '../interfaces/database';
+import sequelize from '../config/sequelize';
+import { QueryTypes } from 'sequelize';
 
 export const getPlayers = async (req: Request, res: Response) => {
   const { search, status, subscription, sortBy, sortOrder, page, limit } = req.query;
@@ -13,9 +13,9 @@ export const getPlayers = async (req: Request, res: Response) => {
   query += ` ORDER BY ${sortBy} ${sortOrder} LIMIT ${limit} OFFSET ${offset}`;
 
   try {
-    const result = await sequelize.query<QueryResult>(query, { type: sequelize.QueryTypes.SELECT });
-    const total = await sequelize.query<QueryResult>('SELECT COUNT(*) FROM users', { type: sequelize.QueryTypes.SELECT });
-    res.json({ items: result, total: parseInt(total[0].count) });
+    const result = await sequelize.query(query, { type: QueryTypes.SELECT });
+    const total = await sequelize.query('SELECT COUNT(*) FROM users', { type: QueryTypes.SELECT });
+    res.json({ items: result, total: parseInt((total[0] as { count: string }).count) });
   } catch (error) {
     console.error('Error fetching players:', error);
     res.status(500).json({ error: 'Error fetching players' });

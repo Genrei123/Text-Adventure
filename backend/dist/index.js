@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -71,18 +62,18 @@ app.use('/api/players', players_1.default); // Use the new players route
 const authRouter = (0, authRoutes_1.default)(frontendUrl);
 app.use('/auth', authRouter);
 const server = (0, socket_1.createServer)(app);
-server.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
+server.listen(PORT, async () => {
     try {
         //await database.authenticate();
-        yield (0, models_1.initializeModels)();
+        await (0, models_1.initializeModels)();
         console.log('Connection to the database has been established successfully.');
-        yield user_1.default.sync({ alter: true });
+        await user_1.default.sync({ alter: true });
         console.log('User table has been synchronized.');
     }
     catch (error) {
         console.error('Unable to connect to the database:', error);
     }
     console.log(`Server is running on port ${PORT}`);
-}));
+});
 exports.default = app;
 //# sourceMappingURL=index.js.map

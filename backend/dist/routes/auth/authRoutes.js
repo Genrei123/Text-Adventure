@@ -21,10 +21,9 @@ const createAuthRouter = (frontendUrl) => {
     });
     router.get('/google', passport_1.default.authenticate('google', { scope: ['profile', 'email'] }));
     router.get('/google/callback', passport_1.default.authenticate('google', { failureRedirect: '/' }), (req, res) => {
-        var _a;
         if (req.user) {
             const user = req.user;
-            const username = user.displayName || ((_a = user.emails[0]) === null || _a === void 0 ? void 0 : _a.value);
+            const username = user.displayName || user.emails[0]?.value;
             const token = jsonwebtoken_1.default.sign({ id: user.id, username }, process.env.JWT_SECRET, { expiresIn: '1h' });
             res.cookie('token', token, { httpOnly: true });
             res.redirect(`${frontendUrl}/home?username=${encodeURIComponent(username)}`);

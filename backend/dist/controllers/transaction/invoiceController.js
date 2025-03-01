@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createInvoice = void 0;
 const xenditClient_1 = require("../../service/transaction/xenditClient");
@@ -26,7 +17,7 @@ const logError = (error) => {
     }
 };
 // Create an invoice
-const createInvoice = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createInvoice = async (req, res) => {
     try {
         console.log('Request received:', req.body);
         // Validate request body
@@ -44,7 +35,7 @@ const createInvoice = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             invoiceDuration: invoice_duration
         };
         console.log('Invoice data:', invoiceData);
-        const response = yield xenditClient_1.Invoice.createInvoice({ data: invoiceData });
+        const response = await xenditClient_1.Invoice.createInvoice({ data: invoiceData });
         console.log('Invoice created successfully:', response);
         res.status(201).json(response);
     }
@@ -60,6 +51,6 @@ const createInvoice = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(500).json({ error: error.message });
         }
     }
-});
+};
 exports.createInvoice = createInvoice;
 //# sourceMappingURL=invoiceController.js.map

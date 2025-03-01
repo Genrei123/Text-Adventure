@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGameState = exports.getInventory = exports.useItem = exports.changeLocation = void 0;
 const chatService_1 = require("../../../../service/chat/chatService"); // Adjust path to your service file
@@ -48,13 +39,13 @@ const locations = {
     },
 };
 // Controller functions
-const changeLocation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const changeLocation = async (req, res) => {
     try {
         const playerId = parseInt(req.params.playerId || "1", 10);
         const gameId = parseInt(req.params.gameId || "1", 10);
         const { direction } = req.body;
         // Validate user and game
-        yield (0, chatService_1.validateUserAndGame)(playerId, gameId);
+        await (0, chatService_1.validateUserAndGame)(playerId, gameId);
         if (!direction || typeof direction !== "string") {
             return res.status(400).json({ message: "Direction is required" });
         }
@@ -77,9 +68,9 @@ const changeLocation = (req, res) => __awaiter(void 0, void 0, void 0, function*
         gameState[`player${playerId}`].locationId = newLocationId;
         const newLocation = locations[newLocationId];
         // Get or create session
-        const sessionId = yield (0, chatService_1.findOrCreateSession)(playerId, gameId);
+        const sessionId = await (0, chatService_1.findOrCreateSession)(playerId, gameId);
         // Get conversation history for context
-        const history = yield (0, chatService_1.getConversationHistory)(sessionId, playerId, gameId);
+        const history = await (0, chatService_1.getConversationHistory)(sessionId, playerId, gameId);
         // Prepare prompt for AI narrator with explicit ChatMessage type
         const prompt = [
             ...history,
@@ -89,8 +80,8 @@ const changeLocation = (req, res) => __awaiter(void 0, void 0, void 0, function*
             }
         ];
         // Call OpenAI for narration
-        const narration = yield (0, chatService_1.callOpenAI)(prompt);
-        yield (0, chatService_1.storeChatMessage)(sessionId, playerId, gameId, "assistant", narration);
+        const narration = await (0, chatService_1.callOpenAI)(prompt);
+        await (0, chatService_1.storeChatMessage)(sessionId, playerId, gameId, "assistant", narration);
         // Respond with the new location and narration
         res.status(200).json({
             message: "Location changed successfully",
@@ -107,15 +98,15 @@ const changeLocation = (req, res) => __awaiter(void 0, void 0, void 0, function*
         console.error("Error in changeLocation:", error);
         res.status(500).json({ message: "Internal server error" });
     }
-});
+};
 exports.changeLocation = changeLocation;
-const useItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const useItem = async (req, res) => {
     try {
         const playerId = parseInt(req.params.playerId || "1", 10);
         const gameId = parseInt(req.params.gameId || "1", 10);
         const { itemId, target } = req.body;
         // Validate user and game
-        yield (0, chatService_1.validateUserAndGame)(playerId, gameId);
+        await (0, chatService_1.validateUserAndGame)(playerId, gameId);
         if (!itemId || typeof itemId !== "string") {
             return res.status(400).json({ message: "Item ID is required" });
         }
@@ -154,9 +145,9 @@ const useItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(400).json({ message: "A target is required to use this item." });
         }
         // Get or create session
-        const sessionId = yield (0, chatService_1.findOrCreateSession)(playerId, gameId);
+        const sessionId = await (0, chatService_1.findOrCreateSession)(playerId, gameId);
         // Get conversation history for context
-        const history = yield (0, chatService_1.getConversationHistory)(sessionId, playerId, gameId);
+        const history = await (0, chatService_1.getConversationHistory)(sessionId, playerId, gameId);
         // Prepare prompt for AI narrator
         const prompt = [
             ...history,
@@ -166,8 +157,8 @@ const useItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
         ];
         // Call OpenAI for narration
-        const narration = yield (0, chatService_1.callOpenAI)(prompt);
-        yield (0, chatService_1.storeChatMessage)(sessionId, playerId, gameId, "assistant", narration);
+        const narration = await (0, chatService_1.callOpenAI)(prompt);
+        await (0, chatService_1.storeChatMessage)(sessionId, playerId, gameId, "assistant", narration);
         // Respond with the result
         res.status(200).json({
             message: resultMessage,
@@ -179,20 +170,20 @@ const useItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.error("Error in useItem:", error);
         res.status(500).json({ message: "Internal server error" });
     }
-});
+};
 exports.useItem = useItem;
-const getInventory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getInventory = async (req, res) => {
     try {
         const playerId = parseInt(req.params.playerId || "1", 10);
         const gameId = parseInt(req.params.gameId || "1", 10);
         console.log(`Fetching for playerId: ${playerId}, gameId: ${gameId}`);
         // Validate user and game
-        yield (0, chatService_1.validateUserAndGame)(playerId, gameId);
+        await (0, chatService_1.validateUserAndGame)(playerId, gameId);
         const playerKey = `player${playerId}`;
         // Check if the player exists in string format (for backward compatibility)
         if (!gameState[playerKey] && gameState["player1"] && playerId === 1) {
             // Copy the existing player1 state to ensure we use the right format
-            gameState[playerKey] = Object.assign({}, gameState["player1"]);
+            gameState[playerKey] = { ...gameState["player1"] };
         }
         // Initialize player state if not exists with the default rusty key
         if (!gameState[playerKey]) {
@@ -219,14 +210,14 @@ const getInventory = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         console.error("Error in getInventory:", error instanceof Error ? `${error.message} ${error.stack}` : error);
         res.status(500).json({ message: "Internal server error", error: error instanceof Error ? error.message : 'Unknown error' });
     }
-});
+};
 exports.getInventory = getInventory;
-const getGameState = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getGameState = async (req, res) => {
     try {
         const playerId = parseInt(req.params.playerId || "1", 10);
         const gameId = parseInt(req.params.gameId || "1", 10);
         // Validate user and game
-        yield (0, chatService_1.validateUserAndGame)(playerId, gameId);
+        await (0, chatService_1.validateUserAndGame)(playerId, gameId);
         // Reference to the global gameState and locations objects
         // Make sure these are accessible in this scope
         const playerKey = `player${playerId}`;
@@ -275,6 +266,6 @@ const getGameState = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             error: error instanceof Error ? error.message : 'Unknown error'
         });
     }
-});
+};
 exports.getGameState = getGameState;
 //# sourceMappingURL=nihController.js.map

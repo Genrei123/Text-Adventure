@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -19,9 +10,9 @@ const sequelize_1 = require("sequelize"); // Import Sequelize operators
 const session_1 = __importDefault(require("../../model/session")); // Import Session model
 const router = express_1.default.Router();
 // Endpoint to retrieve daily activities
-router.get("/daily-activities", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get("/daily-activities", async (req, res) => {
     try {
-        const activities = yield session_1.default.findAll({
+        const activities = await session_1.default.findAll({
             where: {
                 createdAt: {
                     [sequelize_1.Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)), // Get activities from the start of the day
@@ -50,7 +41,7 @@ router.get("/daily-activities", (req, res) => __awaiter(void 0, void 0, void 0, 
     catch (error) {
         res.status(500).json({ error: 'Failed to retrieve activities' });
     }
-}));
+});
 // Existing endpoint to retrieve player activity by email
 router.get("/player-activity/:email", (req, res) => {
     const { email } = req.params;
