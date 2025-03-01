@@ -60,6 +60,12 @@ const AdminDashboard: React.FC = () => {
     limit: 10,
     total: 0
   });
+  const [newTask, setNewTask] = useState('');
+  const [tasks, setTasks] = useState<Array<{
+    id: number;
+    text: string;
+    completed: boolean;
+  }>>([]);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
