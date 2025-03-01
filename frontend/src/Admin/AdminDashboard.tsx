@@ -3,12 +3,24 @@ import {
   ArrowLeftRight, Users, UserPlus, Activity, UserX, SortAsc, SortDesc, Search, Clock, Trash2, Plus
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Paper, TextField, Button, Chip, FormControl, Select, MenuItem, InputLabel, CircularProgress } from '@mui/material';
+import { Paper, TextField, Button, Chip, FormControl, Select, MenuItem, InputLabel, CircularProgress, Checkbox, IconButton } from '@mui/material';
 import MetricCard from './MetricCard';
 import SidebarItem from './SidebarItem';
 import BanForm from '../components/BanForm';
 import BannedPlayersList from '../components/BannedPlayersList';
 import { fetchDashboardStats, fetchPlayers, fetchGamesCount } from '../api/admin';
+import axios from 'axios';
+import { Player, Game } from '../types';
+
+// Add this at the top of your AdminDashboard component file
+const activeUsersData = [
+  { time: '00:00', users: 400 },
+  { time: '04:00', users: 800 },
+  { time: '08:00', users: 600 },
+  { time: '12:00', users: 1200 },
+  { time: '16:00', users: 900 },
+  { time: '20:00', users: 1500 },
+];
 
 // Add above your component declaration
 const mockRecentGames = [
@@ -34,8 +46,9 @@ const AdminDashboard: React.FC = () => {
     activePlayers: 0,
     offlinePlayers: 0,
     activeGames: 0
-  });]
-  const [players, setPlayers] = useState([]);
+  });
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [recentGames, setRecentGames] = useState<Game[]>(mockRecentGames);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -47,20 +60,6 @@ const AdminDashboard: React.FC = () => {
     limit: 10,
     total: 0
   });
-
-  // Add state for active users data
-  const [activeUsersData, setActiveUsersData] = useState<Array<{ time: string; users: number }>>([]);
-
-  // Then use in your state initialization
-  const [recentGames, setRecentGames] = useState(mockRecentGames);
-
-  // Add to your state declarations
-  const [tasks, setTasks] = useState<Array<{
-    id: number;
-    text: string;
-    completed: boolean;
-  }>>([]);
-  const [newTask, setNewTask] = useState('');
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -97,10 +96,6 @@ const AdminDashboard: React.FC = () => {
           total: playersData.total
         }));
 
-        // Fetch active users data
-        const response = await axios.get('/api/metrics/active-users');
-        setActiveUsersData(response.data);
-
         setRecentGames(gamesResponse.data);
 
       } catch (error) {
@@ -113,7 +108,6 @@ const AdminDashboard: React.FC = () => {
     loadData();
   }, [searchQuery, statusFilter, subscriptionFilter, sortBy, sortOrder, pagination.page]);
 
-  // Add these handler functions
   const handleAddTask = () => {
     if (newTask.trim()) {
       setTasks([...tasks, {
@@ -465,8 +459,9 @@ const AdminDashboard: React.FC = () => {
               {/* Pagination Controls */}
               <div className="flex justify-between items-center mt-4">
                 <div className="text-sm text-gray-600">
-                  Showing {(pagination.page - 1) * pagination.limit + 1} - 
-                  {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
+                  {`Showing ${((pagination.page - 1) * pagination.limit) + 1} - 
+                  ${Math.min(pagination.page * pagination.limit, pagination.total)} 
+                  of ${pagination.total}`}
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -494,19 +489,3 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
-
-// Add to your games controller
-export const getRecentGames = async (req: Request, res: Response) => {
-  try {
-    const games = await sequelize.query(`
-      SELECT title, description as excerpt, "createdAt" as created, status 
-      FROM games 
-      ORDER BY "createdAt" DESC 
-      LIMIT 5
-    `, { type: QueryTypes.SELECT });
-    
-    res.json(games);
-  } catch (error) {
-    res.status(500).json({ error: 'Error fetching recent games' });
-  }
-};
