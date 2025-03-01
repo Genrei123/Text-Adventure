@@ -22,7 +22,8 @@ import paymentRoutes from './routes/transaction/shopRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
 import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation
 import banRoutes from './routes/banRoutes';
-
+import metricsRoutes from './routes/metrics'; // Import the new metrics route
+import playersRoutes from './routes/players'; // Import the new players route
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -61,7 +62,8 @@ app.use('/nih', nihRoutes);
 app.use('/openai', openaiRoute); // Image generation
 app.use('/bans', banRoutes);
 app.use('/api/bans', banRoutes);  // Fixes 404 for /api/bans
-
+app.use('/api/metrics', metricsRoutes); // Use the new metrics route
+app.use('/api/players', playersRoutes); // Use the new players route
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);

@@ -1,0 +1,24 @@
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+export const fetchDashboardStats = async () => {
+  const response = await axios.get(`${API_URL}/api/metrics`);
+  return response.data;
+};
+
+export const fetchPlayers = async (params: {
+  search?: string;
+  status?: string;
+  subscription?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}) => {
+  const response = await axios.get(`${API_URL}/api/players`, { params });
+  return response.data;
+};
+
+export const fetchGamesCount = async () => {
+  const response = await axios.get(`${API_URL}/api/metrics/games`);
+  return response.data;
+};

@@ -1,168 +1,74 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
-  ArrowLeftRight, Users, UserPlus, BookOpen, 
-  BarChart3, Ban, Plus, CheckCircle, AlertCircle, Clock, Trash2, Wifi, WifiOff, UserCheck, UserX, SortAsc, SortDesc
+  ArrowLeftRight, Users, UserPlus, Activity, UserX, SortAsc, SortDesc, Search
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Paper, TextField, Button, Chip, Checkbox, IconButton, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { Paper, TextField, Button, Chip, FormControl, Select, MenuItem, InputLabel, CircularProgress } from '@mui/material';
 import MetricCard from './MetricCard';
 import SidebarItem from './SidebarItem';
 import BanForm from '../components/BanForm';
 import BannedPlayersList from '../components/BannedPlayersList';
-
-// Mock data
-const activeUsersData = [
-  { time: '00:00', users: 400 },
-  { time: '04:00', users: 800 },
-  { time: '08:00', users: 600 },
-  { time: '12:00', users: 1200 },
-  { time: '16:00', users: 900 },
-  { time: '20:00', users: 1500 },
-];
-
-const recentGames = [
-  {
-    title: "The Future of Renewable Energy",
-    excerpt: "Innovations and Challenges Ahead...",
-    created: "32 minutes ago",
-    status: "draft",
-  },
-  {
-    title: "AI in Modern Healthcare",
-    excerpt: "Exploring the Impact of Artificial Intelligence...",
-    created: "1 day ago",
-    status: "published",
-  },
-];
-
-const initialTasks = [
-  { id: 1, text: "Prepare Monthly Financial Report", completed: false },
-  { id: 2, text: "Review Player Ban Appeals", completed: true },
-  { id: 3, text: "Update Game Content Schedule", completed: false },
-];
-
-const playerStats = {
-  totalRegistered: 4876,
-  activePlayers: 2345,
-  offlinePlayers: 2531,
-  activeSessions: 1892,
-};
-
-const playerList = [
-  {
-    username: "PP_Namias",
-    subscription: "Premium",
-    status: "online",
-    registered: "2025-03-01",
-    lastActivity: "2025-03-20T14:30:00",
-    coinsBalance: 2450
-  },
-  {
-    username: "Catchers",
-    subscription: "Basic",
-    status: "offline",
-    registered: "2025-02-14",
-    lastActivity: "2025-03-18T10:00:00",
-    coinsBalance: 1200
-  },
-  {
-    username: "PP_Namias99",
-    subscription: "Pro",
-    status: "online",
-    registered: "2025-03-01",
-    lastActivity: "2025-03-19T16:45:00",
-    coinsBalance: 3000
-  },
-  {
-    username: "Zyciann",
-    subscription: "Free",
-    status: "offline",
-    registered: "2025-02-25",
-    lastActivity: "2025-03-17T08:30:00",
-    coinsBalance: 500
-  },
-  {
-    username: "warriorph",
-    subscription: "Premium",
-    status: "offline",
-    registered: "2025-02-25",
-    lastActivity: "2025-03-15T14:00:00",
-    coinsBalance: 1500
-  },
-  {
-    username: "caps_002",
-    subscription: "Basic",
-    status: "offline",
-    registered: "2025-02-25",
-    lastActivity: "2025-03-14T09:00:00",
-    coinsBalance: 800
-  },
-  {
-    username: "mika76",
-    subscription: "Pro",
-    status: "offline",
-    registered: "2025-02-25",
-    lastActivity: "2025-03-13T11:30:00",
-    coinsBalance: 2200
-  },
-  {
-    username: "NANyopo",
-    subscription: "Free",
-    status: "offline",
-    registered: "2025-02-26",
-    lastActivity: "2025-03-12T07:45:00",
-    coinsBalance: 600
-  },
-];
+import { fetchDashboardStats, fetchPlayers, fetchGamesCount } from '../api/admin';
 
 const AdminDashboard: React.FC = () => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeSection, setActiveSection] = useState('dashboard');
-  const [newTask, setNewTask] = useState('');
-  const [tasks, setTasks] = useState(initialTasks);
-  const [bans, setBans] = useState([]);
-  const [sortBy, setSortBy] = useState('lastActivity');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [stats, setStats] = useState({
+    totalVerified: 0,
+    activePlayers: 0,
+    offlinePlayers: 0,
+    activeGames: 0
+  });
+  const [players, setPlayers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [subscriptionFilter, setSubscriptionFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('lastActivity');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0
+  });
 
-  const handleAddTask = () => {
-    if (newTask.trim()) {
-      setTasks([...tasks, { id: Date.now(), text: newTask, completed: false }]);
-      setNewTask('');
-    }
-  };
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [dashboardStats, gamesCount] = await Promise.all([
+          fetchDashboardStats(),
+          fetchGamesCount()
+        ]);
 
-  const handleDeleteTask = (taskId: number) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
-  };
+        setStats({
+          totalVerified: dashboardStats.emailVerifiedCount,
+          activePlayers: dashboardStats.activePlayersCount,
+          offlinePlayers: dashboardStats.offlinePlayersCount,
+          activeGames: gamesCount.count
+        });
 
-  const handleBan = (newBan) => {
-    setBans([...bans, newBan]);
-  };
+        const playersData = await fetchPlayers({
+          search: searchQuery,
+          status: statusFilter,
+          subscription: subscriptionFilter,
+          sortBy,
+          sortOrder,
+          page: pagination.page,
+          limit: pagination.limit
+        });
+        setPlayers(playersData.items);
+        setPagination(prev => ({
+          ...prev,
+          total: playersData.total
+        }));
 
-  const handleUnban = (banId) => {
-    setBans(bans.filter(ban => ban.id !== banId));
-  };
-
-  const filteredPlayers = playerList
-    .filter(player => 
-      (statusFilter === 'all' || player.status === statusFilter) &&
-      (subscriptionFilter === 'all' || player.subscription === subscriptionFilter)
-    )
-    .sort((a, b) => {
-      const modifier = sortOrder === 'asc' ? 1 : -1;
-      switch(sortBy) {
-        case 'lastActivity':
-          return (new Date(a.lastActivity).getTime() - new Date(b.lastActivity).getTime()) * modifier;
-        case 'coinsBalance':
-          return (a.coinsBalance - b.coinsBalance) * modifier;
-        case 'registered':
-          return (new Date(a.registered).getTime() - new Date(b.registered).getTime()) * modifier;
-        default:
-          return 0;
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
       }
-    });
+    };
+
+    loadData();
+  }, [searchQuery, statusFilter, subscriptionFilter, sortBy, sortOrder, pagination.page]);
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -180,17 +86,10 @@ const AdminDashboard: React.FC = () => {
 
         <div className="flex-1 p-2 space-y-1">
           <SidebarItem 
-            icon={<BarChart3 className="w-5 h-5" />} 
+            icon={<Activity className="w-5 h-5" />} 
             label="Dashboard" 
             active={activeSection === 'dashboard'} 
             onClick={() => setActiveSection('dashboard')}
-            collapsed={sidebarCollapsed}
-          />
-          <SidebarItem 
-            icon={<Ban className="w-5 h-5" />} 
-            label="Banned Players" 
-            active={activeSection === 'banned'} 
-            onClick={() => setActiveSection('banned')}
             collapsed={sidebarCollapsed}
           />
           <SidebarItem 
@@ -212,32 +111,26 @@ const AdminDashboard: React.FC = () => {
             {/* Metric Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard 
-                title="Total Registered Users" 
-                value={30000} 
+                title="Total Verified" 
+                value={stats.totalVerified} 
                 percentChange={2.6} 
-                period="last 7 days"
                 icon={<UserPlus className="w-6 h-6" />}
               />
               <MetricCard 
-                title="Total Active Users" 
-                value={18765} 
+                title="Active Players" 
+                value={stats.activePlayers} 
                 percentChange={2.6} 
-                period="last 7 days"
                 icon={<Users className="w-6 h-6" />}
               />
               <MetricCard 
-                title="Total Players" 
-                value={4876} 
-                percentChange={0.2} 
-                period="last 7 days"
-                icon={<Users className="w-6 h-6" />}
+                title="Offline Players" 
+                value={stats.offlinePlayers} 
+                icon={<UserX className="w-6 h-6" />}
               />
               <MetricCard 
-                title="Stories Created" 
-                value={678} 
-                percentChange={-0.1} 
-                period="last 7 days"
-                icon={<BookOpen className="w-6 h-6" />}
+                title="Active Games" 
+                value={stats.activeGames}
+                icon={<Activity className="w-6 h-6" />}
               />
             </div>
 
@@ -350,48 +243,53 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
-        {activeSection === 'banned' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Paper className="p-6 rounded-xl shadow-sm">
-              <h2 className="text-2xl font-semibold mb-4">Ban a Player</h2>
-              <BanForm onBan={handleBan} />
-            </Paper>
-            <Paper className="p-6 rounded-xl shadow-sm">
-              <BannedPlayersList bans={bans} onUnban={handleUnban} />
-            </Paper>
-          </div>
-        )}
-
         {activeSection === 'players' && (
           <div className="space-y-6">
             {/* Player Statistics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <MetricCard 
-                title="Total Registered" 
-                value={playerStats.totalRegistered}
+                title="Total Verified" 
+                value={stats.totalVerified} 
+                percentChange={2.6} 
                 icon={<UserPlus className="w-6 h-6" />}
               />
               <MetricCard 
                 title="Active Players" 
-                value={playerStats.activePlayers}
-                percentChange={2.6}
-                icon={<UserCheck className="w-6 h-6" />}
+                value={stats.activePlayers} 
+                percentChange={2.6} 
+                icon={<Users className="w-6 h-6" />}
               />
               <MetricCard 
                 title="Offline Players" 
-                value={playerStats.offlinePlayers}
+                value={stats.offlinePlayers} 
                 icon={<UserX className="w-6 h-6" />}
               />
               <MetricCard 
-                title="Active Sessions" 
-                value={playerStats.activeSessions}
-                icon={<Wifi className="w-6 h-6" />}
+                title="Active Games" 
+                value={stats.activeGames}
+                icon={<Activity className="w-6 h-6" />}
               />
             </div>
 
-            {/* Filter/Sort Controls */}
+            {/* Search and Filter Controls */}
             <Paper className="p-4 rounded-xl shadow-sm">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+                {/* Search Input */}
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  placeholder="Search players..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <Search className="w-4 h-4 mr-2 text-gray-400" />
+                    ),
+                  }}
+                />
+
+                {/* Existing filter controls */}
                 <FormControl size="small" fullWidth>
                   <InputLabel>Status</InputLabel>
                   <Select
@@ -455,7 +353,7 @@ const AdminDashboard: React.FC = () => {
               <div className="space-y-4">
                 {/* Table Header */}
                 <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-gray-50 rounded-lg">
-                  <div className="col-span-4 font-medium">Username</div>
+                  <div className="col-span-3 font-medium">Username</div>
                   <div className="col-span-2 font-medium">Status</div>
                   <div className="col-span-2 font-medium">Subscription</div>
                   <div className="col-span-2 font-medium">Coins</div>
@@ -463,17 +361,26 @@ const AdminDashboard: React.FC = () => {
                 </div>
 
                 {/* Table Body */}
-                {filteredPlayers.map((player, index) => (
+                {loading && (
+                  <div className="flex justify-center py-8">
+                    <CircularProgress />
+                  </div>
+                )}
+
+                {!loading && players.length === 0 && (
+                  <div className="text-center py-8 text-gray-500">
+                    No players found matching your criteria
+                  </div>
+                )}
+
+                {players.map((player, index) => (
                   <div key={index} className="grid grid-cols-12 gap-4 items-center p-4 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div className="col-span-4 font-medium">{player.username}</div>
+                    <div className="col-span-3 font-medium">{player.username}</div>
                     <div className="col-span-2">
                       <Chip
                         label={player.status}
                         size="small"
                         color={player.status === 'online' ? 'success' : 'default'}
-                        icon={player.status === 'online' ? 
-                          <Wifi className="w-4 h-4" /> : 
-                          <WifiOff className="w-4 h-4" />}
                       />
                     </div>
                     <div className="col-span-2">
@@ -486,14 +393,38 @@ const AdminDashboard: React.FC = () => {
                         }
                       />
                     </div>
-                    <div className="col-span-2 text-sm text-gray-500">
-                      {player.coinsBalance}
+                    <div className="col-span-2 font-medium">
+                      {player.coinsBalance.toLocaleString()}
                     </div>
                     <div className="col-span-2 text-sm text-gray-500">
-                      {new Date(player.lastActivity).toLocaleString()}
+                      {new Date(player.lastActivity).toLocaleDateString()}
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="flex justify-between items-center mt-4">
+                <div className="text-sm text-gray-600">
+                  Showing {(pagination.page - 1) * pagination.limit + 1} - 
+                  {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outlined"
+                    disabled={pagination.page === 1}
+                    onClick={() => setPagination(prev => ({...prev, page: prev.page - 1}))}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    disabled={pagination.page * pagination.limit >= pagination.total}
+                    onClick={() => setPagination(prev => ({...prev, page: prev.page + 1}))}
+                  >
+                    Next
+                  </Button>
+                </div>
               </div>
             </Paper>
           </div>
