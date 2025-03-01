@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const Sidebar: React.FC = () => {
     return (
         <>
-            <div className="hidden md:block w-1/15 h-10 p-6 absolute top-12 left-0 md:w-1/15 md:h-[calc(127vh-4rem)] md:p-6">
+            <div className="hidden md:block w-1/15 h-10 p-6 absolute top-15 left-0 md:w-1/15 md:h-[calc(127vh-4rem)] md:p-6">
                 <ul className="space-y-2 md:space-y-0 md:flex md:flex-col">
                     <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
                         <Link to="/home">
@@ -41,7 +41,7 @@ const Sidebar: React.FC = () => {
                     </li>
                 </ul>
             </div>
-            <div className="block md:hidden w-full p-1 top-16 left-0 h-50 absolute">
+            <div className="block md:hidden w-full p-1 top-[calc(45%+4%)] left-0 h-[calc(55%-2%)] absolute bg-[#2F2118] stroke-[#1e1e1e] stroke-2">
                 <ul className="flex justify-around">
                     <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
                         <Link to="/home">
