@@ -5,6 +5,7 @@ import Sidebar from '../components/Sidebar';
 import GameHeader from '../components/GameHeader';
 import ActionButton from './components/ActionButton';
 import { motion, AnimatePresence } from "framer-motion";
+import Homepage from '../home/Homepage';
 
 const GameScreen: React.FC = () => {
     const { id: gameId } = useParams();
@@ -256,7 +257,7 @@ const GameScreen: React.FC = () => {
                             transition={{ duration: 0.5 }}
                         >
                             <motion.div
-                                className=" p-8 rounded-lg"
+                                className="p-8 rounded-lg flex flex-col items-center"
                                 variants={gameOverVariants}
                                 initial="hidden"
                                 animate="visible"
@@ -269,6 +270,39 @@ const GameScreen: React.FC = () => {
                                 >
                                     GAME OVER
                                 </motion.h1>
+
+                                {/* Add buttons below the GAME OVER text */}
+                                <div className="flex space-x-4 mt-8">
+                                    {/* Return to Home Button */}
+                                    <motion.button
+                                        className="px-6 py-3 bg-[#311F17] text-[#E5D4B3] rounded-lg font-playfair text-lg border border-[#634630] focus:outline-none"
+                                        whileHover={{
+                                            scale: 1.05,
+                                            backgroundColor: "#634630",
+                                            borderColor: "#E5D4B3",
+                                            transition: { duration: 0.3, ease: "easeInOut" },
+                                        }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => window.location.href = '/home'} // Redirect to /home
+                                    >
+                                        Return to Home
+                                    </motion.button>
+
+                                    {/* View Summary Button */}
+                                    <motion.button
+                                        className="px-6 py-3 bg-[#311F17] text-[#E5D4B3] rounded-lg font-playfair text-lg border border-[#634630] focus:outline-none"
+                                        whileHover={{
+                                            scale: 1.05,
+                                            backgroundColor: "#634630",
+                                            borderColor: "#E5D4B3",
+                                            transition: { duration: 0.3, ease: "easeInOut" },
+                                        }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => console.log("View Summary clicked")} // Replace with actual logic
+                                    >
+                                        View Summary
+                                    </motion.button>
+                                </div>
                             </motion.div>
                         </motion.div>
                     )}
