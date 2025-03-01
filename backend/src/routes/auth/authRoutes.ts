@@ -21,7 +21,7 @@ const createAuthRouter = (frontendUrl: string) => {
   router.get('/google',
     passport.authenticate('google', { scope: ['profile', 'email'] })
   );
-
+  
   router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req: Request, res: Response) => {
