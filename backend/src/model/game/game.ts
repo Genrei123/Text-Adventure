@@ -1,6 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../../service/database";
-import User from "../user/user";
 
 interface GameAttributes {
     id: number;
@@ -23,7 +22,7 @@ interface GameAttributes {
     private: boolean;
     createdAt: Date;
     updatedAt: Date;
-    UserId: number;
+    UserId: number | null;  // Updated to allow null temporarily
 }
 
 interface GameCreationAttributes extends Optional<GameAttributes, "id" | "primary_color" | "prompt_text" | "prompt_model" | "image_prompt_model" | "image_prompt_name" | "image_prompt_text" | "image_data" | "music_prompt_text" | "music_prompt_seed_image" | "createdAt" | "updatedAt"> {}
@@ -49,7 +48,7 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public private!: boolean;
     public createdAt!: Date;
     public updatedAt!: Date;
-    public UserId!: number;
+    public UserId!: number | null;  // Updated to allow null temporarily
 
     public llm_fields!: {
         title: string;
@@ -62,103 +61,39 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
 }
 
 Game.init({
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    slug: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
-    tagline: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
-    genre: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    subgenre: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    primary_color: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    prompt_name: {
-        type: DataTypes.STRING,
-        defaultValue: "UGC",
-        allowNull: false,
-    },
-    prompt_text: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-    },
-    prompt_model: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        defaultValue: "gpt-3.5-turbo",
-    },
-    image_prompt_model: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    image_prompt_name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    image_prompt_text: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-    },
-    image_data: {
-        type: DataTypes.BLOB,
-        allowNull: true,
-    },
-    music_prompt_text: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-    },
-    music_prompt_seed_image: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    private: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-    },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-    },
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    title: { type: DataTypes.STRING, allowNull: false },
+    slug: { type: DataTypes.STRING, allowNull: false, unique: true },
+    description: { type: DataTypes.TEXT, allowNull: false },
+    tagline: { type: DataTypes.TEXT, allowNull: false },
+    genre: { type: DataTypes.STRING, allowNull: false },
+    subgenre: { type: DataTypes.STRING, allowNull: false },
+    primary_color: { type: DataTypes.STRING, allowNull: true },
+    prompt_name: { type: DataTypes.STRING, defaultValue: "UGC", allowNull: false },
+    prompt_text: { type: DataTypes.TEXT, allowNull: true },
+    prompt_model: { type: DataTypes.STRING, allowNull: true, defaultValue: "gpt-3.5-turbo" },
+    image_prompt_model: { type: DataTypes.STRING, allowNull: true },
+    image_prompt_name: { type: DataTypes.STRING, allowNull: true },
+    image_prompt_text: { type: DataTypes.TEXT, allowNull: true },
+    image_data: { type: DataTypes.BLOB, allowNull: true },
+    music_prompt_text: { type: DataTypes.TEXT, allowNull: true },
+    music_prompt_seed_image: { type: DataTypes.STRING, allowNull: true },
+    private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     UserId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,  // Changed to true temporarily
+        references: {
+            model: 'Users',
+            key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     },
 }, {
     sequelize,
     modelName: "Game",
 });
-
-Game.belongsTo(User, { foreignKey: "UserId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-User.hasMany(Game, { foreignKey: "UserId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 
 export default Game;
