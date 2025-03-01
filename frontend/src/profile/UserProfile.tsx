@@ -87,9 +87,9 @@ export default function ProfilePage() {
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen bg-gray-900"
       style={{
-        backgroundImage: "src/assets/UserBG.svg",
+        backgroundImage: "url(/UserBG.svg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

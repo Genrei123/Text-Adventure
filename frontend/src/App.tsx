@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React from 'react';
 
 // Auth Components
 import LoginScreen from './auth/LoginScreen';
@@ -20,12 +21,23 @@ import Homepage from './home/Homepage';
 import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import GameDetails from './game-details/GameDetails';
+import AdminDashboard from './Admin/AdminDashboard';
+import AdminPlayerList from './Admin/AdminPlayerList';
+import BannedList from './Admin/AdminBannedList';
 import Subscription from './subscription/Subscription';
+
+
+// Work in Progress Components [EXPERIMENTAL - Do not include in main app!]
+import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
+
 // Game Creation Components
 import GameCreation from './game-creation/GameCreation';
 import AdventureEditor from './game-creation/Editing Page/Editor';
 import { WebSocketProvider } from './websocket/context/WebSocketContext';
 import ActivePlayerCount from './websocket/components/ActivePlayerCount';
+import NihGameScreen from './game/NihGameScreen';
+import BanTestPage from './pages/BanTestPage';
+
 
 // Session Components
 import SessionTracker from './sessions/components/SessionTracker';
@@ -71,10 +83,10 @@ function App() {
         />
       )}
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginScreen onLogin={handleLogin} />} />
         <Route path="/register" element={<Register onRegister={handleRegister} />} />
+        <Route path="/game/nih/:id" element={<NihGameScreen />} />
         
         {/* Auth Related Routes */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -134,19 +146,28 @@ function App() {
             </ProtectedRoute>
           } 
         />
+
+        {/* Work in Progress Routes */}
+        <Route path="/image-generator" element={<ImageGeneratorScreen />} />
         
         {/* Utility Routes */}
         <Route path="/subscription" element={<Subscription />} />
         <Route path="/active-players" element={<ActivePlayerCount />} />
+        <Route path="/ban-test" element={<BanTestPage />} />
         
         {/* Error Routes */}
         <Route path="/forbidden" element={<Forbidden />} />
         <Route path="/server-error" element={<ServerError />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/game-details" element={<GameDetails />} />
+        {/* admin side */}
+        <Route path="/Admin/Banned" element={<BannedList/>} />
+        <Route path="/Admin/PlayerList" element={<AdminPlayerList />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
 }
 
-export default App;
+export default App; 

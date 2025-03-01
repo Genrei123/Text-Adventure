@@ -4,7 +4,7 @@ import '../../App.css';
 import axios from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import PasswordInput from '../../components/PasswordInput';
+import PasswordInput from './PasswordInput';
 
 const ResetPassword: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');

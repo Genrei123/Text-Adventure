@@ -4,7 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import PasswordInput from '../../components/PasswordInput';
+import ValidatedInput from './ValidatedInput';
+import { ValidationUtils } from '../utils/ValidationUtils';
 import { isAxiosError } from 'axios';
 import { LoginResponse } from '../types/User'; // Adjust the import path based on your folder structure
 
@@ -50,27 +51,30 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   }, [navigate]);
 
   const validateForm = (): boolean => {
-    const newErrors: ValidationErrors = {};
-
-    if (!email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Email format is invalid';
+    // Validate email
+    const emailValidation = ValidationUtils.email(email);
+    if (!emailValidation.isValid) {
+      toast.error(emailValidation.message);
+      return false;
     }
 
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+    // Validate password
+    const passwordValidation = ValidationUtils.login_password(password);
+    if (!passwordValidation.isValid) {
+      toast.error(passwordValidation.message);
+      return false;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    
+    // Validate form before proceeding
+    if (!validateForm()) {
+      return;
+    }
 
     setIsProcessing(true);
     toast.info('Logging in...');
@@ -93,7 +97,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       onLogin(user.email); // Assuming onLogin expects email, adjust if it should be username
       toast.success('Login successful!');
       navigate('/home');
-      
     } catch (error) {
       if (isAxiosError(error)) {
         const message = error.response?.data?.message || 'Login failed. Please try again.';
@@ -147,22 +150,22 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                   style={{ transition: 'opacity 1s ease-in-out' }}>
               <div>
                 <label className="block text-sm font-cinzel text-white mb-2">Email</label>
-                <input
+                <ValidatedInput
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(value) => setEmail(value)}
                   className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
                   placeholder="Your email"
-                  style={{ transition: 'opacity 1s ease-in-out' }}
                 />
                 {errors.email && <p className="mt-1 text-sm text-red-400">{errors.email}</p>}
               </div>
 
               <div>
                 <label className="block text-sm font-cinzel text-white mb-2">Password</label>
-                <PasswordInput
+                <ValidatedInput
+                  type="login_password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(value) => setPassword(value)}
                   className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
                   placeholder="Your password"
                 />

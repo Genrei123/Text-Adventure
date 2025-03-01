@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axiosInstance from '../../config/axiosConfig';
 import Sidebar from '../components/Sidebar';
 import GameHeader from '../components/GameHeader';
+import ActionButton from './components/ActionButton'; // Import the new component
 
 const GameScreen: React.FC = () => {
     const { id: gameId } = useParams();
@@ -11,6 +12,7 @@ const GameScreen: React.FC = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [showScroll, setShowScroll] = useState(false);
+    const [selectedAction, setSelectedAction] = useState('Say'); // Default action is 'Say'
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const [chatMessages, setChatMessages] = useState<Array<{ content: string, isUser: boolean, timestamp: string }>>([]);
@@ -42,7 +44,7 @@ const GameScreen: React.FC = () => {
                     content: msg.content,
                     isUser: msg.role === 'user',
                     timestamp: new Date(msg.createdAt).toLocaleTimeString()
-                })); // No reverse here, keep oldest first
+                }));
                 setChatMessages(formattedMessages);
             } catch (error) {
                 console.error('Error fetching chat messages:', error);
@@ -80,16 +82,23 @@ const GameScreen: React.FC = () => {
             return;
         }
 
+        // Include the selected action in the payload
         const payload = {
             userId,
             gameId: parseInt(gameId, 10),
-            message
+            message,
+            action: selectedAction // Add the selected action to the payload
         };
 
+        setMessage(''); // Clear message input
+
         try {
+            // Format message with action prefix for display
+            const displayMessage = `[${selectedAction}] ${message}`;
+            
             // Temporarily show user's message with current time
             const tempUserMessage = {
-                content: message,
+                content: displayMessage,
                 isUser: true,
                 timestamp: new Date().toLocaleTimeString()
             };
@@ -112,7 +121,7 @@ const GameScreen: React.FC = () => {
                     return [
                         ...updatedMessages,
                         {
-                            content: response.data.user_message.content,
+                            content: `[${selectedAction}] ${response.data.user_message.content}`,
                             isUser: true,
                             timestamp: new Date(response.data.user_message.createdAt).toLocaleTimeString()
                         },
@@ -124,7 +133,7 @@ const GameScreen: React.FC = () => {
                     ];
                 });
             } else {
-                setChatMessages(prevMessages => [...prevMessages.slice(0, -1), aiResponse]);
+                setChatMessages(prevMessages => [...prevMessages.slice(0, -1), tempUserMessage, aiResponse]);
             }
 
             setSuccess('Message sent successfully!');
@@ -159,13 +168,32 @@ const GameScreen: React.FC = () => {
                 </div>
             </div>
             <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
+                {/* Action buttons row */}
+                <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
+                    <ActionButton 
+                        action="Do" 
+                        isSelected={selectedAction === "Do"} 
+                        onClick={() => setSelectedAction("Do")} 
+                    />
+                    <ActionButton 
+                        action="Say" 
+                        isSelected={selectedAction === "Say"} 
+                        onClick={() => setSelectedAction("Say")} 
+                    />
+                    <ActionButton 
+                        action="See" 
+                        isSelected={selectedAction === "See"} 
+                        onClick={() => setSelectedAction("See")} 
+                    />
+                </div>
+                
                 <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
                     <textarea
                         ref={textareaRef}
                         className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${
                             showScroll ? 'overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent' : 'overflow-y-hidden'
                         }`}
-                        placeholder="Type your text here..."
+                        placeholder={`Type what you want to ${selectedAction.toLowerCase()}...`}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyDown={handleKeyDown}

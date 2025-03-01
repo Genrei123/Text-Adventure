@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import passport from '../../middlware/auth/google/passport';
 import Jwt from 'jsonwebtoken';
 import cookieJwtAuth from '../../middlware/auth/auth';
-import { forgotPassword, resetPassword, validateResetToken, verifyEmail } from '../../controllers/auth/authController';
+import { forgotPassword, resetPassword, validateResetToken, verifyEmail, checkUsername, checkEmail } from '../../controllers/auth/authController';
 
 // Create a function that returns the configured router
 const createAuthRouter = (frontendUrl: string) => {
@@ -11,6 +11,8 @@ const createAuthRouter = (frontendUrl: string) => {
   router.post('/forgot-password', forgotPassword);
   router.post('/validate-reset-token', validateResetToken);
   router.post('/reset-password', resetPassword);
+  router.post('/check-username', checkUsername);
+  router.post('/check-email', checkEmail);
 
   router.get('/', (req: Request, res: Response) => {
     res.send("Hello World!");
