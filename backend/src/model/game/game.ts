@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../../service/database";
+import sequelize from "../../config/sequelize"; // Adjusted path
 
 interface GameAttributes {
     id: number;
@@ -22,7 +22,7 @@ interface GameAttributes {
     private: boolean;
     createdAt: Date;
     updatedAt: Date;
-    UserId: number | null;  // Updated to allow null temporarily
+    UserId: number | null;
 }
 
 interface GameCreationAttributes extends Optional<GameAttributes, "id" | "primary_color" | "prompt_text" | "prompt_model" | "image_prompt_model" | "image_prompt_name" | "image_prompt_text" | "image_data" | "music_prompt_text" | "music_prompt_seed_image" | "createdAt" | "updatedAt"> {}
@@ -48,16 +48,7 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public private!: boolean;
     public createdAt!: Date;
     public updatedAt!: Date;
-    public UserId!: number | null;  // Updated to allow null temporarily
-
-    public llm_fields!: {
-        title: string;
-        description: string;
-        genre: string;
-        subgenre: string;
-        tagline: string;
-        primary_color?: string;
-    };
+    public UserId!: number | null;
 }
 
 Game.init({
@@ -79,21 +70,22 @@ Game.init({
     music_prompt_text: { type: DataTypes.TEXT, allowNull: true },
     music_prompt_seed_image: { type: DataTypes.STRING, allowNull: true },
     private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'createdAt' },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updatedAt' },
     UserId: {
         type: DataTypes.INTEGER,
-        allowNull: true,  // Changed to true temporarily
+        allowNull: true,
         references: {
             model: 'Users',
             key: 'id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
-    },
+    }
 }, {
     sequelize,
     modelName: "Game",
+    tableName: 'games'
 });
 
 export default Game;
