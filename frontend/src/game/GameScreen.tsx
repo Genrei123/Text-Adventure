@@ -66,7 +66,7 @@ const GameScreen: React.FC = () => {
             clearTimeout(gameOverTimer);
         };
     }, []);
-
+    // animation effects here
     // Game Over animation variants
     const gameOverVariants = {
         hidden: {
@@ -103,7 +103,7 @@ const GameScreen: React.FC = () => {
             }
         }
     };
-    // Testing 123
+    // Testing Glowing text
     // Glowing text animation
     const glowVariants = {
         visible: {
