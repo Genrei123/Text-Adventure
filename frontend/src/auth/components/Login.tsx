@@ -30,8 +30,23 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // User is already logged in, redirect to /home
-      navigate('/home');
+      // Verify token with backend
+      axiosInstance.post('/auth/verify-token', { token })
+        .then(response => {
+          if (response.data.valid) {
+            // Token is valid, redirect to /home
+            navigate('/home');
+          } else {
+            // Token is invalid, remove it from localStorage
+            localStorage.removeItem('token');
+            localStorage.removeItem('email');
+          }
+        })
+        .catch(error => {
+          console.error('Error verifying token:', error);
+          localStorage.removeItem('token');
+          localStorage.removeItem('email');
+        });
     }
   }, [navigate]);
 
