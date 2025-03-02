@@ -46,13 +46,16 @@ const getUserDetailsByEmail = async (email: string) => {
 };
 
 // Fetch coin balance
-export const getCoins = async (req: Request, res: Response) => {
-  const userId = parseInt(req.params.userId);
+export const getCoins = async (req: Request, res: Response): Promise<void> => {
+  const email = req.query.email as string;
+
+  if (!email) {
+    res.status(400).json({ error: 'Email query parameter is required' });
+    return;
+  }
 
   try {
-    const user = await User.findByPk(userId, {
-      attributes: ['totalCoins'],
-    });
+    const user = await User.findOne({ where: { email }, attributes: ['totalCoins'] });
 
     if (user) {
       res.json({ coins: user.totalCoins });
@@ -90,7 +93,7 @@ export const deductCoins = async (req: Request, res: Response) => {
 };
 
 export const buyItem = async (req: Request, res: Response) => {
-  const { itemId, paymentMethod, email } = req.body;
+  const { itemId, email } = req.body;
 
   let item;
   let user;
@@ -121,7 +124,6 @@ export const buyItem = async (req: Request, res: Response) => {
       successRedirectUrl: SUCCESS_RETURN_URL,
       failureRedirectUrl: FAILURE_RETURN_URL,
       currency: 'PHP',
-      paymentMethods: [paymentMethod], // Example: ['GCASH', 'PAYMAYA']
     };
 
     console.log('Invoice data:', invoiceData);
@@ -137,7 +139,6 @@ Item Name: ${item.name}
 User ID: ${user.id}
 Username: ${user.username}
 Email: ${user.email}
-Payment Method: ${paymentMethod}
 Paid Amount: ${item.price}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
@@ -155,7 +156,6 @@ Item Name: ${item?.name || 'N/A'}
 User ID: ${user?.id || 'N/A'}
 Username: ${user?.username || 'N/A'}
 User Email: ${email}
-Payment Method: ${paymentMethod}
 Paid Amount: ${item?.price || 'N/A'}
 Date Created: ${formattedDate}
 Order ID: ${orderId}

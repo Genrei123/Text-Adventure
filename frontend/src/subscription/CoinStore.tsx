@@ -27,7 +27,6 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         try {
             const response = await axios.post('http://localhost:3000/shop/buy-item', {
                 itemId: itemId,
-                paymentMethod: "GCASH", // Automatically set to GCASH
                 email: email // Use the email from local storage
             });
             const { paymentLink } = response.data;

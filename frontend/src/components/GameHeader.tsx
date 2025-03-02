@@ -1,8 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import CoinStore from "../subscription/CoinStore";
 
 const GameHeader: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
+    const [coins, setCoins] = useState<number>(0);
+
+    useEffect(() => {
+        const fetchCoins = async () => {
+            const email = localStorage.getItem('email');
+            if (email) {
+                try {
+                    const response = await axios.get(`http://localhost:3000/shop/coins?email=${email}`);
+                    setCoins(response.data.coins);
+                } catch (error) {
+                    console.error('Error fetching coins:', error);
+                }
+            }
+        };
+
+        fetchCoins();
+    }, []);
 
     return (
         <nav className="bg-[#1E1E1E] py-[1.06rem] px-0 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
@@ -15,7 +33,7 @@ const GameHeader: React.FC = () => {
                 </div>
                 <div className="flex items-center">                     
                     <img src="/Coin.svg" alt="Coins" className="w-6 h-6" />
-                    <span className="text-x1 font-cinzel text-[#ffffff] font-bol ml-2">{new Intl.NumberFormat().format(100000)}</span>
+                    <span className="text-x1 font-cinzel text-[#ffffff] font-bol ml-2">{new Intl.NumberFormat().format(coins)}</span>
                     <button className="mr-1 relative group" onClick={() => setShowModal(true)}>
                         <img src="/add.svg" alt="Button" className="w-7 h-6 mr-[10%]" />
                         <img src="/add-after.svg" alt="Hover Button" className="w-7 h-6 mr-[10%] absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
