@@ -1,18 +1,16 @@
 import { Request, Response } from 'express';
-import { PaymentRequest } from '../../service/transaction/xenditClient';
-import { PaymentRequestParameters, PaymentRequestCurrency } from 'xendit-node/payment_request/models';
+import { Invoice } from '../../service/transaction/xenditClient';
 import User from '../../model/user/user'; // Import the User model
 import Item from '../../model/transaction/ItemModel'; // Import the Item model
 import dotenv from 'dotenv';
-import { createPaymentMethod } from '../../service/transaction/Subscription/paymentMethodService';
 import { deductCoinsByTokens, checkOrderIdExists } from '../../service/transaction/Item Shop/coinService'; // Import coin service
 import { getChatTokenDetails } from '../../utils/tokenizer'; // Import the correct function
 
 dotenv.config();
 
 // Constants for return URLs
-const SUCCESS_RETURN_URL = process.env.SUCCESS_RETURN_URL || 'http://localhost:5173/home';
-const FAILURE_RETURN_URL = process.env.FAILURE_RETURN_URL || 'http://localhost:5173/home';
+const SUCCESS_RETURN_URL = process.env.SUCCESS_RETURN_URL;
+const FAILURE_RETURN_URL = process.env.FAILURE_RETURN_URL;
 
 // Function to generate a random 6-character alphanumeric string
 const generateRandomId = () => {
@@ -104,7 +102,7 @@ export const buyItem = async (req: Request, res: Response) => {
     user = await getUserDetailsByEmail(email);
 
     // Create an orderId with username, date, and a random 6-character alphanumeric string
-    const date = new Date().toISOString().split('T')[0].replace(/-/g, ''); // Format date as YYYYMMDD
+    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
     let randomId = generateRandomId();
     orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomId}`;
 
@@ -114,49 +112,25 @@ export const buyItem = async (req: Request, res: Response) => {
       orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomId}`;
     }
 
-    // Create payment method data
-    const paymentMethodData = {
-      type: 'EWALLET',
-      reusability: 'ONE_TIME_USE',
-      ewallet: {
-        channel_code: paymentMethod,
-        channel_properties: {
-          success_return_url: SUCCESS_RETURN_URL,
-          failure_return_url: FAILURE_RETURN_URL,
-        },
-      },
-      customer_id: user.id.toString(), // Convert customer_id to string
-      metadata: {},
-      context: 'buy_item' as 'buy_item', // Explicitly set context as 'buy_item'
-    };
-
-    // Create payment method
-    const paymentMethodResponse = await createPaymentMethod(paymentMethodData);
-
-    // Create a payment request
-    const data: PaymentRequestParameters = {
+    // Create an invoice using Xendit Invoice API
+    const invoiceData = {
+      externalId: orderId,
       amount: item.price,
-      paymentMethod: {
-        ewallet: {
-          channelProperties: {
-            successReturnUrl: SUCCESS_RETURN_URL,
-            failureReturnUrl: FAILURE_RETURN_URL,
-            
-          },
-          channelCode: paymentMethod, // 'GCASH' or 'PAYMAYA'
-        },
-        reusability: 'ONE_TIME_USE',
-        type: 'EWALLET',
-      },
-      currency: 'PHP' as PaymentRequestCurrency,
-      referenceId: orderId, // This is the field used by Xendit for tracking
+      payerEmail: email,
+      description: `Purchase of ${item.name}`,
+      successRedirectUrl: SUCCESS_RETURN_URL,
+      failureRedirectUrl: FAILURE_RETURN_URL,
+      currency: 'PHP',
+      paymentMethods: [paymentMethod], // Example: ['GCASH', 'PAYMAYA']
     };
 
-    const paymentRequest = await PaymentRequest.createPaymentRequest({ data });
-    const paymentLink = paymentRequest.actions?.find((action: { urlType: string }) => action.urlType === 'WEB')?.url || 'N/A';
+    console.log('Invoice data:', invoiceData);
+
+    const invoice = await Invoice.createInvoice({ data: invoiceData }); // Ensure createInvoice is correctly imported
+    const paymentLink = invoice.invoiceUrl || 'N/A';
     const formattedDate = new Date().toLocaleString();
 
-    console.log(`-------------- Payment Request Details --------------`)
+    console.log(`-------------- Invoice Details --------------`);
     console.log(`Status: Success
 Item ID: ${itemId}
 Item Name: ${item.name}
@@ -167,14 +141,14 @@ Payment Method: ${paymentMethod}
 Paid Amount: ${item.price}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
-Payment Request ID: ${paymentRequest.id}
+Invoice ID: ${invoice.id}
 Link To Payment: ${paymentLink}`);
     console.log(`-----------------------------------------------------`);
     console.log(` `);
     res.json({ paymentLink });
   } catch (error: any) {
     const formattedDate = new Date().toLocaleString();
-    console.error(` ----------------- Payment Request Details -----------------`)
+    console.error(` ----------------- Invoice Creation Failed -----------------`);
     console.error(`Status: Fail
 Item ID: ${itemId}
 Item Name: ${item?.name || 'N/A'}
