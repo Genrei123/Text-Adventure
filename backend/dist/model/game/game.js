@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
-const database_1 = __importDefault(require("../../service/database"));
+const sequelize_2 = __importDefault(require("../../config/sequelize")); // Adjusted path
 class Game extends sequelize_1.Model {
 }
 Game.init({
@@ -26,21 +26,23 @@ Game.init({
     music_prompt_text: { type: sequelize_1.DataTypes.TEXT, allowNull: true },
     music_prompt_seed_image: { type: sequelize_1.DataTypes.STRING, allowNull: true },
     private: { type: sequelize_1.DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    createdAt: { type: sequelize_1.DataTypes.DATE, allowNull: false, defaultValue: sequelize_1.DataTypes.NOW },
-    updatedAt: { type: sequelize_1.DataTypes.DATE, allowNull: false, defaultValue: sequelize_1.DataTypes.NOW },
+    status: { type: sequelize_1.DataTypes.STRING, allowNull: false, defaultValue: "draft" }, // Added status property
+    createdAt: { type: sequelize_1.DataTypes.DATE, allowNull: false, defaultValue: sequelize_1.DataTypes.NOW, field: 'createdAt' },
+    updatedAt: { type: sequelize_1.DataTypes.DATE, allowNull: false, defaultValue: sequelize_1.DataTypes.NOW, field: 'updatedAt' },
     UserId: {
         type: sequelize_1.DataTypes.INTEGER,
-        allowNull: true, // Changed to true temporarily
+        allowNull: true, // Matches database NULLABLE
         references: {
             model: 'Users',
             key: 'id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
-    },
+    }
 }, {
-    sequelize: database_1.default,
+    sequelize: sequelize_2.default,
     modelName: "Game",
+    tableName: 'games'
 });
 exports.default = Game;
 //# sourceMappingURL=game.js.map

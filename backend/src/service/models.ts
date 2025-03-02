@@ -27,6 +27,11 @@ export const initializeModels = async () => {
         // Sync the database
         await sequelize.sync({ alter: true });
         console.log("Database and models synchronized successfully.");
+
+        // Sync the Game model
+        await Game.sync({ alter: true }).catch((error: Error) => {
+            console.error('Error syncing Game model:', error);
+        });
     } catch (error) {
         console.error("Error synchronizing database and models:", error);
         throw error;

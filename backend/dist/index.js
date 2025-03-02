@@ -26,8 +26,8 @@ const shopRoutes_2 = __importDefault(require("./routes/transaction/shopRoutes"))
 const nihRoutes_1 = __importDefault(require("./routes/game/nih-game/nihRoutes"));
 const openaiRoute_1 = __importDefault(require("./routes/img-generation/openaiRoute")); // Image generation
 const banRoutes_1 = __importDefault(require("./routes/banRoutes"));
-const metrics_1 = __importDefault(require("./routes/metrics")); // Import the new metrics route
-const players_1 = __importDefault(require("./routes/players")); // Import the new players route
+const metrics_1 = __importDefault(require("./routes/metrics"));
+const games_1 = __importDefault(require("./routes/games"));
 const PORT = process.env.PORT || 3000;
 const app = (0, express_1.default)();
 const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -56,8 +56,8 @@ app.use('/nih', nihRoutes_1.default);
 app.use('/openai', openaiRoute_1.default); // Image generation
 app.use('/bans', banRoutes_1.default);
 app.use('/api/bans', banRoutes_1.default); // Fixes 404 for /api/bans
-app.use('/api/metrics', metrics_1.default); // Use the new metrics route
-app.use('/api/players', players_1.default); // Use the new players route
+app.use('/api/metrics', metrics_1.default);
+app.use('/api/games', games_1.default);
 // Auth routes setup
 const authRouter = (0, authRoutes_1.default)(frontendUrl);
 app.use('/auth', authRouter);
