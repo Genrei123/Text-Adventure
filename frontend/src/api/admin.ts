@@ -22,3 +22,8 @@ export const fetchGamesCount = async () => {
   const response = await axios.get(`${API_URL}/api/metrics/games`);
   return response.data;
 };
+
+export const fetchRecentGames = async () => {
+  const response = await axios.get(`${API_URL}/api/games/recent`);
+  return response.data;
+};

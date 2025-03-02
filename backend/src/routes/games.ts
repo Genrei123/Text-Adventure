@@ -6,9 +6,9 @@ const router = Router();
 router.get('/recent', async (req, res) => {
   try {
     const recentGames = await Game.findAll({
-      order: [['createdAt', 'DESC']],
+      order: [['created_at', 'DESC']],
       limit: 5,
-      attributes: ['title', 'description', 'createdAt', 'status']
+      attributes: ['title', 'description', 'created_at', 'status']
     });
 
     res.json(recentGames.map(g => ({
