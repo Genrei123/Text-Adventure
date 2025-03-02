@@ -34,6 +34,7 @@ const addGame = async (req, res) => {
         music_prompt_text: req.music_prompt_text,
         music_prompt_seed_image: req.music_prompt_seed_image,
         private: req.private,
+        status: req.status || 'draft', // Ensure status is included
         createdAt: new Date(),
         updatedAt: new Date(),
         UserId: req.UserId,

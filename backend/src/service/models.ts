@@ -10,32 +10,27 @@ import Ban from '../model/ban/ban';
 import defineAssociations from "../model/associations";
 
 export const initializeModels = async () => {
-    try {
-        // Reference models to ensure they’re initialized
-        User;
-        Game;
-        Comment;
-        Rating;
-        Order;
-        Item;
-        Chat;
-        Ban;
+  try {
+    // First create tables without foreign keys
+    await User.sync({ alter: true });
+    await Game.sync({ alter: true });
+    
+    // Then sync dependent models
+    await Comment.sync({ alter: true });
+    await Rating.sync({ alter: true });
+    await Order.sync({ alter: true });
+    await Item.sync({ alter: true });
+    await Chat.sync({ alter: true });
+    await Ban.sync({ alter: true });
+    
+    // Define associations
+    defineAssociations();
 
-        // Define associations
-        defineAssociations();
-
-        // Sync the database
-        await sequelize.sync({ alter: true });
-        console.log("Database and models synchronized successfully.");
-
-        // Sync the Game model
-        await Game.sync({ alter: true }).catch((error: Error) => {
-            console.error('Error syncing Game model:', error);
-        });
-    } catch (error) {
-        console.error("Error synchronizing database and models:", error);
-        throw error;
-    }
+    console.log("Database tables synchronized successfully.");
+  } catch (error) {
+    console.error("Error synchronizing database:", error);
+    throw error;
+  }
 };
 
 // Export models for use elsewhere

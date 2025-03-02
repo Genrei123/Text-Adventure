@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ban = exports.Chat = exports.Item = exports.Order = exports.Rating = exports.Comment = exports.Game = exports.User = exports.initializeModels = void 0;
-const database_1 = require("./database"); // Import after sequelize is defined
 const user_1 = __importDefault(require("../model/user/user"));
 exports.User = user_1.default;
 const game_1 = __importDefault(require("../model/game/game"));
@@ -24,27 +23,22 @@ exports.Ban = ban_1.default;
 const associations_1 = __importDefault(require("../model/associations"));
 const initializeModels = async () => {
     try {
-        // Reference models to ensure they’re initialized
-        user_1.default;
-        game_1.default;
-        comments_1.default;
-        rating_1.default;
-        order_1.default;
-        ItemModel_1.default;
-        chat_1.default;
-        ban_1.default;
+        // First create tables without foreign keys
+        await user_1.default.sync({ alter: true });
+        await game_1.default.sync({ alter: true });
+        // Then sync dependent models
+        await comments_1.default.sync({ alter: true });
+        await rating_1.default.sync({ alter: true });
+        await order_1.default.sync({ alter: true });
+        await ItemModel_1.default.sync({ alter: true });
+        await chat_1.default.sync({ alter: true });
+        await ban_1.default.sync({ alter: true });
         // Define associations
         (0, associations_1.default)();
-        // Sync the database
-        await database_1.sequelize.sync({ alter: true });
-        console.log("Database and models synchronized successfully.");
-        // Sync the Game model
-        await game_1.default.sync({ alter: true }).catch((error) => {
-            console.error('Error syncing Game model:', error);
-        });
+        console.log("Database tables synchronized successfully.");
     }
     catch (error) {
-        console.error("Error synchronizing database and models:", error);
+        console.error("Error synchronizing database:", error);
         throw error;
     }
 };

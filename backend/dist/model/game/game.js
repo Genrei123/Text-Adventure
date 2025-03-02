@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
-const sequelize_2 = __importDefault(require("../../config/sequelize")); // Adjusted path
+const sequelize_2 = __importDefault(require("../../config/sequelize"));
 class Game extends sequelize_1.Model {
 }
 Game.init({
@@ -26,12 +26,12 @@ Game.init({
     music_prompt_text: { type: sequelize_1.DataTypes.TEXT, allowNull: true },
     music_prompt_seed_image: { type: sequelize_1.DataTypes.STRING, allowNull: true },
     private: { type: sequelize_1.DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    status: { type: sequelize_1.DataTypes.STRING, allowNull: false, defaultValue: "draft" }, // Added status property
+    status: { type: sequelize_1.DataTypes.STRING, allowNull: false, defaultValue: "draft" },
     createdAt: { type: sequelize_1.DataTypes.DATE, allowNull: false, defaultValue: sequelize_1.DataTypes.NOW, field: 'createdAt' },
     updatedAt: { type: sequelize_1.DataTypes.DATE, allowNull: false, defaultValue: sequelize_1.DataTypes.NOW, field: 'updatedAt' },
     UserId: {
         type: sequelize_1.DataTypes.INTEGER,
-        allowNull: true, // Matches database NULLABLE
+        allowNull: true,
         references: {
             model: 'Users',
             key: 'id'

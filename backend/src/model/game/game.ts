@@ -20,10 +20,10 @@ interface GameAttributes {
   music_prompt_text?: string;
   music_prompt_seed_image?: string;
   private: boolean;
-  status: string; // Added status property
+  status: string;
   createdAt: Date;
   updatedAt: Date;
-  UserId?: number; // Made optional to match NULLABLE in database
+  UserId?: number;
 }
 
 interface GameCreationAttributes extends Optional<GameAttributes, "id" | "primary_color" | "prompt_text" | "prompt_model" | "image_prompt_model" | "image_prompt_name" | "image_prompt_text" | "image_data" | "music_prompt_text" | "music_prompt_seed_image" | "createdAt" | "updatedAt"> {}
@@ -47,7 +47,7 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
   public music_prompt_text?: string;
   public music_prompt_seed_image?: string;
   public private!: boolean;
-  public status!: string; // Added status property
+  public status!: string;
   public createdAt!: Date;
   public updatedAt!: Date;
   public UserId?: number;
@@ -72,12 +72,12 @@ Game.init({
   music_prompt_text: { type: DataTypes.TEXT, allowNull: true },
   music_prompt_seed_image: { type: DataTypes.STRING, allowNull: true },
   private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-  status: { type: DataTypes.STRING, allowNull: false, defaultValue: "draft" }, // Added status property
+  status: { type: DataTypes.STRING, allowNull: false, defaultValue: "draft" },
   createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'createdAt' },
   updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updatedAt' },
   UserId: {
     type: DataTypes.INTEGER,
-    allowNull: true, // Matches database NULLABLE
+    allowNull: true,
     references: {
       model: 'Users',
       key: 'id'
