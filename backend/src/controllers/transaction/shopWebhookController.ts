@@ -8,8 +8,25 @@ dotenv.config();
 
 // Webhook handler for payment callbacks at buy item
 export const handlePaymentCallback = async (req: Request, res: Response): Promise<void> => {
-  const { data, event } = req.body;
-  const { id: product_id, status, reference_id, email, amount, payment_method } = data;
+  const {
+    id: product_id,
+    status,
+    external_id: reference_id,
+    payer_email: email,
+    amount,
+    payment_method,
+    currency,
+    payment_channel,
+    user_id,
+    description,
+    paid_amount,
+    created,
+    updated,
+    paid_at,
+    merchant_name,
+    payment_destination
+  } = req.body;
+
   const webhookToken = req.headers['x-callback-token'];
 
   // Verify the webhook token
@@ -22,24 +39,17 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
   console.log(` `);
   console.log(`------------ Webhook Order Details ------------`);
   console.log(`Received payment webhook for order: ${reference_id}
-Status: ${status}
-Event: ${event}`);
+Status: ${status}`);
 
   // Extract the payment method
-  const paymentMethod = payment_method?.ewallet?.channel_code || 'Unknown';
+  const paymentMethod = payment_channel || 'Unknown';
   console.log(`Payment Method: ${paymentMethod}`);
 
   // Extract the transaction ID
-  const transactionId = payment_method?.id || 'Unknown';
+  const transactionId = product_id || 'Unknown';
   console.log(`Transaction ID: ${transactionId}`);
 
-  if (event === 'payment_method.activated') {
-    console.log(`Payment method activated for order: ${reference_id}`);
-    res.status(200).json({ message: 'Payment method activated' });
-  } else if (event === 'payment_method.expired') {
-    console.log(`Payment method expired for order: ${reference_id}`);
-    res.status(200).json({ message: 'Payment method expired' });
-  } else if (status === 'SUCCEEDED' || status === 'COMPLETED' || status === 'PAID') {
+  if (status === 'SUCCEEDED' || status === 'COMPLETED' || status === 'PAID') {
     try {
       // Check if reference_id format is as expected
       const referenceIdParts = reference_id.split('-');
@@ -88,7 +98,7 @@ Product ID: ${product_id}`);
           orderId: reference_id,
           received_coins: item.coins,
           payment_method: paymentMethod,
-          currency: data.currency,
+          currency: currency,
           paid_amount: amount,
           created_at: new Date(),
         },
@@ -113,7 +123,7 @@ Email: ${user.email}
 ------------------------------------
 💳 Payment Details:
 Payment Method: ${paymentMethod} 
-Currency: ${data.currency}
+Currency: ${currency}
 Paid Amount: ${amount}
 
 ------------------------------------
@@ -130,8 +140,8 @@ Total Coins Balance: ${user.totalCoins}
       res.status(500).json({ message: 'Server error' });
     }
   } else if (status === 'REQUIRES_ACTION') {
-    console.log(`Payment requires action for order ${reference_id}. Actions: ${JSON.stringify(data.actions, null, 2)}`);
-    res.status(200).json({ message: 'Payment requires action', actions: data.actions });
+    console.log(`Payment requires action for order ${reference_id}. Actions: ${JSON.stringify(req.body.actions, null, 2)}`);
+    res.status(200).json({ message: 'Payment requires action', actions: req.body.actions });
   } else {
     console.log(`Payment status for order ${reference_id}: ${status}`);
     res.status(200).json({ message: `Payment status: ${status}` });

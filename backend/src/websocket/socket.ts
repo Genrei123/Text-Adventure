@@ -5,18 +5,7 @@ import includedRoutes from '../config/websocketConfig';
 import corsOptions from '../config/cors';
 import { activeUserEmails } from '../shared/websocket/activeUser'; // Import activeUserEmails
 import { JoinPayload, PlayerCount } from '../interfaces/websocket/websocketInterfaces'; // Import interfaces
-import winston from 'winston';
 import axios from 'axios'; // Import axios
-
-// Initialize Winston Logger
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.printf(({ timestamp, level, message }) => `${timestamp} [${level.toUpperCase()}]: ${message}`)
-  ),
-  transports: [new winston.transports.Console(), new winston.transports.File({ filename: 'server.log' })],
-});
 
 const userSockets: Map<string, Set<string>> = new Map(); // Track multiple sockets per user
 
@@ -26,27 +15,26 @@ export function createServer(app: Express) {
 
   const logPlayerStats = async () => {
     try {
-      //const response = await axios.get(`${process.env.SITE_URL}/statistics/statsRoutes/player-stats`);
       const response = await axios.get(`${process.env.SITE_URL}/statistics/statsRoutes/player-stats`);
       const activePlayers = response.data.activePlayers;
-      logger.info(`Active players: ${activePlayers}`);
+      console.info(`Active players: ${activePlayers}`);
     } catch (error) {
-      logger.error('Error fetching active player count:', error);
+      console.error('Error fetching active player count:', error);
     }
   };
 
   io.on('connection', (socket: Socket) => {
-    logger.info(`New socket connected: ${socket.id}`);
+    console.info(`New socket connected: ${socket.id}`);
 
     socket.on('join', async ({ route, email }: JoinPayload) => {
-      logger.debug(`Join event received: route=${route}, email=${email}`);
+      console.debug(`Join event received: route=${route}, email=${email}`);
       if (!route) {
-        logger.error('Route is missing');
+        console.error('Route is missing');
         return;
       }
 
-      logger.info(`New connection from route: ${route}`);
-      logger.info(`Email received: ${email}`);
+      console.info(`New connection from route: ${route}`);
+      console.info(`Email received: ${email}`);
 
       const userEmail = email;
 
@@ -62,21 +50,21 @@ export function createServer(app: Express) {
           await logPlayerStats();
         }
 
-        logger.info(`User ${userEmail} joined. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
+        console.info(`User ${userEmail} joined. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
       } else {
-        logger.warn(`Route does not match included routes.`);
+        console.warn(`Route does not match included routes.`);
       }
     });
 
     socket.on('leave', async ({ route, email }: JoinPayload) => {
-      logger.debug(`Leave event received: route=${route}, email=${email}`);
+      console.debug(`Leave event received: route=${route}, email=${email}`);
       if (!route) {
-        logger.error('Route is missing');
+        console.error('Route is missing');
         return;
       }
 
-      logger.info(`Disconnection from route: ${route}`);
-      logger.info(`Email received: ${email}`);
+      console.info(`Disconnection from route: ${route}`);
+      console.info(`Email received: ${email}`);
 
       const userEmail = email;
 
@@ -92,14 +80,14 @@ export function createServer(app: Express) {
           }
         }
 
-        logger.info(`User ${userEmail} left. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
+        console.info(`User ${userEmail} left. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
       } else {
-        logger.warn(`Route does not match included routes.`);
+        console.warn(`Route does not match included routes.`);
       }
     });
 
     socket.on('disconnect', async () => {
-      logger.info(`Socket disconnected: ${socket.id}`);
+      console.info(`Socket disconnected: ${socket.id}`);
 
       for (const [userEmail, sockets] of userSockets.entries()) {
         if (sockets.has(socket.id)) {

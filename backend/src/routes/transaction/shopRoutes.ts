@@ -1,8 +1,8 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { createCustomer } from '../../service/transaction/Subscription/customerService';
 import { createPaymentMethod } from '../../service/transaction/Subscription/paymentMethodService';
 import { createSubscriptionPlan } from '../../service/transaction/Subscription/subscriptionService';
-import { buyItem, getCoins, deductCoins } from '../../controllers/transaction/shopController';
+import { buyItem, getCoins, deductCoins, getAllItems } from '../../controllers/transaction/shopController';
 import { handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
 
 const router = express.Router();
@@ -10,7 +10,7 @@ const router = express.Router();
 // ============================== Subscription Routes ==============================
 
 // Route for creating a customer
-router.post('/create-customer', async (req, res) => {
+router.post('/create-customer', async (req: Request, res: Response) => {
   try {
     const customerData = req.body.customerData;
     const customer = await createCustomer(customerData);
@@ -23,7 +23,7 @@ router.post('/create-customer', async (req, res) => {
 });
 
 // Route for creating a payment method
-router.post('/create-payment-method', async (req, res) => {
+router.post('/create-payment-method', async (req: Request, res: Response) => {
   try {
     const paymentMethodData = req.body.paymentMethodData;
     const paymentMethod = await createPaymentMethod(paymentMethodData);
@@ -46,7 +46,7 @@ router.post('/create-payment-method', async (req, res) => {
 });
 
 // Route for creating a subscription plan
-router.post('/create-subscription-plan', async (req, res) => {
+router.post('/create-subscription-plan', async (req: Request, res: Response) => {
   try {
     const planData = req.body.planData;
     const plan = await createSubscriptionPlan(planData);
@@ -64,5 +64,9 @@ router.post('/create-subscription-plan', async (req, res) => {
 router.post('/buy-item', buyItem);
 router.post('/payment', handlePaymentCallback);
 
+// Route for fetching all items
+router.get('/items', getAllItems);
+router.get('/coins', getCoins);
+router.post('/deduct-coins', deductCoins);
 
 export default router;

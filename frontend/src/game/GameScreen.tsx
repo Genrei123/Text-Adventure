@@ -18,7 +18,7 @@ const GameScreen: React.FC = () => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const [chatMessages, setChatMessages] = useState<Array<{ content: string, isUser: boolean, timestamp: string }>>([]);
-    const [isGameOver, setIsGameOver] = useState(false);
+    //const [isGameOver, setIsGameOver] = useState(false);
     const [isAnimating, setIsAnimating] = useState(true);
 
     useEffect(() => {
@@ -67,10 +67,10 @@ const GameScreen: React.FC = () => {
     // Game Over animation setup
     useEffect(() => {
         const timer = setTimeout(() => setIsAnimating(false), 5000);
-        const gameOverTimer = setTimeout(() => setIsGameOver(true), 6000);
+        //const gameOverTimer = setTimeout(() => setIsGameOver(true), 6000);
         return () => {
             clearTimeout(timer);
-            clearTimeout(gameOverTimer);
+            //clearTimeout(gameOverTimer);
         };
     }, []);
 
@@ -240,96 +240,14 @@ const GameScreen: React.FC = () => {
                     className="absolute inset-0"
                     variants={backgroundVariants}
                     initial="normal"
-                    animate={isGameOver ? "blurred" : "normal"}
+                    //animate={isGameOver ? "blurred" : "normal"}
                 >
                     {/* put the code for fetching story background here */}
                     <img src="/warhammer.jpg" alt="Background" className="w-full h-full object-cover" />
                 </motion.div>
 
                 {/* Game Over Overlay */}
-                <AnimatePresence>
-                    {isGameOver && (
-                        <motion.div
-                            className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 pointer-events-auto"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            {/* Full-page Glowing Red Background Animation */}
-                            <motion.div
-                                className="absolute inset-0 z-0"
-                                style={{
-                                    background: "radial-gradient(circle, rgba(255, 0, 0, 0.3), transparent)",
-                                }}
-                                animate={{
-                                    scale: [1, 1.1, 1],
-                                    opacity: [0.3, 0.6, 0.3],
-                                    background: [
-                                        "radial-gradient(circle, rgba(255, 0, 0, 0.3), transparent)",
-                                        "radial-gradient(circle, rgba(255, 0, 0, 0.5), transparent)",
-                                        "radial-gradient(circle, rgba(255, 0, 0, 0.3), transparent)",
-                                    ],
-                                }}
-                                transition={{
-                                    duration: 3,
-                                    repeat: Infinity,
-                                    ease: "easeInOut",
-                                }}
-                            />
-
-                            {/* Content container centered on top */}
-                            <motion.div
-                                className="relative z-10 flex flex-col items-center"
-                                variants={gameOverVariants}
-                                initial="hidden"
-                                animate="visible"
-                                exit="exit"
-                            >
-                                <motion.h1
-                                    className="text-4xl md:text-6xl font-bold text-red-600 tracking-wider font-cinzel"
-                                    variants={glowVariants}
-                                    animate="visible"
-                                >
-                                    GAME OVER
-                                </motion.h1>
-
-                                {/* Buttons */}
-                                <div className="flex space-x-4 mt-8">
-                                    {/* Return to Home Button */}
-                                    <motion.button
-                                        className="px-6 py-3 bg-[#311F17] text-[#E5D4B3] rounded-lg font-playfair text-lg border border-[#634630] focus:outline-none"
-                                        whileHover={{
-                                            scale: 1.05,
-                                            backgroundColor: "#634630",
-                                            borderColor: "#E5D4B3",
-                                            transition: { duration: 0.3, ease: "easeInOut" },
-                                        }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => window.location.href = '/home'} // Redirect to /home
-                                    >
-                                        Return to Home
-                                    </motion.button>
-
-                                    {/* View Summary Button */}
-                                    <motion.button
-                                        className="px-6 py-3 bg-[#311F17] text-[#E5D4B3] rounded-lg font-playfair text-lg border border-[#634630] focus:outline-none"
-                                        whileHover={{
-                                            scale: 1.05,
-                                            backgroundColor: "#634630",
-                                            borderColor: "#E5D4B3",
-                                            transition: { duration: 0.3, ease: "easeInOut" },
-                                        }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={() => console.log("View Summary clicked")} // Replace with actual logic
-                                    >
-                                        View Summary
-                                    </motion.button>
-                                </div>
-                            </motion.div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                
 
                 {/* Main content */}
                 <div className="relative z-10">
