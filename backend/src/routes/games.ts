@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import Game from '../model/game/game'; // Corrected import syntax
+import Game from '../model/game/game';
 
 const router = Router();
 

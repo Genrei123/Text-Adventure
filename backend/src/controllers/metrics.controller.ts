@@ -10,11 +10,11 @@ export const getMetrics = async (req: Request, res: Response) => {
   try {
     const [emailVerified, gamesResult] = await Promise.all([
       sequelize.query<CountResult>(
-        'SELECT COUNT(*) FROM users WHERE email_verified = true',
+        'SELECT COUNT(*) FROM "Users" WHERE "email_verified" = true',
         { type: QueryTypes.SELECT }
       ),
       sequelize.query<CountResult>(
-        'SELECT COUNT(*) FROM games',
+        'SELECT COUNT(*) FROM "Games"',
         { type: QueryTypes.SELECT }
       )
     ]);
@@ -34,7 +34,7 @@ export const getMetrics = async (req: Request, res: Response) => {
 export const getGamesCount = async (req: Request, res: Response) => {
   try {
     const result = await sequelize.query<CountResult>(
-      'SELECT COUNT(*) FROM games',
+      'SELECT COUNT(*) FROM "Games"',
       { type: QueryTypes.SELECT }
     );
     res.json({ count: Number(result[0].count) });
