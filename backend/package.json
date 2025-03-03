@@ -25,9 +25,11 @@
   "homepage": "https://github.com/Genrei123/Text-Adventure#readme",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.10.9",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/react": "^19.0.8",
@@ -62,6 +64,7 @@
     "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.5",
+    "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.0",
     "openai": "^4.84.1",
     "passport": "^0.7.0",
@@ -78,6 +81,6 @@
     "uuid": "^11.0.5",
     "winston": "^3.17.0",
     "ws": "^8.18.0",
-    "xendit-node": "^6.0.0"
+    "xendit-node": "^6.2.0"
   }
 }

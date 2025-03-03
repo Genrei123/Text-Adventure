@@ -14,7 +14,7 @@ if (!googleClientID || !googleClientSecret) {
 passport.use(new GoogleStrategy({
     clientID: googleClientID,
     clientSecret: googleClientSecret,
-    callbackURL: "/google/callback"
+    callbackURL: "/auth/google/callback"
   },
   (accessToken, refreshToken, profile, done) => {
     // Here you can save the user profile to your database

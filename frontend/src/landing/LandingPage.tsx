@@ -16,6 +16,8 @@ const LandingPage: React.FC = () => {
 
     return (
         <>
+            {/* fade in animation for he page */}
+            <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${background})` }}></div>
             <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-black to-transparent"></div>
             <div className="flex justify-center items-center h-[950px] bg-cover bg-center fade-in relative" style={{ backgroundImage: `url(${background})` }}>
                 <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black to-transparent"></div>
