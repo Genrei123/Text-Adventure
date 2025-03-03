@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import Session from "../../model/session";
 import { SessionData } from "../../interfaces/session/sessionInterface";
 
@@ -8,6 +9,9 @@ import { SessionData } from "../../interfaces/session/sessionInterface";
  */
 export async function createSession(email: string): Promise<Session> {
   try {
+    // Call deleteSessionsWithNoEndTime directly
+    await deleteSessionsWithNoEndTime();
+
     const newSession = await Session.create({
       email,
       startTime: new Date(),
@@ -99,7 +103,6 @@ export async function addPageVisits(sessionId: string, pages: string[], localSto
   }
 }
 
-
 /**
  * Clears a session and updates the endTime in the database.
  * @param sessionId - The ID of the session.
@@ -107,18 +110,8 @@ export async function addPageVisits(sessionId: string, pages: string[], localSto
  */
 export async function clearSession(sessionId: string, visitedPages: string[]): Promise<void> {
   try {
-        
-    // Make HTTP request to delete sessions with no endTime
-    const response = await fetch('http://localhost:3000/sessions/deleteSessionsWithNoEndTime', {
-      method: 'POST',
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete sessions with no endTime');
-    }
-
-    console.log("Sessions with no endTime deleted successfully");
-
+    // Call deleteSessionsWithNoEndTime directly
+    await deleteSessionsWithNoEndTime();
 
     console.log("clearSession function called");
 
@@ -145,6 +138,25 @@ export async function clearSession(sessionId: string, visitedPages: string[]): P
     console.log("Session ended:", session);
   } catch (error) {
     console.error("Error ending session:", error);
+    throw error;
+  }
+}
+
+/**
+ * Deletes sessions with no end time.
+ * @returns The number of deleted sessions.
+ */
+export async function deleteSessionsWithNoEndTime(): Promise<number> {
+  try {
+    const result = await Session.destroy({
+      where: {
+          endTime: { [Op.is]: null as any }
+      },
+  });
+    console.log("Sessions with no end time deleted:", result);
+    return result;
+  } catch (error) {
+    console.error("Error deleting sessions with no end time:", error);
     throw error;
   }
 }

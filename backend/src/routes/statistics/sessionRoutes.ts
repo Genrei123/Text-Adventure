@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createSessionController, addPageVisitController, clearSessionController } from "../../controllers/session/sessionController";
+import { createSessionController, addPageVisitController, clearSessionController, deleteSessionsWithNoEndTimeController } from "../../controllers/session/sessionController";
 
 const router = Router();
 
@@ -20,5 +20,7 @@ router.post("/clearSession", (req, res) => {
   console.log("Received clearSession request:", req.body);
   clearSessionController(req, res);
 });
+
+router.delete('/delete-sessions-no-end-time', deleteSessionsWithNoEndTimeController);
 
 export default router;

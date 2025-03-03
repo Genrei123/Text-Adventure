@@ -6,7 +6,7 @@ let isSessionCreating = false;
 
 export const createSession = async (email: string) => {
   if (isSessionCreating) {
-    // console.log('Session creation already in progress');
+    console.log('Session creation already in progress');
     return;
   }
 
@@ -15,7 +15,7 @@ export const createSession = async (email: string) => {
     const response = await axios.post(`${API_URL}/sessions/createSession`, { email });
     const newSession = response.data;
 
-    //console.log('New session created:', newSession); // Add this line to log the response
+    console.log('New session created:', newSession); // Add this line to log the response
 
     localStorage.setItem('sessionId', newSession.id);
     return newSession;
