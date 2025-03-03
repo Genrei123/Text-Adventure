@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createSession, addPageVisits, clearSession } from "../../service/session/sessionService";
+import { createSession, addPageVisits, clearSession, deleteSessionsWithNoEndTime } from "../../service/session/sessionService";
 
 export const createSessionController = async (req: Request, res: Response) => {
   try {
@@ -33,6 +33,17 @@ export const clearSessionController = async (req: Request, res: Response) => {
     res.status(200).json({ message: "Session ended successfully" });
   } catch (error) {
     console.error("Error clearing session:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const deleteSessionsWithNoEndTimeController = async (req: Request, res: Response) => {
+  try {
+    console.log("Received deleteSessionsWithNoEndTime request");
+    const result = await deleteSessionsWithNoEndTime();
+    res.status(200).json({ message: "Sessions with no end time deleted successfully", result });
+  } catch (error) {
+    console.error("Error deleting sessions with no end time:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
