@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, initiateGameSession, getConversationHistory } from "../../service/chat/chatService";
+import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, storeImageMessage, initiateGameSession, getConversationHistory } from "../../service/chat/chatService";
 
 export const getChatHistoryController = async (req: Request, res: Response) => {
     try {
@@ -52,5 +52,38 @@ export const handleChatRequestController = async (req: Request, res: Response): 
         console.error(error);
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
         res.status(500).json({ error: errorMessage });
+    }
+};
+
+export const storeImage = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { userId, gameId, content, imageUrl, role } = req.body;
+
+        if (!userId || !gameId || !imageUrl) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Validate user and game
+        await validateUserAndGame(userId, gameId);
+
+        // Store the image message
+        const storedMessage = await storeImageMessage(
+            userId,
+            gameId,
+            content || 'Scene visualized:',
+            imageUrl,
+            role || 'assistant'
+        );
+
+        return res.status(201).json({
+            message: 'Image stored successfully',
+            data: storedMessage
+        });
+    } catch (error) {
+        console.error('Error storing image:', error);
+        return res.status(500).json({
+            error: 'Failed to store image',
+            details: error instanceof Error ? error.message : String(error)
+        });
     }
 };

@@ -82,13 +82,46 @@ export const callOpenAI = async (messages: ChatMessage[]) => {
     }
 };
 
-// Store new chat message
-export const storeChatMessage = async (session_id: string, userId: number, gameId: number, role: string, content: string) => {
+// Store new chat message with optional imageUrl
+export const storeChatMessage = async (
+    session_id: string, 
+    userId: number, 
+    gameId: number, 
+    role: string, 
+    content: string,
+    image_url?: string
+) => {
     return await Chat.create({
         session_id,
         model: "gpt-3.5-turbo",
         role,
         content,
+        image_url, // Add the imageUrl field
+        GameId: gameId,
+        UserId: userId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    });
+};
+
+// Store image message
+export const storeImageMessage = async (
+    userId: number,
+    gameId: number,
+    content: string,
+    image_url: string,
+    role: string = "assistant"
+) => {
+    // Get the session_id
+    const session_id = await findOrCreateSession(userId, gameId);
+    
+    // Create a chat message with image URL
+    return await Chat.create({
+        session_id,
+        model: "gpt-3.5-turbo",
+        role,
+        content,
+        image_url,
         GameId: gameId,
         UserId: userId,
         createdAt: new Date(),
@@ -124,6 +157,7 @@ export const getConversationHistory = async (session_id: string, userId: number,
         .filter(chat => chat.content && chat.role) // Exclude messages with empty content or missing role
         .map(chat => ({
             role: chat.role as "system" | "user" | "assistant",
-            content: chat.content
+            content: chat.content,
+            imageUrl: chat.image_url // Include imageUrl in the returned data
         }));
 };

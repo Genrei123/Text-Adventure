@@ -4,8 +4,7 @@ import axiosInstance from '../../config/axiosConfig';
 import Sidebar from '../components/Sidebar';
 import GameHeader from '../components/GameHeader';
 import ActionButton from './components/ActionButton';
-import { motion, AnimatePresence } from "framer-motion";
-import Homepage from '../home/Homepage';
+import { motion } from "framer-motion";
 
 const GameScreen: React.FC = () => {
     const { id: gameId } = useParams();
@@ -15,10 +14,15 @@ const GameScreen: React.FC = () => {
     const [success, setSuccess] = useState('');
     const [showScroll, setShowScroll] = useState(false);
     const [selectedAction, setSelectedAction] = useState('Say'); // Default action is 'Say'
+    const [isGeneratingImage, setIsGeneratingImage] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const chatContainerRef = useRef<HTMLDivElement>(null);
-    const [chatMessages, setChatMessages] = useState<Array<{ content: string, isUser: boolean, timestamp: string }>>([]);
-    //const [isGameOver, setIsGameOver] = useState(false);
+    const [chatMessages, setChatMessages] = useState<Array<{ 
+        content: string, 
+        isUser: boolean, 
+        timestamp: string,
+        image_url?: string 
+    }>>([]);
     const [isAnimating, setIsAnimating] = useState(true);
 
     useEffect(() => {
@@ -47,8 +51,10 @@ const GameScreen: React.FC = () => {
                 const formattedMessages = response.data.map((msg: any) => ({
                     content: msg.content,
                     isUser: msg.role === 'user',
-                    timestamp: new Date(msg.createdAt).toLocaleTimeString()
+                    timestamp: new Date(msg.createdAt).toLocaleTimeString(),
+                    image_url: msg.image_url || undefined
                 }));
+                console.log(formattedMessages);
                 setChatMessages(formattedMessages);
             } catch (error) {
                 console.error('Error fetching chat messages:', error);
@@ -64,39 +70,15 @@ const GameScreen: React.FC = () => {
         }
     }, [chatMessages]);
 
-    // Game Over animation setup
+    // Door animation setup
     useEffect(() => {
         const timer = setTimeout(() => setIsAnimating(false), 5000);
-        //const gameOverTimer = setTimeout(() => setIsGameOver(true), 6000);
         return () => {
             clearTimeout(timer);
-            //clearTimeout(gameOverTimer);
         };
     }, []);
 
     // Animation variants
-    const gameOverVariants = {
-        hidden: {
-            opacity: 0,
-            scale: 0.8
-        },
-        visible: {
-            opacity: 1,
-            scale: 1,
-            transition: {
-                duration: 0.8,
-                ease: "easeInOut"
-            }
-        },
-        exit: {
-            opacity: 0,
-            scale: 0.8,
-            transition: {
-                duration: 0.5
-            }
-        }
-    };
-
     const backgroundVariants = {
         normal: {
             filter: "blur(50px)"
@@ -105,23 +87,6 @@ const GameScreen: React.FC = () => {
             filter: "blur(60px)",
             transition: {
                 duration: 1.5,
-                ease: "easeInOut"
-            }
-        }
-    };
-
-    const glowVariants = {
-        visible: {
-            textShadow: [
-                "0 0 5px #ff0000",
-                "0 0 10px #ff0000",
-                "0 0 20px #ff0000",
-                "0 0 10px #ff0000",
-                "0 0 5px #ff0000"
-            ],
-            transition: {
-                duration: 2,
-                repeat: Infinity,
                 ease: "easeInOut"
             }
         }
@@ -154,7 +119,7 @@ const GameScreen: React.FC = () => {
             userId,
             gameId: parseInt(gameId, 10),
             message,
-            action: selectedAction // Add the selected action to the payload
+            action: selectedAction
         };
 
         setMessage(''); // Clear message input
@@ -178,7 +143,8 @@ const GameScreen: React.FC = () => {
                 isUser: false,
                 timestamp: response.data.ai_response.createdAt
                     ? new Date(response.data.ai_response.createdAt).toLocaleTimeString()
-                    : new Date().toLocaleTimeString()
+                    : new Date().toLocaleTimeString(),
+                image_url: response.data.ai_response.image_url
             };
 
             // Replace temp user message with backend data if available
@@ -190,12 +156,14 @@ const GameScreen: React.FC = () => {
                         {
                             content: `[${selectedAction}] ${response.data.user_message.content}`,
                             isUser: true,
-                            timestamp: new Date(response.data.user_message.createdAt).toLocaleTimeString()
+                            timestamp: new Date(response.data.user_message.createdAt).toLocaleTimeString(),
+                            image_url: response.data.user_message.image_url
                         },
                         {
                             content: response.data.ai_response.content,
                             isUser: false,
-                            timestamp: new Date(response.data.ai_response.createdAt).toLocaleTimeString()
+                            timestamp: new Date(response.data.ai_response.createdAt).toLocaleTimeString(),
+                            image_url: response.data.ai_response.image_url
                         }
                     ];
                 });
@@ -207,6 +175,117 @@ const GameScreen: React.FC = () => {
         } catch (err) {
             console.error('Error sending message:', err);
             setError('An unexpected error occurred. Please try again.');
+        }
+    };
+
+    // Function to extract the last few messages to generate context for the image
+    const getContextFromMessages = (): string => {
+        // Get the last 3-5 messages for context (or fewer if there aren't that many)
+        const recentMessages = chatMessages.slice(-5);
+        
+        // Extract just the content from each message, removing action prefixes like [Say], [Do], etc.
+        const cleanedContents = recentMessages.map(msg => {
+            // Remove action prefixes if they exist
+            const content = msg.content.replace(/^\[(Say|Do|See)\]\s+/i, '');
+            return content;
+        });
+        
+        // If there are no messages, return a default prompt
+        if (cleanedContents.length === 0) {
+            return "A scene from a narrative adventure game";
+        }
+        
+        // Join the contents together, with more emphasis on the most recent message
+        return `Generate an image of the current scene in the story: ${cleanedContents.join(". ")}`;
+    };
+
+    const handleGenerateImage = async () => {
+        if (!userId || !gameId) {
+            setError('User ID or Game ID not found. Please log in again.');
+            return;
+        }
+        
+        setError('');
+        setSuccess('');
+        setIsGeneratingImage(true);
+        
+        try {
+            // Get context from recent conversation
+            const imagePrompt = getContextFromMessages();
+            
+            // Ensure the prompt doesn't exceed 1000 characters
+            const truncatedPrompt = imagePrompt.length > 1000 
+                ? imagePrompt.substring(0, 997) + "..."
+                : imagePrompt;
+            
+            // Show generating message
+            const userPromptMessage = {
+                content: `[Generate Image] Visualizing the current scene...`,
+                isUser: true,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            
+            setChatMessages(prevMessages => [...prevMessages, userPromptMessage]);
+            
+            const generatingMessage = {
+                content: "Generating image of the current scene...",
+                isUser: false,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            
+            setChatMessages(prevMessages => [...prevMessages, generatingMessage]);
+
+            // Make API call
+            const response = await axiosInstance.post('/openai/generate-image', { 
+                prompt: truncatedPrompt,
+                userId,
+                gameId: parseInt(gameId, 10)
+            });
+
+            // Remove the "generating" message
+            setChatMessages(prevMessages => prevMessages.slice(0, -1));
+
+            // Get the image URL from the response
+            const image_url = response.data.image_url;
+
+            // Save the image URL to the chat history
+            // Send a request to store this as an AI message with image
+            await axiosInstance.post('/ai/store-image', {
+                userId,
+                gameId: parseInt(gameId, 10),
+                content: "Scene visualized:",
+                image_url: image_url,
+                role: 'assistant' // This is an AI response
+            });
+
+            // Add the image response
+            const imageResponse = {
+                content: "Scene visualized:",
+                isUser: false,
+                timestamp: new Date().toLocaleTimeString(),
+                image_url: image_url
+            };
+
+            setChatMessages(prevMessages => [...prevMessages, imageResponse]);
+            setSuccess('Scene visualized successfully!');
+        } catch (err) {
+            console.error('Error generating image:', err);
+            setError('Image generation failed. Please try again.');
+            
+            // Remove the "generating" message and add an error message
+            setChatMessages(prevMessages => {
+                const updatedMessages = prevMessages.slice(0, -1);
+                return [
+                    ...updatedMessages,
+                    {
+                        content: "Failed to visualize the scene. Please try again.",
+                        isUser: false,
+                        timestamp: new Date().toLocaleTimeString()
+                    }
+                ];
+            });
+        } finally {
+            setIsGeneratingImage(false);
         }
     };
 
@@ -240,14 +319,9 @@ const GameScreen: React.FC = () => {
                     className="absolute inset-0"
                     variants={backgroundVariants}
                     initial="normal"
-                    //animate={isGameOver ? "blurred" : "normal"}
                 >
-                    {/* put the code for fetching story background here */}
                     <img src="/warhammer.jpg" alt="Background" className="w-full h-full object-cover" />
                 </motion.div>
-
-                {/* Game Over Overlay */}
-                
 
                 {/* Main content */}
                 <div className="relative z-10">
@@ -271,6 +345,11 @@ const GameScreen: React.FC = () => {
                                 <p className={`inline-block p-2 rounded-lg ${msg.isUser ? 'bg-[#311F17] text-white' : 'bg-[#634630] text-[#E5D4B3]'}`}>
                                     {msg.content}
                                 </p>
+                                {msg.image_url && (
+                                    <div className={`mt-2 ${msg.isUser ? 'text-right' : 'text-left'}`}>
+                                        <img src={msg.image_url} alt="Generated" className="max-w-full h-auto rounded-lg inline-block" />
+                                    </div>
+                                )}
                                 <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
                             </div>
                         ))}
@@ -278,7 +357,7 @@ const GameScreen: React.FC = () => {
                 </div>
 
                 <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
-                    {/* Action buttons row */}
+                    {/* Action buttons row with Image button */}
                     <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
                         <ActionButton 
                             action="Do" 
@@ -295,8 +374,18 @@ const GameScreen: React.FC = () => {
                             isSelected={selectedAction === "See"} 
                             onClick={() => setSelectedAction("See")} 
                         />
+                        <button 
+                            onClick={handleGenerateImage}
+                            disabled={isGeneratingImage}
+                            className={`px-4 py-2 rounded-full font-playfair
+                                ${isGeneratingImage ? 'bg-[#634630]/50 text-gray-400 cursor-not-allowed' : 'bg-[#634630] text-white hover:bg-[#311F17] transition-colors'}
+                            `}
+                        >
+                            {isGeneratingImage ? 'Generating...' : 'Visualize Scene'}
+                        </button>
                     </div>
                     
+                    {/* Chat input */}
                     <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
                         <textarea
                             ref={textareaRef}
@@ -318,6 +407,7 @@ const GameScreen: React.FC = () => {
                             <img src="/Enter-after.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
                         </button>
                     </div>
+                    
                     {error && <p className="text-red-500 mt-2">{error}</p>}
                     {success && <p className="text-green-500 mt-2">{success}</p>}
                 </div>
