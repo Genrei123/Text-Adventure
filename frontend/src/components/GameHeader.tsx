@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../../config/axiosConfig";
 import CoinStore from "../subscription/CoinStore";
 
 const GameHeader: React.FC = () => {
@@ -11,7 +11,7 @@ const GameHeader: React.FC = () => {
             const email = localStorage.getItem('email');
             if (email) {
                 try {
-                    const response = await axios.get(`http://localhost:3000/shop/coins?email=${email}`);
+                    const response = await axios.get(`/shop/coins?email=${email}`);
                     setCoins(response.data.coins);
                 } catch (error) {
                     console.error('Error fetching coins:', error);
