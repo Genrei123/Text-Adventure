@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Auth Components
@@ -25,7 +25,6 @@ import AdminPlayerList from './Admin/AdminPlayerList';
 import BannedList from './Admin/AdminBannedList';
 import Subscription from './subscription/Subscription';
 
-
 // Work in Progress Components [EXPERIMENTAL - Do not include in main app!]
 import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
 
@@ -36,7 +35,6 @@ import { WebSocketProvider } from './websocket/context/WebSocketContext';
 import ActivePlayerCount from './websocket/components/ActivePlayerCount';
 import NihGameScreen from './game/NihGameScreen';
 import BanTestPage from './pages/BanTestPage';
-
 
 // Session Components
 import SessionTracker from './sessions/components/SessionTracker';
@@ -65,6 +63,25 @@ function App() {
   const handleRegister = (user: string, isSocialLogin: boolean): void => {
     if (isSocialLogin) setUsername(user);
   };
+
+  // Add event listener for beforeunload to handle browser close or refresh
+  useEffect(() => {
+    const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
+      if (sessionId) {
+        try {
+          await clearSession(sessionId, visitedPages);
+        } catch (error) {
+          console.error('Error handling beforeunload:', error);
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [sessionId, visitedPages]);
 
   // WebSocket wrapper component
   const WebSocketRoutes = ({ children }: { children: React.ReactNode }) => (
@@ -169,4 +186,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;
