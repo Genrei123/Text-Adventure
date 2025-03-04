@@ -30,7 +30,7 @@ export function createServer(app: Express) {
 
   const logPlayerStats = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/statistics/player-stats');
+      const response = await axios.get(`${process.env.SITE_URL}/statistics/statsRoutes/player-stats`);
       const activePlayers = response.data.activePlayers;
       logger.info(`Active players: ${activePlayers}`);
     } catch (error) {

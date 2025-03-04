@@ -9,7 +9,7 @@ const NotFound: React.FC = () => {
       <h1 className="text-4xl md:text-6xl font-cinzel mb-4">Lost in the Dark?</h1>
       <p className="text-xl md:text-2xl font-playfair mb-8">Here, grab a torch</p>
       <button 
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/home')}
         className="px-6 py-3 bg-[#311F17] text-white font-playfair text-lg rounded-lg hover:bg-[#4A2E22] transition duration-300 flex items-center space-x-2"
       >
         <img src="/torch.svg" alt="Torch" className="w-6 h-6" />

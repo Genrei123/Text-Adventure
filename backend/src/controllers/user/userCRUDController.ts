@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import UserService from '../../service/user/userService';
+import { getUserComments, getUserRatings} from '../../service/user/userGamesService';
 
 export const getAllUsers = async (req: Request, res: Response) => {
     try {
@@ -70,3 +71,56 @@ export const deleteUser = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to delete user' });
     }
 };
+
+export const getUserCommentsById = async (req: Request, res: Response) => {
+    try {
+        const comments = await getUserComments(parseInt(req.params.id));
+        res.json(comments);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user comments' });
+    }
+};
+
+export const getUserRatingsById = async (req: Request, res: Response) => {
+    try {
+        const ratings = await getUserRatings(parseInt(req.params.id));
+        res.json(ratings);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user ratings' });
+    }
+};
+
+export const getUserCommentsByUsername = async (req: Request, res: Response) => {
+
+    try {
+        const user = await UserService.getUserByUsername(req.params.username);
+        if (user) {
+            const comments = await getUserComments(user.id);
+            res.json(comments);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to fetch user comments'  });
+    }
+};
+
+export const getUserRatingsByUsername = async (req: Request, res: Response) => {
+    try {
+        const user = await UserService.getUserByUsername(req.params.username);
+        if (user) {
+            const ratings = await getUserRatings(user.id);
+            res.json(ratings);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user ratings' });
+    }
+};
+
+
+
+
+

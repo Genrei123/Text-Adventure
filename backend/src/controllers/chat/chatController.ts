@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, initiateGameSession } from "../../service/chat/chatService";
+import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, initiateGameSession, getConversationHistory } from "../../service/chat/chatService";
 
 export const getChatHistoryController = async (req: Request, res: Response) => {
     try {
@@ -15,34 +15,42 @@ export const getChatHistoryController = async (req: Request, res: Response) => {
 
 export const handleChatRequestController = async (req: Request, res: Response): Promise<any> => {
     try {
-        // Initiate game session
         const { userId, gameId, message } = req.body;
-        
-        // First validate and get session
+
+        if (!message) {
+            throw new Error("Message is required");
+        }
+
         await validateUserAndGame(userId, gameId);
         const session_id = await findOrCreateSession(userId, gameId);
-        
-        // Properly format messages for OpenAI
+
         const gameSession = await initiateGameSession(userId, gameId);
-        
-        // Create proper message array for OpenAI
-        const formattedMessages: { role: "system" | "user" | "assistant"; content: any }[] = [
+        const conversationHistory = await getConversationHistory(session_id, userId, gameId);
+
+        const formattedMessages: { role: "system" | "user" | "assistant"; content: string }[] = [
             {
                 role: "system",
-                content: gameSession
+                content: gameSession || "Default game context"
             },
+            ...conversationHistory,
             {
                 role: "user",
-                content: message || "Hello" // Make sure messages has a value
+                content: message
             }
         ];
-        const messages = await callOpenAI(formattedMessages);
-        // Store the message
-        const response = await storeChatMessage(session_id, userId, gameId, "user", messages);
-        res.status(200).json(response);  // Use json() instead of send() for consistency
+
+        await storeChatMessage(session_id, userId, gameId, "user", message);
+        const aiResponse = await callOpenAI(formattedMessages);
+        const storedResponse = await storeChatMessage(session_id, userId, gameId, "assistant", aiResponse);
+
+        res.status(200).json({
+            session_id,
+            user_message: { content: message, createdAt: new Date() },
+            ai_response: storedResponse
+        });
     } catch (error) {
         console.error(error);
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        res.status(500).json({ error: errorMessage });  // Return error as JSON
+        res.status(500).json({ error: errorMessage });
     }
 };

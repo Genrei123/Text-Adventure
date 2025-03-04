@@ -11,7 +11,7 @@
 
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   <script>
-    const socket = io('https://orange-space-engine-66r5v9667p5h46qr-3000.app.github.dev'); // Adjust the URL to match your backend
+    const socket = io(`https://text-adventure-production.up.railway.app/statistics/statsRoutes/player-stats`); // Adjust the URL to match your backend
 
     socket.on('playerCount', (data) => {
       document.getElementById('playerCount').innerText = `Active players: ${data.activePlayers}`;

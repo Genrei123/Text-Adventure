@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Carousel from "./components/Carousel";
@@ -101,10 +101,13 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
           {/* Game List Section */}
           <GameList />
 
-          {/* Logout Button */}
-          <button onClick={onLogout} className="mt-4 p-2 bg-red-500 text-white rounded">
-            Logout
-          </button>
+          {/* Link to Ban Test Page */}
+          <div>
+            <h1>Main Application</h1>
+            <Link to="/ban-test">
+              Go to Ban Test Page
+            </Link>
+          </div>
         </div>
       </div>
     </div>
