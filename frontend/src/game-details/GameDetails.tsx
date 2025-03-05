@@ -112,6 +112,15 @@ const GameDetails: React.FC = () => {
     ...game,
   }
 
+  // Function to handle image fallback
+  const getGameImage = () => {
+    // Priority: image_data -> imageUrl -> default placeholder
+    if (game.image_data) {
+      return import.meta.env.VITE_BACKEND_URL + game.image_data
+    }
+    return import.meta.env.VITE_BACKEND_URL + game.image_data + game.imageUrl || "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1200&h=800&fit=crop"
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 bg-cover bg-center bg-[url('/UserBG.svg')] text-white pb-16">
       <Navbar />
@@ -123,9 +132,7 @@ const GameDetails: React.FC = () => {
           {/* Image with gradient overlay */}
           <div className="absolute inset-0">
             <img
-              src={
-                game.imageUrl || "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1200&h=800&fit=crop"
-              }
+              src={getGameImage()}
               alt={game.title}
               className="w-full h-full object-cover"
             />

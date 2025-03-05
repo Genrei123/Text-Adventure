@@ -27,7 +27,7 @@ export const storage = multer.diskStorage({
 });
 
 // Configure multer upload
-export const upload = multer({ storage: storage }).single('file');
+export const upload = multer({ storage: storage }).single('image');  
 
 // Upload profile image handler
 export const uploadProfileImage = async (req: MulterRequest, res: Response) => {

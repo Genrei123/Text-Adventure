@@ -16,7 +16,7 @@ interface GameAttributes {
     image_prompt_model?: string;
     image_prompt_name?: string;
     image_prompt_text?: string;
-    image_data?: Buffer;
+    image_data?: string;
     music_prompt_text?: string;
     music_prompt_seed_image?: string;
     private: boolean;
@@ -42,7 +42,7 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public image_prompt_model?: string;
     public image_prompt_name?: string;
     public image_prompt_text?: string;
-    public image_data?: Buffer;
+    public image_data?: string;
     public music_prompt_text?: string;
     public music_prompt_seed_image?: string;
     public private!: boolean;
@@ -67,7 +67,7 @@ Game.init({
     description: { type: DataTypes.TEXT, allowNull: false },
     tagline: { type: DataTypes.TEXT, allowNull: false },
     genre: { type: DataTypes.STRING, allowNull: false },
-    subgenre: { type: DataTypes.STRING, allowNull: false },
+    subgenre: { type: DataTypes.STRING, allowNull: true },
     primary_color: { type: DataTypes.STRING, allowNull: true },
     prompt_name: { type: DataTypes.STRING, defaultValue: "UGC", allowNull: false },
     prompt_text: { type: DataTypes.TEXT, allowNull: true },
@@ -75,7 +75,7 @@ Game.init({
     image_prompt_model: { type: DataTypes.STRING, allowNull: true },
     image_prompt_name: { type: DataTypes.STRING, allowNull: true },
     image_prompt_text: { type: DataTypes.TEXT, allowNull: true },
-    image_data: { type: DataTypes.BLOB, allowNull: true },
+    image_data: { type: DataTypes.TEXT, allowNull: true },
     music_prompt_text: { type: DataTypes.TEXT, allowNull: true },
     music_prompt_seed_image: { type: DataTypes.STRING, allowNull: true },
     private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
