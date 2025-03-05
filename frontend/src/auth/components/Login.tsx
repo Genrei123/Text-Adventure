@@ -127,17 +127,24 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   const handleSocialLogin = async (provider: string) => {
-    setIsProcessing(true);
-    toast.info(`Connecting to ${provider}...`);
-
-    setErrors({});
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-
     try {
-      const authUrl = `${
-        import.meta.env.VITE_SITE_URL
-      }/auth/${provider.toLowerCase()}`;
+      setIsProcessing(true);
+      setErrors({});
+      
+      // Clear existing tokens before social login
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+  
+      // Toast notification
+      toast.info(`Connecting to ${provider}...`);
+  
+      // Construct the authentication URL
+      const authUrl = `${import.meta.env.VITE_SITE_URL}/auth/${provider.toLowerCase()}`;
+      
+      // Additional logging for debugging
+      console.log('Social Login URL:', authUrl);
+  
+      // Redirect to authentication endpoint
       window.location.href = authUrl;
     } catch (error) {
       console.error(`Error during ${provider} login:`, error);
