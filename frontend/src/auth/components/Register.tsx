@@ -5,6 +5,8 @@ import axiosInstance from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { useLoading } from '../../context/LoadingContext';
+import LoadingLink from '../../components/LoadingLink';
 
 import RegisterCarousel from './RegisterCarousel';
 
@@ -38,6 +40,7 @@ interface RegisterProps {
 const Register: React.FC<RegisterProps> = ({ }) => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
+  const { navigateWithLoading } = useLoading();
 
   const handleRegister = async (formData: {
     username: string;
@@ -51,7 +54,7 @@ const Register: React.FC<RegisterProps> = ({ }) => {
       await axiosInstance.post('/auth/register', formData);
       toast.success('Registration successful! A verification email has been sent.');
       setTimeout(() => {
-        navigate('/login');
+        navigateWithLoading('/login');
       }, 3000);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data.message) {
@@ -131,12 +134,14 @@ const Register: React.FC<RegisterProps> = ({ }) => {
           {/* Login Link Section */}
           <div className="mt-6 text-center">
             <div className="text-[#8B7355] text-sm">Continue your journey?</div>
-            <Link 
+            <LoadingLink 
               to="/login" 
-              className={`text-[#C8A97E] hover:text-[#D8B98E] text-sm ${isProcessing ? 'pointer-events-none opacity-50' : ''}`}
+              className={`text-[#C8A97E] hover:text-[#D8B98E] text-sm ${
+                isProcessing ? 'pointer-events-none opacity-50' : ''
+              }`}
             >
               Login
-            </Link>
+            </LoadingLink>
           </div>
         </div>
       </div>

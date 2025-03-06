@@ -8,6 +8,9 @@ import ValidatedInput from "./ValidatedInput";
 import { ValidationUtils } from "../utils/ValidationUtils";
 import { isAxiosError } from "axios";
 import { LoginResponse } from "../types/User"; // Adjust the import path based on your folder structure
+import { useLoading } from '../../context/LoadingContext';
+import LoadingLink from '../../components/LoadingLink';
+import LoadingScreen from '../../components/LoadingScreen';
 
 interface LoginProps {
   onLogin: (username: string) => void;
@@ -25,20 +28,21 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
+  const { navigateWithLoading } = useLoading();
+  const [fadeIn, setFadeIn] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
 
   // Check if user is already logged in when component mounts
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      // Verify token with backend
       axiosInstance
         .post("/auth/verify-token", { token })
         .then((response) => {
           if (response.data.valid) {
-            // Token is valid, redirect to /home
-            navigate("/home");
+            navigateWithLoading("/home");
           } else {
-            // Token is invalid, remove it from localStorage
             localStorage.removeItem("token");
             localStorage.removeItem("email");
           }
@@ -49,7 +53,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           localStorage.removeItem("email");
         });
     }
-  }, [navigate]);
+  }, [navigateWithLoading]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -63,6 +67,24 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       navigate('/home');
     }
   }, [navigate, onLogin]);
+
+  // Check if user was redirected from logout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('from') === 'logout') {
+      setIsInitialLoading(true);
+      setTimeout(() => {
+        setFadeOut(true);
+        setTimeout(() => {
+          setIsInitialLoading(false);
+        }, 500);
+      }, 2000);
+    }
+  }, []);
+
+  if (isInitialLoading) {
+    return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />;
+  }
 
   const validateForm = (): boolean => {
     // Validate email
@@ -110,7 +132,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
       onLogin(user.email); // Assuming onLogin expects email, adjust if it should be username
       toast.success("Login successful!");
-      navigate("/home");
+      navigateWithLoading("/home");
     } catch (error) {
       if (isAxiosError(error)) {
         const message =
@@ -249,24 +271,24 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </div>
 
             <div className="mt-6 text-center">
-              <Link
+              <LoadingLink
                 to="/forgot-password"
                 className="text-[#C8A97E] hover:text-[#D8B98E] text-sm"
               >
                 Forgot Password?
-              </Link>
+              </LoadingLink>
             </div>
 
             <div className="mt-6 text-center">
               <div className="text-[#8B7355] text-sm">
                 Mark your Name in the History
               </div>
-              <Link
+              <LoadingLink
                 to="/register"
                 className="text-[#C8A97E] hover:text-[#D8B98E] text-sm"
               >
                 Register
-              </Link>
+              </LoadingLink>
             </div>
           </div>
         </div>

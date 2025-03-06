@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 import OfferModal from './OfferModal';
+import LoadingScreen from '../components/LoadingScreen';
 
 const Subscription: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState(null);
+    const [fadeIn, setFadeIn] = useState(false);
+    const [fadeOut, setFadeOut] = useState(false);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
 
     const handlePlanClick = (plan) => {
         setSelectedPlan(plan);
@@ -16,6 +20,20 @@ const Subscription: React.FC = () => {
         setIsModalOpen(false);
         setSelectedPlan(null);
     };
+
+    useEffect(() => {
+        // Simulate loading time
+        setTimeout(() => {
+            setFadeOut(true);
+            setTimeout(() => {
+                setIsInitialLoading(false);
+            }, 500);
+        }, 2000);
+    }, []);
+
+    if (isInitialLoading) {
+        return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />;
+    }
 
     return (
         <>

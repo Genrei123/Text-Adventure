@@ -15,7 +15,11 @@ interface Game {
   icon?: string; // Added icon property
 }
 
-const Navbar = () => {
+interface NavbarProps {
+  onLogout?: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Game[]>([]); // Changed to store full Game objects
@@ -128,30 +132,8 @@ const Navbar = () => {
   }, [searchQuery, games]);
 
   const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const email = localStorage.getItem('email');
-      const sessionId = localStorage.getItem('sessionId');
-      const pages = JSON.parse(localStorage.getItem('visitedPages') || '[]');
-      const localStorageData = localStorage.getItem('sessionData') || '{}';
-
-      if (token && email) {
-        socket.emit('leave', { route: window.location.pathname, email, token });
-      }
-
-      if (sessionId && pages.length > 0) {
-        // Add page visits before logging out
-        await addPageVisits(sessionId, pages, localStorageData);
-      }
-
-      localStorage.removeItem("email");
-      localStorage.removeItem("token");
-      localStorage.removeItem("sessionId");
-      localStorage.removeItem("visitedPages");
-      localStorage.removeItem("sessionData");
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout failed", error);
+    if (onLogout) {
+      await onLogout();
     }
   };
 
