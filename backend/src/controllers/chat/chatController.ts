@@ -79,7 +79,7 @@ export const storeImage = async (req: Request, res: Response): Promise<any> => {
         } = req.body;
 
         // Validate required fields
-        if (!userId || !gameId || !imageUrl) {
+        if (!userId || !gameId) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
