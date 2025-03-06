@@ -52,14 +52,22 @@ interface ChatMessage {
     content: string;
 }
 
-export const callOpenAI = async (messages: ChatMessage[]) => {
+interface OpenAIResponse {
+    choices: {
+        message: {
+            content: string;
+        };
+    }[];
+}
+
+export const callOpenAI = async (messages: ChatMessage[]): Promise<string> => {
     try {
         // Validate messages
         if (!Array.isArray(messages) || messages.some(msg => !msg.content || !msg.role)) {
             throw new Error("Invalid messages format");
         }
 
-        const response = await axios.post(
+        const response: import("axios").AxiosResponse<OpenAIResponse> = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
                 model: "gpt-3.5-turbo",
@@ -74,13 +82,20 @@ export const callOpenAI = async (messages: ChatMessage[]) => {
         );
 
         return response.data.choices[0].message.content;
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
+    } catch (error: unknown) {
+        if (isAxiosError(error)) {
             console.error('OpenAI API Error:', error.response?.data);
+        } else {
+            console.error('Unexpected Error:', error);
         }
         throw error;
     }
 };
+
+// Custom type guard to check if the error is an Axios error
+function isAxiosError(error: unknown): error is import("axios").AxiosError {
+    return (error as import("axios").AxiosError).isAxiosError !== undefined;
+}
 
 // Store new chat message
 export const storeChatMessage = async (session_id: string, userId: number, gameId: number, role: string, content: string) => {
