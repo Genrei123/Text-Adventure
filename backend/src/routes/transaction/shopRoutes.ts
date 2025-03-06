@@ -4,7 +4,7 @@ import express, { Request, Response } from 'express';
 // import { createSubscriptionPlan } from '../../service/transaction/Subscription/subscriptionService';
 import { buyItem, getCoins, deductCoins, getAllItems } from '../../controllers/transaction/shopController';
 import { handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
-import { createSubscription } from '../../controllers/transaction/subscriptionController'; // Correct import path
+import { createSubscription, getSubscriptionOffers, getUserSubscriptions } from '../../controllers/transaction/subscriptionController';
 
 const router = express.Router();
 
@@ -18,6 +18,8 @@ router.get('/items', getAllItems);
 router.get('/coins', getCoins);
 router.post('/deduct-coins', deductCoins);
 
-
+// Route for fetching subscription offers
+router.get('/subscription/offers', getSubscriptionOffers);
+router.get('/subscription/user/:email', getUserSubscriptions);
 
 export default router;

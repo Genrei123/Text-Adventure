@@ -102,30 +102,28 @@ Transaction ID: ${product_id || 'Unknown'}`);
         
         subscriber = await Subscriber.findOne({ where: { id: subscriberId } });
         
-        // If still not found, try creating a new subscriber
+        // If still not found, report an error instead of creating a new one
         if (!subscriber && email) {
-          console.log(`No matching subscriber found. Creating a new subscription record for: ${email}`);
-          
-          // Create a new ID in the correct format (sub_YYYYMMDD_RANDOM)
-          const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
-          const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-          const newSubscriberId = `sub_${date}_${random}`;
-          
-          subscriber = await Subscriber.create({
-            id: newSubscriberId, 
-            email: email.toLowerCase(),
-            subscriptionType: "Hero's Journey", // Default value
-            startDate: new Date(),
-            subscribedAt: new Date(),
-            status: 'active',
-            duration: 1, // Default 1 month
-            endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)) // Default 1 month from now
+          // Instead of automatically creating a new subscription, log an error
+          console.error(`No matching subscriber found for email: ${email} and reference_id: ${reference_id}`);
+          res.status(404).json({ 
+            error: 'Subscriber not found', 
+            details: {
+              reference_id: reference_id,
+              email: email,
+              message: 'No pending subscription record found. The subscription must be created before the payment webhook is received.'
+            }
           });
-          
-          console.log(`Created new subscriber with ID: ${subscriber.id}`);
+          return;
         } else if (!subscriber) {
-          console.log(`Cannot create new subscriber, no email provided in webhook`);
-          res.status(404).json({ message: 'Subscriber not found and no email provided' });
+          console.error('Cannot process webhook: no subscriber found and no email provided');
+          res.status(404).json({ 
+            error: 'Subscriber not found and no email provided',
+            details: {
+              reference_id: reference_id,
+              message: 'No pending subscription record found and no email was provided in the webhook.'
+            }
+          });
           return;
         }
       }

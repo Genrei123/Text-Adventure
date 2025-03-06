@@ -3,11 +3,12 @@ import { Invoice } from '../../service/transaction/xenditClient';
 import Subscriber from '../../model/transaction/SubscriberModel';
 import SubscriptionOffers from '../../model/transaction/SubscriptionOffersModel';
 import dotenv from 'dotenv';
+import { Op } from 'sequelize';
 
 dotenv.config();
 
-const SUCCESS_RETURN_URL = process.env.SUCCESS_RETURN_URL;
-const FAILURE_RETURN_URL = process.env.FAILURE_RETURN_URL;
+const SUCCESS_RETURN_URL = process.env.SUBSCRIPTION_SUCCESS_RETURN_URL;
+const FAILURE_RETURN_URL = process.env.SUBSCRIPTION_FAILURE_RETURN_URL;
 
 // Function to generate a random 6-character alphanumeric string (same as in shopController)
 const generateRandomId = () => {
@@ -125,5 +126,39 @@ Error: ${error.message}`);
       console.error('Error message:', error.message);
       res.status(500).json({ error: error.message });
     }
+  }
+};
+
+export const getSubscriptionOffers = async (req: Request, res: Response): Promise<void> => {
+  try {
+      // Find all available subscription offers
+      const offers = await SubscriptionOffers.findAll();
+      res.status(200).json(offers);
+  } catch (error) {
+      console.error('Error fetching subscription offers:', error);
+      res.status(500).json({ error: 'Failed to fetch subscription offers' });
+  }
+};
+
+export const getUserSubscriptions = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.params;
+    
+    if (!email) {
+      res.status(400).json({ error: 'Email parameter is required' });
+      return;
+    }
+    
+    // Find all subscriptions for this user
+    const subscriptions = await Subscriber.findAll({
+      where: { 
+        email: { [Op.iLike]: email } // Case insensitive email matching
+      }
+    });
+    
+    res.status(200).json(subscriptions);
+  } catch (error) {
+    console.error('Error fetching user subscriptions:', error);
+    res.status(500).json({ error: 'Failed to fetch user subscriptions' });
   }
 };
