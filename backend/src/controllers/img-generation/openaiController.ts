@@ -25,6 +25,7 @@ export const generateImage = async (req: Request, res: Response): Promise<void> 
     const openAiResponse = await axios.post(
       'https://api.openai.com/v1/images/generations',
       {
+        model: 'dall-e-3', // Specify DALL-E 3 model
         prompt,
         n: 1,
         size: '1024x1024',
