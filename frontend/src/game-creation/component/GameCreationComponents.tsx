@@ -29,9 +29,10 @@ interface NavigationButtonsProps {
   onBack: () => void
   onNext: () => void
   isLastStep: boolean
+  isLoading: boolean
 }
 
-export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ onBack, onNext, isLastStep }) => {
+export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ isLoading, onBack, onNext, isLastStep}) => {
   return (
     <div className="flex justify-between items-center gap-4">
       <button

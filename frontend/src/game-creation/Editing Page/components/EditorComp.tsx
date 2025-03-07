@@ -29,12 +29,20 @@ export const InputField: React.FC<InputFieldProps> = ({ title, description, inpu
 }
 
 interface BannerPromptProps {
-  value: string
-  onChange: (value: string) => void
-  setImageUrl: (url: string) => void
+  value: string;
+  onChange: (value: string) => void;
+  setImageUrl: (url: string) => void;
+  onGenerateImage?: () => void;
+  isLoading?: boolean;
+  imageUrl?: string;
 }
 
-export const BannerPrompt: React.FC<BannerPromptProps> = ({ value, onChange, setImageUrl }) => {
+export const BannerPrompt: React.FC<BannerPromptProps> = ({ value, 
+  onChange, 
+  setImageUrl, 
+  onGenerateImage,
+  isLoading,
+  imageUrl }) => {
   const handleInsertImage = () => {
     const input = document.createElement("input")
     input.type = "file"
@@ -81,9 +89,10 @@ export const BannerPrompt: React.FC<BannerPromptProps> = ({ value, onChange, set
 
 interface SaveButtonProps {
   onSave: () => void
+  isLoading: boolean
 }
 
-export const SaveButton: React.FC<SaveButtonProps> = ({ onSave }) => {
+export const SaveButton: React.FC<SaveButtonProps> = ({ isLoading, onSave }) => {
   return (
     <button
       onClick={onSave}

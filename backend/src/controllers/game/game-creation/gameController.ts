@@ -13,6 +13,8 @@ import {
     addGameComments,
     addGameRatings
 } from "../../../service/game-details/gameDetailsService";
+import User from "../../../model/user/user";
+import { Op } from "sequelize";
 
 export const getAllGames = async (req: Request, res: Response) => {
     try {
@@ -108,6 +110,92 @@ export const addRating = async (req: Request, res: Response): Promise<void> => {
 
         const rating = await addGameRatings(gameId, userId, score);
         res.status(201).json(rating);
+    } catch (error) {
+        console.error(error);
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        res.status(500).send(errorMessage);
+    }
+};
+
+export const getGameByUsername = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { username } = req.params;
+
+        // Find the user by username first
+        const user = await User.findOne({ 
+            where: { username },
+            attributes: ['id'] 
+        });
+
+        // If no user found, return 404
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Find all games created by this user
+        const games = await Game.findAll({ 
+            where: { UserId: user.id },
+            // Optional: you can add more attributes or include related models if needed
+            attributes: [
+                'id', 
+                'title', 
+                'slug', 
+                'description', 
+                'genre', 
+                'subgenre', 
+                'image_data', 
+                'createdAt'
+            ],
+            order: [['createdAt', 'DESC']] // Optional: sort by most recent first
+        });
+
+        // Return the games
+        res.status(200).json(games);
+    } catch (error) {
+        console.error(error);
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        res.status(500).send(errorMessage);
+    }
+};
+
+export const getGameByTitle = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { title } = req.query;
+
+        // Validate title input
+        if (!title || typeof title !== 'string') {
+            return res.status(400).json({ message: "Title is required" });
+        }
+
+        // Find games with a title that contains the input (case-insensitive)
+        const games = await Game.findAll({ 
+            where: {
+                title: {
+                    [Op.iLike]: `%${title}%`  // Case-insensitive partial match
+                }
+            },
+            attributes: [
+                'id', 
+                'title', 
+                'slug', 
+                'description', 
+                'genre', 
+                'subgenre', 
+                'image_data', 
+                'primary_color',
+                'createdAt'
+            ],
+            order: [['createdAt', 'DESC']],
+            limit: 50  // Limit to prevent overly broad searches
+        });
+
+        // If no games found
+        if (games.length === 0) {
+            return res.status(404).json({ message: "No games found matching the title" });
+        }
+
+        // Return the games
+        res.status(200).json(games);
     } catch (error) {
         console.error(error);
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';

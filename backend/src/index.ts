@@ -68,7 +68,7 @@ app.use('/api/bans', banRoutes);  // Fixes 404 for /api/bans
 app.use('/image', jwtAuth, imageRoutes);
 
 
-app.use('/image', express.static('public/images'));
+app.use('/images', express.static('public/images'));
 
 
 // Auth routes setup

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "../../config/axiosConfig"; // Adjust the import path
 import { TextInput, NavigationButtons, SkipToEditor } from "./component/GameCreationComponents";
 import { useNavigate } from 'react-router-dom';
 import Navbar from "../components/Navbar";
@@ -34,7 +35,18 @@ export const GameCreation: React.FC<GameCreationProps> = ({ onBack, onNext, onSk
     bannerPrompt: ""
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Retrieve user data from localStorage
+  const getUserId = () => {
+    const userDataString = localStorage.getItem("userData");
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      return userData.id; // Assuming the user object has an 'id' field
+    }
+    return null;
+  };
 
   const handleNext = () => {
     if (validateStep()) {
@@ -61,9 +73,62 @@ export const GameCreation: React.FC<GameCreationProps> = ({ onBack, onNext, onSk
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .trim();
+  };
+
+  const handleSubmit = async () => {
     if (validateStep()) {
-      navigate('/editing-page', { state: formData });
+      setIsLoading(true);
+      try {
+        // Generate banner image
+        const imageResponse = await axios.post('/openai/generate-image', {
+          prompt: formData.bannerPrompt || `A banner for a ${formData.genre} story titled ${formData.title}`
+        });
+
+        // Prepare game data
+        const gameData = {
+          title: formData.title,
+          slug: generateSlug(formData.title),
+          description: formData.description,
+          tagline: formData.ending,
+          genre: formData.genre,
+          subgenre: "", // You might want to add a field for this
+          primary_color: "#FF5733", // Default color, could be customizable
+          prompt_name: "default",
+          prompt_text: `You are in a ${formData.genre} story: ${formData.description}`,
+          prompt_model: "gpt-3.5-turbo",
+          image_prompt_model: "dall-e-3",
+          image_prompt_name: "scene",
+          image_prompt_text: formData.bannerPrompt || `A banner for a ${formData.genre} story`,
+          image_data: imageResponse.data.imageUrl,
+          music_prompt_text: `Create ambient music for a ${formData.genre} story`,
+          music_prompt_seed_image: "", // Optional
+          private: false,
+          UserId: getUserId()
+        };
+
+        // Add game to backend
+        const addGameResponse = await axios.post('/game/add-game', gameData);
+
+        // Navigate to editing page with game data
+        navigate('/editing-page', { 
+          state: { 
+            ...gameData, 
+            gameId: addGameResponse.data.id 
+          } 
+        });
+      } catch (error) {
+        console.error('Error submitting game:', error);
+        // Handle error (show error message to user)
+        alert('Failed to create game. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -81,7 +146,6 @@ export const GameCreation: React.FC<GameCreationProps> = ({ onBack, onNext, onSk
   const { field, title, description, subComment } = getStepContent();
 
   return (
-    
     <div className="min-h-screen bg-[#1a1a1a] text-white font-inter relative overflow-hidden">
       <Navbar />
       {/* Content */}
@@ -110,6 +174,7 @@ export const GameCreation: React.FC<GameCreationProps> = ({ onBack, onNext, onSk
             onBack={handleBack} 
             onNext={step === 5 ? handleSubmit : handleNext}
             isLastStep={step === 5}
+            isLoading={isLoading}
           />
 
           <div className="mt-8">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../../config/axiosConfig";
 
 const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const [offers, setOffers] = useState<{ id: string, name: string, price: number, coins: number }[]>([]);
@@ -7,13 +7,12 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     useEffect(() => {
         const fetchOffers = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/shop/items`);
+                const response = await axios.get('/shop/items');
                 setOffers(response.data);
             } catch (error) {
                 console.error('Error fetching offers:', error);
             }
         };
-
         fetchOffers();
     }, []);
 
@@ -25,7 +24,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         }
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/buy-item`, {
+            const response = await axios.post('/shop/buy-item', {
                 itemId: itemId,
                 email: email // Use the email from local storage
             });

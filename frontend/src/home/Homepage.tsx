@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import axios from '../../config/axiosConfig';
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Carousel from "./components/Carousel";
@@ -11,48 +12,59 @@ interface HomepageProps {
   onLogout: () => void;
 }
 
+interface CarouselGame {
+  id: string;
+  title: string;
+  description: string;
+  image_data: string;
+  genre?: string;
+  tagline?: string;
+}
+
 const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState<string | null>(null);
   const [card, setCard] = useState<string | null>(null);
-
-  const carouselData = [
-    {
-      image:
-        "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1200&h=800&fit=crop",
-      title: "Medieval Fantasy",
-      description: "Embark on an epic journey through enchanted realms",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=1200&h=800&fit=crop",
-      title: "Mystical Adventures",
-      description: "Discover ancient secrets and magical powers",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      title: "Dragon's Lair",
-      description: "Face legendary creatures in this thrilling quest",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1642248595032-d3a156fc5ec3?w=1200&h=800&fit=crop",
-      title: "Ancient Kingdoms",
-      description: "Rule your own realm in this epic saga",
-    },
-    {
-      image:
-        "https://images.unsplash.com/photo-1616091216791-a5205c5b336a?w=1200&h=800&fit=crop",
-      title: "Magic Academy",
-      description: "Master the arts of magic and sorcery",
-    },
-  ];
+  const [carouselData, setCarouselData] = useState<CarouselGame[]>([]);
 
   useEffect(() => {
+    const fetchCarouselGames = async () => {
+      try {
+        const response = await axios.get<CarouselGame[]>('/game', {
+          params: {
+            order: 'createdAt',
+            direction: 'DESC',
+            limit: 5
+          }
+        });
+
+        // Transform the response into carousel format
+        const formattedCarousel = response.data.map(game => ({
+          id: game.id,
+          image_data: game.image_data || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          title: game.title,
+          description: game.tagline || game.description || 'Explore a new adventure',
+          genre: game.genre
+        }));
+
+        setCarouselData(formattedCarousel);
+      } catch (error) {
+        console.error('Error fetching carousel games:', error);
+        // Fallback to default carousel if fetch fails
+        setCarouselData([
+          {
+            id: '1',
+            image_data: "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1200&h=800&fit=crop",
+            title: "Medieval Fantasy",
+            description: "Embark on an epic journey through enchanted realms",
+          },
+          // ... other default slides
+        ]);
+      }
+    };
+
     const fetchUserData = async () => {
-      // Fetch in local storage
       const token = localStorage.getItem('token');
       if (!token) {
         return;
@@ -61,6 +73,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
     };
 
     fetchUserData();
+    fetchCarouselGames();
 
     const params = new URLSearchParams(location.search);
     const usernameParam = params.get("username");
