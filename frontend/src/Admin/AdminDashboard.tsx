@@ -8,7 +8,7 @@ import MetricCard from './MetricCard';
 import SidebarItem from './SidebarItem';
 import BanForm from '../components/BanForm';
 import BannedPlayersList from '../components/BannedPlayersList';
-import { fetchDashboardStats, fetchPlayers, fetchGamesCount } from '../api/admin';
+import { fetchDashboardStats, fetchPlayers, fetchGamesCount, fetchAllGames } from '../api/admin';
 import axios from 'axios';
 import { Player, Game } from '../types';
 
@@ -49,6 +49,7 @@ const AdminDashboard: React.FC = () => {
   });
   const [players, setPlayers] = useState<Player[]>([]);
   const [recentGames, setRecentGames] = useState<Game[]>(mockRecentGames);
+  const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -77,7 +78,7 @@ const AdminDashboard: React.FC = () => {
         const [dashboardStats, gamesCount, gamesResponse] = await Promise.all([
           fetchDashboardStats(),
           fetchGamesCount(),
-          axios.get('/api/games/recent')
+          fetchAllGames()
         ]);
 
         setStats({
@@ -102,7 +103,7 @@ const AdminDashboard: React.FC = () => {
           total: playersData.total
         }));
 
-        setRecentGames(gamesResponse.data);
+        setGames(gamesResponse.games);
 
       } catch (error) {
         console.error('Error loading data:', error);
@@ -112,7 +113,7 @@ const AdminDashboard: React.FC = () => {
     };
 
     loadData();
-  }, [searchQuery, statusFilter, subscriptionFilter, sortBy, sortOrder, pagination.page]);
+  }, [searchQuery, statusFilter, subscriptionFilter, sortBy, sortOrder, pagination.page, pagination.limit]);
 
   const handleAddTask = () => {
     if (newTask.trim()) {
@@ -134,27 +135,14 @@ const AdminDashboard: React.FC = () => {
       {/* Sidebar */}
       <div className={`bg-gray-900 text-white transition-all duration-300 ${sidebarCollapsed ? 'w-16' : 'w-64'} flex flex-col`}>
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
-          {!sidebarCollapsed && <h2 className="text-xl font-bold truncate">Admin Panel</h2>}
-          <button 
-            onClick={toggleSidebar}
-            className="p-1 hover:bg-gray-800 rounded-lg transition-colors"
-          >
-            <ArrowLeftRight className="w-5 h-5" />
-          </button>
+          <h2 className="text-xl font-bold">Admin Dashboard</h2>
+          <button onClick={toggleSidebar}>Toggle</button>
         </div>
-
-        <div className="flex-1 p-2 space-y-1">
-          <SidebarItem 
-            icon={<Activity className="w-5 h-5" />} 
-            label="Dashboard" 
-            active={activeSection === 'dashboard'} 
-            onClick={() => setActiveSection('dashboard')}
-            collapsed={sidebarCollapsed}
-          />
-          <SidebarItem 
-            icon={<Users className="w-5 h-5" />} 
-            label="Player List" 
-            active={activeSection === 'players'} 
+        <div className="flex-1 overflow-auto">
+          <SidebarItem
+            icon={<Users className="w-5 h-5" />}
+            label="Player Directory"
+            active={activeSection === 'players'}
             onClick={() => setActiveSection('players')}
             collapsed={sidebarCollapsed}
           />

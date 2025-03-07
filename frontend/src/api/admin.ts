@@ -27,3 +27,8 @@ export const fetchRecentGames = async () => {
   const response = await axios.get(`${API_URL}/api/games/recent`);
   return response.data;
 };
+
+export const fetchAllGames = async () => {
+  const response = await axios.get(`${API_URL}/api/games/all`);
+  return response.data;
+};
