@@ -58,7 +58,15 @@ interface ChatMessage {
     };
 }
 
-export const callOpenAI = async (messages: ChatMessage[]) => {
+interface OpenAIResponse {
+    choices: {
+        message: {
+            content: string;
+        };
+    }[];
+}
+
+export const callOpenAI = async (messages: ChatMessage[]): Promise<any> => {
     try {
         // Validate messages
         if (!Array.isArray(messages) || messages.some(msg => !msg.content || !msg.role)) {
@@ -76,7 +84,7 @@ export const callOpenAI = async (messages: ChatMessage[]) => {
                 "5. Maintain immersion at all times.";
         }
 
-        const response = await axios.post(
+        const response: import("axios").AxiosResponse<OpenAIResponse> = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
                 model: "gpt-3.5-turbo",
@@ -106,6 +114,8 @@ export const callOpenAI = async (messages: ChatMessage[]) => {
     } catch (error) {
         if (axios.isAxiosError(error)) {
             console.error('OpenAI API Error:', error.response?.data);
+        } else {
+            console.error('Unexpected Error:', error);
         }
         throw error;
     }

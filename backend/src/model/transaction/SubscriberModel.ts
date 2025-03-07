@@ -7,9 +7,11 @@ class Subscriber extends Model<ISubscriber> implements ISubscriber {
   public id!: string;
   public email!: string;
   public subscribedAt!: Date;
-  public startDate!: Date;
-  public endDate!: Date;
+  public startDate!: Date; // Not nullable
+  public endDate!: Date; // Allow null values
   public subscriptionType!: string;
+  public status!: string;
+  public duration!: number;
 }
 
 Subscriber.init({
@@ -29,14 +31,23 @@ Subscriber.init({
   },
   startDate: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: false, // Not nullable
   },
   endDate: {
     type: DataTypes.DATE,
-    allowNull: true,
+    allowNull: true, // Allow null values
   },
   subscriptionType: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'pending',
+  },
+  duration: {
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
 }, {
