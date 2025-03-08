@@ -17,7 +17,7 @@ import {
 export const getAllGames = async (req: Request, res: Response) => {
     try {
         const games = await Game.findAll({
-            attributes: ['id', 'title', 'genre', 'createdAt']
+            attributes: ['id', 'title', 'genre', 'created_at']
         });
         res.json(games);
     } catch (error) {

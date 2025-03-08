@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import sequelize from '../config/sequelize';
 import { QueryTypes } from 'sequelize';
+import sequelize from '../config/sequelize';
 
 interface CountResult {
   count: string;
@@ -10,7 +10,7 @@ export const getMetrics = async (req: Request, res: Response) => {
   try {
     const [emailVerified, gamesResult] = await Promise.all([
       sequelize.query<CountResult>(
-        'SELECT COUNT(*) FROM "Users" WHERE "emailVerified" = true',
+        'SELECT COUNT(*) FROM "Users" WHERE "email_verified" = true',
         { type: QueryTypes.SELECT }
       ),
       sequelize.query<CountResult>(

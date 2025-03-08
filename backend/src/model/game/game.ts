@@ -11,6 +11,7 @@ interface GameAttributes {
   subgenre?: string;
   primary_color?: string;
   prompt_name: string;
+  
   prompt_text?: string;
   prompt_model?: string;
   image_prompt_model?: string;

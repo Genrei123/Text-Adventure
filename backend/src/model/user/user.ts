@@ -10,7 +10,7 @@ interface UserAttributes {
   model: string;
   admin: boolean;
   emailVerified: boolean;
-  resetPasswordToken?: string;  
+  resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   totalCoins: number;
   verificationToken?: string;
