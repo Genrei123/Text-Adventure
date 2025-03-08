@@ -67,8 +67,8 @@ User.init(
     totalCoins: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     verificationToken: { type: DataTypes.STRING, allowNull: true },
     verificationTokenExpires: { type: DataTypes.DATE, allowNull: true },
-    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+    createdAt: { type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW },
+    updatedAt: { type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW },
     image_url: { type: DataTypes.STRING, allowNull: true }, // Add this field to schema
   },
   {

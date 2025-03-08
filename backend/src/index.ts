@@ -25,6 +25,7 @@ import banRoutes from './routes/banRoutes';
 import imageRoutes from './routes/image/imageRoutes';
 import jwtAuth from './middlware/auth/auth';
 import cookieParser from 'cookie-parser';
+import seedTokenPackages from './service/transaction/tokenPackageSeeder';
 
 
 const PORT = process.env.PORT || 3000;
@@ -37,6 +38,8 @@ declare module 'express-session' {
     // Add other session properties you need
   }
 }
+
+seedTokenPackages().then(() => console.log('Token packages seeded'));
 
 // Middleware setup
 app.use(cors(corsOptions));

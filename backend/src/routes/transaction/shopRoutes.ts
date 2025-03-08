@@ -2,7 +2,16 @@ import express, { Request, Response } from 'express';
 // import { createCustomer } from '../../service/transaction/Subscription/customerService';
 // import { createPaymentMethod } from '../../service/transaction/Subscription/paymentMethodService';
 // import { createSubscriptionPlan } from '../../service/transaction/Subscription/subscriptionService';
-import { buyItem, getCoins, deductCoins, getAllItems } from '../../controllers/transaction/shopController';
+import { 
+  buyItem, 
+  getCoins, 
+  deductCoins, 
+  getAllItems,
+  buyTokenPackage,
+  getAllTokenPackages,
+  handlePaymentWebhook,
+  getUserOrderHistory
+} from '../../controllers/transaction/shopController';
 import { handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
 import { createSubscription, getSubscriptionOffers, getUserSubscriptions } from '../../controllers/transaction/subscriptionController';
 
@@ -17,6 +26,18 @@ router.post('/subscribe', createSubscription);
 router.get('/items', getAllItems);
 router.get('/coins', getCoins);
 router.post('/deduct-coins', deductCoins);
+
+// Token package routes
+router.get('/tokens/packages', getAllTokenPackages);
+router.post('/tokens/purchase', buyTokenPackage);
+router.post('/tokens/webhook', handlePaymentWebhook);
+
+// Coins management
+router.get('/coins', getCoins);
+router.post('/coins/deduct', deductCoins);
+
+// Order history
+router.get('/orders', getUserOrderHistory);
 
 // Route for fetching subscription offers
 router.get('/subscription/offers', getSubscriptionOffers);

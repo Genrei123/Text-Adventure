@@ -150,7 +150,6 @@ function App() {
               <GameCreation 
                 onBack={() => {}} 
                 onNext={() => {}} 
-                onSkip={() => {}} 
               />
             } 
           />
