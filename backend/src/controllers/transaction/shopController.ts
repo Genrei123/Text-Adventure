@@ -128,7 +128,7 @@ export const buyItem = async (req: Request, res: Response) => {
 
     console.log('Invoice data:', invoiceData);
 
-    const invoice = await Invoice.createInvoice({ data: invoiceData }); // Ensure createInvoice is correctly imported
+    const invoice = await Invoice.createInvoice({ data: invoiceData }); // Using the correct method from InvoiceApi
     const paymentLink = invoice.invoiceUrl || 'N/A';
     const formattedDate = new Date().toLocaleString();
 

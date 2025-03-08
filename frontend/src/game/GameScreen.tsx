@@ -257,7 +257,7 @@ const GameScreen: React.FC = () => {
                 </p>
                 {msg.image_url && (
                   <div className={`mt-2 ${msg.isUser ? 'text-right' : 'text-left'}`}>
-                    <img src={`${import.meta.env.VITE_SITE_URL}` + msg.image_url} alt="Generated" className="max-w-full h-auto rounded-lg inline-block" />
+                    <img src={`${import.meta.env.VITE_BACKEND_URL}` + msg.image_url} alt="Generated" className="max-w-full h-auto rounded-lg inline-block" />
                   </div>
                 )}
                 <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
