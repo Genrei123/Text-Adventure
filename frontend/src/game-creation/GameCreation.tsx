@@ -25,7 +25,7 @@ interface StepContent {
   subComment?: string;
 }
 
-export const GameCreation: React.FC<GameCreationProps> = ({ onBack, onNext }) => {
+export const GameCreation: React.FC<GameCreationProps> = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     genre: "",

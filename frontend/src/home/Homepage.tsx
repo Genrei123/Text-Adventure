@@ -35,6 +35,8 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   const { navigateWithLoading } = useLoading();
 
   useEffect(() => {
+    let isMounted = true;
+
     const initializeHomepage = async () => {
       try {
         // Fetch carousel games
@@ -46,15 +48,17 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
           }
         });
 
-        const formattedCarousel = response.data.map(game => ({
-          id: game.id,
-          image_data: game.image_data || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-          title: game.title,
-          description: game.tagline || game.description || 'Explore a new adventure',
-          genre: game.genre
-        }));
-
-        setCarouselData(formattedCarousel);
+        if (isMounted) {
+          const formattedCarousel = response.data.map(game => ({
+            id: game.id,
+            image_data: game.image_data || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=1200',
+            title: game.title,
+            description: game.tagline || game.description || 'Explore a new adventure',
+            genre: game.genre
+          }));
+  
+          setCarouselData(formattedCarousel);
+        }
 
         // Fetch user data
         const token = localStorage.getItem('token');
@@ -72,12 +76,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
 
       } catch (error) {
         console.error('Error initializing homepage:', error);
-        setCarouselData([{
-          id: '1',
-          image_data: "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1200&h=800&fit=crop",
-          title: "Medieval Fantasy",
-          description: "Embark on an epic journey through enchanted realms",
-        }]);
       } finally {
         setTimeout(() => {
           setFadeOut(true);
@@ -89,7 +87,11 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
     };
 
     initializeHomepage();
-  }, [location]);
+
+    return () => {
+      isMounted = false;
+    }
+  }, [location.search]);
 
   const handleLogout = async () => {
     setFadeIn(true);
@@ -115,7 +117,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         <div className="w-full">
           {/* Carousel Section */}
             <div className="w-[95%] max-w-full mx-auto px-6 md:px-12 my-10">
-            <Carousel slides={carouselData} />
+              <Carousel slides={carouselData} />
             </div>
 
           <YourJourney setCard={setCard} />
