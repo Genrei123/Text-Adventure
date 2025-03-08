@@ -115,7 +115,7 @@ export const changeLocation = async (req: Request, res: Response): Promise<Json>
 
     // Call OpenAI for narration
     const narration = await callOpenAI(prompt);
-    await storeChatMessage(sessionId, playerId, gameId, "assistant", narration);
+    await storeChatMessage(sessionId, playerId, gameId, "assistant", narration.content, undefined, narration.roleplay_metadata);
 
     // Respond with the new location and narration
     res.status(200).json({
@@ -201,7 +201,7 @@ export const useItem = async (req: Request, res: Response): Promise<Json> => {
 
     // Call OpenAI for narration
     const narration = await callOpenAI(prompt);
-    await storeChatMessage(sessionId, playerId, gameId, "assistant", narration);
+    await storeChatMessage(sessionId, playerId, gameId, "assistant", narration.content, undefined, narration.roleplay_metadata);
 
     // Respond with the result
     res.status(200).json({

@@ -1,17 +1,21 @@
 import type React from "react"
+import { useNavigate } from "react-router-dom"
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 
 interface CarouselProps {
   slides: {
-    image: string
+    id: string
+    image_data: string
     title: string
     description: string
   }[]
 }
 
 const Carousel: React.FC<CarouselProps> = ({ slides }) => {
+  const navigate = useNavigate()
+
   const carouselSettings = {
     dots: true,
     infinite: true,
@@ -34,6 +38,10 @@ const Carousel: React.FC<CarouselProps> = ({ slides }) => {
     ),
   }
 
+  const handlePlayGame = (gameId: string) => {
+    navigate(`/game-details/${gameId}`)
+  }
+
   return (
     <div className="w-full max-w-8xl mx-auto px-4 md:px-8 my-17 relative">
       <Slider {...carouselSettings}>
@@ -42,7 +50,12 @@ const Carousel: React.FC<CarouselProps> = ({ slides }) => {
             <div className="relative h-[250px] sm:h-[350px] rounded-lg overflow-hidden shadow-2xl translate-y-[5%]">
               {/* Dark Overlay for Better Contrast */}
               <div className="absolute inset-0 bg-black/50"></div>
-              <img src={slide.image || "/placeholder.svg"} alt={slide.title} className="w-full h-full object-cover" />
+              <img 
+                src={slide.image_data || "/placeholder.svg"} 
+                alt={slide.title} 
+                className="w-full h-full object-cover" 
+              />
+
 
               {/* Text Content - Made responsive with Tailwind classes */}
               <div className="absolute bottom-4 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-10 text-white drop-shadow-lg px-2 sm:px-0">
@@ -65,3 +78,4 @@ const Carousel: React.FC<CarouselProps> = ({ slides }) => {
 }
 
 export default Carousel
+

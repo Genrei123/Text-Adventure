@@ -17,9 +17,21 @@ interface UserAttributes {
   verificationTokenExpires: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  image_url?: string | null; // Add this field
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'emailVerified' | 'resetPasswordToken' | 'resetPasswordExpires' | 'totalCoins' | 'verificationToken' | 'verificationTokenExpires'> {}
+interface UserCreationAttributes
+  extends Optional<
+    UserAttributes,
+    | "id"
+    | "emailVerified"
+    | "resetPasswordToken"
+    | "resetPasswordExpires"
+    | "totalCoins"
+    | "verificationToken"
+    | "verificationTokenExpires"
+    | "image_url" // Add image_url as optional for creation
+  > {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: number;
@@ -37,6 +49,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public verificationTokenExpires!: Date | null;
   public createdAt!: Date;
   public updatedAt!: Date;
+  public image_url?: string | null; // Add this field
 }
 
 User.init(
@@ -46,7 +59,7 @@ User.init(
     email: { type: DataTypes.STRING, allowNull: false, unique: true, validate: { isEmail: true } },
     password: { type: DataTypes.STRING, allowNull: false },
     private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
-    model: { type: DataTypes.STRING, allowNull: false, defaultValue: 'gpt-4' },
+    model: { type: DataTypes.STRING, allowNull: false, defaultValue: "gpt-4" },
     admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     emailVerified: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     resetPasswordToken: { type: DataTypes.STRING, allowNull: true },
@@ -56,11 +69,12 @@ User.init(
     verificationTokenExpires: { type: DataTypes.DATE, allowNull: true },
     createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+    image_url: { type: DataTypes.STRING, allowNull: true }, // Add this field to schema
   },
   {
     sequelize,
-    modelName: 'User',
-    tableName: 'Users',
+    modelName: "User",
+    tableName: "Users",
     timestamps: true,
   }
 );

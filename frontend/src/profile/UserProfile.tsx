@@ -8,6 +8,15 @@ import YourComments from "./components/YourComments";
 import YourLikes from "./components/YourLikes";
 import axios from '../../config/axiosConfig';
 import Navbar from "../components/Navbar";
+import { FaSpinner } from 'react-icons/fa';
+
+interface UserDetails {
+  id: number;
+  username: string;
+  email: string;
+  bio?: string;
+  image_url?: string;
+}
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("games");
@@ -16,8 +25,9 @@ export default function ProfilePage() {
   const [showBioModal, setShowBioModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const cropperRef = useRef<ReactCropperElement>(null); // Correctly typing the cropper ref
+  const cropperRef = useRef<ReactCropperElement>(null);
   const [copied, setCopied] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
   const { username } = useParams<{ username: string }>();
 
   const navigate = useNavigate();
@@ -30,10 +40,6 @@ export default function ProfilePage() {
       setTimeout(() => {
         setCopied(false);
       }, 2000);
-      const copiedElement = document.querySelector('.fixed.top-4.left-1/2');
-      if (copiedElement) {
-        copiedElement.classList.add('animate-fadeOut');
-      }
     }
   };
 
@@ -42,10 +48,8 @@ export default function ProfilePage() {
       try {
         const response = await axios.get(`/admin/users/username/${username}`);
         setUserDetails(response.data);
-        
       } catch (error) {
         console.error('Error fetching user profile:', error);
-        // Give 404
         navigate('/forbidden');
       }
     };
@@ -71,18 +75,40 @@ export default function ProfilePage() {
     input.click();
   };
 
-  const handleCrop = () => {
-    const cropper = cropperRef.current?.cropper; // Access the cropper instance
+  const handleCrop = async () => {
+    const cropper = cropperRef.current?.cropper;
     if (cropper) {
-      const croppedImage = cropper.getCroppedCanvas().toDataURL();
-      const imgElement = document.querySelector('img[alt="Profile"]') as HTMLImageElement | null;
-      if (imgElement) {
-        imgElement.src = croppedImage;
-        imgElement.style.objectFit = "cover";
-        imgElement.style.borderRadius = "50%";
-      }
+      // Convert cropped image to blob
+      cropper.getCroppedCanvas().toBlob(async (blob) => {
+        if (blob) {
+          const formData = new FormData();
+          // Ensure the field name matches what the backend expects
+          formData.append('image', blob, 'profile.jpg');
+  
+          try {
+            setImageLoading(true);
+            const response = await axios.post('/image/upload', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+  
+            // Update user details with new image URL
+            setUserDetails(prev => prev ? {
+              ...prev,
+              image_url: response.data.imageUrl
+            } : null);
+  
+            setShowCropModal(false);
+          } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Failed to upload profile picture');
+          } finally {
+            setImageLoading(false);
+          }
+        }
+      });
     }
-    setShowCropModal(false);
   };
 
   return (
@@ -94,46 +120,38 @@ export default function ProfilePage() {
         backgroundPosition: "center",
       }}
     >
-      {/* Header */}
-      {/* <nav className="bg-[#1e1e1e] py-3.5 px-4 shadow-[0_10px_10px_0_rgba(0,0,0,0.75)] z-50">
-        <div className="flex justify-between items-center">
-          <div className="text-2xl font-cinzel text-[#C8A97E]">Sage.AI</div>
-        </div>
-      </nav> */}
-
       <Navbar />
 
       <div className="flex flex-col md:flex-row">
-        {/* Sidebar */}
         <Sidebar />
-        <br />
-        <br />
-        <br />
-        {/* Main Content */}
         <main className="flex-1 p-4 md:p-8">
           <div className="max-w-4xl mx-auto">
-            {/* Profile Section */}
             <div className="flex flex-col md:flex-row items-start gap-8 mb-12">
               <div className="relative">
-              <div className="w-[150px] h-[150px] md:w-[200px] md:h-[200px] rounded-full border-4 border-[#B39C7D] flex items-center justify-center mx-auto md:mx-0">
-                <img
-                src="/null_Icon.svg"
-                alt="Profile"
-                width={150}
-                height={150}
-                className="rounded-full md:w-[200px] md:h-[200px]"
-                />
-                <button
-                className="absolute bottom-0 right-0 bg-[#B39C7D] text-[#1e1e1e] rounded-full p-2 hover:bg-[#ffffff] transition-colors duration-300"
-                onClick={handleImageUpload}
-                >
-                <img
-                  src="camera.png"
-                  alt="Edit Profile Picture"
-                  className="w-6 h-6"
-                />
-                </button>
-              </div>
+                <div className="w-[150px] h-[150px] md:w-[200px] md:h-[200px] rounded-full border-4 border-[#B39C7D] flex items-center justify-center mx-auto md:mx-0">
+                  {imageLoading ? (
+                    <div className="flex items-center justify-center w-full h-full">
+                      <FaSpinner className="animate-spin text-[#B39C7D] text-3xl" />
+                    </div>
+                  ) : (
+                    <img
+                      src={userDetails?.image_url || "/null_Icon.svg"}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  )}
+                  
+                  <button
+                    className="absolute bottom-0 right-0 bg-[#B39C7D] text-[#1e1e1e] rounded-full p-2 hover:bg-[#ffffff] transition-colors duration-300"
+                    onClick={handleImageUpload}
+                  >
+                    <img
+                      src="camera.png"
+                      alt="Edit Profile Picture"
+                      className="w-6 h-6"
+                    />
+                  </button>
+                </div>
               </div>
               <div className="flex-1 flex flex-col items-start mt-4 md:mt-0">
               <div className="flex items-center">
@@ -313,42 +331,43 @@ export default function ProfilePage() {
 
             {/* Crop Modal */}
             {showCropModal && (
-              <div className="fixed inset-0 flex items-center justify-center z-50">
-                <div className="fixed inset-0 bg-[#1e1e1e] opacity-80"></div>
-                <div className="bg-[#1e1e1e] p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] relative z-10 border-4 border-[#B39C7D]"> {/* Added border */}
-                  <button
-                    onClick={() => setShowCropModal(false)}
-                    className="absolute top-2 right-2 text-[#B39C7D] hover:text-[#a38b6d] transition-colors duration-300"
-                  >
-                    &times;
-                  </button>
-                  <h2 className="text-xl text-[#B39C7D] mb-4 font-cinzel">
-                    Crop Your Profile Picture
-                  </h2>
-                  {selectedImage && (
-                    <Cropper
-                      src={selectedImage}
-                      style={{ height: 400, width: "100%" }}
-                      initialAspectRatio={1}
-                      aspectRatio={1}
-                      guides={false}
-                      viewMode={1}
-                      dragMode="move"
-                      background={false}
-                      ref={cropperRef}
-                    />
-                  )}
-                  <div className="flex justify-end mt-4">
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                  <div className="fixed inset-0 bg-[#1e1e1e] opacity-80"></div>
+                  <div className="bg-[#1e1e1e] p-6 rounded-lg shadow-lg w-[90%] md:w-[600px] relative z-10 border-4 border-[#B39C7D]">
                     <button
-                      onClick={handleCrop}
-                      className="px-4 py-2 bg-[#B39C7D] text-[#1e1e1e] rounded hover:bg-[#ffffff] transition-colors duration-300"
+                      onClick={() => setShowCropModal(false)}
+                      className="absolute top-2 right-2 text-[#B39C7D] hover:text-[#a38b6d] transition-colors duration-300"
                     >
-                      Crop and Save
+                      &times;
                     </button>
+                    <h2 className="text-xl text-[#B39C7D] mb-4 font-cinzel">
+                      Crop Your Profile Picture
+                    </h2>
+                    {selectedImage && (
+                      <Cropper
+                        src={selectedImage}
+                        style={{ height: 400, width: "100%" }}
+                        initialAspectRatio={1}
+                        aspectRatio={1}
+                        guides={false}
+                        viewMode={1}
+                        dragMode="move"
+                        background={false}
+                        ref={cropperRef}
+                      />
+                    )}
+                    <div className="flex justify-end mt-4">
+                      <button
+                        onClick={handleCrop}
+                        disabled={imageLoading}
+                        className={`px-4 py-2 bg-[#B39C7D] text-[#1e1e1e] rounded hover:bg-[#ffffff] transition-colors duration-300 ${imageLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        {imageLoading ? 'Uploading...' : 'Crop and Save'}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Additional Sections */}
             {/* Tabs Section */}
@@ -366,12 +385,12 @@ export default function ProfilePage() {
                 >
                   COMMENTS
                 </button>
-                <button
+                {/* <button
                   onClick={() => setActiveTab("likes")}
                   className={`px-4 py-2 text-[#ffffff] ${activeTab === "likes" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:shadow-[0_0_10px_2px_rgba(179,156,125,0.75)] rounded-full bg-transparent`}
                 >
                   LIKES
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="mt-4">
