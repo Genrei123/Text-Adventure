@@ -239,9 +239,23 @@ export const buyTokenPackage = async (req: Request, res: Response) => {
   let orderId;
 
   try {
+    // Validate input
+    if (!packageId || !email) {
+      throw new Error('Missing packageId or email');
+    }
+
     // Fetch token package details and user details from your database
     tokenPackage = await getTokenPackageDetails(packageId);
+    if (!tokenPackage) throw new Error('Token package not found');
+
     user = await getUserDetailsByEmail(email);
+    if (!user) throw new Error('User not found');
+
+    // Ensure price is a valid number and convert to integer
+    const price = parseInt(tokenPackage.price.toString(), 10);
+    if (isNaN(price)) {
+      throw new Error('Invalid price value in token package');
+    }
 
     // Create an orderId with username, date, and a random 6-character alphanumeric string
     const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
@@ -257,7 +271,7 @@ export const buyTokenPackage = async (req: Request, res: Response) => {
     // Create an invoice using Xendit Invoice API
     const invoiceData = {
       externalId: orderId,
-      amount: tokenPackage.price,
+      amount: price, // Use integer price
       payerEmail: email,
       description: `Purchase of ${tokenPackage.name} (${tokenPackage.tokens + tokenPackage.bonus} tokens)`,
       successRedirectUrl: SUCCESS_RETURN_URL,
@@ -271,23 +285,23 @@ export const buyTokenPackage = async (req: Request, res: Response) => {
     const paymentLink = invoice.invoiceUrl || 'N/A';
     const formattedDate = new Date().toLocaleString();
 
-    // Create Order record in the database
+    // Create Order record in the database with integer paid_amount
     await Order.create({
       order_id: orderId,
       email: email,
       client_reference_id: invoice.id || 'N/A',
-      order_details: { 
-        packageId, 
+      order_details: {
+        packageId,
         packageName: tokenPackage.name,
         tokens: tokenPackage.tokens,
         bonus: tokenPackage.bonus,
-        paymentLink
+        paymentLink,
       },
-      paid_amount: Math.round(tokenPackage.price),
+      paid_amount: price, // Integer value
       UserId: user.id,
       received_coins: 0,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
 
     console.log(`-------------- Token Package Invoice Details --------------`);
@@ -298,42 +312,50 @@ Tokens: ${tokenPackage.tokens} + ${tokenPackage.bonus} bonus
 User ID: ${user.id}
 Username: ${user.username}
 Email: ${user.email}
-Paid Amount: ${tokenPackage.price} ${tokenPackage.currency}
+Paid Amount: ${price} ${tokenPackage.currency}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
 Invoice ID: ${invoice.id}
 Link To Payment: ${paymentLink}`);
     console.log(`-----------------------------------------------------`);
     console.log(` `);
+
     res.json({ paymentLink });
   } catch (error: any) {
     const formattedDate = new Date().toLocaleString();
     console.error(` ----------------- Token Package Invoice Creation Failed -----------------`);
     console.error(`Status: Fail
-Package ID: ${packageId}
+Package ID: ${packageId || 'N/A'}
 Package Name: ${tokenPackage?.name || 'N/A'}
 User ID: ${user?.id || 'N/A'}
 Username: ${user?.username || 'N/A'}
-User Email: ${email}
+User Email: ${email || 'N/A'}
 Paid Amount: ${tokenPackage?.price || 'N/A'} ${tokenPackage?.currency || 'PHP'}
 Date Created: ${formattedDate}
-Order ID: ${orderId}
+Order ID: ${orderId || 'N/A'}
 Error: ${error.message}`);
+    console.error('Stack:', error.stack);
     console.log(`-----------------------------------------------------`);
     console.log(` `);
 
-    // Create Order record for the failed transaction
-    await Order.create({
-      order_id: orderId || `failed-token-${packageId}-${Date.now()}`,
-      email: email,
-      client_reference_id: 'N/A',
-      order_details: { packageId, packageName: tokenPackage?.name },
-      paid_amount: tokenPackage?.price || 0,
-      UserId: user?.id,
-      received_coins: 0,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
+    // Only create a failed order if we have enough data
+    if (email && packageId) {
+      try {
+        await Order.create({
+          order_id: orderId || `failed-token-${packageId}-${Date.now()}`,
+          email: email,
+          client_reference_id: 'N/A',
+          order_details: { packageId, packageName: tokenPackage?.name || 'N/A' },
+          paid_amount: tokenPackage ? parseInt(tokenPackage.price.toString(), 10) || 0 : 0,
+          UserId: user?.id || null,
+          received_coins: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      } catch (innerError: any) {
+        console.error('Failed to create failed order record:', innerError.message);
+      }
+    }
 
     if (error.response) {
       console.error('Error response data:', error.response.data);
@@ -350,38 +372,32 @@ Error: ${error.message}`);
 export const handlePaymentWebhook = async (req: Request, res: Response) => {
   try {
     const { external_id, status, id: invoice_id, paid_amount, paid_at } = req.body;
-    
+    console.log('Webhook received:', { external_id, status, invoice_id, paid_amount, paid_at });
+
     if (status === 'PAID') {
-      // Find the existing order first
       let existingOrder = await Order.findOne({ where: { order_id: external_id } });
-      
-      // Check if this is a token package purchase
+      console.log('Existing order:', existingOrder);
+
       if (external_id.startsWith('token-')) {
         const [type, packageId, ...rest] = external_id.split('-');
-        const lastPart = rest[rest.length - 1];
         const username = rest.slice(2, -2).join('-'); // Extract username
-        
-        // Find the user
+
         const user = await User.findOne({ where: { username } });
-        if (!user) {
-          throw new Error('User not found for payment');
-        }
-        
-        // Find the token package
+        if (!user) throw new Error('User not found for payment');
+
         const tokenPackage = await TokenPackage.findByPk(packageId);
-        if (!tokenPackage) {
-          throw new Error('Token package not found');
-        }
-        
-        // Add tokens to user account
+        if (!tokenPackage) throw new Error('Token package not found');
+
         const totalTokens = tokenPackage.tokens + tokenPackage.bonus;
         await addCoinsToUser(user.id, totalTokens);
-        
-        // Update the existing order or create a new one if it doesn't exist
+
+        // Ensure paid_amount is an integer
+        const paidAmountInt = parseInt(paid_amount?.toString() || tokenPackage.price.toString(), 10);
+        if (isNaN(paidAmountInt)) throw new Error('Invalid paid amount');
+
         if (existingOrder) {
-          // Update existing order with payment confirmation details
           existingOrder.client_reference_id = invoice_id;
-          existingOrder.paid_amount = paid_amount || Math.round(tokenPackage.price);
+          existingOrder.paid_amount = paidAmountInt;
           existingOrder.received_coins = totalTokens;
           existingOrder.order_details = {
             ...existingOrder.order_details,
@@ -390,107 +406,92 @@ export const handlePaymentWebhook = async (req: Request, res: Response) => {
             paymentStatus: 'PAID',
             baseTokens: tokenPackage.tokens,
             bonusTokens: tokenPackage.bonus,
-            totalTokens: totalTokens
+            totalTokens: totalTokens,
           };
           await existingOrder.save();
-          
-          console.log(`Updated order ${external_id} and added ${totalTokens} tokens to user ${user.username}`);
+          console.log(`Updated order ${external_id} with received_coins: ${totalTokens}`);
         } else {
-          // Create a new order record if one doesn't exist
           const orderDetails = {
-            packageId: packageId,
+            packageId,
             packageName: tokenPackage.name,
             baseTokens: tokenPackage.tokens,
             bonusTokens: tokenPackage.bonus,
-            totalTokens: totalTokens,
+            totalTokens,
             paymentId: invoice_id,
             paidAt: paid_at,
-            paymentStatus: 'PAID'
+            paymentStatus: 'PAID',
           };
-          
           await Order.create({
             order_id: external_id,
             email: user.email,
             client_reference_id: invoice_id,
             order_details: orderDetails,
-            paid_amount: paid_amount || Math.round(tokenPackage.price),
+            paid_amount: paidAmountInt,
             UserId: user.id,
             received_coins: totalTokens,
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
           });
-          
-          console.log(`Created new order record and added ${totalTokens} tokens to user ${user.username}`);
+          console.log(`Created new order ${external_id} with received_coins: ${totalTokens}`);
         }
-      } 
-      // Handle regular item purchases
-      else if (external_id.startsWith('order-')) {
+      } else if (external_id.startsWith('order-')) {
         const [type, itemId, ...rest] = external_id.split('-');
-        const username = rest.slice(2, -2).join('-'); // Extract username
-        
-        // Find the user
+        const username = rest.slice(2, -2).join('-');
+
         const user = await User.findOne({ where: { username } });
-        if (!user) {
-          throw new Error('User not found for payment');
-        }
-        
-        // Find the item
+        if (!user) throw new Error('User not found for payment');
+
         const item = await Item.findByPk(itemId);
-        if (!item) {
-          throw new Error('Item not found');
-        }
-        
-        // Add coins from item if applicable
+        if (!item) throw new Error('Item not found');
+
         if (item.coins && item.coins > 0) {
           await addCoinsToUser(user.id, item.coins);
           console.log(`Added ${item.coins} coins to user ${user.username} from item purchase`);
         }
-        
-        // Update existing order or create a new one
+
+        // Ensure paid_amount is an integer
+        const paidAmountInt = parseInt(paid_amount?.toString() || item.price.toString(), 10);
+        if (isNaN(paidAmountInt)) throw new Error('Invalid paid amount');
+
         if (existingOrder) {
-          // Update existing order with payment confirmation details
           existingOrder.client_reference_id = invoice_id;
-          existingOrder.paid_amount = paid_amount || Math.round(item.price);
+          existingOrder.paid_amount = paidAmountInt;
           existingOrder.received_coins = item.coins || 0;
           existingOrder.order_details = {
             ...existingOrder.order_details,
             paymentId: invoice_id,
             paidAt: paid_at,
-            paymentStatus: 'PAID'
+            paymentStatus: 'PAID',
           };
           await existingOrder.save();
-          
-          console.log(`Updated order ${external_id} for item purchase: ${item.name} by user ${user.username}`);
+          console.log(`Updated order ${external_id} with received_coins: ${item.coins || 0}`);
         } else {
-          // Create a new order record if one doesn't exist
           const orderDetails = {
-            itemId: itemId,
+            itemId,
             itemName: item.name,
             paymentId: invoice_id,
             paidAt: paid_at,
-            paymentStatus: 'PAID'
+            paymentStatus: 'PAID',
           };
-          
           await Order.create({
             order_id: external_id,
             email: user.email,
             client_reference_id: invoice_id,
             order_details: orderDetails,
-            paid_amount: paid_amount || Math.round(item.price),
+            paid_amount: paidAmountInt,
             UserId: user.id,
             received_coins: item.coins || 0,
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
           });
-          
-          console.log(`Created new order record for item purchase: ${item.name} by user ${user.username}`);
+          console.log(`Created new order ${external_id} with received_coins: ${item.coins || 0}`);
         }
       }
     }
-    
+
     res.status(200).json({ message: 'Webhook processed successfully' });
   } catch (error: any) {
-    console.error('Error processing payment webhook:', error.message);
+    console.error('Error processing payment webhook:', error.message, error.stack);
     res.status(500).json({ error: error.message });
   }
 };
