@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import cors from 'cors';
 import corsOptions from './config/cors';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import database from './service/database';
 import routes from './routes/auth/routes';
@@ -69,13 +69,29 @@ app.use('/api/players', playersRouter);
 const authRouter = createAuthRouter(frontendUrl);
 app.use('/auth', authRouter);
 
+// Error handling middleware
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('Error Stack:', err.stack);
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal Server Error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+// Global error handlers
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 const server = createServer(app);
 server.listen(PORT, async () => { 
   try {
     await initializeModels();
     console.log('Connection to the database has been established successfully.');
-    await User.sync({ alter: true });
-    console.log('User table has been synchronized.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }

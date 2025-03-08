@@ -1,31 +1,32 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../../config/sequelize';
+import { DataTypes, Model, Optional } from "sequelize";
+import sequelize from "../../config/sequelize";
 
 interface UserAttributes {
   id: number;
+  username: string;
   email: string;
   password: string;
-  username: string;
   private: boolean;
   model: string;
   admin: boolean;
   emailVerified: boolean;
-  resetPasswordToken?: string;
+  resetPasswordToken?: string;  
   resetPasswordExpires?: Date;
   totalCoins: number;
   verificationToken?: string;
   verificationTokenExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
+  image_url?: string;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'emailVerified' | 'resetPasswordToken' | 'resetPasswordExpires' | 'totalCoins' | 'verificationToken' | 'verificationTokenExpires'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'emailVerified' | 'resetPasswordToken' | 'resetPasswordExpires' | 'totalCoins' | 'verificationToken' | 'verificationTokenExpires' | 'createdAt' | 'updatedAt' | 'image_url'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: number;
+  public username!: string;
   public email!: string;
   public password!: string;
-  public username!: string;
   public private!: boolean;
   public model!: string;
   public admin!: boolean;
@@ -37,13 +38,14 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public verificationTokenExpires?: Date;
   public createdAt!: Date;
   public updatedAt!: Date;
+  public image_url?: string;
 }
 
 User.init({
   id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+  username: { type: DataTypes.STRING, allowNull: false, unique: true },
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   password: { type: DataTypes.STRING, allowNull: false },
-  username: { type: DataTypes.STRING, allowNull: false, unique: true },
   private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
   model: { type: DataTypes.STRING, allowNull: false, defaultValue: 'gpt-4' },
   admin: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
@@ -53,14 +55,14 @@ User.init({
   totalCoins: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
   verificationToken: { type: DataTypes.STRING, allowNull: true },
   verificationTokenExpires: { type: DataTypes.DATE, allowNull: true },
-  createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'created_at' },
-  updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updated_at' },
+  createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+  updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+  image_url: { type: DataTypes.STRING, allowNull: true },
 }, {
   sequelize,
   modelName: 'User',
   tableName: 'Users',
   timestamps: true,
-  underscored: true,
 });
 
 export default User;

@@ -26,7 +26,7 @@ export const addGame = async (req: AddGame, res: any) => {
     image_prompt_model: req.image_prompt_model,
     image_prompt_name: req.image_prompt_name,
     image_prompt_text: req.image_prompt_text,
-    image_data: req.image_data,
+    image_data: req.image_data, // Changed to string
     music_prompt_text: req.music_prompt_text,
     music_prompt_seed_image: req.music_prompt_seed_image,
     private: req.private,

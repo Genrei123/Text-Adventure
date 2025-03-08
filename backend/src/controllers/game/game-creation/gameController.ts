@@ -16,12 +16,13 @@ import {
 
 export const getAllGames = async (req: Request, res: Response) => {
     try {
-        const games = await getGames();
-        res.status(200).json(games);
+        const games = await Game.findAll({
+            attributes: ['id', 'title', 'genre', 'createdAt']
+        });
+        res.json(games);
     } catch (error) {
-        console.error(error);
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        res.status(500).send(errorMessage);
+        console.error('Error fetching games:', error);
+        res.status(500).json({ error: 'Error fetching games' });
     }
 };
 
