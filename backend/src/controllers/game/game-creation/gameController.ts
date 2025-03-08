@@ -26,8 +26,13 @@ export const getAllGames = async (req: Request, res: Response) => {
 };
 
 export const getGameById = async (req: Request, res: Response) => {
+    const gameId = parseInt(req.params.id, 10);
+
+    if (isNaN(gameId)) {
+        return res.status(400).json({ error: "Invalid game ID" });
+    }
+
     try {
-        const gameId = parseInt(req.params.id);
         const game = await getGameDetails(gameId);
         if (!game) {
             res.status(404).send("Game not found");

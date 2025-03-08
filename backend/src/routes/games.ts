@@ -6,9 +6,9 @@ const router = Router();
 router.get('/recent', async (req, res) => {
   try {
     const recentGames = await Game.findAll({
-      order: [['createdAt', 'DESC']], // Use correct column name
+      order: [['createdAt', 'DESC']],
       limit: 5,
-      attributes: ['title', 'description', 'createdAt', 'status'] // Use correct column name
+      attributes: ['title', 'description', 'createdAt', 'status']
     });
 
     res.json(recentGames.map(g => ({
@@ -26,16 +26,17 @@ router.get('/recent', async (req, res) => {
 router.get('/all', async (req, res) => {
   try {
     const games = await Game.findAll({
-      order: [['createdAt', 'DESC']], // Use correct column name
-      attributes: ['title', 'description', 'createdAt', 'status'] // Use correct column name
+      order: [['createdAt', 'DESC']],
+      attributes: ['id', 'title', 'description', 'createdAt', 'status']
     });
 
     const gamesCount = await Game.count();
 
     res.json({
       games: games.map(g => ({
+        id: g.id,
         title: g.title,
-        excerpt: g.description.substring(0, 100),
+        description: g.description,
         created: g.createdAt.toISOString(),
         status: g.status || 'draft'
       })),

@@ -14,16 +14,16 @@ import chatRoutes from './routes/chat/chatRoutes';
 import User from './model/user/user';
 import coinRoutes from './routes/coins/coinRoutes';
 import { createServer } from './websocket/socket';
-import statsRoutes from './routes/statistics/statsRoutes'; // Import the new stats route
-import playerActivityRoutes from './routes/statistics/playerActivityRoutes'; // Import the new player activity route
+import statsRoutes from './routes/statistics/statsRoutes';
+import playerActivityRoutes from './routes/statistics/playerActivityRoutes';
 import gameRoutes from './routes/game/gameRoutes';
-import { initializeModels } from './service/models';
 import paymentRoutes from './routes/transaction/shopRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
-import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation
+import openaiRoute from './routes/img-generation/openaiRoute';
 import banRoutes from './routes/banRoutes';
 import metricsRouter from './routes/metrics';
-import gamesRouter from './routes/games';
+import playersRouter from './routes/players';
+import { initializeModels } from './service/models';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -53,16 +53,17 @@ app.use('/shop', shopRoutes);
 app.use('/webhook', webhookRoutes);
 app.use('/gameplay', coinRoutes);
 app.use('/ai', chatRoutes);
-app.use('/statistics/statsRoutes', statsRoutes); // Use the new stats route
-app.use('/statistics/playerActivityRoutes', playerActivityRoutes); // Use the new player activity route
+app.use('/statistics/statsRoutes', statsRoutes);
+app.use('/statistics/playerActivityRoutes', playerActivityRoutes);
 app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/nih', nihRoutes);
-app.use('/openai', openaiRoute); // Image generation
+app.use('/openai', openaiRoute);
 app.use('/bans', banRoutes);
-app.use('/api/bans', banRoutes);  // Fixes 404 for /api/bans
+app.use('/api/bans', banRoutes);
 app.use('/api/metrics', metricsRouter);
-app.use('/api/games', gamesRouter);
+app.use('/api/games', gameRoutes);
+app.use('/api/players', playersRouter);
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
@@ -71,7 +72,6 @@ app.use('/auth', authRouter);
 const server = createServer(app);
 server.listen(PORT, async () => { 
   try {
-    //await database.authenticate();
     await initializeModels();
     console.log('Connection to the database has been established successfully.');
     await User.sync({ alter: true });

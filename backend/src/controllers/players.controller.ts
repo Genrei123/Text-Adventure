@@ -3,7 +3,7 @@ import sequelize from '../config/sequelize';
 import { QueryTypes } from 'sequelize';
 
 export const getPlayers = async (req: Request, res: Response) => {
-  const { search, status, subscription, sortBy, sortOrder, page, limit } = req.query;
+  const { search, status, subscription, sortBy = 'username', sortOrder = 'ASC', page = '1', limit = '10' } = req.query;
   const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
 
   let query = 'SELECT * FROM "Users" WHERE "email_verified" = true'; // Only fetch verified users
