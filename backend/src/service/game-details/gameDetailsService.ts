@@ -5,22 +5,25 @@ import User from '../../model/user/user';
 import { sequelize } from '../../service/database';
 
 export const getGameDetails = async (gameId: number) => {
-    return await Game.findOne({
-        where: { id: gameId },
-        include: [{
-            model: Rating,
-            attributes: [
-                [sequelize.fn('AVG', sequelize.col('score')), 'averageRating'],
-                [sequelize.fn('COUNT', sequelize.col('Ratings.id')), 'totalRatings']
-            ],
-            required: false // Use LEFT JOIN
-        }],
-        group: [
-            'Game.id', // Group by the primary key of the Game table
-            'Ratings.id' // Include Ratings.id in the GROUP BY clause if needed
-        ]
-    });
-};
+    try {
+      const game = await Game.findByPk(gameId);
+      if (!game) return null;
+  
+      const ratings = await Rating.findAll({ where: { GameId: gameId } }); // Fixed: Use GameId
+      const averageRating = ratings.length
+        ? ratings.reduce((sum, r) => sum + r.score, 0) / ratings.length
+        : 0;
+  
+      return {
+        ...game.toJSON(),
+        rating: averageRating,  
+        ratingCount: ratings.length
+      };
+    } catch (error) {
+      console.error("Error in getGameDetails:", error);
+      throw error;
+    }
+  };
 
 export const getGameComments = async (id: number): Promise<Comment[]> => {
     const comments = await Comment.findAll({
