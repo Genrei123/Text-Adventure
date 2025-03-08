@@ -1,0 +1,105 @@
+{
+    "1": {
+      "inputs": {
+        "ckpt_name": "sd3_medium_incl_clips.safetensors"
+      },
+      "class_type": "CheckpointLoaderSimple"
+    },
+    "2": {
+      "inputs": {
+        "image": "Nih_character_sheet_dup.png",
+        "upload": "image"
+      },
+      "class_type": "LoadImage"
+    },
+    "3": {
+      "inputs": {},
+      "class_type": "VAEEncode"
+    },
+    "4": {
+      "inputs": {
+        "seed": 207703320507971,
+        "steps": 20,
+        "cfg": 9,
+        "sampler_name": "euler",
+        "scheduler": "beta",
+        "denoise": 1,
+        "model": [
+          "1",
+          0
+        ],
+        "positive": [
+          "7",
+          0
+        ],
+        "negative": [
+          "8",
+          0
+        ],
+        "latent_image": [
+          "9",
+          0
+        ]
+      },
+      "class_type": "KSampler"
+    },
+    "5": {
+      "inputs": {
+        "samples": [
+          "4",
+          0
+        ],
+        "vae": [
+          "1",
+          2
+        ]
+      },
+      "class_type": "VAEDecode"
+    },
+    "6": {
+      "inputs": {
+        "filename_prefix": "SageVision_IMG",
+        "images": [
+          "5",
+          0
+        ]
+      },
+      "class_type": "SaveImage"
+    },
+    "7": {
+      "inputs": {
+        "text": "",
+        "clip": [
+          "1",
+          1
+        ]
+      },
+      "class_type": "CLIPTextEncode"
+    },
+    "8": {
+      "inputs": {
+        "text": "",
+        "clip": [
+          "1",
+          1
+        ]
+      },
+      "class_type": "CLIPTextEncode"
+    },
+    "9": {
+      "inputs": {
+        "width": 1024,
+        "height": 1024,
+        "batch_size": 1
+      },
+      "class_type": "EmptyLatentImage"
+    },
+    "10": {
+      "inputs": {
+        "lora_name": null,
+        "strength_model": 1,
+        "strength_clip": 1
+      },
+      "class_type": "LoraLoader"
+    }
+  }

@@ -21,6 +21,7 @@ import paymentRoutes from './routes/transaction/shopRoutes';
 import sessionRoutes from './routes/statistics/sessionRoutes'; // Import the session routes
 import nihRoutes from './routes/game/nih-game/nihRoutes';
 import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation
+import comfyuiRote from './routes/img-generation/comfyuiRoute';
 import banRoutes from './routes/banRoutes';
 import imageRoutes from './routes/image/imageRoutes';
 import jwtAuth from './middlware/auth/auth';
@@ -62,7 +63,8 @@ app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
 app.use("/sessions", sessionRoutes); // Add the session routes
 app.use('/nih', nihRoutes);
-app.use('/openai', openaiRoute); // Image generation
+app.use('/openai', openaiRoute); // Dall-E image generation 
+app.use('/comfyui', comfyuiRote); // ComfyUI - image generation for SDXL, SD3, etc. (P.S. YOU CAN'T RUN THIS WITHOUT MY PRECIOUS RTX 4060 Ti WAHAHAHAHA! (I meant if my PC is off.))
 app.use('/bans', banRoutes);
 app.use('/api/bans', banRoutes);  // Fixes 404 for /api/bans
 app.use('/image', jwtAuth, imageRoutes);

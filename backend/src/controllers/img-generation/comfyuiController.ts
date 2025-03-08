@@ -1,55 +1,32 @@
-// THIS WILL ONLY WORK WHEN I RUN COMFYUI ON MY LOCAL MACHINE
-// I WILL NEED TO RUN COMFYUI ON THE SERVER TO MAKE THIS WORK ! ! !
-// THEN HAVE API RAN OR SOME STUFF CYKA ! ! !
-
-/*
-import { Request, Response } from 'express';
-import { exec } from 'child_process';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import axios, { AxiosError } from 'axios';
+import { Request, Response } from 'express';
 
-const modelPath = path.join(__dirname, '../../../path/to/sd3_medium_incl_clips.safetensors');
-const workflowPath = path.join(__dirname, '../../../img2img.json');
-const outputDir = path.join(__dirname, '../../../generated_images');
+const comfyUIUrl = 'http://127.0.0.1:8188';
 
 export const generateImage = async (req: Request, res: Response) => {
-  const { prompt } = req.body;
-
-  if (!prompt) {
-    return res.status(400).json({ error: 'Prompt is required' });
-  }
-
   try {
-    // Update the workflow JSON with the new prompt
-    const workflow = JSON.parse(fs.readFileSync(workflowPath, 'utf-8'));
-    workflow['7'].inputs.text = prompt;
+    // Load the full workflow from prompt2img.json
+    const workflowPath = path.join(__dirname, '../../imagegen/comfyui/workflows/prompt2img.json');
+    const workflowData = JSON.parse(fs.readFileSync(workflowPath, 'utf-8'));
 
-    // Save the updated workflow to a temporary file
-    const tempWorkflowPath = path.join(outputDir, 'temp_workflow.json');
-    fs.writeFileSync(tempWorkflowPath, JSON.stringify(workflow, null, 2));
+    // Update Node 7 (positive prompt)
+    workflowData['7'].inputs.text = req.body.prompt || "A cyberpunk cityscape with neon lights";
 
-    // Run ComfyUI with the updated workflow
-    exec(`comfyui --workflow ${tempWorkflowPath} --output ${outputDir}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error generating image: ${error.message}`);
-        return res.status(500).json({ error: 'Failed to generate image' });
-      }
+    // Update Node 8 (negative prompt) if provided
+    if (req.body.negativePrompt) {
+      workflowData['8'].inputs.text = req.body.negativePrompt;
+    }
 
-      // Find the generated image
-      const files = fs.readdirSync(outputDir);
-      const imageFile = files.find(file => file.endsWith('.png'));
+    // Send the full workflow to ComfyUI
+    const response = await axios.post(`${comfyUIUrl}/prompt`, { prompt: workflowData });
+    const promptId = response.data.prompt_id;
 
-      if (!imageFile) {
-        return res.status(500).json({ error: 'No image generated' });
-      }
-
-      const imageUrl = `http://localhost:3000/generated_images/${imageFile}`;
-      res.json({ imageUrl });
-    });
+    res.json({ promptId, message: 'Image generation queued with ComfyUI' });
   } catch (error) {
-    console.error(`Error: ${error.message}`);
-    res.status(500).json({ error: 'Internal server error' });
+    const axiosError = error as AxiosError;
+    console.error('ComfyUI Error:', axiosError.response?.data || axiosError.message);
+    res.status(500).json({ error: axiosError.message });
   }
 };
-
-*/ // Had to comment this out because I have to do OpenAI API stuff first before this.
