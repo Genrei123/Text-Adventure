@@ -9,6 +9,8 @@ import Sidebar from "../components/Sidebar"
 import YourComments from "../profile/components/YourComments.tsx"
 import axiosInstance from "../../config/axiosConfig"
 import { Calendar, Users, Tag, Star, MessageSquare, Heart, Award, Clock } from "lucide-react"
+import { useLoading } from '../context/LoadingContext';
+import LoadingScreen from '../components/LoadingScreen';
 
 const GameDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -19,6 +21,8 @@ const GameDetails: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("details")
   const [comment, setComment] = useState("")
+  const [fadeIn, setFadeIn] = useState(false)
+  const [fadeOut, setFadeOut] = useState(false)
 
   useEffect(() => {
     if (!id) {
@@ -27,16 +31,21 @@ const GameDetails: React.FC = () => {
       return
     }
 
-    axiosInstance
-      .get(`/game/${id}`)
-      .then((response) => {
+    const fetchGameDetails = async () => {
+      try {
+        const response = await axiosInstance.get(`/game/${id}`)
         setGame(response.data)
-        setLoading(false)
-      })
-      .catch((error) => {
+        // Add minimum loading time for better UX
+        setTimeout(() => {
+          setLoading(false)
+        }, 2000)
+      } catch (error: any) {
         setError(error.response?.data?.message || "Failed to fetch game details")
         setLoading(false)
-      })
+      }
+    }
+
+    fetchGameDetails()
   }, [id])
 
   function handleClick(): void {
@@ -74,14 +83,7 @@ const GameDetails: React.FC = () => {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
-        <div className="flex flex-col items-center">
-          <div className="w-12 h-12 border-4 border-t-[#B39C7D] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-[#B39C7D]">Loading game details...</p>
-        </div>
-      </div>
-    )
+    return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />
   }
 
   if (error) {
@@ -105,7 +107,7 @@ const GameDetails: React.FC = () => {
   const gameDetails = {
     genre: game.genre || "Adventure, RPG",
     developer: game.developer || "Game Studio",
-    releaseDate: game.releaseDate || "2023",
+    releaseDate: game.releaseDate || "2025",
     platform: game.platform || "Web Browser",
     playTime: game.playTime || "10-15 hours",
     difficulty: game.difficulty || "Medium",

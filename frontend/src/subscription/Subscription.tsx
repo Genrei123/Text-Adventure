@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
-import { OfferModal } from './OfferModal';
+import LoadingScreen from '../components/LoadingScreen';
 import axios from 'axios';
 
 // Update interface to match the actual API response
@@ -30,6 +30,9 @@ const Subscription: React.FC = () => {
     const [selectedPlan, setSelectedPlan] = useState<any>(null);
     const [subscriptionOffers, setSubscriptionOffers] = useState<SubscriptionPlan[]>([]);
     const [loading, setLoading] = useState(true);
+    const [fadeIn, setFadeIn] = useState(false);
+    const [fadeOut, setFadeOut] = useState(false);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
 
     // Fetch subscription offers from backend
     useEffect(() => {
@@ -46,6 +49,17 @@ const Subscription: React.FC = () => {
         };
 
         fetchSubscriptionOffers();
+    }, []);
+
+    // Simulate initial loading screen
+    useEffect(() => {
+        // Simulate loading time
+        setTimeout(() => {
+            setFadeOut(true);
+            setTimeout(() => {
+                setIsInitialLoading(false);
+            }, 500);
+        }, 2000);
     }, []);
 
     const handlePlanClick = (plan: PlanDisplay) => {
@@ -172,6 +186,10 @@ const Subscription: React.FC = () => {
             btnColor: "bg-black" 
         }
     ];
+
+    if (isInitialLoading) {
+        return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />;
+    }
 
     return (
         <>

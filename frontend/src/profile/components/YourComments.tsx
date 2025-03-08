@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaUserCircle, FaGamepad, FaCommentDots } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from '../../../config/axiosConfig';
+import LoadingBook from '../../components/LoadingBook';
 
 interface Comment {
     id: number;
@@ -61,11 +62,7 @@ const YourComments = () => {
     }
   
     if (loading) {
-        return (
-            <div className="flex justify-center items-center h-64">
-                <div className="w-12 h-12 border-4 border-t-[#B39C7D] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-            </div>
-        );
+        return <LoadingBook message="Loading Comments..." size="md" />;
     }
   
     if (error) {

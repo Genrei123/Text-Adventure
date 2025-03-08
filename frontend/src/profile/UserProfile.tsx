@@ -9,6 +9,9 @@ import YourLikes from "./components/YourLikes";
 import axios from '../../config/axiosConfig';
 import Navbar from "../components/Navbar";
 import { FaSpinner } from 'react-icons/fa';
+import { useLoading } from '../context/LoadingContext';
+import LoadingLink from '../components/LoadingLink';
+import LoadingScreen from '../components/LoadingScreen';
 
 interface UserDetails {
   id: number;
@@ -29,8 +32,12 @@ export default function ProfilePage() {
   const [copied, setCopied] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const { username } = useParams<{ username: string }>();
+  const [fadeIn, setFadeIn] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const navigate = useNavigate();
+  const { navigateWithLoading } = useLoading();
 
   const handleCopyUsername = () => {
     const usernameElement = document.querySelector('h1') as HTMLElement;
@@ -50,12 +57,19 @@ export default function ProfilePage() {
         setUserDetails(response.data);
       } catch (error) {
         console.error('Error fetching user profile:', error);
-        navigate('/forbidden');
+        navigateWithLoading('/forbidden');
+      } finally {
+        setTimeout(() => {
+          setFadeOut(true);
+          setTimeout(() => {
+            setIsInitialLoading(false);
+          }, 500);
+        }, 2000);
       }
     };
 
     fetchUserProfile();
-  }, [username]);
+  }, [username, navigateWithLoading]);
 
   const handleImageUpload = () => {
     const input = document.createElement("input");
@@ -110,6 +124,20 @@ export default function ProfilePage() {
       });
     }
   };
+
+  const handleGameClick = (slug?: string) => {
+    if (slug) {
+      navigateWithLoading(`/game/${slug}`);
+    }
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  if (isInitialLoading) {
+    return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />;
+  }
 
   return (
     <div
@@ -374,13 +402,13 @@ export default function ProfilePage() {
             <div className="w-full">
               <div className="flex border-b border-[#3A3A3A]">
                 <button
-                  onClick={() => setActiveTab("games")}
+                  onClick={() => handleTabChange("games")}
                   className={`px-4 py-2 text-[#ffffff] ${activeTab === "games" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:shadow-[0_0_10px_2px_rgba(179,156,125,0.75)] rounded-full bg-transparent`}
                 >
                   GAMES
                 </button>
                 <button
-                  onClick={() => setActiveTab("comments")}
+                  onClick={() => handleTabChange("comments")}
                   className={`px-4 py-2 text-[#ffffff] ${activeTab === "comments" ? "border-b-2 border-[#B39C7D]" : ""} mr-4 transition-colors duration-300 ease-in-out hover:shadow-[0_0_10px_2px_rgba(179,156,125,0.75)] rounded-full bg-transparent`}
                 >
                   COMMENTS

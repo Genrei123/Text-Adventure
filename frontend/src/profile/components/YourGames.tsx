@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from '../../../config/axiosConfig';
+import LoadingBook from '../../components/LoadingBook';
+import { useLoading } from '../../context/LoadingContext';
 
 interface Story {
     id: number;
@@ -85,6 +87,7 @@ export default function YourGames() {
     const [error, setError] = useState<string | null>(null);
     const { username } = useParams<{ username: string }>();
     const navigate = useNavigate();
+    const { navigateWithLoading } = useLoading();
 
     useEffect(() => {
         const fetchUserGames = async () => {
@@ -107,16 +110,16 @@ export default function YourGames() {
 
     const handleGameClick = (slug?: string) => {
         if (slug) {
-            navigate(`/game/${slug}`);
+            if (onGameClick) {
+                onGameClick(slug);
+            } else {
+                navigateWithLoading(`/game/${slug}`);
+            }
         }
     };
 
     if (loading) {
-        return (
-            <div className="flex justify-center items-center py-8">
-                <div className="w-12 h-12 border-4 border-t-[#B39C7D] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-            </div>
-        );
+        return <LoadingBook message="Loading Games..." size="md" />;
     }
 
     if (error) {

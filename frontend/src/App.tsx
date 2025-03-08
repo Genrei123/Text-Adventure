@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import LoadingProvider from './context/LoadingContext';
 
 // Auth Components
 import LoginScreen from './auth/LoginScreen';
@@ -90,98 +91,100 @@ function App() {
 
   return (
     <Router>
-      {username && (
-        <SessionTracker
-          email={username}
-          setSessionId={setSessionId}
-          visitedPages={visitedPages}
-          setVisitedPages={setVisitedPages}
-        />
-      )}
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginScreen onLogin={handleLogin} />} />
-        <Route path="/register" element={<Register onRegister={handleRegister} />} />
-        <Route path="/game/nih/:id" element={<NihGameScreen />} />
-        
-        {/* Auth Related Routes */}
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/email-confirmation" element={<EmailConfirmation />} />
-        <Route path="/verify-email/:token" element={<VerifyEmail />} />
-        
-        {/* Protected Routes with WebSocket */}
-        <Route 
-          path="/home" 
-          element={
-            <ProtectedRoute>
+      <LoadingProvider>
+        {username && (
+          <SessionTracker
+            email={username}
+            setSessionId={setSessionId}
+            visitedPages={visitedPages}
+            setVisitedPages={setVisitedPages}
+          />
+        )}
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginScreen onLogin={handleLogin} />} />
+          <Route path="/register" element={<Register onRegister={handleRegister} />} />
+          <Route path="/game/nih/:id" element={<NihGameScreen />} />
+          
+          {/* Auth Related Routes */}
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/email-confirmation" element={<EmailConfirmation />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          
+          {/* Protected Routes with WebSocket */}
+          <Route 
+            path="/home" 
+            element={
+              <ProtectedRoute>
+                <WebSocketProvider>
+                  <Homepage onLogout={handleLogout} />
+                </WebSocketProvider>
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/:username" 
+            element={
+              <ProtectedRoute>
+                <WebSocketProvider>
+                  <UserProfile />
+                </WebSocketProvider>
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Game Related Routes */}
+          <Route 
+            path="/game/:id" 
+            element={
               <WebSocketProvider>
-                <Homepage onLogout={handleLogout} />
+                <GameScreen />
               </WebSocketProvider>
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/:username" 
-          element={
-            <ProtectedRoute>
-              <WebSocketProvider>
-                <UserProfile />
-              </WebSocketProvider>
-            </ProtectedRoute>
-          } 
-        />
-        
-        {/* Game Related Routes */}
-        <Route 
-          path="/game/:id" 
-          element={
-            <WebSocketProvider>
-              <GameScreen />
-            </WebSocketProvider>
-          } 
-        />
-        <Route path="/editing-page" element={<AdventureEditor />} />
-        <Route 
-          path="/game-creation" 
-          element={
-            <GameCreation 
-              onBack={() => {}} 
-              onNext={() => {}} 
-              onSkip={() => {}} 
-            />
-          } 
-        />
-        <Route 
-          path="/game-details/:id" 
-          element={
-            <ProtectedRoute>
-              <WebSocketRoutes>
-                <GameDetails />
-              </WebSocketRoutes>
-            </ProtectedRoute>
-          } 
-        />
+            } 
+          />
+          <Route path="/editing-page" element={<AdventureEditor />} />
+          <Route 
+            path="/game-creation" 
+            element={
+              <GameCreation 
+                onBack={() => {}} 
+                onNext={() => {}} 
+                onSkip={() => {}} 
+              />
+            } 
+          />
+          <Route 
+            path="/game-details/:id" 
+            element={
+              <ProtectedRoute>
+                <WebSocketRoutes>
+                  <GameDetails />
+                </WebSocketRoutes>
+              </ProtectedRoute>
+            } 
+          />
 
-        {/* Work in Progress Routes */}
-        <Route path="/image-generator" element={<ImageGeneratorScreen />} />
-        
-        {/* Utility Routes */}
-        <Route path="/subscription" element={<Subscription />} />
-        <Route path="/active-players" element={<ActivePlayerCount />} />
-        <Route path="/ban-test" element={<BanTestPage />} />
-        
-        {/* Error Routes */}
-        <Route path="/forbidden" element={<Forbidden />} />
-        <Route path="/server-error" element={<ServerError />} />
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="*" element={<NotFound />} />
-        <Route path="/game-details" element={<GameDetails />} />
-        {/* admin side */}
-        <Route path="/Admin/Banned" element={<BannedList/>} />
-        <Route path="/Admin/PlayerList" element={<AdminPlayerList />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      </Routes>
+          {/* Work in Progress Routes */}
+          <Route path="/image-generator" element={<ImageGeneratorScreen />} />
+          
+          {/* Utility Routes */}
+          <Route path="/subscription" element={<Subscription />} />
+          <Route path="/active-players" element={<ActivePlayerCount />} />
+          <Route path="/ban-test" element={<BanTestPage />} />
+          
+          {/* Error Routes */}
+          <Route path="/forbidden" element={<Forbidden />} />
+          <Route path="/server-error" element={<ServerError />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="*" element={<NotFound />} />
+          <Route path="/game-details" element={<GameDetails />} />
+          {/* admin side */}
+          <Route path="/Admin/Banned" element={<BannedList/>} />
+          <Route path="/Admin/PlayerList" element={<AdminPlayerList />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        </Routes>
+      </LoadingProvider>
     </Router>
   );
 }

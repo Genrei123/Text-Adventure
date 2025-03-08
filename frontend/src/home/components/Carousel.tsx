@@ -1,20 +1,30 @@
-import type React from "react"
+import React from 'react';
 import { useNavigate } from "react-router-dom"
 import Slider from "react-slick"
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
+import LoadingBook from '../../components/LoadingBook';
 
 interface CarouselProps {
-  slides: {
-    id: string
-    image_data: string
-    title: string
-    description: string
-  }[]
+  slides: Array<{
+    id: string;
+    title: string;
+    description: string;
+    image_data: string;
+  }>;
+  isLoading?: boolean;
 }
 
-const Carousel: React.FC<CarouselProps> = ({ slides }) => {
+const Carousel: React.FC<CarouselProps> = ({ slides, isLoading }) => {
   const navigate = useNavigate()
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-[400px] bg-[#1E1E1E]/50 rounded-lg flex items-center justify-center">
+        <LoadingBook message="Loading Featured Games..." size="md" />
+      </div>
+    );
+  }
 
   const carouselSettings = {
     dots: true,

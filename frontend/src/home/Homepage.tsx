@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from '../../config/axiosConfig';
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
@@ -7,6 +7,8 @@ import Carousel from "./components/Carousel";
 import YourJourney from "./components/YourJourney";
 import StartAdventure from "./components/StartAdventure";
 import GameList from "./components/GameList";
+import { useLoading } from '../context/LoadingContext';
+import LoadingScreen from "../components/LoadingScreen";
 
 interface HomepageProps {
   onLogout: () => void;
@@ -27,10 +29,15 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [card, setCard] = useState<string | null>(null);
   const [carouselData, setCarouselData] = useState<CarouselGame[]>([]);
+  const [fadeIn, setFadeIn] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const { navigateWithLoading } = useLoading();
 
   useEffect(() => {
-    const fetchCarouselGames = async () => {
+    const initializeHomepage = async () => {
       try {
+        // Fetch carousel games
         const response = await axios.get<CarouselGame[]>('/game', {
           params: {
             order: 'createdAt',
@@ -39,7 +46,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
           }
         });
 
-        // Transform the response into carousel format
         const formattedCarousel = response.data.map(game => ({
           id: game.id,
           image_data: game.image_data || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
@@ -49,77 +55,83 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         }));
 
         setCarouselData(formattedCarousel);
+
+        // Fetch user data
+        const token = localStorage.getItem('token');
+        if (token) {
+          setUsername(token);
+        }
+
+        // Check URL params
+        const params = new URLSearchParams(location.search);
+        const usernameParam = params.get("username");
+        if (usernameParam) {
+          setUsername(decodeURIComponent(usernameParam));
+          localStorage.setItem("username", usernameParam);
+        }
+
       } catch (error) {
-        console.error('Error fetching carousel games:', error);
-        // Fallback to default carousel if fetch fails
-        setCarouselData([
-          {
-            id: '1',
-            image_data: "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1200&h=800&fit=crop",
-            title: "Medieval Fantasy",
-            description: "Embark on an epic journey through enchanted realms",
-          },
-          // ... other default slides
-        ]);
+        console.error('Error initializing homepage:', error);
+        setCarouselData([{
+          id: '1',
+          image_data: "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1200&h=800&fit=crop",
+          title: "Medieval Fantasy",
+          description: "Embark on an epic journey through enchanted realms",
+        }]);
+      } finally {
+        setTimeout(() => {
+          setFadeOut(true);
+          setTimeout(() => {
+            setIsInitialLoading(false);
+          }, 500);
+        }, 2000);
       }
     };
 
-    const fetchUserData = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        return;
-      }
-      setUsername(token);
-    };
-
-    fetchUserData();
-    fetchCarouselGames();
-
-    const params = new URLSearchParams(location.search);
-    const usernameParam = params.get("username");
-    if (usernameParam) {
-      setUsername(decodeURIComponent(usernameParam));
-      localStorage.setItem("username", usernameParam);
-    }
+    initializeHomepage();
   }, [location]);
+
+  const handleLogout = async () => {
+    setFadeIn(true);
+    setTimeout(async () => {
+      await onLogout();
+      navigateWithLoading('/login');
+    }, 500);
+  };
+
+  if (isInitialLoading) {
+    return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-      {/* Fixed Navbar */}
       <div className="fixed top-0 left-0 right-0 z-50">
-        <Navbar />
+        <Navbar onLogout={handleLogout} />
       </div>
 
-      {/* Main layout */}
       <div className="flex flex-col w-full h-full pt-16 z-100">
-        {/* Just render Sidebar directly - it has its own positioning */}
         <Sidebar />
 
-        {/* Main content */}
         <div className="w-full">
           {/* Carousel Section */}
             <div className="w-[95%] max-w-full mx-auto px-6 md:px-12 my-10">
             <Carousel slides={carouselData} />
             </div>
 
-          {/* Your Journey Section */}
           <YourJourney setCard={setCard} />
 
-          {/* Start Adventure Section */}
           <StartAdventure 
-            onCreateStory={() => navigate("/game-creation")}
-            onBrowse={() => navigate("/browse-stories")}
+            onCreateStory={() => navigateWithLoading("/game-creation")}
+            onBrowse={() => navigateWithLoading("/browse-stories")}
           />
 
-          {/* Game List Section */}
           <GameList />
 
-          {/* Link to Ban Test Page */}
           <div>
             <h1>Main Application</h1>
-            <Link to="/ban-test">
+            <button onClick={() => navigateWithLoading('/ban-test')}>
               Go to Ban Test Page
-            </Link>
+            </button>
           </div>
         </div>
       </div>
