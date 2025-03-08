@@ -10,9 +10,9 @@ const YourJourney: React.FC<YourJourneyProps> = ({ setCard }) => {
   const [cardType, setCardType] = useState<"portrait" | "landscape">("portrait");
 
   return (
-    <div className="w-full max-w-8xl mx-auto px-4 md:px-8 my-17 relative">
+    <div className="w-full max-w-6xl mx-auto px-4 md:px-8 my-17 relative">
       {/* Top Divider */}
-      <div className="max-w-7xl mx-auto mb-8">
+      <div className="max-w-5xl mx-auto mb-8">
       </div>
 
       {/* Main Content */}
@@ -20,7 +20,7 @@ const YourJourney: React.FC<YourJourneyProps> = ({ setCard }) => {
         {/* Section Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center w-full">
-            <h2 className="text-3xl font-cinzel text-[#C8A97E] whitespace-nowrap mr-6">
+            <h2 className="text-xl font-cinzel text-[#C8A97E] whitespace-nowrap mr-6">
               Your Journey
             </h2>
             <div className="h-1 bg-[#C8A97E] flex-grow"></div>
