@@ -8,7 +8,82 @@ import { promisify } from 'util';
 const writeFileAsync = promisify(fs.writeFile);
 const mkdirAsync = promisify(fs.mkdir);
 
-export const generateImage = async (req: Request, res: Response): Promise<void> => {
+// Function specifically for generating banner images
+export const generateBannerImage = async (req: Request, res: Response): Promise<void> => {
+  const { prompt } = req.body;
+
+  if (!prompt) {
+    res.status(400).json({ error: 'Prompt is required' });
+    return;
+  }
+
+  try {
+    // Ensure the image directory exists
+    const imageDir = path.join('public', 'images', 'banner-images');
+    await mkdirAsync(imageDir, { recursive: true });
+
+    // Call OpenAI API to generate the image
+    const openAiResponse = await axios.post(
+      'https://api.openai.com/v1/images/generations',
+      {
+        model: 'dall-e-3', // Specify CLIP-DALL-E 4 model
+        prompt,
+        n: 1,
+        size: '1024x1024',
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.MY_OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    // Extract the image URL from the response
+    const imageUrl = openAiResponse.data.data[0].url;
+
+    // Download the image
+    const imageResponse = await axios({
+      method: 'get',
+      url: imageUrl,
+      responseType: 'arraybuffer', // Ensure the response is treated as binary data
+    });
+
+    // Generate a unique filename
+    const filename = `banner-image-${Date.now()}.png`;
+    const filepath = path.join(imageDir, filename);
+
+    // Save the image to disk
+    await writeFileAsync(filepath, imageResponse.data);
+
+    // Create a relative URL for storing in the database
+    const relativeImageUrl = `/images/banner-images/${filename}`;
+
+    res.json({ imageUrl: relativeImageUrl });
+
+  } catch (error: unknown) { 
+    console.error('Full error details:', error);
+    
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      res.status(500).json({ 
+        error: 'Failed to generate banner image', 
+        details: error.response?.data || error.message 
+      });
+    } else {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`Error generating banner image: ${errorMessage}`);
+      res.status(500).json({ error: 'Failed to generate banner image' });
+    }
+  }
+};
+
+// For game cover images - updates the Game model
+export const generateGameCoverImage = async (req: Request, res: Response): Promise<void> => {
   const { prompt, gameId, userId } = req.body;
 
   if (!prompt) {
@@ -25,6 +100,7 @@ export const generateImage = async (req: Request, res: Response): Promise<void> 
     const openAiResponse = await axios.post(
       'https://api.openai.com/v1/images/generations',
       {
+        model: 'dall-e-3', // Specify DALL-E 3 model
         prompt,
         n: 1,
         size: '1024x1024',
@@ -106,13 +182,91 @@ export const generateImage = async (req: Request, res: Response): Promise<void> 
         data: error.response?.data,
       });
       res.status(500).json({ 
-        error: 'Failed to generate image', 
+        error: 'Failed to generate game cover image', 
         details: error.response?.data || error.message 
       });
     } else {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(`Error generating image: ${errorMessage}`);
-      res.status(500).json({ error: 'Failed to generate image' });
+      console.error(`Error generating game cover image: ${errorMessage}`);
+      res.status(500).json({ error: 'Failed to generate game cover image' });
+    }
+  }
+};
+
+// NEW: Function specifically for chat images - does NOT update Game model
+export const generateChatImage = async (req: Request, res: Response): Promise<void> => {
+  const { prompt, gameId } = req.body;
+
+  if (!prompt) {
+    res.status(400).json({ error: 'Prompt is required' });
+    return;
+  }
+
+  try {
+    // Ensure the image directory exists
+    const imageDir = path.join('public', 'images', 'chat-images');
+    await mkdirAsync(imageDir, { recursive: true });
+
+    // Call OpenAI API to generate the image
+    const openAiResponse = await axios.post(
+      'https://api.openai.com/v1/images/generations',
+      {
+        model: 'dall-e-3',
+        prompt,
+        n: 1,
+        size: '1024x1024',
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.MY_OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    // Extract the image URL from the response
+    const imageUrl = openAiResponse.data.data[0].url;
+
+    // Download the image
+    const imageResponse = await axios({
+      method: 'get',
+      url: imageUrl,
+      responseType: 'arraybuffer',
+    });
+
+    // Generate a unique filename
+    const filename = `chat-image-${Date.now()}.png`;
+    const filepath = path.join(imageDir, filename);
+
+    // Save the image to disk
+    await writeFileAsync(filepath, imageResponse.data);
+
+    // Create a relative URL for storing in the database
+    const relativeImageUrl = `/images/chat-images/${filename}`;
+
+    // IMPORTANT: This function does NOT update the Game model
+    res.json({ 
+      imageUrl: relativeImageUrl,
+      gameId: gameId // Just pass back the gameId for reference
+    });
+
+  } catch (error: unknown) { 
+    console.error('Full error details:', error);
+    
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      res.status(500).json({ 
+        error: 'Failed to generate chat image', 
+        details: error.response?.data || error.message 
+      });
+    } else {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`Error generating chat image: ${errorMessage}`);
+      res.status(500).json({ error: 'Failed to generate chat image' });
     }
   }
 };

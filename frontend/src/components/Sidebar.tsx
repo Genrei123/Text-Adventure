@@ -44,7 +44,7 @@ const Sidebar: React.FC = () => {
                     </li>
                 </ul>
             </div>
-            <div className="block md:hidden w-full p-1 top-[calc(45%+4%)] left-0 h-[calc(55%-2%)] absolute bg-[#2F2118] stroke-[#1e1e1e] stroke-2">
+            <div className="block md:hidden w-full p-1 top-[] left-0 h-[calc(55%)] absolute stroke-[#1e1e1e] stroke-2">
                 <ul className="flex justify-around">
                     <li className="flex justify-center items-center cursor-pointer m-1.5 relative group">
                         <Link to="/home">

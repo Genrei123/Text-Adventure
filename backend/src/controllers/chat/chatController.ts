@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, storeImageMessage, initiateGameSession, getConversationHistory } from "../../service/chat/chatService";
+import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, initiateGameSession, getConversationHistory } from "../../service/chat/chatService";
 
 export const getChatHistoryController = async (req: Request, res: Response) => {
     try {
@@ -63,7 +63,7 @@ export const handleChatRequestController = async (req: Request, res: Response): 
     }
 };
 
-export const storeImage = async (req: Request, res: Response): Promise<any> => {
+export const storeBannerImage = async (req: Request, res: Response): Promise<any> => {
     try {
         const { 
             userId, 
@@ -79,7 +79,7 @@ export const storeImage = async (req: Request, res: Response): Promise<any> => {
         } = req.body;
 
         // Validate required fields
-        if (!userId || !gameId || !imageUrl) {
+        if (!userId || !gameId) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
@@ -110,6 +110,54 @@ export const storeImage = async (req: Request, res: Response): Promise<any> => {
             message: 'Image stored successfully',
             data: {
                 imageUrl,
+                gameId,
+                // Include roleplay metadata in response
+                roleplay_metadata: {
+                    emotion: storedMessage.roleplay_emotion,
+                    action: storedMessage.roleplay_action,
+                    character_state: storedMessage.roleplay_character_state,
+                    narrative_impact: storedMessage.roleplay_narrative_impact
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error storing image:', error);
+        return res.status(500).json({
+            error: 'Failed to store image',
+            details: error instanceof Error ? error.message : String(error)
+        });
+    }
+};
+
+export const storeImageMessage = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { userId, gameId, image_url, role = 'assistant' } = req.body;
+
+        // Validate required fields
+        if (!userId || !gameId || !image_url) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Validate user and game
+        await validateUserAndGame(userId, gameId);
+
+        // Find or create a session
+        const session_id = await findOrCreateSession(userId, gameId);
+
+        // Store the image message
+        const storedMessage = await storeChatMessage(
+            session_id,
+            userId,
+            gameId,
+            role,
+            'Image received',
+            image_url
+        );
+
+        return res.status(201).json({
+            message: 'Image stored successfully',
+            data: {
+                image_url,
                 gameId,
                 // Include roleplay metadata in response
                 roleplay_metadata: {

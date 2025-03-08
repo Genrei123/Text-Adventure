@@ -113,9 +113,10 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         <Sidebar />
 
         <div className="w-full">
-          <div className="w-[95%] max-w-full mx-auto px-6 md:px-12 my-16">
+          {/* Carousel Section */}
+            <div className="w-[95%] max-w-full mx-auto px-6 md:px-12 my-10">
             <Carousel slides={carouselData} />
-          </div>
+            </div>
 
           <YourJourney setCard={setCard} />
 

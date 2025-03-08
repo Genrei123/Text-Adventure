@@ -13,7 +13,6 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 console.error('Error fetching offers:', error);
             }
         };
-
         fetchOffers();
     }, []);
 
