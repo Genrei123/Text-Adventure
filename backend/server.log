@@ -165,3 +165,214 @@
 2025-03-09T16:43:02.861Z [INFO]: New socket connected: u-TP9JeiB9VRNbNKAAAP
 2025-03-09T16:43:02.865Z [INFO]: New socket connected: a__dk3xfYgqXPrOFAAAQ
 2025-03-09T16:43:02.867Z [INFO]: New socket connected: -4lZ-9EbrFiV7r2hAAAR
+2025-03-09T18:05:39.420Z [INFO]: New socket connected: 1c-nsxY8u76dcYENAAAC
+2025-03-09T18:05:39.423Z [INFO]: New socket connected: kzth33uN3pCjWnCaAAAD
+2025-03-09T18:05:45.003Z [INFO]: Socket disconnected: 1c-nsxY8u76dcYENAAAC
+2025-03-09T18:09:48.580Z [INFO]: New socket connected: HFqlH_t5_CGhG9ZgAAAF
+2025-03-09T18:09:53.394Z [INFO]: Socket disconnected: HFqlH_t5_CGhG9ZgAAAF
+2025-03-09T18:09:53.749Z [INFO]: New socket connected: QaKEOEWOCOiSsLJ6AAAH
+2025-03-09T18:10:16.606Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T18:10:16.606Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU0MzgxNCwiZXhwIjoxNzQxNTQ3NDE0fQ.FBFTWMQuzpnPFj88Nj0BDJMxj2r0RSoV4JW3wFyPUvo
+2025-03-09T18:10:16.607Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:16.609Z [INFO]: Disconnection from route: /home
+2025-03-09T18:10:16.610Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:16.611Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T18:10:16.612Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU0MzgxNCwiZXhwIjoxNzQxNTQ3NDE0fQ.FBFTWMQuzpnPFj88Nj0BDJMxj2r0RSoV4JW3wFyPUvo
+2025-03-09T18:10:16.612Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:17.224Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 0 as of 3/10/2025, 2:10:17 AM
+2025-03-09T18:10:17.817Z [INFO]: Active players: 1
+2025-03-09T18:10:17.817Z [INFO]: Session created for hassagiyassuo@gmail.com
+2025-03-09T18:10:17.817Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 2:10:17 AM
+2025-03-09T18:10:18.099Z [INFO]: Active players: 1
+2025-03-09T18:10:18.099Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 2:10:18 AM
+2025-03-09T18:10:44.220Z [INFO]: Disconnection from route: /home
+2025-03-09T18:10:44.221Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:44.222Z [INFO]: New connection from route: http://localhost:5173/game
+2025-03-09T18:10:44.222Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU0MzgxNCwiZXhwIjoxNzQxNTQ3NDE0fQ.FBFTWMQuzpnPFj88Nj0BDJMxj2r0RSoV4JW3wFyPUvo
+2025-03-09T18:10:44.223Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:46.913Z [INFO]: Active players: 1
+2025-03-09T18:10:46.913Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 2:10:46 AM
+2025-03-09T18:10:48.912Z [INFO]: Session ended for hassagiyassuo@gmail.com: {"startTime":"2025-03-09T18:10:17.817Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-09T18:10:46.552Z"}
+2025-03-09T18:10:48.913Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 1 as of 3/10/2025, 2:10:48 AM
+2025-03-09T18:10:48.942Z [INFO]: Disconnection from route: /game
+2025-03-09T18:10:48.943Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:49.304Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 0 as of 3/10/2025, 2:10:49 AM
+2025-03-09T18:10:54.450Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T18:10:54.450Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU0MzgxNCwiZXhwIjoxNzQxNTQ3NDE0fQ.FBFTWMQuzpnPFj88Nj0BDJMxj2r0RSoV4JW3wFyPUvo
+2025-03-09T18:10:54.451Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:54.452Z [INFO]: Disconnection from route: /home
+2025-03-09T18:10:54.452Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:54.453Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T18:10:54.453Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU0MzgxNCwiZXhwIjoxNzQxNTQ3NDE0fQ.FBFTWMQuzpnPFj88Nj0BDJMxj2r0RSoV4JW3wFyPUvo
+2025-03-09T18:10:54.453Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:54.831Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 0 as of 3/10/2025, 2:10:54 AM
+2025-03-09T18:10:55.118Z [INFO]: Active players: 0
+2025-03-09T18:10:55.118Z [INFO]: Session created for hassagiyassuo@gmail.com
+2025-03-09T18:10:55.118Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 0 as of 3/10/2025, 2:10:55 AM
+2025-03-09T18:10:55.120Z [INFO]: Active players: 0
+2025-03-09T18:10:55.120Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 0 as of 3/10/2025, 2:10:55 AM
+2025-03-09T18:10:59.156Z [INFO]: Disconnection from route: /home
+2025-03-09T18:10:59.156Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:59.158Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T18:10:59.158Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU0MzgxNCwiZXhwIjoxNzQxNTQ3NDE0fQ.FBFTWMQuzpnPFj88Nj0BDJMxj2r0RSoV4JW3wFyPUvo
+2025-03-09T18:10:59.158Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:59.159Z [INFO]: Updated last played game for hassagiyassuo@gmail.com: Game 2
+2025-03-09T18:10:59.160Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T18:10:59.160Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:59.161Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T18:10:59.161Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU0MzgxNCwiZXhwIjoxNzQxNTQ3NDE0fQ.FBFTWMQuzpnPFj88Nj0BDJMxj2r0RSoV4JW3wFyPUvo
+2025-03-09T18:10:59.161Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:10:59.162Z [INFO]: Updated last played game for hassagiyassuo@gmail.com: Game 2
+2025-03-09T18:10:59.762Z [INFO]: Active players: 1
+2025-03-09T18:10:59.762Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 2:10:59 AM
+2025-03-09T18:11:00.015Z [INFO]: Session ended for hassagiyassuo@gmail.com: {"startTime":"2025-03-09T18:10:55.118Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-09T18:10:59.466Z"}
+2025-03-09T18:11:00.015Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 1 as of 3/10/2025, 2:11:00 AM
+2025-03-09T18:11:00.053Z [INFO]: Active players: 1
+2025-03-09T18:11:00.054Z [INFO]: Session created for hassagiyassuo@gmail.com
+2025-03-09T18:11:00.054Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 2:11:00 AM
+2025-03-09T18:11:12.872Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T18:11:12.872Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T18:11:15.507Z [INFO]: Session ended for hassagiyassuo@gmail.com: {"startTime":"2025-03-09T18:11:00.053Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-09T18:11:15.206Z"}
+2025-03-09T18:11:15.507Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 0 as of 3/10/2025, 2:11:15 AM
+2025-03-09T18:29:49.236Z [INFO]: Socket disconnected: QaKEOEWOCOiSsLJ6AAAH
+2025-03-09T18:29:49.558Z [INFO]: New socket connected: JxW5Fsg9QRO1FWcGAAAJ
+2025-03-09T18:29:55.212Z [INFO]: Socket disconnected: JxW5Fsg9QRO1FWcGAAAJ
+2025-03-09T18:29:55.526Z [INFO]: New socket connected: FtlzSvPvH6T0ohgLAAAL
+2025-03-09T18:53:50.443Z [INFO]: New socket connected: JNoJ9kgJwiLY9eavAAAB
+2025-03-09T18:53:51.029Z [INFO]: New socket connected: 2bCD8SYSkzeu6UpQAAAD
+2025-03-09T19:02:45.879Z [INFO]: New socket connected: W44MqRoAmMo1UXFzAAAB
+2025-03-09T19:02:46.379Z [INFO]: New socket connected: VTU-3BIsL4gn3ZYUAAAD
+2025-03-09T19:13:25.965Z [INFO]: New socket connected: yDia2Um_u8BAEqPcAAAF
+2025-03-09T19:13:31.507Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T19:13:31.508Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU0MzgxNCwiZXhwIjoxNzQxNTQ3NDE0fQ.FBFTWMQuzpnPFj88Nj0BDJMxj2r0RSoV4JW3wFyPUvo
+2025-03-09T19:13:31.508Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T19:13:31.511Z [INFO]: Disconnection from route: /home
+2025-03-09T19:13:31.511Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T19:13:31.512Z [WARN]: Invalid token or user email missing
+2025-03-09T19:13:31.512Z [WARN]: Invalid token or user email missing
+2025-03-09T19:13:31.513Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T19:13:31.513Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU0MzgxNCwiZXhwIjoxNzQxNTQ3NDE0fQ.FBFTWMQuzpnPFj88Nj0BDJMxj2r0RSoV4JW3wFyPUvo
+2025-03-09T19:13:31.513Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T19:13:31.514Z [WARN]: Invalid token or user email missing
+2025-03-09T19:13:33.548Z [INFO]: Disconnection from route: /home
+2025-03-09T19:13:33.548Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T19:13:33.549Z [WARN]: Invalid token or user email missing
+2025-03-09T19:13:33.660Z [INFO]: Socket disconnected: yDia2Um_u8BAEqPcAAAF
+2025-03-09T19:16:52.374Z [INFO]: Socket disconnected: VTU-3BIsL4gn3ZYUAAAD
+2025-03-09T19:16:55.164Z [INFO]: New socket connected: qvv15kHDBbCY-vcpAAAH
+2025-03-09T19:28:27.236Z [INFO]: Socket disconnected: qvv15kHDBbCY-vcpAAAH
+2025-03-09T19:29:33.690Z [INFO]: New socket connected: IbTjSBD4XoE8rsm2AAAJ
+2025-03-09T19:30:51.717Z [INFO]: Socket disconnected: IbTjSBD4XoE8rsm2AAAJ
+2025-03-09T19:30:52.289Z [INFO]: New socket connected: h_t1WzCQED6Lpp6OAAAL
+2025-03-09T19:32:15.525Z [INFO]: Socket disconnected: h_t1WzCQED6Lpp6OAAAL
+2025-03-09T19:32:31.692Z [INFO]: New socket connected: _GEJWDxjK1l7C6WjAAAN
+2025-03-09T19:32:41.309Z [INFO]: Socket disconnected: _GEJWDxjK1l7C6WjAAAN
+2025-03-09T19:32:41.906Z [INFO]: New socket connected: VygkS_wON8zPgErEAAAP
+2025-03-09T19:33:17.789Z [INFO]: Socket disconnected: VygkS_wON8zPgErEAAAP
+2025-03-09T19:33:18.432Z [INFO]: New socket connected: 1tekY6ia1OdxRgT_AAAR
+2025-03-09T19:44:17.182Z [INFO]: Socket disconnected: 1tekY6ia1OdxRgT_AAAR
+2025-03-09T19:50:11.517Z [INFO]: New socket connected: Tvop1ebN0tpUs2HMAAAT
+2025-03-09T20:02:21.869Z [INFO]: Socket disconnected: Tvop1ebN0tpUs2HMAAAT
+2025-03-09T20:02:23.247Z [INFO]: New socket connected: sBjKC0uHC1o_tdZeAAAV
+2025-03-09T20:03:34.873Z [INFO]: Socket disconnected: sBjKC0uHC1o_tdZeAAAV
+2025-03-09T20:03:36.010Z [INFO]: New socket connected: 0_Q1F2KArRB774zUAAAX
+2025-03-09T20:04:23.534Z [INFO]: Socket disconnected: W44MqRoAmMo1UXFzAAAB
+2025-03-09T20:04:23.842Z [INFO]: New socket connected: 7uSRtY6g3ReeZtIJAAAZ
+2025-03-09T20:04:28.557Z [INFO]: Socket disconnected: 0_Q1F2KArRB774zUAAAX
+2025-03-09T20:04:38.137Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T20:04:38.137Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:04:38.137Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:04:38.138Z [INFO]: Disconnection from route: /home
+2025-03-09T20:04:38.138Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:04:38.140Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T20:04:38.140Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:04:38.140Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:04:38.723Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 0 as of 3/10/2025, 4:04:38 AM
+2025-03-09T20:04:39.283Z [INFO]: Active players: 1
+2025-03-09T20:04:39.283Z [INFO]: Session created for hassagiyassuo@gmail.com
+2025-03-09T20:04:39.283Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:04:39 AM
+2025-03-09T20:04:39.635Z [INFO]: Active players: 1
+2025-03-09T20:04:39.635Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:04:39 AM
+2025-03-09T20:04:46.892Z [INFO]: Disconnection from route: /home
+2025-03-09T20:04:46.893Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:04:46.894Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T20:04:46.894Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:04:46.895Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:04:46.896Z [INFO]: Updated last played game for hassagiyassuo@gmail.com: Game 2
+2025-03-09T20:04:46.896Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T20:04:46.896Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:04:46.897Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T20:04:46.897Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:04:46.897Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:04:46.898Z [INFO]: Updated last played game for hassagiyassuo@gmail.com: Game 2
+2025-03-09T20:04:47.456Z [INFO]: Active players: 1
+2025-03-09T20:04:47.456Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:04:47 AM
+2025-03-09T20:04:47.475Z [INFO]: Session ended for hassagiyassuo@gmail.com: {"startTime":"2025-03-09T20:04:39.283Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-09T20:04:47.184Z"}
+2025-03-09T20:04:47.475Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 1 as of 3/10/2025, 4:04:47 AM
+2025-03-09T20:04:47.482Z [INFO]: Active players: 1
+2025-03-09T20:04:47.482Z [INFO]: Session created for hassagiyassuo@gmail.com
+2025-03-09T20:04:47.482Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:04:47 AM
+2025-03-09T20:04:52.366Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T20:04:52.367Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:04:52.953Z [INFO]: Session ended for hassagiyassuo@gmail.com: {"startTime":"2025-03-09T20:04:47.482Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-09T20:04:52.668Z"}
+2025-03-09T20:04:52.954Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 0 as of 3/10/2025, 4:04:52 AM
+2025-03-09T20:08:10.221Z [INFO]: Socket disconnected: 7uSRtY6g3ReeZtIJAAAZ
+2025-03-09T20:08:10.547Z [INFO]: New socket connected: IKlUP28Eh9aJarIkAAAb
+2025-03-09T20:09:09.065Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T20:09:09.066Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:09:09.066Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:11.678Z [INFO]: Active players: 1
+2025-03-09T20:09:11.678Z [INFO]: Session created for hassagiyassuo@gmail.com
+2025-03-09T20:09:11.678Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:09:11 AM
+2025-03-09T20:09:15.545Z [INFO]: Disconnection from route: /home
+2025-03-09T20:09:15.545Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:15.547Z [INFO]: New connection from route: http://localhost:5173/game
+2025-03-09T20:09:15.547Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:09:15.547Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:16.192Z [INFO]: Session ended for hassagiyassuo@gmail.com: {"startTime":"2025-03-09T20:09:11.678Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-09T20:09:15.865Z"}
+2025-03-09T20:09:16.193Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 1 as of 3/10/2025, 4:09:16 AM
+2025-03-09T20:09:17.208Z [INFO]: Active players: 1
+2025-03-09T20:09:17.208Z [INFO]: Session created for hassagiyassuo@gmail.com
+2025-03-09T20:09:17.208Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:09:17 AM
+2025-03-09T20:09:18.799Z [INFO]: Disconnection from route: /game
+2025-03-09T20:09:18.799Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:19.398Z [INFO]: Session ended for hassagiyassuo@gmail.com: {"startTime":"2025-03-09T20:09:17.208Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-09T20:09:19.097Z"}
+2025-03-09T20:09:19.398Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 0 as of 3/10/2025, 4:09:19 AM
+2025-03-09T20:09:25.145Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T20:09:25.145Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:09:25.145Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:25.146Z [INFO]: Disconnection from route: /home
+2025-03-09T20:09:25.146Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:25.147Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T20:09:25.147Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:09:25.147Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:25.455Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 0 as of 3/10/2025, 4:09:25 AM
+2025-03-09T20:09:25.723Z [INFO]: Active players: 1
+2025-03-09T20:09:25.724Z [INFO]: Session created for hassagiyassuo@gmail.com
+2025-03-09T20:09:25.724Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:09:25 AM
+2025-03-09T20:09:25.738Z [INFO]: Active players: 1
+2025-03-09T20:09:25.738Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:09:25 AM
+2025-03-09T20:09:29.710Z [INFO]: Disconnection from route: /home
+2025-03-09T20:09:29.710Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:29.712Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T20:09:29.712Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:09:29.713Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:29.714Z [INFO]: Updated last played game for hassagiyassuo@gmail.com: Game 2
+2025-03-09T20:09:29.714Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T20:09:29.714Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:29.715Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T20:09:29.715Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhZ2l5YXNzdW9AZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTc0MTU1MDY3NSwiZXhwIjoxNzQxNTU0Mjc1fQ.GHdmNfNWumOEPinepBW8g1nA5iVh9kNdGvKR3DJvcq8
+2025-03-09T20:09:29.715Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:29.716Z [INFO]: Updated last played game for hassagiyassuo@gmail.com: Game 2
+2025-03-09T20:09:30.271Z [INFO]: Active players: 1
+2025-03-09T20:09:30.271Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:09:30 AM
+2025-03-09T20:09:30.384Z [INFO]: Session ended for hassagiyassuo@gmail.com: {"startTime":"2025-03-09T20:09:25.724Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-09T20:09:29.997Z"}
+2025-03-09T20:09:30.385Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 1 as of 3/10/2025, 4:09:30 AM
+2025-03-09T20:09:30.550Z [INFO]: Active players: 1
+2025-03-09T20:09:30.551Z [INFO]: Session created for hassagiyassuo@gmail.com
+2025-03-09T20:09:30.551Z [INFO]: User hassagiyassuo@gmail.com joined. Active players: 1 as of 3/10/2025, 4:09:30 AM
+2025-03-09T20:09:38.093Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T20:09:38.093Z [INFO]: Email received: hassagiyassuo@gmail.com
+2025-03-09T20:09:38.696Z [INFO]: Session ended for hassagiyassuo@gmail.com: {"startTime":"2025-03-09T20:09:30.551Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-09T20:09:38.401Z"}
+2025-03-09T20:09:38.697Z [INFO]: User hassagiyassuo@gmail.com left. Active players: 0 as of 3/10/2025, 4:09:38 AM
+2025-03-09T20:12:22.052Z [INFO]: New socket connected: d-5dP4fvBiYIflVeAAAB

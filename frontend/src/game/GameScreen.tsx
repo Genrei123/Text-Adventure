@@ -1,10 +1,11 @@
-import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axiosInstance from '../../config/axiosConfig';
-import Sidebar from '../components/Sidebar';
-import GameHeader from '../components/GameHeader';
-import ActionButton from './components/ActionButton';
+import React, { useState, useEffect, useRef, KeyboardEvent } from "react";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../../config/axiosConfig";
+import Sidebar from "../components/Sidebar";
+import GameHeader from "../components/GameHeader";
+import ActionButton from "./components/ActionButton";
 import { motion } from "framer-motion";
+import { ChevronUp, ChevronDown } from "lucide-react";
 
 interface GameDetails {
   title: string;
@@ -13,31 +14,49 @@ interface GameDetails {
   image_data?: string;
 }
 
+interface ChatMessage {
+  content: string;
+  isUser: boolean;
+  timestamp: string;
+  image_url?: string;
+}
+
 const GameScreen: React.FC = () => {
-  const { id: gameId } = useParams();
+  const { id: gameId } = useParams<{ id: string }>();
   const [userId, setUserId] = useState<number | null>(null);
   const [gameDetails, setGameDetails] = useState<GameDetails | null>(null);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [showScroll, setShowScroll] = useState(false);
-  const [selectedAction, setSelectedAction] = useState('Say');
+  const [selectedAction, setSelectedAction] = useState("Say");
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
-  const [showEndStoryModal, setShowEndStoryModal] = useState(false); // New state for modal
+  const [showEndStoryModal, setShowEndStoryModal] = useState(false);
+  const [showModelDropdown, setShowModelDropdown] = useState(false);
+  const [selectedModel, setSelectedModel] = useState("DALL-E");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [chatMessages, setChatMessages] = useState<Array<{
-    content: string;
-    isUser: boolean;
-    timestamp: string;
-    image_url?: string;
-  }>>([]);
+  const modelDropdownRef = useRef<HTMLDivElement>(null);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isAnimating, setIsAnimating] = useState(true);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (modelDropdownRef.current && !modelDropdownRef.current.contains(event.target as Node)) {
+        setShowModelDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Fetch userId from localStorage
   useEffect(() => {
-    const userData = localStorage.getItem('userData');
+    const userData = localStorage.getItem("userData");
     if (userData) {
       try {
         const parsedData = JSON.parse(userData);
@@ -45,7 +64,7 @@ const GameScreen: React.FC = () => {
           setUserId(parsedData.id);
         }
       } catch (error) {
-        console.error('Error parsing userData from localStorage:', error);
+        console.error("Error parsing userData from localStorage:", error);
       }
     }
   }, []);
@@ -64,27 +83,27 @@ const GameScreen: React.FC = () => {
           image_data: response.data.image_data,
         });
       } catch (error) {
-        console.error('Error fetching game details:', error);
-        setError('Failed to load game details.');
+        console.error("Error fetching game details:", error);
+        setError("Failed to load game details.");
       }
     };
 
     const fetchChatMessages = async () => {
       try {
-        const response = await axiosInstance.post('/ai/get-chat', {
+        const response = await axiosInstance.post("/ai/get-chat", {
           userId,
-          gameId: parseInt(gameId, 10),
+          gameId: Number.parseInt(gameId, 10),
         });
         const formattedMessages = response.data.map((msg: any) => ({
           content: msg.content,
-          isUser: msg.role === 'user',
+          isUser: msg.role === "user",
           timestamp: new Date(msg.createdAt).toLocaleTimeString(),
           image_url: msg.image_url || undefined,
         }));
-        console.log('Fetched chat messages:', formattedMessages);
+        console.log("Fetched chat messages:", formattedMessages);
         setChatMessages(formattedMessages);
       } catch (error) {
-        console.error('Error fetching chat messages:', error);
+        console.error("Error fetching chat messages:", error);
       }
     };
 
@@ -112,7 +131,7 @@ const GameScreen: React.FC = () => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e as any);
     }
@@ -120,29 +139,29 @@ const GameScreen: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (!message.trim()) {
-      setError('Message cannot be empty.');
+      setError("Message cannot be empty.");
       return;
     }
 
     if (!userId || !gameId) {
-      setError('User ID or Game ID not found. Please log in again.');
+      setError("User ID or Game ID not found. Please log in again.");
       return;
     }
 
-    const payload = { userId, gameId: parseInt(gameId, 10), message, action: selectedAction };
-    setMessage('');
+    const payload = { userId, gameId: Number.parseInt(gameId, 10), message, action: selectedAction };
+    setMessage("");
 
     try {
       const displayMessage = `[${selectedAction}] ${message}`;
       const tempUserMessage = { content: displayMessage, isUser: true, timestamp: new Date().toLocaleTimeString() };
-      setChatMessages(prev => [...prev, tempUserMessage]);
+      setChatMessages((prev) => [...prev, tempUserMessage]);
 
-      const response = await axiosInstance.post('/ai/chat', payload);
-      const aiResponse = {
+      const response = await axiosInstance.post("/ai/chat", payload);
+      const aiResponse: ChatMessage = {
         content: response.data.ai_response.content || "This is a simulated AI response.",
         isUser: false,
         timestamp: response.data.ai_response.createdAt
@@ -152,7 +171,7 @@ const GameScreen: React.FC = () => {
       };
 
       if (response.data.user_message && response.data.user_message.createdAt) {
-        setChatMessages(prev => {
+        setChatMessages((prev) => {
           const updatedMessages = prev.slice(0, -1);
           return [
             ...updatedMessages,
@@ -166,19 +185,19 @@ const GameScreen: React.FC = () => {
           ];
         });
       } else {
-        setChatMessages(prev => [...prev.slice(0, -1), tempUserMessage, aiResponse]);
+        setChatMessages((prev) => [...prev.slice(0, -1), tempUserMessage, aiResponse]);
       }
 
-      setSuccess('Message sent successfully!');
+      setSuccess("Message sent successfully!");
     } catch (err) {
-      console.error('Error sending message:', err);
-      setError('An unexpected error occurred. Please try again.');
+      console.error("Error sending message:", err);
+      setError("An unexpected error occurred. Please try again.");
     }
   };
 
   const getContextFromMessages = (): string => {
     const recentMessages = chatMessages.slice(-5);
-    const cleanedContents = recentMessages.map(msg => msg.content.replace(/^\[(Say|Do|See)\]\s+/i, ''));
+    const cleanedContents = recentMessages.map((msg) => msg.content.replace(/^\[(Say|Do|See)\]\s+/i, ""));
     return cleanedContents.length === 0 && gameDetails?.description
       ? `Generate an image based on this game description: ${gameDetails.description}`
       : `Generate an image of the current scene in the story: ${cleanedContents.join(". ")}`;
@@ -186,53 +205,114 @@ const GameScreen: React.FC = () => {
 
   const handleGenerateImage = async () => {
     if (!userId || !gameId) {
-      setError('User ID or Game ID not found. Please log in again.');
+      setError("User ID or Game ID not found. Please log in again.");
       return;
     }
 
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
     setIsGeneratingImage(true);
+    setShowModelDropdown(false);
 
     try {
       const contextMessage = getContextFromMessages();
       const imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
-      const userPromptMessage = { content: `[Generate Image] Visualizing the current scene...`, isUser: true, timestamp: new Date().toLocaleTimeString() };
-      setChatMessages(prev => [...prev, userPromptMessage]);
+      const userPromptMessage: ChatMessage = {
+        content: `[Generate Image] Visualizing the current scene using ${selectedModel}...`,
+        isUser: true,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+      setChatMessages((prev) => [...prev, userPromptMessage]);
 
-      const generatingMessage = { content: "Generating image of the current scene...", isUser: false, timestamp: new Date().toLocaleTimeString() };
-      setChatMessages(prev => [...prev, generatingMessage]);
+      const generatingMessage: ChatMessage = {
+        content: `Generating image of the current scene with ${selectedModel}...`,
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+      setChatMessages((prev) => [...prev, generatingMessage]);
 
-      const response = await axiosInstance.post('/openai/generate-image', { prompt: imagePrompt, userId, gameId: parseInt(gameId, 10) });
-      setChatMessages(prev => prev.slice(0, -1));
-
-      const image_url = response.data.imageUrl || "test";
-      await axiosInstance.post('/ai/store-image', {
+      console.log("Sending request to /openai/generate-image with:", { prompt: imagePrompt, userId, gameId, model: selectedModel.toLowerCase() });
+      const response = await axiosInstance.post("/openai/generate-image", {
+        prompt: imagePrompt,
         userId,
-        gameId: parseInt(gameId, 10),
-        content: "Scene visualized:",
-        image_url: image_url,
-        role: 'assistant',
+        gameId: Number.parseInt(gameId, 10),
+        model: selectedModel.toLowerCase(),
       });
+      console.log("Response from /openai/generate-image:", response.data);
 
-      const imageResponse = { content: "Scene visualized:", isUser: false, timestamp: new Date().toLocaleTimeString(), image_url };
-      setChatMessages(prev => [...prev, imageResponse]);
-      setSuccess('Scene visualized successfully!');
+      setChatMessages((prev) => prev.slice(0, -1));
+
+      const { imageUrl } = response.data;
+      console.log("Image URL received:", imageUrl);
+
+      await axiosInstance.post("/ai/store-image", {
+        userId,
+        gameId: Number.parseInt(gameId, 10),
+        content: `Scene visualized with ${selectedModel}:`,
+        image_url: imageUrl,
+        role: "assistant",
+      });
+      console.log("Store-image response:", await axiosInstance.post("/ai/store-image", {
+        userId,
+        gameId: Number.parseInt(gameId, 10),
+        content: `Scene visualized with ${selectedModel}:`,
+        image_url: imageUrl,
+        role: "assistant",
+      }).catch(err => console.error("Store-image error:", err)));
+
+      const imageResponse: ChatMessage = {
+        content: `Scene visualized with ${selectedModel}:`,
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString(),
+        image_url: imageUrl,
+      };
+      setChatMessages((prev) => [...prev, imageResponse]);
+      setSuccess("Scene visualized successfully!");
     } catch (err) {
-      console.error('Error generating image:', err);
-      setError('Image generation failed. Please try again.');
-      setChatMessages(prev => [...prev.slice(0, -1), { content: "Failed to visualize the scene. Please try again.", isUser: false, timestamp: new Date().toLocaleTimeString() }]);
+      console.error("Error generating image:", err);
+      setError("Image generation failed. Please try again.");
+      setChatMessages((prev) => [
+        ...prev.slice(0, -1),
+        {
+          content: `Failed to visualize the scene with ${selectedModel}. Please try again.`,
+          isUser: false,
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ]);
     } finally {
       setIsGeneratingImage(false);
     }
+  };
+
+  const toggleModelDropdown = () => {
+    setShowModelDropdown(!showModelDropdown);
+  };
+
+  const selectModel = (model: string) => {
+    setSelectedModel(model);
+    setShowModelDropdown(false);
   };
 
   return (
     <>
       {isAnimating && (
         <div className="fixed top-0 left-0 w-full h-full z-50 flex justify-center items-center">
-          <motion.div className="absolute top-0 left-0 w-1/2 h-full bg-black" initial={{ scaleX: 1 }} animate={{ scaleX: 0 }} exit={{ scaleX: 1 }} transition={{ duration: 1, ease: "easeInOut" }} style={{ transformOrigin: "left" }} />
-          <motion.div className="absolute top-0 right-0 w-1/2 h-full bg-black" initial={{ scaleX: 1 }} animate={{ scaleX: 0 }} exit={{ scaleX: 1 }} transition={{ duration: 1, ease: "easeInOut" }} style={{ transformOrigin: "right" }} />
+          <motion.div
+            className="absolute top-0 left-0 w-1/2 h-full bg-black"
+            initial={{ scaleX: 1 }}
+            animate={{ scaleX: 0 }}
+            exit={{ scaleX: 1 }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+            style={{ transformOrigin: "left" }}
+          />
+          <motion.div
+            className="absolute top-0 right-0 w-1/2 h-full bg-black"
+            initial={{ scaleX: 1 }}
+            animate={{ scaleX: 0 }}
+            exit={{ scaleX: 1 }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+            style={{ transformOrigin: "right" }}
+          />
         </div>
       )}
 
@@ -246,19 +326,36 @@ const GameScreen: React.FC = () => {
             <GameHeader title={gameDetails?.title} />
             <Sidebar />
           </div>
-          <br /><br /><br />
+          <br />
+          <br />
+          <br />
         </div>
 
         <div className="flex-grow flex justify-center items-start mt-[-5%] pt-4">
-          <div ref={chatContainerRef} className="w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto h-[calc(100vh-200px)] scrollbar-hide bg-[#1E1E1E]/50 backdrop-blur-sm text-white" style={{ scrollbarColor: '#634630 #1E1E1E' }}>
+        <div
+            ref={chatContainerRef}
+            className="w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto h-[calc(100vh-200px)] scrollbar-hide bg-[#1E1E1E]/50 backdrop-blur-sm text-white"
+            style={{ scrollbarColor: "#634630 #1E1E1E" }}
+          >
             {chatMessages.map((msg, index) => (
-              <div key={index} className={`mb-4 ${msg.isUser ? 'text-right' : 'text-left'}`}>
-                <p className={`inline-block p-2 rounded-lg ${msg.isUser ? 'bg-[#311F17] text-white' : 'bg-[#634630] text-[#E5D4B3]'}`}>
+              <div key={index} className={`mb-4 ${msg.isUser ? "text-right" : "text-left"}`}>
+                <p
+                  className={`inline-block p-2 rounded-lg ${msg.isUser ? "bg-[#311F17] text-white" : "bg-[#634630] text-[#E5D4B3]"}`}
+                >
                   {msg.content}
                 </p>
                 {msg.image_url && (
-                  <div className={`mt-2 ${msg.isUser ? 'text-right' : 'text-left'}`}>
-                    <img src={`${import.meta.env.VITE_BACKEND_URL}` + msg.image_url} alt="Generated" className="max-w-full h-auto rounded-lg inline-block" />
+                  <div className={`mt-2 ${msg.isUser ? "text-right" : "text-left"}`}>
+                    <img
+                      src={
+                        import.meta.env.VITE_BACKEND_URL
+                          ? `${import.meta.env.VITE_BACKEND_URL}${msg.image_url.startsWith('/') ? '' : '/'}${msg.image_url}`
+                          : `/images${msg.image_url}` // Fallback for dev if VITE_BACKEND_URL is undefined
+                      }
+                      alt="Generated"
+                      className="max-w-full h-auto rounded-lg inline-block"
+                      onError={(e) => console.error("Image load error:", e.currentTarget.src)}
+                    />
                   </div>
                 )}
                 <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
@@ -271,23 +368,56 @@ const GameScreen: React.FC = () => {
           <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
             <ActionButton action="Do" isSelected={selectedAction === "Do"} onClick={() => setSelectedAction("Do")} />
             <ActionButton action="Say" isSelected={selectedAction === "Say"} onClick={() => setSelectedAction("Say")} />
-            <button
-              onClick={handleGenerateImage}
-              disabled={isGeneratingImage}
-              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base ${isGeneratingImage ? 'bg-[#634630]/50 text-gray-400 cursor-not-allowed' : `bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}`}
-            >
-              {isGeneratingImage ? 'Generating...' : 'Visualize Scene'}
-            </button>
+
+            <div className="relative" ref={modelDropdownRef}>
+              <button
+                onClick={toggleModelDropdown}
+                className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base flex items-center gap-1 ${isGeneratingImage ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed" : `bg-[${gameDetails?.primary_color || "#634630"}] text-white hover:bg-[#311F17] transition-colors`}`}
+                disabled={isGeneratingImage}
+              >
+                Visualize Scene
+                {showModelDropdown ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </button>
+
+              {showModelDropdown && (
+                <div className="absolute top-full left-0 mt-1 w-full bg-[#1E1E1E] border border-[#634630] rounded-md shadow-lg z-50">
+                  <div className="p-1">
+                    <button
+                      onClick={() => selectModel("DALL-E")}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedModel === "DALL-E" ? "bg-[#634630] text-white" : "hover:bg-[#311F17] text-[#E5D4B3]"}`}
+                    >
+                      DALL-E
+                    </button>
+                    <button
+                      onClick={() => selectModel("SDXL")}
+                      className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedModel === "SDXL" ? "bg-[#634630] text-white" : "hover:bg-[#311F17] text-[#E5D4B3]"}`}
+                    >
+                      SDXL
+                    </button>
+                  </div>
+                  <div className="border-t border-[#634630] p-1">
+                    <button
+                      onClick={handleGenerateImage}
+                      disabled={isGeneratingImage}
+                      className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-[#311F17] text-[#E5D4B3]"
+                    >
+                      {isGeneratingImage ? "Generating..." : `Generate with ${selectedModel}`}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button
               onClick={() => setShowDescription(!showDescription)}
-              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}
+              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || "#634630"}] text-white hover:bg-[#311F17] transition-colors`}
             >
-              {showDescription ? 'Hide Description' : 'Show Description'}
+              {showDescription ? "Hide Description" : "Show Description"}
             </button>
 
             <button
-              onClick={() => setShowEndStoryModal(true)} // Updated to show modal
-              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || '#634630'}] text-red hover:bg-[#8E1616] transition-colors`}
+              onClick={() => setShowEndStoryModal(true)}
+              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || "#634630"}] text-red hover:bg-[#8E1616] transition-colors`}
             >
               End Story
             </button>
@@ -296,17 +426,21 @@ const GameScreen: React.FC = () => {
           <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
             <textarea
               ref={textareaRef}
-              className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${showScroll ? 'overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent' : 'overflow-y-hidden'}`}
+              className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${showScroll ? "overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent" : "overflow-y-hidden"}`}
               placeholder={`Type what you want to ${selectedAction.toLowerCase()}...`}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               rows={1}
-              style={{ minHeight: '56px', height: `${Math.min(message.split('\n').length * 24 + 32, 192)}px` }}
+              style={{ minHeight: "56px", height: `${Math.min(message.split("\n").length * 24 + 32, 192)}px` }}
             />
             <button className="p-4 bg-transparent rounded-r-2xl relative group self-start" onClick={handleSubmit}>
               <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
-              <img src="/Enter-after.svg" alt="Enter Hover" className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100" />
+              <img
+                src="/Enter-after.svg"
+                alt="Enter Hover"
+                className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100"
+              />
             </button>
           </div>
 
@@ -318,7 +452,7 @@ const GameScreen: React.FC = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-[#1E1E1E] p-6 rounded-lg max-w-md w-full">
               <h2 className="text-xl font-bold mb-4">Game Description</h2>
-              <p className="text-sm italic" style={{ color: gameDetails?.primary_color || '#E5D4B3' }}>
+              <p className="text-sm italic" style={{ color: gameDetails?.primary_color || "#E5D4B3" }}>
                 {gameDetails?.description}
               </p>
               <button
@@ -340,15 +474,15 @@ const GameScreen: React.FC = () => {
             transition={{ duration: 0.5 }}
           >
             <motion.div
-              className="p-6 rounded-lg animate-dark-glow" // Add the Tailwind animation class here
+              className="p-6 rounded-lg animate-dark-glow"
               style={{
-                width: '75vw',
-                height: '80vh',
-                backgroundColor: '#2F2118',
-                border: '2px solid #1E1E1E',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
+                width: "75vw",
+                height: "80vh",
+                backgroundColor: "#2F2118",
+                border: "2px solid #1E1E1E",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
               }}
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
@@ -356,37 +490,37 @@ const GameScreen: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <div>
-                {/* Placeholder for picture */}
                 <div
                   className="w-full bg-gray-700 rounded-lg flex items-center justify-center border-4 border-[#634630]"
-                  style={{ height: '30vh' }} // Updated height to 30% of screen height
+                  style={{ height: "30vh" }}
                 >
                   <img src="/warhammer.jpg" alt="Game Summary" className="w-full h-full object-cover rounded-lg" />
                 </div>
-                <br></br>
-                
-                {/* Summary of the game */}
+                <br />
+
                 <div className="mt-4 text-[#E5D4B3]">
                   <h2 className="text-xl font-bold mb-2 font-cinzel">Game Summary</h2>
                   <p className="max-h-[25vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent mx-4 leading-loose text-base text-lg text-[#C9B57B]">
-                    Spider-Man, also known as Peter Parker, is a superhero who gained spider-like abilities after being bitten by a radioactive spider. He uses his powers to fight crime and protect New York City, balancing his responsibilities as a hero with his personal life.
-
-                    Magneto, also known as Erik Lehnsherr, is a powerful mutant with the ability to generate and control magnetic fields. He is often portrayed as a complex character, sometimes as a villain and other times as an anti-hero, fighting for mutant rights and against human oppression.
+                    Spider-Man, also known as Peter Parker, is a superhero who gained spider-like abilities after being
+                    bitten by a radioactive spider. He uses his powers to fight crime and protect New York City,
+                    balancing his responsibilities as a hero with his personal life. Magneto, also known as Erik
+                    Lehnsherr, is a powerful mutant with the ability to generate and control magnetic fields. He is
+                    often portrayed as a complex character, sometimes as a villain and other times as an anti-hero,
+                    fighting for mutant rights and against human oppression.
                   </p>
                 </div>
               </div>
               <div className="flex justify-end">
                 <button
-                  onClick={() => setShowEndStoryModal(false)} // Placeholder for actual end story logic
-                  className="px-4 py-3 rounded-full font-playfair text-white hover:bg-[#1e1e1e] transition-colors "
+                  onClick={() => setShowEndStoryModal(false)}
+                  className="px-4 py-3 rounded-full font-playfair text-white hover:bg-[#1e1e1e] transition-colors"
                 >
                   Go back
                 </button>
               </div>
             </motion.div>
           </motion.div>
-        )}  
-        
+        )}
       </div>
     </>
   );
