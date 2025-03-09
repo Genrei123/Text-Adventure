@@ -1,7 +1,7 @@
 {
     "1": {
       "inputs": {
-        "ckpt_name": "sd3_medium_incl_clips.safetensors"
+        "ckpt_name": "ikastriousNoobaiXL_v94.safetensors"
       },
       "class_type": "CheckpointLoaderSimple"
     },
