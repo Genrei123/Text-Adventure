@@ -69,6 +69,8 @@ export const createSubscription = async (req: Request, res: Response) => {
       duration: plan.duration, // Assign the duration from the plan
     });
 
+    // UPDATE USER GPT TYPE
+
     // Create a consistent reference ID format for the external service
     const externalId = `subscription-${subscriptionId}`;
 

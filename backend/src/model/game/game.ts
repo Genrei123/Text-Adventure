@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../../config/sequelize";
+import sequelize from "../../service/database";
 
 interface GameAttributes {
     id: number;
@@ -8,7 +8,7 @@ interface GameAttributes {
     description: string;
     tagline: string;
     genre: string;
-    subgenre?: string;
+    subgenre: string;
     primary_color?: string;
     prompt_name: string;
     prompt_text?: string;
@@ -22,10 +22,10 @@ interface GameAttributes {
     private: boolean;
     createdAt: Date;
     updatedAt: Date;
-    UserId?: number | null;  // Allow null temporarily as per main
+    UserId: number | null;  // Updated to allow null temporarily
 }
 
-interface GameCreationAttributes extends Optional<GameAttributes, "id" | "subgenre" | "primary_color" | "prompt_text" | "prompt_model" | "image_prompt_model" | "image_prompt_name" | "image_prompt_text" | "image_data" | "music_prompt_text" | "music_prompt_seed_image" | "UserId"> {}
+interface GameCreationAttributes extends Optional<GameAttributes, "id" | "primary_color" | "prompt_text" | "prompt_model" | "image_prompt_model" | "image_prompt_name" | "image_prompt_text" | "image_data" | "music_prompt_text" | "music_prompt_seed_image" | "createdAt" | "updatedAt"> {}
 
 class Game extends Model<GameAttributes, GameCreationAttributes> implements GameAttributes {
     public id!: number;
@@ -34,7 +34,7 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public description!: string;
     public tagline!: string;
     public genre!: string;
-    public subgenre?: string;
+    public subgenre!: string;
     public primary_color?: string;
     public prompt_name!: string;
     public prompt_text?: string;
@@ -48,9 +48,8 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
     public private!: boolean;
     public createdAt!: Date;
     public updatedAt!: Date;
-    public UserId?: number | null;  // Allow null temporarily as per main
+    public UserId!: number | null;  // Updated to allow null temporarily
 
-    // Added from main branch
     public llm_fields!: {
         title: string;
         description: string;
@@ -70,56 +69,31 @@ Game.init({
     genre: { type: DataTypes.STRING, allowNull: false },
     subgenre: { type: DataTypes.STRING, allowNull: true },
     primary_color: { type: DataTypes.STRING, allowNull: true },
-    prompt_name: { 
-        type: DataTypes.STRING, 
-        allowNull: false, 
-        defaultValue: 'UGC' 
-    },
+    prompt_name: { type: DataTypes.STRING, defaultValue: "UGC", allowNull: false },
     prompt_text: { type: DataTypes.TEXT, allowNull: true },
-    prompt_model: { 
-        type: DataTypes.STRING, 
-        allowNull: true, 
-        defaultValue: 'gpt-3.5-turbo' 
-    },
+    prompt_model: { type: DataTypes.STRING, allowNull: true, defaultValue: "gpt-3.5-turbo" },
     image_prompt_model: { type: DataTypes.STRING, allowNull: true },
     image_prompt_name: { type: DataTypes.STRING, allowNull: true },
     image_prompt_text: { type: DataTypes.TEXT, allowNull: true },
     image_data: { type: DataTypes.TEXT, allowNull: true },
     music_prompt_text: { type: DataTypes.TEXT, allowNull: true },
     music_prompt_seed_image: { type: DataTypes.STRING, allowNull: true },
-    private: { 
-        type: DataTypes.BOOLEAN, 
-        allowNull: false, 
-        defaultValue: false 
-    },
-    createdAt: { 
-        type: DataTypes.DATE, 
-        allowNull: false, 
-        defaultValue: DataTypes.NOW, 
-        field: 'createdAt' 
-    },
-    updatedAt: { 
-        type: DataTypes.DATE, 
-        allowNull: false, 
-        defaultValue: DataTypes.NOW, 
-        field: 'updatedAt' 
-    },
+    private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+    updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     UserId: {
         type: DataTypes.INTEGER,
-        allowNull: true,  // Changed to true temporarily as per main
+        allowNull: true,  // Changed to true temporarily
         references: {
             model: 'Users',
             key: 'id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
-    }
+    },
 }, {
     sequelize,
     modelName: "Game",
-    tableName: "Games",
-    timestamps: true,
-    underscored: false // Disable snake_case conversion
 });
 
 export default Game;

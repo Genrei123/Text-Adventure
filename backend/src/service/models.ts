@@ -8,20 +8,26 @@ import Item from "../model/transaction/ItemModel"; // Adjust path if needed
 import Chat from "../model/chat/chat";
 import Ban from '../model/ban/ban';
 import defineAssociations from "../model/associations";
+import TokenPackage from "../model/transaction/TokenPackageModel";
+import SubscriptionOffers from "../model/transaction/SubscriptionOffersModel";
+import Subscriber from "../model/transaction/SubscriberModel";
 
 export const initializeModels = async () => {
   try {
     // First create tables without foreign keys
-    await User.sync();
-    await Game.sync();
+    await User.sync({alter: true});
+    await Game.sync({alter: true});
     
-    // Then sync dependent models
-    await Comment.sync();
-    await Rating.sync();
-    await Order.sync();
-    await Item.sync();
-    await Chat.sync();
-    await Ban.sync();
+    // Then sync {alter: true}dependent models
+    await Comment.sync({alter: true});
+    await Rating.sync({alter: true});
+    await Order.sync({alter: true});
+    await Item.sync({alter: true});
+    await Chat.sync({alter: true});
+    await Ban.sync({alter: true});
+    await TokenPackage.sync({alter: true});
+    await SubscriptionOffers.sync({alter: true});
+    await Subscriber.sync({alter: true});
     
     // Define associations
     defineAssociations();
