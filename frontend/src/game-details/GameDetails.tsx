@@ -4,21 +4,45 @@ import "tailwindcss/tailwind.css"
 import { useParams, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Sidebar from "../components/Sidebar"
-import YourComments from "../profile/components/YourComments.tsx"
 import axiosInstance from "../../config/axiosConfig"
-import { Calendar, Users, Tag, Star, MessageSquare, Heart, Award, Clock } from "lucide-react"
+import { Calendar, Users, Tag, Star, MessageSquare, Heart, Award, Clock, Flag } from "lucide-react"
 import LoadingScreen from '../components/LoadingScreen';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+interface Comment {
+  id: number;
+  content: string;
+  createdAt: string;
+  Game?: {
+    id: number;
+    title: string;
+    slug: string;
+    image_data?: string;
+    primary_color?: string;
+  };
+  User?: {
+    id: number;
+    username: string;
+  };
+  likes?: number;
+}
 
 const GameDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const commentsRef = useRef<HTMLDivElement>(null)
 
   const [game, setGame] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("details")
   const [comment, setComment] = useState("")
-  const [fadeIn, setFadeIn] = useState(false)
+  const [comments, setComments] = useState<Comment[]>([])
+  const [initialCommentCount, setInitialCommentCount] = useState(0)
+  const [newCommentsCount, setNewCommentsCount] = useState(0)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [fadeIn, setFadeIn] = useState(false) 
   const [fadeOut, setFadeOut] = useState(false)
   const [userRating, setUserRating] = useState<number | null>(null)
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
@@ -27,16 +51,25 @@ const GameDetails: React.FC = () => {
 
   useEffect(() => {
     if (!id) {
-      setError("Invalid game ID.")
-      setLoading(false)
+      navigate('/not-found')
       return
     }
+
+    // Set loading state with fade-in animation when route changes
+    setLoading(true)
+    setFadeIn(false) // Make loading screen visible immediately
 
     const fetchGameDetails = async () => {
       try {
         const response = await axiosInstance.get(`/game/${id}`)
         setGame(response.data)
-        setTimeout(() => setLoading(false), 2000) // Minimum loading time
+        
+        // Start fade out animation before hiding the loading screen
+        setFadeOut(true)
+        setTimeout(() => {
+          setLoading(false)
+          setFadeOut(false) // Reset for next time
+        }, 500) // Match the transition duration from LoadingScreen
       } catch (error: any) {
         setError(error.response?.data?.message || "Failed to fetch game details")
         setLoading(false)
@@ -67,72 +100,215 @@ const GameDetails: React.FC = () => {
     fetchGameDetails()
     fetchUserRating()
   }, [id])
-
+  
+  // Setup polling for new comments when the comments tab is active
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        setIsRatingPopupOpen(false)
+    let interval: NodeJS.Timeout | null = null;
+    
+    if (activeTab === "comments" && id) {
+      // Initial fetch
+      fetchComments();
+      
+      // Set up polling interval to check for new comments every 30 seconds
+      interval = setInterval(() => {
+        checkForNewComments();
+      }, 30000); // 30 seconds
+    }
+    
+    // Cleanup function to clear interval when component unmounts or tab changes
+    return () => {
+      if (interval) {
+        clearInterval(interval);
       }
-    }
-
-    if (isRatingPopupOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isRatingPopupOpen])
-
-  const handleClick = () => navigate(`/game/${id}`)
-
-  const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!comment.trim()) return
-
+    };
+  }, [activeTab, id]);
+  
+  // Separate function to check for new comments without updating the UI immediately
+  const checkForNewComments = async () => {
     try {
-      let userId = 0
-      const userData = localStorage.getItem("userData")
-      if (userData) {
-        const parsedData = JSON.parse(userData)
-        if (parsedData.id) userId = parsedData.id
+      const response = await axiosInstance.get(`/game/${id}/comments`);
+      const latestComments = response.data;
+      
+      // Show notification if comment count increases from initial load
+      if (latestComments.length > initialCommentCount) {
+        setNewCommentsCount(latestComments.length - initialCommentCount);
       }
-
-      await axiosInstance.post(`/game/${id}/comments`, { content: comment, userId })
-      setComment("")
     } catch (error) {
-      console.error("Failed to submit comment:", error)
+      console.error("Failed to check for new comments", error);
+    }
+  };
+  
+  const fetchComments = async () => {
+    try {
+      const response = await axiosInstance.get(`/game/${id}/comments`)
+      setComments(response.data)
+      
+      // Store initial comment count when first loaded
+      if (initialCommentCount === 0) {
+        setInitialCommentCount(response.data.length);
+      }
+      
+      // Reset new comments counter when fetching comments
+      setNewCommentsCount(0);
+    } catch (error) {
+      console.error("Failed to fetch comments", error)
+      toast.error("Failed to load comments. Please try again later.");
+    }
+  }
+  
+  const refreshComments = () => {
+    fetchComments()
+    // No need to set newCommentsCount to 0 here as it's done in fetchComments
+    // Scroll to the top of the comments section
+    if (commentsRef.current) {
+      commentsRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
-  const handleRate = async (rating: number) => {
-    setIsRatingPopupOpen(false)
+  const validateComment = (text: string): boolean => {
+    if (!text.trim()) {
+      toast.warning("Comment cannot be empty.");
+      return false;
+    }
+    
+    if (text.length > 1000) {
+      toast.warning("Comment is too long (maximum 1000 characters).");
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleCommentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!validateComment(comment)) {
+      return;
+    }
+    
+    setIsSubmitting(true);
+    toast.info("Posting your comment...");
+
     try {
-      let userId = 0
-      const userData = localStorage.getItem("userData")
+      let userId = 0;
+      const userData = localStorage.getItem("userData");
       if (userData) {
-        const parsedData = JSON.parse(userData)
-        if (parsedData.id) userId = parsedData.id
+        try {
+          const parsedData = JSON.parse(userData);
+          if (parsedData.id) {
+            userId = parsedData.id;
+          }
+        } catch (error) {
+          console.error("Error parsing userData from localStorage:", error);
+          toast.error("You must be logged in to comment.");
+          setIsSubmitting(false);
+          return;
+        }
+      } else {
+        toast.error("You must be logged in to comment.");
+        setIsSubmitting(false);
+        return;
       }
+
+      await axiosInstance.post(`/game/${id}/comments`, {
+        content: comment,
+        userId: userId,
+      });
+
+      toast.success("Comment posted successfully!");
+      setComment("");
+      fetchComments(); // This already sets newCommentsCount to 0
+    } catch (error: any) {
+      console.error("Failed to submit comment", error);
+      toast.error(error.response?.data?.message || "Failed to post comment. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLikeComment = async (commentId: number) => {
+    try {
+      const userData = localStorage.getItem("userData");
+      if (!userData) {
+        toast.warning("You must be logged in to like comments.");
+        return;
+      }
+      
+      const parsedData = JSON.parse(userData);
+      const userId = parsedData.id;
+      
+      await axiosInstance.post(`/game/comments/${commentId}/like`, { userId });
+      toast.success("You liked this comment!");
+      
+      // Update the UI optimistically
+      setComments(prevComments => 
+        prevComments.map(comment => 
+          comment.id === commentId 
+            ? { ...comment, likes: (comment.likes || 0) + 1 } 
+            : comment
+        )
+      );
+    } catch (error) {
+      console.error("Failed to like comment", error);
+      toast.error("Failed to like comment. Please try again.");
+    }
+  };
   
+  const handleReportComment = async (commentId: number) => {
+    try {
+      const userData = localStorage.getItem("userData");
+      if (!userData) {
+        toast.warning("You must be logged in to report comments.");
+        return;
+      }
+      
+      const parsedData = JSON.parse(userData);
+      const userId = parsedData.id;
+      
+      await axiosInstance.post(`/game/comments/${commentId}/report`, { 
+        userId,
+        reason: "Inappropriate content" // Default reason
+      });
+      
+      toast.success("Comment reported. Thank you for helping keep our community safe.");
+    } catch (error) {
+      console.error("Failed to report comment", error);
+      toast.error("Failed to report comment. Please try again.");
+    }
+  };
+
+  const handleRate = async (rating: number) => {
+    try {
+      let userId = 0;
+      const userData = localStorage.getItem("userData");
+      if (!userData) {
+        toast.warning("You must be logged in to rate games.");
+        return;
+      }
+      
+      const parsedData = JSON.parse(userData);
+      userId = parsedData.id;
+      
       const response = await axiosInstance.post(`/game/${id}/ratings`, {
         score: rating,
-        userId,
-      })
-  
-      setUserRating(response.data.score)
-      console.log("Rating submitted:", response.data)
-  
-      const gameResponse = await axiosInstance.get(`/game/${id}`)
-      console.log("Updated game data:", gameResponse.data) // Debug
-      setGame(gameResponse.data)
-    } catch (error) {
-      console.error("Failed to submit rating:", error)
-      setGame((prevGame: any) => {
-        const currentRatings = prevGame.rating ? prevGame.rating * (prevGame.ratingCount || 1) : 0
-        const newRatingCount = (prevGame.ratingCount || 1) + 1
-        const newAverage = (currentRatings + rating) / newRatingCount
-        console.log("Fallback rating:", newAverage) // Debug
-        return { ...prevGame, rating: newAverage, ratingCount: newRatingCount }
-      })
+        userId: userId
+      });
+      
+      setUserRating(rating);
+      toast.success("Thank you for rating this game!");
+      setIsRatingPopupOpen(false);
+      
+      // Optionally refresh game data to show updated average rating
+      const gameResponse = await axiosInstance.get(`/game/${id}`);
+      setGame(gameResponse.data);
+    } catch (error: any) {
+      console.error("Failed to submit rating", error);
+      toast.error(error.response?.data?.message || "Failed to submit rating. Please try again.");
     }
+  };
+
+  function handleClick(): void {
+    navigate(`/game/${id}`)
   }
 
   const toggleRatingPopup = () => setIsRatingPopupOpen((prev) => !prev)
@@ -172,6 +348,24 @@ const GameDetails: React.FC = () => {
     <div className="min-h-screen bg-gray-900 bg-cover bg-center bg-[url('/UserBG.svg')] text-white pb-16">
       <Navbar />
       <Sidebar />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        style={{ 
+          position: "fixed", 
+          zIndex: 9999,
+          bottom: "20px",
+          right: "20px"
+        }}
+      />
       <div className="container mx-auto px-4 pt-24 md:pt-28">
         <div className="relative rounded-2xl overflow-hidden border-2 border-[#634630] shadow-lg mb-8 h-[400px] md:h-[500px]">
           <div className="absolute inset-0">
@@ -264,11 +458,20 @@ const GameDetails: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab("comments")}
-              className={`px-6 py-3 text-lg font-medium transition-all duration-200 ${
-                activeTab === "comments" ? "text-[#B39C7D] border-b-2 border-[#B39C7D]" : "text-white/70 hover:text-white"
+              className={`px-6 py-3 text-lg font-medium transition-all duration-200 flex items-center gap-2 ${
+                activeTab === "comments"
+                  ? "text-[#B39C7D] border-b-2 border-[#B39C7D]"
+                  : "text-white/70 hover:text-white"
               }`}
             >
               Comments
+              {comments.length > 0 && (
+                <span className="bg-[#B39C7D] text-[#1E1E1E] px-2 py-0.5 rounded-full text-xs font-bold">
+                  {initialCommentCount + newCommentsCount > initialCommentCount 
+                    ? initialCommentCount + newCommentsCount 
+                    : comments.length}
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -358,30 +561,138 @@ const GameDetails: React.FC = () => {
             </div>
           )}
           {activeTab === "comments" && (
-            <div>
-              <h2 className="text-2xl font-bold text-[#B39C7D] mb-6 font-cinzel">Comments</h2>
+            <div ref={commentsRef} className="max-w-full overflow-hidden">
+              <h2 className="text-2xl font-bold text-[#B39C7D] mb-6 font-playfair">Comments</h2>
+
+              {/* Comment submission form */}
               <form onSubmit={handleCommentSubmit} className="mb-8">
                 <div className="mb-4">
                   <textarea
                     placeholder="Share your thoughts about this game..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    className="w-full p-4 bg-[#2a2a2a] text-white border border-[#3A3A3A] rounded-lg focus:outline-none focus:border-[#B39C7D] focus:ring-1 focus:ring-[#B39C7D] transition-all resize-none"
+                    className="w-full p-4 bg-[#2a1810]/80 border border-[#3a2a20] rounded-lg focus:outline-none focus:border-[#B39C7D] focus:ring-1 focus:ring-[#B39C7D] transition-all resize-none font-playfair"
                     rows={4}
+                    disabled={isSubmitting}
                   />
+                  <div className="flex justify-end mt-2">
+                    <p className="text-sm text-gray-400 font-playfair">
+                      {comment.length}/1000 characters
+                    </p>
+                  </div>
                 </div>
+                
                 <div className="flex justify-end">
                   <button
                     type="submit"
-                    className="bg-[#B39C7D] text-white px-6 py-2 rounded-lg hover:bg-[#8C7A5B] transition-colors font-medium"
-                    disabled={!comment.trim()}
+                    className={`bg-[#B39C7D] text-white px-6 py-2 rounded-lg hover:bg-[#8C7A5B] transition-colors font-medium font-playfair flex items-center gap-2 ${
+                      isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                    }`}
+                    disabled={isSubmitting || !comment.trim()}
                   >
-                    Post Comment
+                    {isSubmitting ? (
+                      <>
+                        <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                        Posting...
+                      </>
+                    ) : (
+                      'Post Comment'
+                    )}
                   </button>
                 </div>
               </form>
-              <div className="space-y-4">
-                <YourComments />
+
+              {/* New comments notification */}
+              {newCommentsCount > 0 && (
+                <div 
+                  className="mb-6 p-3 bg-[#B39C7D] text-[#1E1E1E] rounded-lg font-medium font-playfair text-center cursor-pointer hover:bg-[#C9B57B] transition-colors shadow-lg"
+                  onClick={refreshComments}
+                >
+                  {newCommentsCount === 1 
+                    ? "There's a new comment. Click to refresh." 
+                    : `There are ${newCommentsCount} new comments. Click to refresh.`}
+                </div>
+              )}
+
+              {/* Comments list */}
+              <div className="space-y-4 max-w-full">
+                {comments.length > 0 ? (
+                  <div className="space-y-6">
+                    {comments.map((comment) => (
+                      <div
+                        key={comment.id}
+                        className="relative bg-[#2a1810]/80 rounded-lg p-5 shadow-lg border border-[#3a2a20] hover:border-[#B39C7D] transition-colors duration-300 overflow-hidden"
+                      >
+                        <div className="flex items-start mb-4">
+                          <div className="w-10 h-10 rounded-full bg-[#634630] flex items-center justify-center text-[#C8A97E] font-bold text-xl mr-3">
+                            {comment.User?.username.charAt(0).toUpperCase() || 'U'}
+                          </div>
+                          <div className="flex-grow">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                                <h4 className="text-[#C8A97E] font-medium font-playfair">{comment.User?.username || 'Anonymous'}</h4>
+                                <span className="text-gray-400 text-xs">
+                                  <span title={new Date(comment.createdAt).toLocaleString('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                    hour: 'numeric',
+                                    minute: 'numeric'
+                                  })}>
+                                    {(() => {
+                                      const commentDate = new Date(comment.createdAt);
+                                      const now = new Date();
+                                      const diffTime = Math.abs(now.getTime() - commentDate.getTime());
+                                      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                                      
+                                      if (diffDays === 0) {
+                                        return 'Today';
+                                      } else if (diffDays === 1) {
+                                        return 'Yesterday';
+                                      } else {
+                                        return `${diffDays} days ago`;
+                                      }
+                                    })()}
+                                  </span>
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                                {/* <button 
+                                  onClick={() => handleLikeComment(comment.id)}
+                                  className="text-gray-400 hover:text-[#C8A97E] transition-colors p-1 rounded-full hover:bg-[#C8A97E]/10"
+                                  title="Like this comment"
+                                >
+                                  <Heart className="h-5 w-5" />
+                                  {(comment.likes && comment.likes > 0) && (
+                                    <span className="text-xs ml-1">{comment.likes}</span>
+                                  )}
+                                </button>
+                                <button
+                                  onClick={() => handleReportComment(comment.id)}
+                                  className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-500/10"
+                                  title="Report this comment"
+                                >
+                                  <Flag className="h-5 w-5" />
+                                </button> */}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="pl-12 pr-4">
+                          <p className="text-white/90 text-justify font-playfair break-words whitespace-pre-wrap max-w-full">{comment.content}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center h-64 bg-[#2a1810]/60 rounded-lg border border-[#3a2a20]">
+                    <div className="text-[#B39C7D]/80 text-center">
+                      <MessageSquare className="mx-auto mb-4 text-4xl text-[#B39C7D]" />
+                      <p className="text-xl font-playfair mb-2">No comments yet</p>
+                      <p className="text-gray-400 font-playfair">Be the first to share your thoughts on this game!</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
