@@ -11,13 +11,12 @@ interface GameAttributes {
   subgenre?: string;
   primary_color?: string;
   prompt_name: string;
-  
   prompt_text?: string;
   prompt_model?: string;
   image_prompt_model?: string;
   image_prompt_name?: string;
   image_prompt_text?: string;
-  image_data?: string; // Changed to TEXT
+  image_data?: string;
   music_prompt_text?: string;
   music_prompt_seed_image?: string;
   private: boolean;
@@ -26,7 +25,7 @@ interface GameAttributes {
   UserId?: number;
 }
 
-interface GameCreationAttributes extends Optional<GameAttributes, "id" | "subgenre" | "primary_color" | "prompt_text" | "prompt_model" | "image_prompt_model" | "image_prompt_name" | "image_prompt_text" | "image_data" | "music_prompt_text" | "music_prompt_seed_image" | "createdAt" | "updatedAt"> {}
+interface GameCreationAttributes extends Optional<GameAttributes, "id" | "subgenre" | "primary_color" | "prompt_text" | "prompt_model" | "image_prompt_model" | "image_prompt_name" | "image_prompt_text" | "image_data" | "music_prompt_text" | "music_prompt_seed_image" | "UserId"> {}
 
 class Game extends Model<GameAttributes, GameCreationAttributes> implements GameAttributes {
   public id!: number;
@@ -43,7 +42,7 @@ class Game extends Model<GameAttributes, GameCreationAttributes> implements Game
   public image_prompt_model?: string;
   public image_prompt_name?: string;
   public image_prompt_text?: string;
-  public image_data?: string; // Changed to TEXT
+  public image_data?: string;
   public music_prompt_text?: string;
   public music_prompt_seed_image?: string;
   public private!: boolean;
@@ -61,18 +60,18 @@ Game.init({
   genre: { type: DataTypes.STRING, allowNull: false },
   subgenre: { type: DataTypes.STRING, allowNull: true },
   primary_color: { type: DataTypes.STRING, allowNull: true },
-  prompt_name: { type: DataTypes.STRING, defaultValue: "UGC", allowNull: false },
+  prompt_name: { type: DataTypes.STRING, allowNull: false, defaultValue: 'UGC' },
   prompt_text: { type: DataTypes.TEXT, allowNull: true },
-  prompt_model: { type: DataTypes.STRING, allowNull: true, defaultValue: "gpt-3.5-turbo" },
+  prompt_model: { type: DataTypes.STRING, allowNull: true, defaultValue: 'gpt-3.5-turbo' },
   image_prompt_model: { type: DataTypes.STRING, allowNull: true },
   image_prompt_name: { type: DataTypes.STRING, allowNull: true },
   image_prompt_text: { type: DataTypes.TEXT, allowNull: true },
-  image_data: { type: DataTypes.TEXT, allowNull: true }, // Changed to TEXT
+  image_data: { type: DataTypes.TEXT, allowNull: true },
   music_prompt_text: { type: DataTypes.TEXT, allowNull: true },
   music_prompt_seed_image: { type: DataTypes.STRING, allowNull: true },
   private: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-  createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
-  updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
+  createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'createdAt' },
+  updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW, field: 'updatedAt' },
   UserId: {
     type: DataTypes.INTEGER,
     allowNull: true,
@@ -86,8 +85,9 @@ Game.init({
 }, {
   sequelize,
   modelName: "Game",
-  tableName: 'Games',
+  tableName: "Games",
   timestamps: true,
+  underscored: false // Disable snake_case conversion
 });
 
 export default Game;

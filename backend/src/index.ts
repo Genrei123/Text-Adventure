@@ -31,7 +31,7 @@ const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 declare module 'express-session' {
   interface SessionData {
-    user: { [key: string]: any };
+    userId: number;
   }
 }
 
@@ -71,10 +71,12 @@ app.use('/auth', authRouter);
 
 // Error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error('Error Stack:', err.stack);
+  console.error('Global Error Handler:', err);
   res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    error: process.env.NODE_ENV === 'production' 
+      ? 'Server Error' 
+      : err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
   });
 });
 

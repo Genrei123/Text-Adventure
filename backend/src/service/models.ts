@@ -12,16 +12,16 @@ import defineAssociations from "../model/associations";
 export const initializeModels = async () => {
   try {
     // First create tables without foreign keys
-    await User.sync({ alter: true });
-    await Game.sync({ alter: true });
+    await User.sync();
+    await Game.sync();
     
     // Then sync dependent models
-    await Comment.sync({ alter: true });
-    await Rating.sync({ alter: true });
-    await Order.sync({ alter: true });
-    await Item.sync({ alter: true });
-    await Chat.sync({ alter: true });
-    await Ban.sync({ alter: true });
+    await Comment.sync();
+    await Rating.sync();
+    await Order.sync();
+    await Item.sync();
+    await Chat.sync();
+    await Ban.sync();
     
     // Define associations
     defineAssociations();

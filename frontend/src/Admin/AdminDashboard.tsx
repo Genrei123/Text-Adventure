@@ -54,8 +54,8 @@ const AdminDashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [subscriptionFilter, setSubscriptionFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('lastActivity');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [sortBy, setSortBy] = useState('username');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 10,
@@ -67,6 +67,7 @@ const AdminDashboard: React.FC = () => {
     text: string;
     completed: boolean;
   }>>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -129,6 +130,14 @@ const AdminDashboard: React.FC = () => {
   const handleDeleteTask = (taskId: number) => {
     setTasks(tasks.filter(task => task.id !== taskId));
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">

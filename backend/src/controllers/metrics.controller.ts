@@ -10,7 +10,7 @@ export const getMetrics = async (req: Request, res: Response) => {
   try {
     const [emailVerified, gamesResult] = await Promise.all([
       sequelize.query<CountResult>(
-        'SELECT COUNT(*) FROM "Users" WHERE "email_verified" = true',
+        'SELECT COUNT(*) FROM "Users" WHERE "emailVerified" = true',
         { type: QueryTypes.SELECT }
       ),
       sequelize.query<CountResult>(

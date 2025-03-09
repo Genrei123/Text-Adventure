@@ -17,7 +17,7 @@ import {
 export const getAllGames = async (req: Request, res: Response) => {
     try {
         const games = await Game.findAll({
-            attributes: ['id', 'title', 'genre', 'created_at']
+            attributes: ['id', 'title', 'genre', 'createdAt']
         });
         res.json(games);
     } catch (error) {
@@ -41,9 +41,8 @@ export const getGameById = async (req: Request, res: Response) => {
             res.status(200).json(game);
         }
     } catch (error) {
-        console.error(error);
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-        res.status(500).send(errorMessage);
+        console.error('Error fetching game by ID:', error);
+        res.status(500).json({ error: 'Error fetching game by ID' });
     }
 };
 

@@ -20,7 +20,7 @@ interface UserAttributes {
   image_url?: string;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'emailVerified' | 'resetPasswordToken' | 'resetPasswordExpires' | 'totalCoins' | 'verificationToken' | 'verificationTokenExpires' | 'createdAt' | 'updatedAt' | 'image_url'> {}
+interface UserCreationAttributes extends Optional<UserAttributes, "id" | "resetPasswordToken" | "resetPasswordExpires" | "verificationToken" | "verificationTokenExpires" | "image_url"> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: number;
@@ -60,8 +60,8 @@ User.init({
   image_url: { type: DataTypes.STRING, allowNull: true },
 }, {
   sequelize,
-  modelName: 'User',
-  tableName: 'Users',
+  modelName: "User",
+  tableName: "Users",
   timestamps: true,
 });
 

@@ -8,14 +8,13 @@ router.get('/recent', async (req, res) => {
     const recentGames = await Game.findAll({
       order: [['createdAt', 'DESC']],
       limit: 5,
-      attributes: ['title', 'description', 'createdAt', 'status']
+      attributes: ['title', 'description', 'createdAt']
     });
 
     res.json(recentGames.map(g => ({
       title: g.title,
       excerpt: g.description.substring(0, 100),
-      created: g.createdAt.toISOString(),
-      status: g.status || 'draft'
+      created: g.createdAt.toISOString()
     })));
   } catch (error) {
     console.error('Recent games error:', error);
@@ -27,7 +26,7 @@ router.get('/all', async (req, res) => {
   try {
     const games = await Game.findAll({
       order: [['createdAt', 'DESC']],
-      attributes: ['id', 'title', 'description', 'createdAt', 'status']
+      attributes: ['id', 'title', 'description', 'createdAt']
     });
 
     const gamesCount = await Game.count();
@@ -37,8 +36,7 @@ router.get('/all', async (req, res) => {
         id: g.id,
         title: g.title,
         description: g.description,
-        created: g.createdAt.toISOString(),
-        status: g.status || 'draft'
+        created: g.createdAt.toISOString()
       })),
       count: gamesCount
     });

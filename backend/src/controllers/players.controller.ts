@@ -6,7 +6,7 @@ export const getPlayers = async (req: Request, res: Response) => {
   const { search, status, subscription, sortBy = 'username', sortOrder = 'ASC', page = '1', limit = '10' } = req.query;
   const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
 
-  let query = 'SELECT * FROM "Users" WHERE "email_verified" = true'; // Only fetch verified users
+  let query = 'SELECT * FROM "Users" WHERE "emailVerified" = true'; // Only fetch verified users
   if (search) query += ` AND "username" ILIKE '%${search}%'`;
   if (status && status !== 'all') query += ` AND "status" = '${status}'`;
   if (subscription && subscription !== 'all') query += ` AND "subscription" = '${subscription}'`;
@@ -14,7 +14,7 @@ export const getPlayers = async (req: Request, res: Response) => {
 
   try {
     const result = await sequelize.query(query, { type: QueryTypes.SELECT });
-    const total = await sequelize.query('SELECT COUNT(*) FROM "Users" WHERE "email_verified" = true', { type: QueryTypes.SELECT });
+    const total = await sequelize.query('SELECT COUNT(*) FROM "Users" WHERE "emailVerified" = true', { type: QueryTypes.SELECT });
     res.json({ items: result, total: parseInt((total[0] as { count: string }).count) });
   } catch (error) {
     console.error('Error fetching players:', error);

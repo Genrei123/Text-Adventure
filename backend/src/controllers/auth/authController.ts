@@ -7,10 +7,7 @@ import { RegisterRequestBody } from "../../interfaces/auth/RegisterRequestBody";
 import { validatePassword } from "../../utils/passwordValidator";
 import { sendVerificationEmail, sendResetPasswordEmail } from '../../service/auth/emailService';
 import crypto from 'crypto';
-
-const generateVerificationToken = () => {
-    return crypto.randomBytes(32).toString('hex');
-};
+import { generateVerificationToken } from '../../service/auth/authService';
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
@@ -49,12 +46,15 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             private: isPrivate || true, // Default to true if not provided
             model: model || "gpt-4",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
+            emailVerified: false,       // Default to false
             verificationToken,
             verificationTokenExpires,
             createdAt: new Date(),
             updatedAt: new Date(),
             totalCoins: 0,
         });
+
+        // Send verification email
 
         // Send verification email
         const emailSent = await sendVerificationEmail(email, verificationToken, username);
@@ -267,6 +267,7 @@ export const checkAuth = async (req: Request, res: Response): Promise<void> => {
         }
 
         res.status(200).json({ username: user.username });
+
     } catch (error) {
         console.error('Error during authentication check:', error);
         res.status(401).json({ message: 'Unauthorized' });
