@@ -1,10 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useLoading } from '../context/LoadingContext';
+import LoadingBook from '../components/LoadingBook';
 
 const LandingPage: React.FC = () => {
     const contentRef = useRef<HTMLDivElement>(null);
     const [background, setBackground] = useState('/landingMain.gif');
     const backgrounds = ['/landing1.gif', '/landing2.gif' , '/landing3.gif'];
     let index = 0;
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const { navigateWithLoading } = useLoading();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -14,10 +18,29 @@ const LandingPage: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsInitialLoading(false);
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (isInitialLoading) {
+        return (
+            <div className="fixed inset-0 bg-[#1E1E1E] flex items-center justify-center">
+                <div className="flex flex-col items-center justify-center">
+                    <LoadingBook message="Entering the Realm..." size="lg" />
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <>
+        <div className="min-h-screen bg-[#1E1E1E] text-white">
+            {/* fade in animation for he page */}
+            <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}></div>
             <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-black to-transparent"></div>
-            <div className="flex justify-center items-center h-[950px] bg-cover bg-center fade-in relative" style={{ backgroundImage: `url(${background})` }}>
+            <div className="flex justify-center items-center h-[950px] bg-cover bg-center fade-in relative" style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
                 <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black to-transparent"></div>
                 <div ref={contentRef} className="text-center opacity-100 flex flex-col justify-center items-center mx-[5%] -translate-y-[105px] h-[1332px]">
                     <img src="/SageAI.png" alt="logo" className="w-[90%] h-auto responsive-logo" />
@@ -29,14 +52,14 @@ const LandingPage: React.FC = () => {
                     <div className="flex gap-2.5 mt-5">
                         <button 
                             className="font-cinzel bg-[#1e1e1e] text-white py-5 px-10 rounded-lg cursor-pointer relative overflow-hidden transition duration-300 ml-[10%] hover:shadow-[0_0_30px_#b28f4c] hover:scale-110 hover:bg-[#b28f4c] hover:text-black hover:font-bold transform-gpu -skew-x-12 hover:skew-x-0 hover:stroke-[#b28f4c] stroke-[#b28f4c]"
-                            onClick={() => window.location.href = '/login'}
+                            onClick={() => navigateWithLoading('/login')}
                         >
                             gates of realm
                             <div className="absolute right-0 top-0 h-full w-4 bg-[#b28f4c] transform translate-x-1/2"></div>                        </button>
                         <div className  ="w-5"></div> {/* Added space between buttons */}
                         <button 
                             className="font-cinzel bg-[#1e1e1e] text-white py-5 px-10 rounded-lg cursor-pointer relative overflow-hidden transition duration-300 mr-[10%] hover:shadow-[0_0_30px_#b28f4c] hover:scale-110 hover:bg-[#b28f4c] hover:text-black hover:font-bold transform-gpu -skew-x-12 hover:skew-x-0 hover:stroke-[#b28f4c]"
-                            onClick={() => window.location.href = '/register'}
+                            onClick={() => navigateWithLoading('/register')}
                         >
                             enter the world
                             <div className="absolute right-0 top-0 h-full w-4 bg-[#b28f4c] transform translate-x-1/2"></div>
@@ -48,7 +71,7 @@ const LandingPage: React.FC = () => {
                 <h1 className="font-Cinzel text-[150%] text-[#F1DC68] uppercase mx-[20%] responsive-text">SAGE.AI is an AI-driven interactive storytelling platform where you embark on infinite adventures shaped entirely by your imagination.</h1>
             </div>
             <SecondPage />
-        </>
+        </div>
     );
 };
 

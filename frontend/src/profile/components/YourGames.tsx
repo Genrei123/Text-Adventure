@@ -1,12 +1,27 @@
-import React, { useState } from "react";
-import games from "../types/Story"; // Adjust the path as necessary
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from '../../../config/axiosConfig';
+import LoadingBook from '../../components/LoadingBook';
+import { useLoading } from '../../context/LoadingContext';
 
 interface Story {
+    id: number;
     title: string;
     description: string;
+    slug?: string;
+    image_data?: string;
+    genre?: string;
+    primary_color?: string;
 }
 
-const GameDetails: React.FC<Story> = ({ title, description }) => {
+const GameDetails: React.FC<Story & { onGameClick?: () => void }> = ({ 
+    title, 
+    description, 
+    genre,
+    image_data,
+    primary_color,
+    onGameClick 
+}) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const truncatedDescription =
@@ -15,90 +30,123 @@ const GameDetails: React.FC<Story> = ({ title, description }) => {
             : description.slice(0, 300) + "...";
 
     return (
-        <div className="w-full max-w-4xl mx-auto border rounded-lg shadow-md p-4 my-4 bg-[#563C2D] fade-in">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <h1 className="text-2xl font-bold text-[#B28F4C]">
-                    {title}
-                </h1>
-                <div className="cursor-pointer hover:underline text-[#C9B57B]">
-                    GO TO GAME
+        <div 
+            className="relative group cursor-pointer"
+            onClick={onGameClick}
+        >
+            <div 
+                className="relative h-[400px] rounded-lg overflow-hidden shadow-2xl"
+                style={{ backgroundColor: primary_color || '#1E1E1E' }}
+            >
+                {/* Dark Overlay */}
+                <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-all duration-300"></div>
+                
+                {/* Image */}
+                <img 
+                    src={image_data || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'} 
+                    alt={title} 
+                    className="w-full h-full object-cover"
+                />
+
+                {/* Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                    <h3 className="text-2xl font-cinzel font-extrabold text-[#F1E3C6] mb-2">
+                        {title}
+                    </h3>
+                    <p className="text-lg font-playfair text-[#FFFBEA] mb-4 line-clamp-2">
+                        {isExpanded ? description : truncatedDescription}
+                    </p>
+
+                    {description.length > 300 && (
+                        <div 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsExpanded(!isExpanded);
+                            }}
+                            className="text-[#C8A97E] hover:underline font-cinzel"
+                        >
+                            {isExpanded ? 'Show Less' : 'Read More'}
+                        </div>
+                    )}
+
+                    {/* Additional Info */}
+                    <div className="flex justify-between items-center mt-2">
+                        <span className="text-[#F1E3C6] font-cinzel">
+                            📋 {genre || 'Unspecified'}
+                        </span>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p className="text-white mb-2 text-left">{truncatedDescription}</p>
-                {!isExpanded && description.length > 300 && (
-                    <div
-                        onClick={() => setIsExpanded(true)}
-                        className="cursor-pointer hover:underline ml-2 text-[#C9B57B] text-left"
-                        aria-expanded={isExpanded}
-                    >
-                        Read More
-                    </div>
-                )}
-                {isExpanded && (
-                    <div
-                        onClick={() => setIsExpanded(false)}
-                        className="cursor-pointer hover:underline ml-2 text-blue-500"
-                        aria-expanded={isExpanded}
-                    >
-                        See Less
-                    </div>
-                )}
             </div>
         </div>
     );
 };
 
 export default function YourGames() {
+    const [games, setGames] = useState<Story[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const { username } = useParams<{ username: string }>();
+    const navigate = useNavigate();
+    const { navigateWithLoading } = useLoading();
+
+    useEffect(() => {
+        const fetchUserGames = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`/game/games/user/${username}`);
+                setGames(response.data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching user games:', error);
+                setError('Failed to fetch games');
+                setLoading(false);
+            }
+        };
+
+        if (username) {
+            fetchUserGames();
+        }
+    }, [username]);
+
+    const handleGameClick = (slug?: string) => {
+        if (slug) {
+            if (onGameClick) {
+                onGameClick(slug);
+            } else {
+                navigateWithLoading(`/game/${slug}`);
+            }
+        }
+    };
+
+    if (loading) {
+        return <LoadingBook message="Loading Games..." size="md" />;
+    }
+
+    if (error) {
+        return (
+            <div className="text-center text-red-500 py-8">
+                {error}
+            </div>
+        );
+    }
+
     return (
-        <div className="container mx-auto py-8">
-            <div className="max-h-[450px] overflow-y-auto m-1 p-2.5 custom-scrollbar">
-                    {games.map((game, index) => (
+        <div className="w-full">
+            {games.length === 0 ? (
+                <div className="bg-[#2e2e2e] w-full p-4 text-center text-[#B39C7D] font-cinzel">
+                    No games created yet
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {games.map((game) => (
                         <GameDetails
-                            key={index}
-                            title={game.title}
-                            description={game.description}
+                            key={game.id}
+                            {...game}
+                            onGameClick={() => handleGameClick(game.slug)}
                         />
                     ))}
                 </div>
+            )}
         </div>
     );
 }
-
-// Add the custom scrollbar styles and keyframe animation
-const styles = `
-.custom-scrollbar::-webkit-scrollbar {
-    width: 12px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #B28F4C;
-    border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #B28F4C;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.fade-in {
-    animation: fadeIn 1s ease-in-out;
-}
-`;
-
-// Inject the styles into the document head
-const styleSheet = document.createElement("style");
-styleSheet.type = "text/css";
-styleSheet.innerText = styles;
-document.head.appendChild(styleSheet);

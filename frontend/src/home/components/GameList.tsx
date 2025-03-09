@@ -6,45 +6,39 @@ import { useNavigate } from 'react-router-dom';
 interface Game {
   id: string;
   title: string;
+  slug: string;
   description?: string;
-  genre?: string[];
-  imageUrl?: string;
-  rating?: number;
-  playCount?: number;
+  tagline?: string;
+  genre?: string;
+  subgenre?: string;
+  image_data?: string;
+  primary_color?: string;
+  prompt_name?: string;
+  private?: boolean;
+  prompt_model?: string;
+  UserId?: number;
 }
 
 const GameList: React.FC = () => {
   const navigate = useNavigate();
-  const [games, setGames] = useState<Game[]>([
-    {
-      id: '1',
-      title: 'Dragon Quest',
-      description: 'An epic adventure in a magical realm',
-      genre: ['Fantasy', 'RPG', 'Adventure'],
-      imageUrl: 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      rating: 4.5,
-      playCount: 1200
-    }
-  ]);
-
+  const [games, setGames] = useState<Game[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<'rating' | 'playCount' | 'title'>('rating');
+  const [sortBy, setSortBy] = useState<'title' | 'genre'>('title');
+
+  // import backend url
+  
 
   useEffect(() => {
     const fetchGames = async () => {
       try {
         const response = await axios.get<Game[]>('/game');
         if (response.data.length > 0) {
-          // Ensuring cards are created even if only 'title' exists
           const formattedGames = response.data.map((game) => ({
-            id: game.id,
-            title: game.title,
+            ...game,
             description: game.description || 'No description available',
-            genre: game.genre || [],
-            imageUrl: game.imageUrl || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            rating: game.rating ?? 0,
-            playCount: game.playCount ?? 0
+            genre: game.genre || 'Unspecified',
+            image_data: import.meta.env.VITE_BACKEND_URL + game.image_data || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
           }));
           setGames(formattedGames);
         }
@@ -56,19 +50,18 @@ const GameList: React.FC = () => {
     fetchGames();
   }, []);
 
-  const allGenres = Array.from(new Set(games.flatMap(game => game.genre || [])));
+  const allGenres = Array.from(new Set(games.map(game => game.genre || 'Unspecified')));
 
   const filteredGames = games
     .filter(game => {
       const matchesSearch = game.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           (game.description && game.description.toLowerCase().includes(searchTerm.toLowerCase()));
       const matchesGenres = selectedGenres.length === 0 || 
-                           selectedGenres.some(genre => game.genre?.includes(genre));
+                           selectedGenres.includes(game.genre || 'Unspecified');
       return matchesSearch && matchesGenres;
     })
     .sort((a, b) => {
-      if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
-      if (sortBy === 'playCount') return (b.playCount || 0) - (a.playCount || 0);
+      if (sortBy === 'genre') return (a.genre || '').localeCompare(b.genre || '');
       return a.title.localeCompare(b.title);
     });
 
@@ -110,12 +103,11 @@ const GameList: React.FC = () => {
           {/* Sort Dropdown */}
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as 'rating' | 'playCount' | 'title')}
+            onChange={(e) => setSortBy(e.target.value as 'title' | 'genre')}
             className="px-4 py-3 bg-[#2A2A2A] border border-[#C8A97E] rounded-lg text-[#E5D4B3] focus:outline-none focus:ring-2 focus:ring-[#C8A97E] font-cinzel cursor-pointer"
           >
-            <option value="rating">Sort by Rating</option>
-            <option value="playCount">Sort by Popularity</option>
             <option value="title">Sort by Title</option>
+            <option value="genre">Sort by Genre</option>
           </select>
         </div>
 
@@ -141,14 +133,21 @@ const GameList: React.FC = () => {
       <div className="bg-[#1e1e1e] w-full p-4 max-h-[1240px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#C8A97E] scrollbar-track-[#2A2A2A]">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
           {filteredGames.map(game => (
-            <div onClick={() => navigate(`/game-details/${game.id}`)} key={game.id} className="relative group cursor-pointer">
-              <div className="relative h-[400px] rounded-lg overflow-hidden shadow-2xl">
+            <div 
+              onClick={() => navigate(`/game-details/${game.id}`)} 
+              key={game.id} 
+              className="relative group cursor-pointer"
+            >
+              <div 
+                className="relative h-[400px] rounded-lg overflow-hidden shadow-2xl"
+                style={{ backgroundColor: game.primary_color || '#1E1E1E' }}
+              >
                 {/* Dark Overlay */}
                 <div className="absolute inset-0 bg-black/50 group-hover:bg-black/40 transition-all duration-300"></div>
                 
                 {/* Image */}
                 <img 
-                  src={game.imageUrl} 
+                  src={game.image_data} 
                   alt={game.title} 
                   className="w-full h-full object-cover"
                 />
@@ -158,18 +157,20 @@ const GameList: React.FC = () => {
                   <h3 className="text-2xl font-cinzel font-extrabold text-[#F1E3C6] mb-2">
                     {game.title}
                   </h3>
-                  <p className="text-lg font-playfair text-[#FFFBEA] mb-4">
-                    {/*game.description*/}
+                  <p className="text-lg font-playfair text-[#FFFBEA] mb-4 line-clamp-2">
+                    {game.tagline || game.description}
                   </p>
 
-                  {/* Stats */}
+                  {/* Additional Info */}
                   <div className="flex justify-between items-center">
                     <span className="text-[#F1E3C6] font-cinzel">
-                      ⭐ {game.rating?.toFixed(1)}
+                      📋 {game.genre || 'Unspecified'}
                     </span>
-                    <span className="text-[#F1E3C6] font-cinzel">
-                      👥 {game.playCount?.toLocaleString()}
-                    </span>
+                    {game.subgenre && (
+                      <span className="text-[#F1E3C6] font-cinzel">
+                        🏷️ {game.subgenre}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

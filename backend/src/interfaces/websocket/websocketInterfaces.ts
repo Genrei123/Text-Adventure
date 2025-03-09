@@ -7,14 +7,3 @@ export interface JoinPayload {
 export interface PlayerCount {
   activePlayers: number;
 }
-
-export interface SessionData {
-  startTime: Date;
-  endTime?: Date;
-  sessionData: {
-    interactions: { [key: string]: any };
-    gamesCreated: { [key: string]: any };
-    gamesPlayed: { [key: string]: any };
-    visitedPages: { [key: string]: any };
-  };
-}

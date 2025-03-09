@@ -2,13 +2,27 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Search, ChevronDown, X, LogOut} from "lucide-react";
 import socketIOClient from 'socket.io-client';
+import { addPageVisits } from '../sessions/api-calls/visitedPagesSession';
 
 const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
-const Navbar = () => {
+interface Game {
+  id: number;
+  title: string;
+  slug: string;
+  genre: string;
+  subgenre: string;
+  icon?: string; // Added icon property
+}
+
+interface NavbarProps {
+  onLogout?: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<Game[]>([]); // Changed to store full Game objects
   const [showFilters, setShowFilters] = useState(false);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -16,6 +30,7 @@ const Navbar = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [games, setGames] = useState<Game[]>([]);
   
   const searchInputRef = useRef<HTMLInputElement>(null);
   const isMobile = windowWidth < 768; // Define mobile breakpoint
@@ -24,20 +39,38 @@ const Navbar = () => {
   const location = useLocation();
 
   const isHomePage = location.pathname === "/home";
-  const genres = [
-    "Fantasy",
-    "Dark Fantasy",
-    "High Fantasy",
-    "Medieval",
-    "Magic",
-  ];
-  const tags = ["Adventure", "Dragons", "Magic System", "Kingdom", "Quest"];
+  
+  // Extract unique genres and subgenres from actual data
+  const genres = [...new Set(games.map(game => game.genre))].filter(Boolean);
+  
+  // Use subgenres as tags
+  const tags = [...new Set(games.map(game => game.subgenre))].filter(Boolean);
+  
   const popularityOptions = [
     { label: "Past Day", value: "1day" },
     { label: "Past Moon", value: "30days" },
     { label: "Past Year", value: "1year" },
     { label: "All Time", value: "all" },
   ];
+
+  // Fetch games data from API
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/game/');
+        if (response.ok) {
+          const data = await response.json();
+          setGames(data);
+        } else {
+          console.error('Failed to fetch games');
+        }
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      }
+    };
+
+    fetchGames();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -86,37 +119,21 @@ const Navbar = () => {
     }
   }, [isSearchExpanded]);
 
+  // Update suggestions based on search query using actual game data
   useEffect(() => {
     if (searchQuery.length > 0) {
-      const sampleStories = [
-        "The Lost Scrolls of Aldor",
-        "Legends of the Crystal Keep",
-        "The Last Sage",
-        "Realm of Ancient Magic",
-      ];
-      setSuggestions(
-        sampleStories.filter((story) =>
-          story.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+      const filteredGames = games.filter(game => 
+        game.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
+      setSuggestions(filteredGames); // Store entire game objects
     } else {
       setSuggestions([]);
     }
-  }, [searchQuery]);
+  }, [searchQuery, games]);
 
   const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const email = localStorage.getItem('email');
-      if (token && email) {
-        socket.emit('leave', { route: window.location.pathname, email, token });
-      }
-
-      localStorage.removeItem("email");
-      localStorage.removeItem("token");
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout failed", error);
+    if (onLogout) {
+      await onLogout();
     }
   };
 
@@ -151,7 +168,7 @@ const Navbar = () => {
       .substring(0, 2);
   };
 
-  // Get a consistent color based on username (extra code for fun)
+  // Get a consistent color based on username
   const getProfileColor = () => {
     if (!username) return "#8B4513";
     
@@ -227,13 +244,27 @@ const Navbar = () => {
                         </button>
                         {suggestions.length > 0 && (
                           <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 top-10 shadow-lg overflow-hidden">
-                            {suggestions.map((suggestion, index) => (
+                            {suggestions.map((game, index) => (
                               <div
                                 key={index}
-                                className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22]"
-                                onClick={() => setSearchQuery(suggestion)}
+                                className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
+                                onClick={() => setSearchQuery(game.title)}
                               >
-                                {suggestion}
+                                {/* Game Icon */}
+                                <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
+                                  {game.icon ? (
+                                    <img 
+                                      src={game.icon} 
+                                      alt={`${game.title} icon`} 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
+                                      {game.title.substring(0, 2).toUpperCase()}
+                                    </div>
+                                  )}
+                                </div>
+                                <span>{game.title}</span>
                               </div>
                             ))}
                           </div>
@@ -265,13 +296,27 @@ const Navbar = () => {
                     />
                     {suggestions.length > 0 && (
                       <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 shadow-lg overflow-hidden">
-                        {suggestions.map((suggestion, index) => (
+                        {suggestions.map((game, index) => (
                           <div
                             key={index}
-                            className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22]"
-                            onClick={() => setSearchQuery(suggestion)}
+                            className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
+                            onClick={() => setSearchQuery(game.title)}
                           >
-                            {suggestion}
+                            {/* Game Icon */}
+                            <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
+                              {game.icon ? (
+                                <img 
+                                  src={game.icon} 
+                                  alt={`${game.title} icon`} 
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
+                                  {game.title.substring(0, 2).toUpperCase()}
+                                </div>
+                              )}
+                            </div>
+                            <span>{game.title}</span>
                           </div>
                         ))}
                       </div>
