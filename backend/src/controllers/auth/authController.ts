@@ -275,6 +275,7 @@ export const checkAuth = async (req: Request, res: Response): Promise<void> => {
 };
 
 // New function to verify the token and return the user
+// New function to verify the token and return the user
 export const verifyToken = async (token: string): Promise<User | null> => {
     try {
         if (!token) {

@@ -1,21 +1,23 @@
 export interface AddGame {
-  title: string;
-  slug: string;
-  description: string;
-  tagline: string;
-  genre: string;
-  subgenre: string;
-  primary_color?: string;
-  prompt_name: string;
-  prompt_text?: string;
-  prompt_model?: string;
-  image_prompt_model?: string;
-  image_prompt_name?: string;
-  image_prompt_text?: string;
-  image_data?: string; // Changed to string
-  music_prompt_text?: string;
-  music_prompt_seed_image?: string;
-  private: boolean;
-  status?: string; // Added status property
-  UserId: number;
+    id: number;
+    title: string;
+    slug: string;
+    description: string;
+    tagline: string;
+    genre: string;
+    subgenre: string;
+    primary_color?: string;
+    prompt_name: string;
+    prompt_text?: string;
+    prompt_model?: string;
+    image_prompt_model?: string;
+    image_prompt_name?: string;
+    image_prompt_text?: string;
+    image_data?: string;
+    music_prompt_text?: string;
+    music_prompt_seed_image?: string;
+    private: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    UserId: number;
 }

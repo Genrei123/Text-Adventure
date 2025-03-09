@@ -121,3 +121,8 @@ const ReviewPage: React.FC<ReviewPageProps> = ({
 };
 
 export default ReviewPage;
+
+// mga kulang
+// Add a "Play Game" button in the Details section.
+// Introduce a state to track "liked" status.
+// Display total likes and show whether the user has liked the game.

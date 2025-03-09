@@ -1,164 +1,434 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+import LoadingScreen from '../components/LoadingScreen';
+import axios from 'axios';
+import { OfferModal } from './OfferModal';
+
+// Update interface to match the actual API response
+interface SubscriptionPlan {
+    offerId: string;
+    offerName: string;
+    description: string;
+    price: string;
+    duration: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
+interface PlanDisplay {
+    id: string;
+    title: string;
+    desc: string;
+    price: string;
+    img: string;
+    btnText: string;
+    btnColor: string;
+}
+
+// Updated to match the actual API response format
+interface UserSubscription {
+    id: string;
+    email: string;
+    subscribedAt: string;
+    startDate: string;
+    endDate: string | null;
+    subscriptionType: string;
+    status: string;
+    duration: number;
+}
 
 const Subscription: React.FC = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState<any>(null);
+    const [subscriptionOffers, setSubscriptionOffers] = useState<SubscriptionPlan[]>([]);
+    const [userSubscription, setUserSubscription] = useState<UserSubscription | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [fadeIn, setFadeIn] = useState(false);
+    const [fadeOut, setFadeOut] = useState(false);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const [confirmUnsubscribe, setConfirmUnsubscribe] = useState(false);
+    const [unsubscribeLoading, setUnsubscribeLoading] = useState(false);
+    const [message, setMessage] = useState('');
+
+    // Fetch subscription offers and user's current subscription
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Load subscription offers
+                const offersResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/offers`);
+                console.log('Fetched subscription offers:', offersResponse.data);
+                setSubscriptionOffers(offersResponse.data);
+                
+                // Get user's email from localStorage
+                const email = localStorage.getItem('email');
+                
+                if (email) {
+                    // Load user's current subscription using the correct endpoint
+                    const subscriptionResponse = await axios.get(
+                        `${import.meta.env.VITE_BACKEND_URL}/shop/subscription/user/${email}`
+                    );
+                    console.log('User subscription data:', subscriptionResponse.data);
+                    
+                    // Check if there are any subscriptions in the array
+                    if (subscriptionResponse.data && subscriptionResponse.data.length > 0) {
+                        // Get the most recent subscription (assuming they're ordered by date)
+                        setUserSubscription(subscriptionResponse.data[0]);
+                    } else {
+                        setUserSubscription(null);
+                    }
+                }
+                
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // Simulate initial loading screen
+    useEffect(() => {
+        // Simulate loading time
+        setTimeout(() => {
+            setFadeOut(true);
+            setTimeout(() => {
+                setIsInitialLoading(false);
+            }, 500);
+        }, 2000);
+    }, []);
+
+    const handlePlanClick = (plan: PlanDisplay) => {
+        if (plan.title === "Freedom Sword") return; // Don't show modal for free tier
+        
+        // If user is already subscribed to this plan, show confirmation to unsubscribe
+        if (userSubscription && userSubscription.subscriptionType === plan.title) {
+            setSelectedPlan(plan);
+            setConfirmUnsubscribe(true);
+            return;
+        }
+        
+        console.log('Clicked plan:', plan);
+        
+        // Find matching backend data - note the use of offerId and offerName
+        const backendPlan = subscriptionOffers.find(offer => offer.offerName === plan.title);
+        
+        if (backendPlan) {
+            console.log('Found matching backend plan:', backendPlan);
+            // Merge frontend display data with backend data
+            setSelectedPlan({
+                ...plan,
+                // Use backend offerId as id for the API call
+                offerId: backendPlan.offerId,
+                backendPrice: backendPlan.price,
+                backendDuration: backendPlan.duration
+            });
+        } else {
+            console.log('No matching backend plan found');
+            setSelectedPlan(plan);
+        }
+        
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedPlan(null);
+        setConfirmUnsubscribe(false);
+    };
+
+    // Handle subscription purchase
+    const handleSubscription = async (selectedDuration: string) => {
+        const email = localStorage.getItem('email');
+        
+        if (!email) {
+            alert('Please log in to subscribe');
+            return;
+        }
+
+        if (!selectedPlan) {
+            console.error('No plan selected');
+            return;
+        }
+
+        // Use offerId from the backend data
+        const offerId = selectedPlan.offerId || selectedPlan.id;
+
+        if (!offerId) {
+            console.error('Selected plan has no ID:', selectedPlan);
+            alert('Unable to process subscription: plan ID is missing.');
+            return;
+        }
+
+        try {
+            console.log('Creating subscription with:', {
+                email,
+                offerId: offerId,
+                duration: selectedDuration.split(" ")[0]
+            });
+            
+            // Use the full path to the subscription creation endpoint
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscribe`, {
+                email,
+                offerId: offerId
+            });
+            
+            console.log('Subscription API response:', response.data);
+            
+            if (response.data && response.data.paymentLink) {
+                console.log('Redirecting to payment link:', response.data.paymentLink);
+                window.location.href = response.data.paymentLink;
+            } else {
+                console.error('No payment link received:', response.data);
+                alert('Could not process subscription. Please try again.');
+            }
+        } catch (error: any) {
+            console.error('Error creating subscription:', error);
+            if (error.response) {
+                console.error('Error response data:', error.response.data);
+            }
+            alert(`Failed to create subscription: ${error.response?.data?.error || error.message || 'Unknown error'}`);
+        }
+    };
+
+    // Handle unsubscribe
+    const handleUnsubscribe = async () => {
+        const email = localStorage.getItem('email');
+        
+        if (!email || !userSubscription) {
+            alert('No active subscription found');
+            return;
+        }
+        
+        setUnsubscribeLoading(true);
+        
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/unsubscribe`, { 
+                email,
+                subscriptionId: userSubscription.id // Using the correct id field from the API response
+            });
+            
+            console.log('Unsubscribe response:', response.data);
+            setMessage('Successfully unsubscribed. Your benefits will remain active until the end of your billing period.');
+            setUserSubscription(null);
+            setConfirmUnsubscribe(false);
+        } catch (error: any) {
+            console.error('Error unsubscribing:', error);
+            setMessage(`Failed to unsubscribe: ${error.response?.data?.error || error.message || 'Unknown error'}`);
+        } finally {
+            setUnsubscribeLoading(false);
+        }
+    };
+
+    // Keep your static plan data for the frontend display
+    const displayPlans: PlanDisplay[] = [
+        { 
+            id: "FREE",
+            title: "Freedom Sword", 
+            desc: "Begin your journey with 2000 tokens worth of free prompts and basic world access.", 
+            price: "FREE", 
+            img: "/Freemium.png", 
+            btnText: "CURRENT PATH", 
+            btnColor: "bg-green-600" 
+        },
+        { 
+            id: "SUB001",
+            title: "Adventurer's Entry", 
+            desc: "Gain extra tokens, extended prompt limits, and access to enhanced character options.", 
+            price: "₱100/mo", 
+            img: "/Adventurer.png", 
+            btnText: "EMBARK ON YOUR PATH", 
+            btnColor: "bg-black" 
+        },
+        { 
+            id: "SUB002",
+            title: "Hero's Journey", 
+            desc: "Enjoy unlimited prompts, customizable characters, ad-free storytelling, and access to exclusive worlds.", 
+            price: "₱250/mo", 
+            img: "/Hero.png", 
+            btnText: "BECOME A HERO", 
+            btnColor: "bg-black" 
+        },
+        { 
+            id: "SUB003",
+            title: "Legend's Legacy", 
+            desc: "Unlock ultimate features including early access to new worlds, personalized storylines, and priority support.", 
+            price: "₱500/mo", 
+            img: "/Legend.png", 
+            btnText: "FORGE YOUR LEGACY", 
+            btnColor: "bg-black" 
+        }
+    ];
+    
+    // Update button text and color based on user's subscription
+    const updatedDisplayPlans = displayPlans.map(plan => {
+        if (!userSubscription) return plan;
+        
+        // Check if this plan matches user's subscription type
+        if (userSubscription.subscriptionType === plan.title) {
+            return {
+                ...plan,
+                btnText: userSubscription.status === "active" ? "CURRENT SUBSCRIPTION" : 
+                         userSubscription.status === "pending" ? "PENDING ACTIVATION" : 
+                         "MANAGE SUBSCRIPTION",
+                btnColor: userSubscription.status === "active" ? "bg-green-600" : 
+                         userSubscription.status === "pending" ? "bg-yellow-600" : 
+                         "bg-blue-600"
+            };
+        }
+        
+        return plan;
+    });
+
+    if (isInitialLoading) {
+        return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />;
+    }
+
+    // Format date for display
+    const formatDate = (dateString: string | null) => {
+        if (!dateString) return "N/A";
+        return new Date(dateString).toLocaleDateString();
+    };
+
     return (
         <>
-        <Navbar/>
-        
-        <div style={{ backgroundImage: 'url(Billings.png)', backgroundSize: 'cover', minHeight: '100vh', padding: '1rem' }}>
-            <Sidebar/>
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                <h2 style={{ textAlign: 'center', color: 'white', marginBottom: '1rem', marginTop: '5rem', fontSize: '3rem', fontFamily: 'Cinzel Decorative, serif' }}>
-                    find your path
-                </h2>
-                <h4 style={{ textAlign: 'center', color: 'white', marginTop: '1rem', fontSize: '1rem', fontFamily: 'Cinzel Decorative, serif' }}>
-                    unlock your full potential 
-                </h4>
-                <br></br>
+            <Navbar />
+            <div className="bg-cover min-h-screen p-4" style={{ backgroundImage: 'url(Billings.png)' }}>
+                <Sidebar />
+                <div className="max-w-7xl mx-auto text-center text-white">
+                    <h2 className="text-3xl md:text-5xl font-cinzel my-10">Find Your Path</h2>
+                    <h4 className="text-lg md:text-xl font-cinzel mb-6">Unlock Your Full Potential</h4>
                     
-                    <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                        <div style={{ flex: '0 0 300px', backgroundColor: 'white', height: '600px', maxWidth: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', margin: '1rem', border: '4px solid #563C2D', transition: 'transform 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}>
-                            <img src="/Freemium.png" alt="Basic Plan" style={{ width: '100%', height: 'auto' }} />
-                            <h1 style={{ color: '#B28F4C', textAlign: 'center', paddingTop: '1rem', fontFamily: 'Cinzel Decorative, serif', fontWeight: 'bolder', fontSize: '1.5rem' }}>freedom sword</h1>
-                            <p style={{ color: 'black', textAlign: 'center', padding: '0 1rem' }}>Begin your journey with 2000 tokens worth of free prompts and basic world access.</p>
-                            <h2 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', fontFamily: 'Playfair Display, serif', fontWeight: 'bold' }}>FREE</h2>
-                            <button style={{ width: '90%', backgroundColor: 'green', color: 'white', padding: '1rem', border: 'none', cursor: 'pointer', borderRadius: '10px', marginBottom: '5%' }}>CURRENT PATH</button>
+                    {userSubscription && (
+                        <div className="mb-8 p-4 rounded-lg bg-[#563C2D] bg-opacity-70">
+                            <h3 className="text-xl font-cinzel mb-2">Current Subscription</h3>
+                            <div className="flex flex-col md:flex-row justify-center items-center gap-4">
+                                <div className="text-left">
+                                    <p className="font-bold">{userSubscription.subscriptionType}</p>
+                                    <p className="text-sm">Status: <span className={
+                                        userSubscription.status === "active" ? "text-green-400" : 
+                                        userSubscription.status === "pending" ? "text-yellow-300" : 
+                                        "text-gray-300"
+                                    }>{userSubscription.status.charAt(0).toUpperCase() + userSubscription.status.slice(1)}</span></p>
+                                    <p className="text-sm">Start Date: {formatDate(userSubscription.startDate)}</p>
+                                    {userSubscription.endDate && (
+                                        <p className="text-sm">Expiry Date: {formatDate(userSubscription.endDate)}</p>
+                                    )}
+                                </div>
+                                {userSubscription.status === "active" && (
+                                    <button 
+                                        className="px-4 py-2 bg-red-600 text-white rounded-md"
+                                        onClick={() => {
+                                            // Find the plan that matches the user's subscription
+                                            const plan = displayPlans.find(p => p.title === userSubscription.subscriptionType);
+                                            if (plan) {
+                                                setSelectedPlan(plan);
+                                                setConfirmUnsubscribe(true);
+                                            }
+                                        }}
+                                    >
+                                        Manage Subscription
+                                    </button>
+                                )}
+                            </div>
+                            <p className="mt-2 text-sm">Click on your current plan to manage your subscription</p>
                         </div>
-                        <div style={{ flex: '0 0 300px', backgroundColor: 'white', height: '600px', maxWidth: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', margin: '1rem', border: '4px solid #563C2D', transition: 'transform 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }} onClick={() => { document.getElementById('billingModal').style.display = 'block'; document.getElementById('modalOverlay').style.display = 'block'; }}>
-                            <img src="/Adventurer.png" alt="Standard Plan" style={{ width: '100%', height: 'auto' }} />
-                            <h1 style={{ color: '#B28F4C', textAlign: 'center', paddingTop: '1rem', fontFamily: 'Cinzel Decorative, serif', fontWeight: 'bolder', fontSize: '1.5rem' }}>adventurer's entry</h1>
-                            <p style={{ color: 'black', textAlign: 'center', padding: '0 1rem' }}> Gain extra tokens, extended prompt limits, and access to enhanced character options.</p>
-                            <h2 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', fontFamily: 'Playfair Display, serif', fontWeight: 'bold' }}>₱100/mo</h2>
-                            <button style={{ width: '90%', backgroundColor: 'black', color: 'white', padding: '1rem', border: 'none', cursor: 'pointer', borderRadius: '10px', marginBottom: '5%' }}>EMBARK ON YOUR PATH</button>
+                    )}
+                    
+                    {message && (
+                        <div className="mb-6 p-3 rounded-lg bg-green-500 text-white">
+                            {message}
                         </div>
-                        <div style={{ flex: '0 0 300px', backgroundColor: 'white', height: '600px', maxWidth: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', margin: '1rem', border: '4px solid #563C2D', transition: 'transform 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }} onClick={() => { document.getElementById('billingModal').style.display = 'block'; document.getElementById('modalOverlay').style.display = 'block'; }}>
-                            <img src="/Hero.png" alt="Premium Plan" style={{ width: '100%', height: 'auto' }} />
-                            <h1 style={{ color: '#B28F4C', textAlign: 'center', paddingTop: '1rem', fontFamily: 'Cinzel Decorative, serif', fontWeight: 'bolder', fontSize: '1.5rem' }}>hero's journey</h1>
-                            <p style={{ color: 'black', textAlign: 'center', padding: '0 1rem' }}>Enjoy unlimited prompts, customizable characters, ad-free storytelling, and access to exclusive worlds.</p>
-                            <h2 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', fontFamily: 'Playfair Display, serif', fontWeight: 'bold' }}>₱250/mo</h2>
-                            <button style={{ width: '90%', backgroundColor: 'black', color: 'white', padding: '1rem', border: 'none', cursor: 'pointer', borderRadius: '10px', marginBottom: '5%' }}>BECOME A HERO</button>
-                        </div>
-                        <div style={{ flex: '0 0 300px', backgroundColor: 'white', height: '600px', maxWidth: '250px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', margin: '1rem', border: '4px solid #563C2D', transition: 'transform 0.3s' }} onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; }} onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }} onClick={() => { document.getElementById('billingModal').style.display = 'block'; document.getElementById('modalOverlay').style.display = 'block'; }}>
-                            <img src="/Legend.png" alt="Ultimate Plan" style={{ width: '100%', height: 'auto' }} />
-                            <h1 style={{ color: '#B28F4C', textAlign: 'center', paddingTop: '1rem', fontFamily: 'Cinzel Decorative, serif', fontWeight: 'bolder', fontSize: '1.5rem' }}>legend's legacy</h1>
-                            <p style={{ color: 'black', textAlign: 'center', padding: '0 1rem' }}>Unlock ultimate features including early access to new worlds, personalized storylines, and priority support.</p>
-                            <h2 style={{ color: 'black', textAlign: 'center', fontSize: '2rem', fontFamily: 'Playfair Display, serif', fontWeight: 'bold' }}>₱500/mo</h2>
-                            <button style={{ width: '90%', backgroundColor: 'black', color: 'white', padding: '1rem', border: 'none', cursor: 'pointer', borderRadius: '10px', marginBottom: '5%' }}>FORGE YOUR LEGACY</button>
-                        </div>
+                    )}
 
-                    <div id="billingModal" style={{ display: 'none', position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: '#1e1e1e', padding: '2rem', borderRadius: '10px', boxShadow: '0 0 10px rgba(0,0,0,0.5)', zIndex: 1000, border: '5px solid #634630' }}>
-                        <button onClick={() => { document.getElementById('billingModal').style.display = 'none'; document.getElementById('modalOverlay').style.display = 'none'; }} style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#a38b6d' }}>×</button>
-                        <h2 style={{ textAlign: 'center', marginBottom: '1rem', color: '#634630', fontSize: '2rem', fontFamily: 'Cinzel Decorative, serif' }}>billing information</h2>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630', float: 'left' }}>Name:</label>
-                            <input type="text" placeholder="The name whispered in legends" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
+                    {loading ? (
+                        <div className="text-center p-8">
+                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white mx-auto"></div>
+                            <p className="mt-4">Loading subscription plans...</p>
                         </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630', float: 'left'  }}>Email:</label>
-                            <input type="email" placeholder="Where to send your quest updates" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
+                    ) : (
+                        <div className="flex flex-wrap justify-center gap-8 mt-6">
+                            {updatedDisplayPlans.map((plan, index) => (
+                                <div 
+                                    key={index} 
+                                    className="bg-white w-72 p-6 rounded-lg shadow-lg border-4 border-[#563C2D] transform transition-transform hover:scale-110" 
+                                    onClick={() => handlePlanClick(plan)}
+                                >
+                                    <img src={plan.img} alt={plan.title} className="w-full" />
+                                    <h1 className="text-[#B28F4C] text-center text-xl font-bold font-cinzel mt-4">{plan.title}</h1>
+                                    <p className="text-black text-center p-2">{plan.desc}</p>
+                                    <h2 className="text-black text-center text-2xl font-bold font-playfair">{plan.price}</h2>
+                                    <button className={`w-full text-white p-2 rounded-md mt-4 ${plan.btnColor}`}>{plan.btnText}</button>
+                                </div>
+                            ))}
                         </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630' , float: 'left' }}>Address:</label>
-                            <input type="text" placeholder="Your secret incantation" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630' , float: 'left' }}>Subscription:</label>
-                            <input type="text" id="subscriptionInput" readOnly placeholder="Selected subscription" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ color: '#634630' , float: 'left' }}>Password:</label>
-                            <input type="password" placeholder="your mystical phrase" style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem', borderRadius: '10px', backgroundColor: '#2e2e2e', color: 'white' }} />
-                        </div>
-                        <div style={{ marginBottom: '1rem' }}>
-                            <input type="checkbox" id="eula" />
-                            <label htmlFor="eula" style={{ color: 'white' }}> I agree on terms</label>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                            <div style={{ width: '45%', height: '50px', backgroundColor: '#ccc', borderRadius: '10px' }}></div>
-                            <div style={{ width: '45%', height: '50px', backgroundColor: '#ccc', borderRadius: '10px' }}></div>
-                        </div>
-                        <button style={{ width: '100%', padding: '1rem', backgroundColor: '#B39C7D', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '10px' }}>SUBMIT</button>
-                    </div>
-                    <style>{`
-                        @media (max-width: 600px) {
-                            #billingModal {
-                                height: 90% !important;
-                                width: 90%   !important;
-                                padding: 0.5rem !important;
-                            }
-                            #billingModal h2 {
-                                font-size: 1.2rem !important;
-                            }
-                            #billingModal input {
-                                padding: 0.2rem !important;
-                            }
-                            #billingModal button {
-                                font-size: 0.8rem !important;
-                                padding: 0.4rem !important;
-                            }
-                            #billingModal label {
-                                font-size: 0.8rem !important;
-                            }
-                            #billingModal #eula {
-                                transform: scale(0.8) !important;
-                            }
-                            #billingModal div[style*="width: '45%'"] {
-                                height: 40px !important;
-                            }
+                    )}
+                </div>
+            </div>
+            
+            {isModalOpen && selectedPlan && (
+                <OfferModal
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                    offerType={selectedPlan.title}
+                    subcontext={selectedPlan.desc}
+                    features={[
+                        "Premium world access",
+                        "Extended character customization", 
+                        "Ad-free experience",
+                        selectedPlan.title === "Legend's Legacy" ? "Priority support" : "Standard support"
+                    ]}
+                    plans={[
+                        { 
+                            id: selectedPlan.offerId || selectedPlan.id, // Use offerId from backend if available
+                            duration: "1 Month", 
+                            credit: "Premium Access", 
+                            cost: selectedPlan.price 
                         }
-                    `}</style>
-                    <div id="modalOverlay" style={{ display: 'none', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 999 }}></div>
-                    <script>
-                        {`
-                            const cards = document.querySelectorAll('div[style*="flex: 0 0 300px"]');
-                            const modal = document.getElementById('billingModal');
-                            const overlay = document.getElementById('modalOverlay');
-                            cards.forEach(card => {
-                                card.addEventListener('click', () => {
-                                    modal.style.display = 'block';
-                                    overlay.style.display = 'block';
-                                });
-                            });
-                            overlay.addEventListener('click', () => {
-                                modal.style.display = 'none';
-                                overlay.style.display = 'none';
-                            });
-                        `}
-                    </script>
+                    ]}
+                    onPlanSelect={(plan: { duration: string }) => handleSubscription(plan.duration)}
+                />
+            )}
+            
+            {confirmUnsubscribe && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                        <h3 className="text-xl font-bold text-black mb-4">Manage Subscription</h3>
+                        <p className="text-gray-700 mb-4">
+                            You are currently subscribed to {selectedPlan?.title}. 
+                            {userSubscription?.endDate ? 
+                                ` Your subscription is active until ${formatDate(userSubscription.endDate)}.` : 
+                                ' Your subscription is currently active.'}
+                        </p>
+                        <div className="flex justify-end space-x-3">
+                            <button 
+                                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md"
+                                onClick={closeModal}
+                            >
+                                Close
+                            </button>
+                            <button 
+                                className="px-4 py-2 bg-red-600 text-white rounded-md flex items-center"
+                                onClick={handleUnsubscribe}
+                                disabled={unsubscribeLoading || userSubscription?.status !== 'active'}
+                            >
+                                {unsubscribeLoading ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Processing...
+                                    </>
+                                ) : "Cancel Subscription"}
+                            </button>
+                        </div>
                     </div>
-                    <style>{`
-                        @media (max-width: 600px) {
-                            div[style*="flex: 0 0 300px"] {
-                                flex: 0 0 100% !important;
-                                height: auto !important;
-                                flex-direction: column !important;
-                                align-items: center !important;
-                                overflow: hidden !important;
-                            }
-                            div[style*="flex: 0 0 300px"] img {
-                                width: 100% !important;
-                                height: auto !important;
-                            }
-                            div[style*="flex: 0 0 300px"] h1, 
-                            div[style*="flex: 0 0 300px"] p, 
-                            div[style*="flex: 0 0 300px"] h2, 
-                            div[style*="flex: 0 0 300px"] button {
-                                width: 90% !important;
-                                text-align: center !important;
-                                padding-left: 0 !important;
-                            }
-                            div[style*="flex: 0 0 300px"] button {
-                                margin-bottom: 5% !important;
-                            }
-                        }
-                    `}</style>
-            </div>               
-        </div>
+                </div>
+            )}
         </>
-        
-        
     );
 };
 

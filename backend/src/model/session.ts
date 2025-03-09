@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from "../service/database";
+import { SessionData } from "../interfaces/session/sessionInterface";
 
 // Define the attributes of the Session model
 interface SessionAttributes {
@@ -7,13 +8,13 @@ interface SessionAttributes {
     email: string;
     startTime: Date;
     endTime?: Date;
-    sessionData: object; // Change to JSONB type
+    sessionData: SessionData; // Use SessionData type from interface
     createdAt: Date;
     updatedAt: Date;
 }
 
 // Define the creation attributes for the Session model
-interface SessionCreationAttributes extends Optional<SessionAttributes, "id" | "endTime" | "sessionData" | "createdAt" | "updatedAt"> {}
+interface SessionCreationAttributes extends Optional<SessionAttributes, "id" | "endTime" | "createdAt" | "updatedAt"> {}
 
 // Extend the Model class with the Session attributes
 class Session extends Model<SessionAttributes, SessionCreationAttributes> implements SessionAttributes {
@@ -21,7 +22,7 @@ class Session extends Model<SessionAttributes, SessionCreationAttributes> implem
     public email!: string;
     public startTime!: Date;
     public endTime?: Date;
-    public sessionData!: object; // Change to JSONB type
+    public sessionData!: SessionData; // Use SessionData type
     public createdAt!: Date;
     public updatedAt!: Date;
 }
@@ -44,11 +45,17 @@ Session.init({
     },
     endTime: {
         type: DataTypes.DATE,
+        allowNull: true, // Explicitly set to true for clarity
     },
     sessionData: {
         type: DataTypes.JSONB, // Use JSONB type
         allowNull: false,
-        defaultValue: {},
+        defaultValue: {
+            interactions: [],
+            gamesCreated: [],
+            gamesPlayed: [],
+            visitedPages: {},
+        },
     },
     createdAt: {
         type: DataTypes.DATE,

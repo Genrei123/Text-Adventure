@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
-import { PaymentRequest } from '../../service/transaction/xenditClient';
-import { PaymentRequestParameters, PaymentRequestCurrency } from 'xendit-node/payment_request/models';
-import User from '../../model/user/user'; // Import the User model
-import Item from '../../model/transaction/ItemModel'; // Import the Item model
+import { Invoice } from '../../service/transaction/xenditClient';
+import User from '../../model/user/user';
+import Item from '../../model/transaction/ItemModel';
+import Order from '../../model/transaction/order'; // Import the Order model
 import dotenv from 'dotenv';
-import { createPaymentMethod } from '../../service/transaction/Subscription/paymentMethodService';
-import { deductCoinsByTokens, checkOrderIdExists } from '../../service/transaction/Item Shop/coinService'; // Import coin service
-import { getChatTokenDetails } from '../../utils/tokenizer'; // Import the correct function
+import { deductCoinsByTokens, checkOrderIdExists } from '../../service/transaction/Item Shop/coinService';
+import { getChatTokenDetails } from '../../utils/tokenizer';
+import TokenPackage from '../../model/transaction/TokenPackageModel';
 
 dotenv.config();
 
 // Constants for return URLs
-const SUCCESS_RETURN_URL = 'https://example.com/payment-success';
-const FAILURE_RETURN_URL = 'https://example.com/payment-failure';
+const SUCCESS_RETURN_URL = process.env.SUCCESS_RETURN_URL;
+const FAILURE_RETURN_URL = process.env.FAILURE_RETURN_URL;
 
 // Function to generate a random 6-character alphanumeric string
 const generateRandomId = () => {
@@ -28,6 +28,35 @@ export const getItemDetails = async (itemId: string) => {
   return item;
 };
 
+// Function to fetch token package details based on package ID
+export const getTokenPackageDetails = async (packageId: string) => {
+  const tokenPackage = await TokenPackage.findByPk(packageId);
+  if (!tokenPackage) {
+    throw new Error('Token package not found');
+  }
+  return tokenPackage;
+};
+
+// Function to fetch all items
+export const getAllItems = async (req: Request, res: Response) => {
+  try {
+    const items = await Item.findAll();
+    res.json(items);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Function to fetch all token packages
+export const getAllTokenPackages = async (req: Request, res: Response) => {
+  try {
+    const packages = await TokenPackage.findAll();
+    res.json(packages);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Function to fetch user details from the database using email
 const getUserDetailsByEmail = async (email: string) => {
   const user = await User.findOne({ where: { email } });
@@ -38,13 +67,16 @@ const getUserDetailsByEmail = async (email: string) => {
 };
 
 // Fetch coin balance
-export const getCoins = async (req: Request, res: Response) => {
-  const userId = parseInt(req.params.userId);
+export const getCoins = async (req: Request, res: Response): Promise<void> => {
+  const email = req.query.email as string;
+
+  if (!email) {
+    res.status(400).json({ error: 'Email query parameter is required' });
+    return;
+  }
 
   try {
-    const user = await User.findByPk(userId, {
-      attributes: ['totalCoins'],
-    });
+    const user = await User.findOne({ where: { email }, attributes: ['totalCoins'] });
 
     if (user) {
       res.json({ coins: user.totalCoins });
@@ -53,6 +85,25 @@ export const getCoins = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+// Add coins to user account after token package purchase
+export const addCoinsToUser = async (userId: string | number, tokens: number): Promise<void> => {
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    // Add tokens to the user's account
+    user.totalCoins = (user.totalCoins || 0) + tokens;
+    await user.save();
+    
+    console.log(`Added ${tokens} tokens to user ${userId}. New balance: ${user.totalCoins}`);
+  } catch (error: any) {
+    console.error(`Failed to add tokens to user: ${error.message}`);
+    throw error;
   }
 };
 
@@ -82,7 +133,7 @@ export const deductCoins = async (req: Request, res: Response) => {
 };
 
 export const buyItem = async (req: Request, res: Response) => {
-  const { itemId, paymentMethod, email } = req.body;
+  const { itemId, email } = req.body;
 
   let item;
   let user;
@@ -94,7 +145,7 @@ export const buyItem = async (req: Request, res: Response) => {
     user = await getUserDetailsByEmail(email);
 
     // Create an orderId with username, date, and a random 6-character alphanumeric string
-    const date = new Date().toISOString().split('T')[0].replace(/-/g, ''); // Format date as YYYYMMDD
+    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
     let randomId = generateRandomId();
     orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomId}`;
 
@@ -104,73 +155,64 @@ export const buyItem = async (req: Request, res: Response) => {
       orderId = `order-${itemId}-${item.name}-${user.username}-${date}-${randomId}`;
     }
 
-    // Create payment method data
-    const paymentMethodData = {
-      type: 'EWALLET',
-      reusability: 'ONE_TIME_USE',
-      ewallet: {
-        channel_code: paymentMethod,
-        channel_properties: {
-          success_return_url: SUCCESS_RETURN_URL,
-          failure_return_url: FAILURE_RETURN_URL,
-        },
-      },
-      customer_id: user.id.toString(), // Convert customer_id to string
-      metadata: {},
-      context: 'buy_item' as 'buy_item', // Explicitly set context as 'buy_item'
-    };
-
-    // Create payment method
-    const paymentMethodResponse = await createPaymentMethod(paymentMethodData);
-
-    // Create a payment request
-    const data: PaymentRequestParameters = {
+    // Create an invoice using Xendit Invoice API
+    const invoiceData = {
+      externalId: orderId,
       amount: item.price,
-      paymentMethod: {
-        ewallet: {
-          channelProperties: {
-            successReturnUrl: SUCCESS_RETURN_URL,
-            failureReturnUrl: FAILURE_RETURN_URL,
-          },
-          channelCode: paymentMethod, // 'GCASH' or 'MAYA'
-        },
-        reusability: 'ONE_TIME_USE',
-        type: 'EWALLET',
-      },
-      currency: 'PHP' as PaymentRequestCurrency,
-      referenceId: orderId, // This is the field used by Xendit for tracking
+      payerEmail: email,
+      description: `Purchase of ${item.name}`,
+      successRedirectUrl: SUCCESS_RETURN_URL,
+      failureRedirectUrl: FAILURE_RETURN_URL,
+      currency: 'PHP',
     };
 
-    const paymentRequest = await PaymentRequest.createPaymentRequest({ data });
-    const paymentLink = paymentRequest.actions?.find((action: { urlType: string }) => action.urlType === 'WEB')?.url || 'N/A';
+    console.log('Invoice data:', invoiceData);
+
+    const invoice = await Invoice.createInvoice({ data: invoiceData }); // Using the correct method from InvoiceApi
+    const paymentLink = invoice.invoiceUrl || 'N/A';
     const formattedDate = new Date().toLocaleString();
 
-    console.log(`-------------- Payment Request Details --------------`)
-console.log(`Status: Success
+    // Create Order record in the database
+    await Order.create({
+      order_id: orderId,
+      email: email,
+      client_reference_id: invoice.id || 'N/A',
+      order_details: { 
+        itemId, 
+        itemName: item.name,
+        paymentLink
+      },
+      paid_amount: Math.round(item.price),
+      UserId: user.id,
+      received_coins: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    console.log(`-------------- Invoice Details --------------`);
+    console.log(`Status: Success
 Item ID: ${itemId}
 Item Name: ${item.name}
 User ID: ${user.id}
 Username: ${user.username}
 Email: ${user.email}
-Payment Method: ${paymentMethod}
 Paid Amount: ${item.price}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
-Payment Request ID: ${paymentRequest.id}
+Invoice ID: ${invoice.id}
 Link To Payment: ${paymentLink}`);
-console.log(`-----------------------------------------------------`);
-console.log(` `);
+    console.log(`-----------------------------------------------------`);
+    console.log(` `);
     res.json({ paymentLink });
   } catch (error: any) {
     const formattedDate = new Date().toLocaleString();
-    console.error(` ----------------- Payment Request Details -----------------`)
+    console.error(` ----------------- Invoice Creation Failed -----------------`);
     console.error(`Status: Fail
 Item ID: ${itemId}
 Item Name: ${item?.name || 'N/A'}
 User ID: ${user?.id || 'N/A'}
 Username: ${user?.username || 'N/A'}
 User Email: ${email}
-Payment Method: ${paymentMethod}
 Paid Amount: ${item?.price || 'N/A'}
 Date Created: ${formattedDate}
 Order ID: ${orderId}
@@ -178,11 +220,299 @@ Error: ${error.message}`);
     console.log(`-----------------------------------------------------`);
     console.log(` `);
     if (error.response) {
+      console.error('Error response data:', error.response.data);
       res.status(error.response.status).json({ error: error.response.data });
     } else if (error.request) {
       res.status(500).json({ error: 'No response received from Xendit API' });
     } else {
       res.status(500).json({ error: error.message });
     }
+  }
+};
+
+// New function to purchase token packages
+export const buyTokenPackage = async (req: Request, res: Response) => {
+  const { packageId, email } = req.body;
+
+  let tokenPackage;
+  let user;
+  let orderId;
+
+  try {
+    // Validate input
+    if (!packageId || !email) {
+      throw new Error('Missing packageId or email');
+    }
+
+    // Fetch token package details and user details from your database
+    tokenPackage = await getTokenPackageDetails(packageId);
+    if (!tokenPackage) throw new Error('Token package not found');
+
+    user = await getUserDetailsByEmail(email);
+    if (!user) throw new Error('User not found');
+
+    // Ensure price is a valid number and convert to integer
+    const price = parseInt(tokenPackage.price.toString(), 10);
+    if (isNaN(price)) {
+      throw new Error('Invalid price value in token package');
+    }
+
+    // Create an orderId with username, date, and a random 6-character alphanumeric string
+    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    let randomId = generateRandomId();
+    orderId = `token-${packageId}-${tokenPackage.name}-${user.username}-${date}-${randomId}`;
+
+    // Ensure the Order ID is unique
+    while (await checkOrderIdExists(orderId)) {
+      randomId = generateRandomId();
+      orderId = `token-${packageId}-${tokenPackage.name}-${user.username}-${date}-${randomId}`;
+    }
+
+    // Create an invoice using Xendit Invoice API
+    const invoiceData = {
+      externalId: orderId,
+      amount: price, // Use integer price
+      payerEmail: email,
+      description: `Purchase of ${tokenPackage.name} (${tokenPackage.tokens + tokenPackage.bonus} tokens)`,
+      successRedirectUrl: SUCCESS_RETURN_URL,
+      failureRedirectUrl: FAILURE_RETURN_URL,
+      currency: tokenPackage.currency,
+    };
+
+    console.log('Token Package Invoice data:', invoiceData);
+
+    const invoice = await Invoice.createInvoice({ data: invoiceData });
+    const paymentLink = invoice.invoiceUrl || 'N/A';
+    const formattedDate = new Date().toLocaleString();
+
+    // Create Order record in the database with integer paid_amount
+    await Order.create({
+      order_id: orderId,
+      email: email,
+      client_reference_id: invoice.id || 'N/A',
+      order_details: {
+        packageId,
+        packageName: tokenPackage.name,
+        tokens: tokenPackage.tokens,
+        bonus: tokenPackage.bonus,
+        paymentLink,
+      },
+      paid_amount: price, // Integer value
+      UserId: user.id,
+      received_coins: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    console.log(`-------------- Token Package Invoice Details --------------`);
+    console.log(`Status: Success
+Package ID: ${packageId}
+Package Name: ${tokenPackage.name}
+Tokens: ${tokenPackage.tokens} + ${tokenPackage.bonus} bonus
+User ID: ${user.id}
+Username: ${user.username}
+Email: ${user.email}
+Paid Amount: ${price} ${tokenPackage.currency}
+Date Created: ${formattedDate}
+Order ID: ${orderId}
+Invoice ID: ${invoice.id}
+Link To Payment: ${paymentLink}`);
+    console.log(`-----------------------------------------------------`);
+    console.log(` `);
+
+    res.json({ paymentLink });
+  } catch (error: any) {
+    const formattedDate = new Date().toLocaleString();
+    console.error(` ----------------- Token Package Invoice Creation Failed -----------------`);
+    console.error(`Status: Fail
+Package ID: ${packageId || 'N/A'}
+Package Name: ${tokenPackage?.name || 'N/A'}
+User ID: ${user?.id || 'N/A'}
+Username: ${user?.username || 'N/A'}
+User Email: ${email || 'N/A'}
+Paid Amount: ${tokenPackage?.price || 'N/A'} ${tokenPackage?.currency || 'PHP'}
+Date Created: ${formattedDate}
+Order ID: ${orderId || 'N/A'}
+Error: ${error.message}`);
+    console.error('Stack:', error.stack);
+    console.log(`-----------------------------------------------------`);
+    console.log(` `);
+
+    // Only create a failed order if we have enough data
+    if (email && packageId) {
+      try {
+        await Order.create({
+          order_id: orderId || `failed-token-${packageId}-${Date.now()}`,
+          email: email,
+          client_reference_id: 'N/A',
+          order_details: { packageId, packageName: tokenPackage?.name || 'N/A' },
+          paid_amount: tokenPackage ? parseInt(tokenPackage.price.toString(), 10) || 0 : 0,
+          UserId: user?.id || null,
+          received_coins: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      } catch (innerError: any) {
+        console.error('Failed to create failed order record:', innerError.message);
+      }
+    }
+
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      res.status(error.response.status).json({ error: error.response.data });
+    } else if (error.request) {
+      res.status(500).json({ error: 'No response received from Xendit API' });
+    } else {
+      res.status(500).json({ error: error.message });
+    }
+  }
+};
+
+// Webhook handler for successful payments
+export const handlePaymentWebhook = async (req: Request, res: Response) => {
+  try {
+    const { external_id, status, id: invoice_id, paid_amount, paid_at } = req.body;
+    console.log('Webhook received:', { external_id, status, invoice_id, paid_amount, paid_at });
+
+    if (status === 'PAID') {
+      let existingOrder = await Order.findOne({ where: { order_id: external_id } });
+      console.log('Existing order:', existingOrder);
+
+      if (external_id.startsWith('token-')) {
+        const [type, packageId, ...rest] = external_id.split('-');
+        const username = rest.slice(2, -2).join('-'); // Extract username
+
+        const user = await User.findOne({ where: { username } });
+        if (!user) throw new Error('User not found for payment');
+
+        const tokenPackage = await TokenPackage.findByPk(packageId);
+        if (!tokenPackage) throw new Error('Token package not found');
+
+        const totalTokens = tokenPackage.tokens + tokenPackage.bonus;
+        await addCoinsToUser(user.id, totalTokens);
+
+        // Ensure paid_amount is an integer
+        const paidAmountInt = parseInt(paid_amount?.toString() || tokenPackage.price.toString(), 10);
+        if (isNaN(paidAmountInt)) throw new Error('Invalid paid amount');
+
+        if (existingOrder) {
+          existingOrder.client_reference_id = invoice_id;
+          existingOrder.paid_amount = paidAmountInt;
+          existingOrder.received_coins = totalTokens;
+          existingOrder.order_details = {
+            ...existingOrder.order_details,
+            paymentId: invoice_id,
+            paidAt: paid_at,
+            paymentStatus: 'PAID',
+            baseTokens: tokenPackage.tokens,
+            bonusTokens: tokenPackage.bonus,
+            totalTokens: totalTokens,
+          };
+          await existingOrder.save();
+          console.log(`Updated order ${external_id} with received_coins: ${totalTokens}`);
+        } else {
+          const orderDetails = {
+            packageId,
+            packageName: tokenPackage.name,
+            baseTokens: tokenPackage.tokens,
+            bonusTokens: tokenPackage.bonus,
+            totalTokens,
+            paymentId: invoice_id,
+            paidAt: paid_at,
+            paymentStatus: 'PAID',
+          };
+          await Order.create({
+            order_id: external_id,
+            email: user.email,
+            client_reference_id: invoice_id,
+            order_details: orderDetails,
+            paid_amount: paidAmountInt,
+            UserId: user.id,
+            received_coins: totalTokens,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+          console.log(`Created new order ${external_id} with received_coins: ${totalTokens}`);
+        }
+      } else if (external_id.startsWith('order-')) {
+        const [type, itemId, ...rest] = external_id.split('-');
+        const username = rest.slice(2, -2).join('-');
+
+        const user = await User.findOne({ where: { username } });
+        if (!user) throw new Error('User not found for payment');
+
+        const item = await Item.findByPk(itemId);
+        if (!item) throw new Error('Item not found');
+
+        if (item.coins && item.coins > 0) {
+          await addCoinsToUser(user.id, item.coins);
+          console.log(`Added ${item.coins} coins to user ${user.username} from item purchase`);
+        }
+
+        // Ensure paid_amount is an integer
+        const paidAmountInt = parseInt(paid_amount?.toString() || item.price.toString(), 10);
+        if (isNaN(paidAmountInt)) throw new Error('Invalid paid amount');
+
+        if (existingOrder) {
+          existingOrder.client_reference_id = invoice_id;
+          existingOrder.paid_amount = paidAmountInt;
+          existingOrder.received_coins = item.coins || 0;
+          existingOrder.order_details = {
+            ...existingOrder.order_details,
+            paymentId: invoice_id,
+            paidAt: paid_at,
+            paymentStatus: 'PAID',
+          };
+          await existingOrder.save();
+          console.log(`Updated order ${external_id} with received_coins: ${item.coins || 0}`);
+        } else {
+          const orderDetails = {
+            itemId,
+            itemName: item.name,
+            paymentId: invoice_id,
+            paidAt: paid_at,
+            paymentStatus: 'PAID',
+          };
+          await Order.create({
+            order_id: external_id,
+            email: user.email,
+            client_reference_id: invoice_id,
+            order_details: orderDetails,
+            paid_amount: paidAmountInt,
+            UserId: user.id,
+            received_coins: item.coins || 0,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+          console.log(`Created new order ${external_id} with received_coins: ${item.coins || 0}`);
+        }
+      }
+    }
+
+    res.status(200).json({ message: 'Webhook processed successfully' });
+  } catch (error: any) {
+    console.error('Error processing payment webhook:', error.message, error.stack);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// New endpoint to get order history for a user
+export const getUserOrderHistory = async (req: Request, res: Response): Promise<any> => {
+  const { email } = req.query;
+  
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+  
+  try {
+    const orders = await Order.findAll({
+      where: { email: email as string },
+      order: [['createdAt', 'DESC']]
+    });
+    
+    res.status(200).json(orders);
+  } catch (error: any) {
+    console.error('Error fetching order history:', error.message);
+    res.status(500).json({ error: error.message });
   }
 };

@@ -18,11 +18,16 @@ import statsRoutes from './routes/statistics/statsRoutes';
 import playerActivityRoutes from './routes/statistics/playerActivityRoutes';
 import gameRoutes from './routes/game/gameRoutes';
 import paymentRoutes from './routes/transaction/shopRoutes';
+import sessionRoutes from './routes/statistics/sessionRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
 import openaiRoute from './routes/img-generation/openaiRoute';
 import banRoutes from './routes/banRoutes';
 import metricsRouter from './routes/metrics';
 import playersRouter from './routes/players';
+import imageRoutes from './routes/image/imageRoutes';
+import jwtAuth from './middlware/auth/auth';
+import cookieParser from 'cookie-parser';
+import seedTokenPackages from './service/transaction/tokenPackageSeeder';
 import { initializeModels } from './service/models';
 
 const PORT = process.env.PORT || 3000;
@@ -35,6 +40,8 @@ declare module 'express-session' {
   }
 }
 
+seedTokenPackages().then(() => console.log('Token packages seeded'));
+
 // Middleware setup
 app.use(cors(corsOptions));
 app.use(session({ 
@@ -44,6 +51,7 @@ app.use(session({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Route setup
 app.use('/auth', routes);
@@ -57,6 +65,7 @@ app.use('/statistics/statsRoutes', statsRoutes);
 app.use('/statistics/playerActivityRoutes', playerActivityRoutes);
 app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
+app.use("/sessions", sessionRoutes);
 app.use('/nih', nihRoutes);
 app.use('/openai', openaiRoute);
 app.use('/bans', banRoutes);
@@ -64,6 +73,8 @@ app.use('/api/bans', banRoutes);
 app.use('/api/metrics', metricsRouter);
 app.use('/api/games', gameRoutes);
 app.use('/api/players', playersRouter);
+app.use('/image', jwtAuth, imageRoutes);
+app.use('/images', express.static('public/images'));
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);

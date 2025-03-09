@@ -30,6 +30,7 @@
     "dotenv": "^16.4.7",
     "emailjs-com": "^3.2.0",
     "express": "^4.21.2",
+    "framer-motion": "^12.4.7",
     "lodash": "^4.17.21",
     "lucide-react": "^0.475.0",
     "mongoose": "^8.9.5",
@@ -47,6 +48,7 @@
     "recharts": "^2.15.1",
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.8.1",
+    "tailwindcss-animate": "^1.0.7",
     "three": "^0.173.0"
   },
   "devDependencies": {

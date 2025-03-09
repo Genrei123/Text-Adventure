@@ -1,96 +1,171 @@
 import React, { createContext, useEffect, useState, useContext, ReactNode } from 'react';
 import socketIOClient from 'socket.io-client';
 import { useLocation } from 'react-router-dom';
-import includedRoutes from '../../../../backend/src/config/websocketConfig'; // Adjust the import path as needed
+import includedRoutes from '../../../../backend/src/config/websocketConfig';
+import { trackPageVisit, createSession } from '../../sessions/api-calls/visitedPagesSession'; // Import your session tracking functions
 
-const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL); // Ensure this points to the backend server
+const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000');
+
+interface LastPlayedGame {
+  route: string;
+  timestamp: number;
+  gameName?: string;
+}
 
 interface WebSocketContextProps {
   playerCount: number;
+  lastPlayedGame: LastPlayedGame | null;
+  refreshLastPlayed: () => void;
 }
 
 interface WebSocketProviderProps {
   children: ReactNode;
 }
 
-interface PlayerCountData {
-  activePlayers: number;
-}
+const WebSocketContext = createContext<WebSocketContextProps>({
+  playerCount: 0,
+  lastPlayedGame: null,
+  refreshLastPlayed: () => {},
+});
 
-const WebSocketContext = createContext<WebSocketContextProps>({ playerCount: 0 });
+const matchesIncludedRoute = (path: string) => {
+  let pathname = path;
+  if (pathname.startsWith('http://') || pathname.startsWith('https://')) {
+    try {
+      const url = new URL(pathname);
+      pathname = url.pathname;
+    } catch (e) {
+      console.error('Failed to parse URL:', e);
+      return false;
+    }
+  }
+  return includedRoutes.some((pattern) => {
+    if (!pattern.includes(':')) return pathname === pattern;
+    const patternParts = pattern.split('/').filter((part) => part);
+    const pathParts = pathname.split('/').filter((part) => part);
+    if (patternParts[0] !== pathParts[0]) return false;
+    if (pattern === '/game-details/:id') {
+      return pathname.startsWith('/game-details/') && pathParts.length >= 2;
+    }
+    return patternParts.length === pathParts.length && patternParts.every((part, i) => part.startsWith(':') || part === pathParts[i]);
+  });
+};
 
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ children }) => {
   const [playerCount, setPlayerCount] = useState(0);
+  const [lastPlayedGame, setLastPlayedGame] = useState<LastPlayedGame | null>(null);
   const location = useLocation();
 
+  const refreshLastPlayed = () => {
+    const email = localStorage.getItem('email');
+    if (email) socket.emit('getLastPlayed', { email });
+  };
+
   useEffect(() => {
-    const token = localStorage.getItem('token'); // Retrieve the token from local storage
-    const email = localStorage.getItem('email'); // Retrieve the email from local storage
+    socket.on('playerCount', (data: { activePlayers: number }) => setPlayerCount(data.activePlayers));
+    socket.on('lastPlayedGame', (data: LastPlayedGame | null) => {
+      setLastPlayedGame(data);
+      if (data) localStorage.setItem('lastPlayedGame', JSON.stringify(data));
+    });
+    socket.on('lastPlayedUpdated', (response: { success: boolean }) => {
+      if (response.success) console.log('Last played updated successfully');
+    });
 
-    console.log(`Retrieved token: ${token}`);
-    console.log(`Retrieved email: ${email}`);
+    const savedLastGame = localStorage.getItem('lastPlayedGame');
+    if (savedLastGame) {
+      try {
+        setLastPlayedGame(JSON.parse(savedLastGame));
+      } catch (error) {
+        console.error('Failed to parse last played game:', error);
+      }
+    }
 
-    if (includedRoutes.includes(location.pathname)) {
-      console.log(`Emitting join event for route: ${location.pathname}`);
-      console.log(`Sending token: ${token}`);
-      console.log(`Sending email: ${email}`);
-      socket.emit('join', { route: location.pathname, token, email });
+    refreshLastPlayed();
 
-      // Store session data locally
-      localStorage.setItem('sessionData', JSON.stringify({
-        startTime: new Date(),
-        interactions: [],
-        visitedPages: [location.pathname] // Initialize visitedPages with the current page
-      }));
+    return () => {
+      socket.off('playerCount');
+      socket.off('lastPlayedGame');
+      socket.off('lastPlayedUpdated');
+    };
+  }, []);
 
-      const handlePlayerCount = (data: PlayerCountData) => {
-        console.log(`Received playerCount event: ${data.activePlayers}`);
-        setPlayerCount(data.activePlayers);
-      };
+  // Track page visits and sessions
+  useEffect(() => {
+    const email = localStorage.getItem('email');
+    let sessionId = localStorage.getItem('sessionId');
 
-      socket.on('playerCount', handlePlayerCount);
+    const initSession = async () => {
+      if (!sessionId && email) {
+        try {
+          const session = await createSession(email);
+          sessionId = session.id;
+        } catch (error) {
+          console.error('Failed to create session:', error);
+        }
+      }
+
+      // Track the current page visit if we have a valid session
+      if (sessionId) {
+        trackPageVisit(sessionId, location.pathname);
+      }
+    };
+
+    initSession();
+  }, [location.pathname]); // Re-run when the path changes
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('email') || 'guest@example.com'; // Fallback
+    const currentURL = window.location.href;
+    const sessionId = localStorage.getItem('sessionId');
+
+    if (matchesIncludedRoute(currentURL)) {
+      socket.emit('join', { route: currentURL, token, email });
+
+      const isGameRoute = location.pathname.includes('/game-details/') || location.pathname.includes('/game/');
+      if (isGameRoute) {
+        let gameName = '';
+        if (location.pathname.includes('/game-details/')) {
+          const gameId = location.pathname.split('/').pop() || '';
+          gameName = isNaN(Number(gameId)) 
+            ? gameId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+            : `Game ${gameId}`;
+        }
+        const newLastPlayed = { route: location.pathname, timestamp: Date.now(), gameName };
+        setLastPlayedGame(newLastPlayed);
+        localStorage.setItem('lastPlayedGame', JSON.stringify(newLastPlayed));
+        
+        // Update last played game via socket
+        socket.emit('updateLastPlayed', { route: location.pathname, email, timestamp: newLastPlayed.timestamp, gameName });
+        
+        // Also log the game route visit to your session database
+        if (sessionId) {
+          trackPageVisit(sessionId, location.pathname);
+          
+          // You could also add game-specific data to local storage
+          const gameData = {
+            lastGame: gameName,
+            lastGameRoute: location.pathname,
+            lastGameTimestamp: newLastPlayed.timestamp
+          };
+          localStorage.setItem('gameData', JSON.stringify(gameData));
+        }
+      }
 
       const handleBeforeUnload = () => {
-        console.log(`Emitting leave event for route: ${location.pathname}`);
-        const sessionData = JSON.parse(localStorage.getItem('sessionData') || '{}');
-        socket.emit('leave', { route: location.pathname, token, sessionData, email });
+        socket.emit('leave', { route: location.pathname, token, email });
       };
-
       window.addEventListener('beforeunload', handleBeforeUnload);
 
       return () => {
-        console.log(`Component unmounted, emitting leave event for route: ${location.pathname}`);
-        const sessionData = JSON.parse(localStorage.getItem('sessionData') || '{}');
-        socket.emit('leave', { route: location.pathname, token, sessionData, email });
-        socket.off('playerCount', handlePlayerCount);
+        socket.emit('leave', { route: location.pathname, token, email });
         window.removeEventListener('beforeunload', handleBeforeUnload);
       };
-    }
-  }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token'); // Retrieve the token from local storage
-    const email = localStorage.getItem('email'); // Retrieve the email from local storage
-
-    console.log(`Retrieved token: ${token}`);
-    console.log(`Retrieved email: ${email}`);
-
-    if (includedRoutes.includes(location.pathname)) {
-      console.log(`Emitting interaction event for route: ${location.pathname}`);
-      socket.emit('interaction', { email, interaction: 'page_visit', page: location.pathname, token });
-
-      // Update session data locally
-      const sessionData = JSON.parse(localStorage.getItem('sessionData') || '{}');
-      if (sessionData.visitedPages[sessionData.visitedPages.length - 1] !== location.pathname) {
-        sessionData.visitedPages.push(location.pathname);
-      }
-      console.log(`Updated session data: ${JSON.stringify(sessionData)}`);
-      localStorage.setItem('sessionData', JSON.stringify(sessionData));
     }
   }, [location.pathname]);
 
   return (
-    <WebSocketContext.Provider value={{ playerCount }}>
+    <WebSocketContext.Provider value={{ playerCount, lastPlayedGame, refreshLastPlayed }}>
       {children}
     </WebSocketContext.Provider>
   );
