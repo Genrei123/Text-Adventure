@@ -107,6 +107,7 @@ User.init({
   modelName: "User",
   tableName: "Users",
   timestamps: true,
+  underscored: true,  // Add this to make Sequelize use snake_case for column names
 });
 
 export default User;

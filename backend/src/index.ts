@@ -22,9 +22,9 @@ import sessionRoutes from './routes/statistics/sessionRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
 import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation
 import comfyuiRoute from './routes/img-generation/comfyuiRoute';
-import banRoutes from './routes/banRoutes';
-import metricsRouter from './routes/metrics';
-import playersRouter from './routes/players';
+import banRoutes from './routes/admin/banRoutes';
+import metricsRouter from './routes/admin/metricsRoutes';
+import playersRouter from './routes/admin/playersRoutes';
 import imageRoutes from './routes/image/imageRoutes';
 import jwtAuth from './middlware/auth/auth';
 import cookieParser from 'cookie-parser';
@@ -76,6 +76,7 @@ app.use('/api/bans', banRoutes);
 app.use('/api/metrics', metricsRouter);
 app.use('/api/games', gameRoutes);
 app.use('/api/players', playersRouter);
+app.use('/api/admin', banRoutes);
 app.use('/image', jwtAuth, imageRoutes);
 app.use('/images', express.static('public/images'));
 

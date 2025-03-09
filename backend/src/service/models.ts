@@ -16,20 +16,20 @@ import Session from "../model/session";
 export const initializeModels = async () => {
   try {
     // First create tables without foreign keys
-    await User.sync({alter: true});
-    await Game.sync({alter: true});
+    await User.sync();
+    await Game.sync();
     
     // Then sync {alter: true}dependent models
-    await Comment.sync({alter: true});
-    await Rating.sync({alter: true});
-    await Order.sync({alter: true});
-    await Item.sync({alter: true});
-    await Chat.sync({alter: true});
-    await Ban.sync({alter: true});
-    await TokenPackage.sync({alter: true});
-    await SubscriptionOffers.sync({alter: true});
-    await Subscriber.sync({alter: true});
-    await Session.sync({alter: true});
+    await Comment.sync();
+    await Rating.sync();
+    await Order.sync();
+    await Item.sync();
+    await Chat.sync();
+    await Ban.sync();
+    await TokenPackage.sync();
+    await SubscriptionOffers.sync();
+    await Subscriber.sync();
+    await Session.sync();
     
     
     // Define associations
