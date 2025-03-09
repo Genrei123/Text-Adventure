@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createSessionController, addPageVisitController, clearSessionController, deleteSessionsWithNoEndTimeController } from "../../controllers/session/sessionController";
+import { createSessionController, addPageVisitController, clearSessionController, deleteSessionsWithNoEndTimeController, getPlayerVisitsController } from "../../controllers/session/sessionController";
 
 const router = Router();
 
@@ -22,5 +22,11 @@ router.post("/clearSession", (req, res) => {
 });
 
 router.delete('/delete-sessions-no-end-time', deleteSessionsWithNoEndTimeController);
+
+// Route to get sessions by email (accepts query parameter)
+router.get('/get-sessions-by-email', (req, res) => {
+  console.log("Received get-sessions-by-email request:", req.query);
+  getPlayerVisitsController(req, res);
+});
 
 export default router;

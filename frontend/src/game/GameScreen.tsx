@@ -24,6 +24,7 @@ const GameScreen: React.FC = () => {
   const [selectedAction, setSelectedAction] = useState('Say');
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
+  const [showEndStoryModal, setShowEndStoryModal] = useState(false); // New state for modal
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [chatMessages, setChatMessages] = useState<Array<{
@@ -273,15 +274,22 @@ const GameScreen: React.FC = () => {
             <button
               onClick={handleGenerateImage}
               disabled={isGeneratingImage}
-              className={`px-4 py-2 rounded-full font-playfair ${isGeneratingImage ? 'bg-[#634630]/50 text-gray-400 cursor-not-allowed' : `bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}`}
+              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base ${isGeneratingImage ? 'bg-[#634630]/50 text-gray-400 cursor-not-allowed' : `bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}`}
             >
               {isGeneratingImage ? 'Generating...' : 'Visualize Scene'}
             </button>
             <button
               onClick={() => setShowDescription(!showDescription)}
-              className={`px-4 py-2 rounded-full font-playfair bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}
+              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}
             >
               {showDescription ? 'Hide Description' : 'Show Description'}
+            </button>
+
+            <button
+              onClick={() => setShowEndStoryModal(true)} // Updated to show modal
+              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || '#634630'}] text-red hover:bg-[#8E1616] transition-colors`}
+            >
+              End Story
             </button>
           </div>
 
@@ -322,6 +330,63 @@ const GameScreen: React.FC = () => {
             </div>
           </div>
         )}
+
+        {showEndStoryModal && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.div
+              className="p-6 rounded-lg animate-dark-glow" // Add the Tailwind animation class here
+              style={{
+                width: '75vw',
+                height: '80vh',
+                backgroundColor: '#2F2118',
+                border: '2px solid #1E1E1E',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div>
+                {/* Placeholder for picture */}
+                <div
+                  className="w-full bg-gray-700 rounded-lg flex items-center justify-center border-4 border-[#634630]"
+                  style={{ height: '30vh' }} // Updated height to 30% of screen height
+                >
+                  <img src="/warhammer.jpg" alt="Game Summary" className="w-full h-full object-cover rounded-lg" />
+                </div>
+                <br></br>
+                
+                {/* Summary of the game */}
+                <div className="mt-4 text-[#E5D4B3]">
+                  <h2 className="text-xl font-bold mb-2 font-cinzel">Game Summary</h2>
+                  <p className="max-h-[25vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent mx-4 leading-loose text-base text-lg text-[#C9B57B]">
+                    Spider-Man, also known as Peter Parker, is a superhero who gained spider-like abilities after being bitten by a radioactive spider. He uses his powers to fight crime and protect New York City, balancing his responsibilities as a hero with his personal life.
+
+                    Magneto, also known as Erik Lehnsherr, is a powerful mutant with the ability to generate and control magnetic fields. He is often portrayed as a complex character, sometimes as a villain and other times as an anti-hero, fighting for mutant rights and against human oppression.
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowEndStoryModal(false)} // Placeholder for actual end story logic
+                  className="px-4 py-3 rounded-full font-playfair text-white hover:bg-[#1e1e1e] transition-colors "
+                >
+                  Go back
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}  
+        
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 import express from 'express';
-import { handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Import the handlePaymentCallback function
+import { handlePaymentWebhook } from '../../controllers/transaction/shopController'; // Import the correct function
 
 const router = express.Router();
 
@@ -10,31 +10,27 @@ router.post('/webhook', async (req, res) => {
 
   try {
     switch (event.type) {
+      case 'payment_request.paid':
+        // Handle payment success for buyItem or buyTokenPackage
+        console.log('Payment request paid:', event.data);
+        await handlePaymentWebhook(req, res); // Call handlePaymentWebhook here
+        return; // Return to avoid sending another response
       case 'recurring.plan.activated':
         // Handle plan activation
         console.log('Plan activated:', event.data);
-        // Update your database to mark the plan as activated
         break;
       case 'recurring.cycle.succeeded':
         // Handle successful payment cycle
         console.log('Payment cycle succeeded:', event.data);
-        // Update your database to mark the payment as successful
         break;
       case 'recurring.cycle.retrying':
         // Handle payment retry
         console.log('Payment cycle retrying:', event.data);
-        // Update your database to mark the payment as retrying
         break;
       case 'recurring.cycle.failed':
         // Handle failed payment cycle
         console.log('Payment cycle failed:', event.data);
-        // Update your database to mark the payment as failed and terminate the service if necessary
         break;
-      case 'payment_request.paid':
-        // Handle payment success for buyItem
-        console.log('Payment request paid:', event.data);
-        await handlePaymentCallback(req, res);
-        return; // Return to avoid sending another response
       default:
         console.log('Unhandled event type:', event.type);
     }

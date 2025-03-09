@@ -1,757 +1,167 @@
-2025-03-03T13:01:03.347Z [INFO]: New socket connected: XL8kN7rXC4aUaWScAAAC
-2025-03-03T13:01:03.387Z [INFO]: New socket connected: 071pf-KQxxuY7_egAAAD
-2025-03-03T13:09:19.502Z [INFO]: New socket connected: FPZhiEW13xV12_c1AAAC
-2025-03-03T13:09:19.512Z [INFO]: New socket connected: ygINdbNvp2YniMU5AAAD
-2025-03-03T13:12:34.217Z [INFO]: New socket connected: 9XSBPN4zD3SmBlgLAAAB
-2025-03-03T13:12:37.087Z [INFO]: New socket connected: DWu0ZIbs2Fu7EQ0OAAAD
-2025-03-03T13:12:41.019Z [INFO]: New connection from route: /home
-2025-03-03T13:12:41.039Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:12:41.061Z [INFO]: Disconnection from route: /home
-2025-03-03T13:12:41.062Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:12:41.065Z [INFO]: New connection from route: /home
-2025-03-03T13:12:41.069Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:12:42.009Z [INFO]: Active players: 1
-2025-03-03T13:12:42.037Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:12:42 PM
-2025-03-03T13:12:42.188Z [INFO]: Active players: 1
-2025-03-03T13:12:42.188Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:12:42 PM
-2025-03-03T13:12:42.233Z [INFO]: Active players: 1
-2025-03-03T13:12:42.235Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:12:42 PM
-2025-03-03T13:13:00.506Z [INFO]: Disconnection from route: /home
-2025-03-03T13:13:00.512Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:00.513Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:13:00 PM
-2025-03-03T13:13:00.570Z [INFO]: Socket disconnected: 9XSBPN4zD3SmBlgLAAAB
-2025-03-03T13:13:00.585Z [INFO]: Socket disconnected: DWu0ZIbs2Fu7EQ0OAAAD
-2025-03-03T13:13:20.147Z [INFO]: New socket connected: SwzrJZWQ6RPeuduBAAAG
-2025-03-03T13:13:20.158Z [INFO]: New socket connected: Rhn-uGAWuSbvY2FBAAAH
-2025-03-03T13:13:20.426Z [INFO]: New connection from route: /home
-2025-03-03T13:13:20.427Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:20.431Z [INFO]: Disconnection from route: /home
-2025-03-03T13:13:20.431Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:20.433Z [INFO]: New connection from route: /home
-2025-03-03T13:13:20.433Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:21.468Z [INFO]: Active players: 1
-2025-03-03T13:13:21.468Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:13:21 PM
-2025-03-03T13:13:21.702Z [INFO]: Active players: 1
-2025-03-03T13:13:21.702Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:13:21 PM
-2025-03-03T13:13:21.745Z [INFO]: Active players: 1
-2025-03-03T13:13:21.745Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:13:21 PM
-2025-03-03T13:13:25.013Z [INFO]: Disconnection from route: /home
-2025-03-03T13:13:25.014Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:25.014Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:13:25 PM
-2025-03-03T13:13:25.047Z [INFO]: Socket disconnected: Rhn-uGAWuSbvY2FBAAAH
-2025-03-03T13:13:25.053Z [INFO]: Socket disconnected: SwzrJZWQ6RPeuduBAAAG
-2025-03-03T13:13:25.618Z [INFO]: New socket connected: 8cGR76TEpzFBgWqrAAAK
-2025-03-03T13:13:25.622Z [INFO]: New socket connected: geAuZDVrDdsxPm4kAAAL
-2025-03-03T13:13:25.912Z [INFO]: New connection from route: /home
-2025-03-03T13:13:25.917Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:25.923Z [INFO]: Disconnection from route: /home
-2025-03-03T13:13:25.927Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:25.929Z [INFO]: New connection from route: /home
-2025-03-03T13:13:25.930Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:26.216Z [INFO]: Active players: 1
-2025-03-03T13:13:26.217Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:13:26 PM
-2025-03-03T13:13:26.249Z [INFO]: Active players: 1
-2025-03-03T13:13:26.249Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:13:26 PM
-2025-03-03T13:13:26.253Z [INFO]: Active players: 1
-2025-03-03T13:13:26.254Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:13:26 PM
-2025-03-03T13:13:36.977Z [INFO]: Disconnection from route: /home
-2025-03-03T13:13:36.977Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:36.978Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:13:36 PM
-2025-03-03T13:13:36.979Z [INFO]: Disconnection from route: /home
-2025-03-03T13:13:36.979Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:36.979Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:13:36 PM
-2025-03-03T13:13:37.095Z [INFO]: Socket disconnected: geAuZDVrDdsxPm4kAAAL
-2025-03-03T13:13:37.121Z [INFO]: Socket disconnected: 8cGR76TEpzFBgWqrAAAK
-2025-03-03T13:13:37.581Z [INFO]: New socket connected: slstwQLARlmzZ40_AAAO
-2025-03-03T13:13:37.586Z [INFO]: New socket connected: _8DQJNb-_M_fo6oaAAAP
-2025-03-03T13:13:45.164Z [INFO]: New connection from route: /home
-2025-03-03T13:13:45.171Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:45.175Z [INFO]: Disconnection from route: /home
-2025-03-03T13:13:45.176Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:45.179Z [INFO]: New connection from route: /home
-2025-03-03T13:13:45.181Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:13:45.446Z [INFO]: Active players: 1
-2025-03-03T13:13:45.447Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:13:45 PM
-2025-03-03T13:13:45.703Z [INFO]: Active players: 1
-2025-03-03T13:13:45.704Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:13:45 PM
-2025-03-03T13:13:45.959Z [INFO]: Active players: 1
-2025-03-03T13:13:45.960Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:13:45 PM
-2025-03-03T13:14:10.073Z [INFO]: Disconnection from route: /home
-2025-03-03T13:14:10.076Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:14:10.077Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:14:10 PM
-2025-03-03T13:14:10.099Z [INFO]: Disconnection from route: /home
-2025-03-03T13:14:10.106Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:14:10.112Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:14:10 PM
-2025-03-03T13:14:10.217Z [INFO]: Socket disconnected: slstwQLARlmzZ40_AAAO
-2025-03-03T13:14:10.219Z [INFO]: Socket disconnected: _8DQJNb-_M_fo6oaAAAP
-2025-03-03T13:14:10.832Z [INFO]: New socket connected: VhD2ZJUspmUR5AuCAAAS
-2025-03-03T13:14:10.838Z [INFO]: New socket connected: j2Vl3og1UZouvmEZAAAT
-2025-03-03T13:14:20.260Z [INFO]: New connection from route: /home
-2025-03-03T13:14:20.271Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:14:20.286Z [INFO]: Disconnection from route: /home
-2025-03-03T13:14:20.286Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:14:20.288Z [INFO]: New connection from route: /home
-2025-03-03T13:14:20.289Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:14:20.557Z [INFO]: Active players: 1
-2025-03-03T13:14:20.561Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:14:20 PM
-2025-03-03T13:14:20.814Z [INFO]: Active players: 1
-2025-03-03T13:14:20.815Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:14:20 PM
-2025-03-03T13:14:21.081Z [INFO]: Active players: 1
-2025-03-03T13:14:21.082Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:14:21 PM
-2025-03-03T13:16:04.216Z [INFO]: New socket connected: Ic5AgBXyP1xkX0OqAAAB
-2025-03-03T13:16:05.200Z [INFO]: New socket connected: d_4LBRUs6YXMLj0qAAAD
-2025-03-03T13:16:12.417Z [INFO]: Disconnection from route: /home
-2025-03-03T13:16:12.418Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:16:12.444Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 3/3/2025, 9:16:12 PM
-2025-03-03T13:16:12.445Z [INFO]: Disconnection from route: /home
-2025-03-03T13:16:12.446Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:16:12.446Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 3/3/2025, 9:16:12 PM
-2025-03-03T13:16:12.628Z [INFO]: Socket disconnected: Ic5AgBXyP1xkX0OqAAAB
-2025-03-03T13:16:12.632Z [INFO]: Socket disconnected: d_4LBRUs6YXMLj0qAAAD
-2025-03-03T13:16:13.134Z [INFO]: New socket connected: PwY0mA8mtNjwTTpDAAAG
-2025-03-03T13:16:13.139Z [INFO]: New socket connected: JS--rT5VooRa4aXSAAAH
-2025-03-03T13:16:45.085Z [INFO]: New connection from route: /home
-2025-03-03T13:16:45.095Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:16:45.108Z [INFO]: Disconnection from route: /home
-2025-03-03T13:16:45.109Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:16:45.112Z [INFO]: New connection from route: /home
-2025-03-03T13:16:45.112Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:16:45.393Z [INFO]: Active players: 1
-2025-03-03T13:16:45.393Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:16:45 PM
-2025-03-03T13:16:45.480Z [INFO]: Active players: 1
-2025-03-03T13:16:45.480Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:16:45 PM
-2025-03-03T13:16:45.647Z [INFO]: Active players: 1
-2025-03-03T13:16:45.647Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:16:45 PM
-2025-03-03T13:23:06.227Z [INFO]: New socket connected: 3gh5idtt7uvS2gq2AAAB
-2025-03-03T13:23:09.212Z [INFO]: New socket connected: fn4Zfu_WzmrTBCcqAAAD
-2025-03-03T13:23:19.965Z [INFO]: Disconnection from route: /home
-2025-03-03T13:23:19.966Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:23:19.997Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 3/3/2025, 9:23:19 PM
-2025-03-03T13:23:20.006Z [INFO]: Disconnection from route: /home
-2025-03-03T13:23:20.007Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:23:20.020Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 3/3/2025, 9:23:20 PM
-2025-03-03T13:23:20.052Z [INFO]: Socket disconnected: fn4Zfu_WzmrTBCcqAAAD
-2025-03-03T13:23:20.060Z [INFO]: Socket disconnected: 3gh5idtt7uvS2gq2AAAB
-2025-03-03T13:23:20.646Z [INFO]: New socket connected: 45K8k0X2EOskYWGYAAAG
-2025-03-03T13:23:20.653Z [INFO]: New socket connected: o8Ts7uICk9st24XeAAAH
-2025-03-03T13:23:32.716Z [INFO]: New connection from route: /home
-2025-03-03T13:23:32.716Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:23:32.728Z [INFO]: Disconnection from route: /home
-2025-03-03T13:23:32.729Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:23:32.732Z [INFO]: New connection from route: /home
-2025-03-03T13:23:32.733Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:23:33.066Z [INFO]: Active players: 1
-2025-03-03T13:23:33.067Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:23:33 PM
-2025-03-03T13:23:33.105Z [INFO]: Active players: 1
-2025-03-03T13:23:33.105Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:23:33 PM
-2025-03-03T13:23:33.632Z [INFO]: Active players: 1
-2025-03-03T13:23:33.633Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:23:33 PM
-2025-03-03T13:23:41.932Z [INFO]: Disconnection from route: /home
-2025-03-03T13:23:41.932Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:23:41.933Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:23:41 PM
-2025-03-03T13:23:42.722Z [INFO]: Disconnection from route: /home
-2025-03-03T13:23:42.723Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:23:42.723Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:23:42 PM
-2025-03-03T13:23:42.861Z [INFO]: Socket disconnected: o8Ts7uICk9st24XeAAAH
-2025-03-03T13:23:42.864Z [INFO]: Socket disconnected: 45K8k0X2EOskYWGYAAAG
-2025-03-03T13:23:43.366Z [INFO]: New socket connected: owzU2Inc0KbEzm5SAAAK
-2025-03-03T13:23:43.375Z [INFO]: New socket connected: beiX85a0pGzUbJ83AAAL
-2025-03-03T13:24:31.123Z [INFO]: New socket connected: KvgzlG_73im-1xMuAAAN
-2025-03-03T13:24:36.436Z [INFO]: New socket connected: AVFIDNTUnHvK6TbRAAAP
-2025-03-03T13:24:51.112Z [INFO]: New connection from route: /home
-2025-03-03T13:24:51.284Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:24:51.311Z [INFO]: Disconnection from route: /home
-2025-03-03T13:24:51.312Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:24:51.314Z [INFO]: New connection from route: /home
-2025-03-03T13:24:51.372Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:24:51.796Z [INFO]: Active players: 1
-2025-03-03T13:24:51.797Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:24:51 PM
-2025-03-03T13:24:52.055Z [INFO]: Active players: 1
-2025-03-03T13:24:52.055Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:24:52 PM
-2025-03-03T13:24:52.316Z [INFO]: Active players: 1
-2025-03-03T13:24:52.317Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:24:52 PM
-2025-03-03T13:25:02.524Z [INFO]: Disconnection from route: /home
-2025-03-03T13:25:02.524Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:25:02.525Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:25:02 PM
-2025-03-03T13:25:03.305Z [INFO]: Disconnection from route: /home
-2025-03-03T13:25:03.305Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:25:03.306Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:25:03 PM
-2025-03-03T13:25:03.425Z [INFO]: Socket disconnected: owzU2Inc0KbEzm5SAAAK
-2025-03-03T13:25:03.427Z [INFO]: Socket disconnected: AVFIDNTUnHvK6TbRAAAP
-2025-03-03T13:25:03.428Z [INFO]: Socket disconnected: KvgzlG_73im-1xMuAAAN
-2025-03-03T13:25:03.428Z [INFO]: Socket disconnected: beiX85a0pGzUbJ83AAAL
-2025-03-03T13:25:04.035Z [INFO]: New socket connected: LqGc9xniECHA0sJ7AAAS
-2025-03-03T13:25:04.042Z [INFO]: New socket connected: tXpNtkHCX9JTUfPEAAAT
-2025-03-03T13:26:10.428Z [INFO]: New socket connected: WQFIlFz6qioYRHw_AAAC
-2025-03-03T13:26:10.437Z [INFO]: New socket connected: c6dR72Eym10kGPi6AAAD
-2025-03-03T13:26:11.042Z [INFO]: Socket disconnected: c6dR72Eym10kGPi6AAAD
-2025-03-03T13:26:11.058Z [INFO]: Socket disconnected: WQFIlFz6qioYRHw_AAAC
-2025-03-03T13:26:12.525Z [INFO]: New socket connected: RQFkur0z3sik_iQkAAAG
-2025-03-03T13:26:12.537Z [INFO]: New socket connected: lXhLG517NSiYjb2OAAAH
-2025-03-03T13:29:54.851Z [INFO]: New connection from route: /home
-2025-03-03T13:29:54.852Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:29:54.890Z [INFO]: Disconnection from route: /home
-2025-03-03T13:29:54.891Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:29:54.894Z [INFO]: New connection from route: /home
-2025-03-03T13:29:54.900Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:29:55.201Z [INFO]: Active players: 1
-2025-03-03T13:29:55.226Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:29:55 PM
-2025-03-03T13:29:55.427Z [INFO]: Active players: 1
-2025-03-03T13:29:55.428Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:29:55 PM
-2025-03-03T13:29:55.975Z [INFO]: Active players: 1
-2025-03-03T13:29:55.976Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:29:55 PM
-2025-03-03T13:30:07.066Z [INFO]: Disconnection from route: /home
-2025-03-03T13:30:07.066Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:07.066Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:30:07 PM
-2025-03-03T13:30:07.772Z [INFO]: Disconnection from route: /home
-2025-03-03T13:30:07.775Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:07.775Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:30:07 PM
-2025-03-03T13:30:07.905Z [INFO]: Socket disconnected: RQFkur0z3sik_iQkAAAG
-2025-03-03T13:30:07.907Z [INFO]: Socket disconnected: lXhLG517NSiYjb2OAAAH
-2025-03-03T13:30:08.471Z [INFO]: New socket connected: frr62uUHGnvz7tbcAAAK
-2025-03-03T13:30:08.484Z [INFO]: New socket connected: l4HOCMa01ziMwxDXAAAL
-2025-03-03T13:30:22.415Z [INFO]: New connection from route: /home
-2025-03-03T13:30:22.415Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:22.433Z [INFO]: Disconnection from route: /home
-2025-03-03T13:30:22.433Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:22.436Z [INFO]: New connection from route: /home
-2025-03-03T13:30:22.436Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:22.697Z [INFO]: Active players: 1
-2025-03-03T13:30:22.698Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:30:22 PM
-2025-03-03T13:30:22.922Z [INFO]: Active players: 1
-2025-03-03T13:30:22.922Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:30:22 PM
-2025-03-03T13:30:23.148Z [INFO]: Active players: 1
-2025-03-03T13:30:23.148Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:30:23 PM
-2025-03-03T13:30:27.969Z [INFO]: Disconnection from route: /home
-2025-03-03T13:30:27.970Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:27.970Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:30:27 PM
-2025-03-03T13:30:27.997Z [INFO]: Socket disconnected: frr62uUHGnvz7tbcAAAK
-2025-03-03T13:30:27.998Z [INFO]: Socket disconnected: l4HOCMa01ziMwxDXAAAL
-2025-03-03T13:30:28.610Z [INFO]: New socket connected: lMdrdJKSafeVm8h4AAAO
-2025-03-03T13:30:28.760Z [INFO]: New socket connected: j-l8gprV5pOxFuXXAAAP
-2025-03-03T13:30:28.847Z [INFO]: New connection from route: /home
-2025-03-03T13:30:28.869Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:28.895Z [INFO]: Disconnection from route: /home
-2025-03-03T13:30:28.898Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:28.901Z [INFO]: New connection from route: /home
-2025-03-03T13:30:28.902Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:29.105Z [INFO]: Active players: 1
-2025-03-03T13:30:29.105Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:30:29 PM
-2025-03-03T13:30:29.143Z [INFO]: Active players: 1
-2025-03-03T13:30:29.144Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:30:29 PM
-2025-03-03T13:30:29.179Z [INFO]: Active players: 1
-2025-03-03T13:30:29.179Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:30:29 PM
-2025-03-03T13:30:42.993Z [INFO]: Disconnection from route: /home
-2025-03-03T13:30:43.003Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:43.003Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:30:43 PM
-2025-03-03T13:30:45.244Z [INFO]: Disconnection from route: /home
-2025-03-03T13:30:45.244Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:30:45.245Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:30:45 PM
-2025-03-03T13:30:45.374Z [INFO]: Socket disconnected: lMdrdJKSafeVm8h4AAAO
-2025-03-03T13:30:45.376Z [INFO]: Socket disconnected: j-l8gprV5pOxFuXXAAAP
-2025-03-03T13:30:45.998Z [INFO]: New socket connected: yGF94v1iDShAF6JrAAAS
-2025-03-03T13:30:46.057Z [INFO]: New socket connected: w9XqFE3cDBn8EA8PAAAT
-2025-03-03T13:36:23.829Z [INFO]: Socket disconnected: yGF94v1iDShAF6JrAAAS
-2025-03-03T13:36:23.888Z [INFO]: Socket disconnected: w9XqFE3cDBn8EA8PAAAT
-2025-03-03T13:36:24.464Z [INFO]: New socket connected: 7k-UPmujTiEZBwn1AAAW
-2025-03-03T13:36:24.521Z [INFO]: New socket connected: 3D5Q0PKrqcLJ6z2TAAAX
-2025-03-03T13:36:30.150Z [INFO]: New connection from route: /home
-2025-03-03T13:36:30.150Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:36:30.166Z [INFO]: Disconnection from route: /home
-2025-03-03T13:36:30.168Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:36:30.170Z [INFO]: New connection from route: /home
-2025-03-03T13:36:30.171Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:36:30.535Z [INFO]: Active players: 1
-2025-03-03T13:36:30.536Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:36:30 PM
-2025-03-03T13:36:30.758Z [INFO]: Active players: 1
-2025-03-03T13:36:30.758Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:36:30 PM
-2025-03-03T13:36:30.982Z [INFO]: Active players: 1
-2025-03-03T13:36:30.983Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:36:30 PM
-2025-03-03T13:36:38.039Z [INFO]: Disconnection from route: /home
-2025-03-03T13:36:38.039Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:36:38.040Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:36:38 PM
-2025-03-03T13:36:38.048Z [INFO]: Socket disconnected: 7k-UPmujTiEZBwn1AAAW
-2025-03-03T13:36:38.049Z [INFO]: Socket disconnected: 3D5Q0PKrqcLJ6z2TAAAX
-2025-03-03T13:36:54.207Z [INFO]: New socket connected: LtaVrXX3D1aLHRL-AAAa
-2025-03-03T13:36:54.212Z [INFO]: New socket connected: MNqpH7h8i_P-cGpLAAAb
-2025-03-03T13:40:18.040Z [INFO]: Socket disconnected: LtaVrXX3D1aLHRL-AAAa
-2025-03-03T13:40:18.041Z [INFO]: Socket disconnected: MNqpH7h8i_P-cGpLAAAb
-2025-03-03T13:40:18.319Z [INFO]: New socket connected: p-r_NUTfWRCLKK6zAAAe
-2025-03-03T13:40:18.322Z [INFO]: New socket connected: C-C6R8fWhSSn4FcZAAAf
-2025-03-03T13:40:45.514Z [INFO]: New connection from route: /home
-2025-03-03T13:40:45.514Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:40:45.525Z [INFO]: Disconnection from route: /home
-2025-03-03T13:40:45.525Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:40:45.527Z [INFO]: New connection from route: /home
-2025-03-03T13:40:45.528Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:40:45.757Z [INFO]: Active players: 1
-2025-03-03T13:40:45.757Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:40:45 PM
-2025-03-03T13:40:46.199Z [INFO]: Active players: 1
-2025-03-03T13:40:46.200Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:40:46 PM
-2025-03-03T13:40:46.420Z [INFO]: Active players: 1
-2025-03-03T13:40:46.421Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/3/2025, 9:40:46 PM
-2025-03-03T13:41:00.173Z [INFO]: Disconnection from route: /home
-2025-03-03T13:41:00.174Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-03T13:41:00.174Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/3/2025, 9:41:00 PM
-2025-03-03T13:41:00.237Z [INFO]: Socket disconnected: p-r_NUTfWRCLKK6zAAAe
-2025-03-03T13:41:00.238Z [INFO]: Socket disconnected: C-C6R8fWhSSn4FcZAAAf
-=======
-2025-03-02T12:48:23.402Z [INFO]: New socket connected: zIZqbigTouEobKMFAAAC
-2025-03-02T12:48:23.407Z [INFO]: New socket connected: Ir8elF7PesEnXZtTAAAD
-2025-03-02T12:48:23.428Z [INFO]: New connection from route: /home
-2025-03-02T12:48:23.429Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T12:48:23.759Z [INFO]: Disconnection from route: /home
-2025-03-02T12:48:23.760Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T12:48:23.767Z [INFO]: New connection from route: /home
-2025-03-02T12:48:23.768Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T12:48:27.009Z [INFO]: Active players: 1
-2025-03-02T12:48:32.877Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 8:48:27 PM
-2025-03-02T12:48:32.882Z [INFO]: Active players: 1
-2025-03-02T12:48:32.916Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 8:48:32 PM
-2025-03-02T12:48:32.923Z [INFO]: Active players: 1
-2025-03-02T12:48:32.924Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 8:48:32 PM
-2025-03-02T13:00:08.269Z [INFO]: New socket connected: 2a2e_XyOVVaCQJ7nAAAB
-2025-03-02T13:00:09.251Z [INFO]: New socket connected: sd6m4pZ5O7eQGFouAAAD
-2025-03-02T13:07:21.461Z [INFO]: New socket connected: ktQ2m9znAkI-oFs9AAAC
-2025-03-02T13:07:21.473Z [INFO]: New socket connected: Za_ZTUH23SufX3UaAAAD
-2025-03-02T13:17:13.262Z [INFO]: New socket connected: YWwCVxs2OJHzQmS8AAAC
-2025-03-02T13:17:13.272Z [INFO]: New socket connected: JKxMiqgUP3NCHcZHAAAD
-2025-03-02T13:18:02.271Z [INFO]: New socket connected: V5TP39HfFw_UFV5kAAAC
-2025-03-02T13:18:02.286Z [INFO]: New socket connected: Vm2_VtGRErnA05EFAAAD
-2025-03-02T13:18:56.272Z [INFO]: New socket connected: YmL7JtcxtWp68KC4AAAC
-2025-03-02T13:18:56.285Z [INFO]: New socket connected: Fi1dVmHyZdMEya3IAAAD
-2025-03-02T13:19:47.273Z [INFO]: New socket connected: z4k9N2ws87YXUMWHAAAC
-2025-03-02T13:19:47.445Z [INFO]: New socket connected: 1vq54gbGXnhXxff7AAAD
-2025-03-02T13:20:54.875Z [INFO]: New socket connected: _jl7nqUbkPa42fKVAAAB
-2025-03-02T13:20:58.265Z [INFO]: New socket connected: D6OfK8S7x60aITaAAAAD
-2025-03-02T13:23:03.278Z [INFO]: New socket connected: _WIx2t69mJEUFUk1AAAC
-2025-03-02T13:23:03.282Z [INFO]: New socket connected: caFVs_qTEN1VG_uIAAAD
-2025-03-02T13:37:56.877Z [INFO]: New socket connected: 9NIs0bG4YVb8wIPWAAAC
-2025-03-02T13:37:56.888Z [INFO]: New socket connected: Zm-VoHOCMpUrDcy2AAAD
-2025-03-02T13:45:49.904Z [INFO]: New socket connected: BGKKjItvY2dc3XlqAAAC
-2025-03-02T13:45:49.921Z [INFO]: New socket connected: S8mWnFMAQJI2PyCFAAAD
-2025-03-02T13:46:48.265Z [INFO]: New socket connected: 0k2Feqxk2_D6uzr5AAAC
-2025-03-02T13:46:48.287Z [INFO]: New socket connected: bj4mTJqNIcmcdoz3AAAD
-2025-03-02T13:47:56.746Z [INFO]: New socket connected: pZidqxEFs85Z_iazAAAC
-2025-03-02T13:47:56.759Z [INFO]: New socket connected: JHRJsJPrbX_WnHcvAAAD
-2025-03-02T13:51:15.404Z [INFO]: New socket connected: qaOVPQMbuPDcqpu8AAAC
-2025-03-02T13:51:15.412Z [INFO]: New socket connected: qD-jl3QruXq3buCKAAAD
-2025-03-02T13:54:29.355Z [INFO]: New socket connected: uE8z_NOQ9MH2TVG8AAAC
-2025-03-02T13:54:29.389Z [INFO]: New socket connected: dThwXzEc47vl0-xeAAAD
-2025-03-02T13:59:02.966Z [INFO]: New socket connected: rsiZ8F0_44ur2OVvAAAC
-2025-03-02T13:59:02.983Z [INFO]: New socket connected: AbNXXcRhBrwnVISjAAAD
-2025-03-02T14:00:33.625Z [INFO]: New socket connected: HIRXxQSW4XimihNAAAAC
-2025-03-02T14:00:33.636Z [INFO]: New socket connected: uupGraxoOw4Ko4AaAAAD
-2025-03-02T14:06:20.299Z [INFO]: New socket connected: Ryt8C2-SsLHklXhiAAAC
-2025-03-02T14:06:20.342Z [INFO]: New socket connected: ZOKOo_awAP9_wP73AAAD
-2025-03-02T14:21:56.273Z [INFO]: New socket connected: ZsKEtY6-LCXFRKmnAAAC
-2025-03-02T14:21:56.287Z [INFO]: New socket connected: G4ClEHN53FP6oQteAAAD
-2025-03-02T14:33:56.624Z [INFO]: New socket connected: -ZL4S7GwtxQ2o_S6AAAC
-2025-03-02T14:33:56.639Z [INFO]: New socket connected: YZHEWrIWWb7OwDnPAAAD
-2025-03-02T14:35:54.449Z [INFO]: New socket connected: omEeKnXbcenGjKAdAAAG
-2025-03-02T14:35:54.457Z [INFO]: New socket connected: LCdVHlBu2gzjWmSWAAAH
-2025-03-02T14:35:54.801Z [INFO]: New connection from route: /home
-2025-03-02T14:35:54.802Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:35:54.815Z [INFO]: Disconnection from route: /home
-2025-03-02T14:35:54.816Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:35:54.818Z [INFO]: New connection from route: /home
-2025-03-02T14:35:54.818Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:35:56.614Z [INFO]: Active players: 1
-2025-03-02T14:35:56.615Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:35:56 PM
-2025-03-02T14:35:56.642Z [INFO]: Active players: 1
-2025-03-02T14:35:56.642Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:35:56 PM
-2025-03-02T14:35:56.664Z [INFO]: Active players: 1
-2025-03-02T14:35:56.664Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:35:56 PM
-2025-03-02T14:36:04.563Z [INFO]: New socket connected: ifagjj9cVCBtJu8OAAAK
-2025-03-02T14:36:04.568Z [INFO]: New socket connected: qoR_MD6jZVEHneUOAAAL
-2025-03-02T14:36:05.015Z [INFO]: New connection from route: /home
-2025-03-02T14:36:05.019Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:36:05.025Z [INFO]: Disconnection from route: /home
-2025-03-02T14:36:05.026Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:36:05.028Z [INFO]: New connection from route: /home
-2025-03-02T14:36:05.030Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:36:05.280Z [INFO]: Active players: 1
-2025-03-02T14:36:05.280Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:36:05 PM
-2025-03-02T14:36:05.310Z [INFO]: Active players: 1
-2025-03-02T14:36:05.311Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:36:05 PM
-2025-03-02T14:36:05.342Z [INFO]: Active players: 1
-2025-03-02T14:36:05.342Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:36:05 PM
-2025-03-02T14:36:32.885Z [INFO]: Disconnection from route: /home
-2025-03-02T14:36:32.886Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:36:32.886Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:36:32 PM
-2025-03-02T14:36:32.995Z [INFO]: Socket disconnected: ifagjj9cVCBtJu8OAAAK
-2025-03-02T14:36:32.999Z [INFO]: Socket disconnected: qoR_MD6jZVEHneUOAAAL
-2025-03-02T14:36:34.198Z [INFO]: Disconnection from route: /home
-2025-03-02T14:36:34.198Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:36:34.198Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:36:34 PM
-2025-03-02T14:36:34.276Z [INFO]: Socket disconnected: LCdVHlBu2gzjWmSWAAAH
-2025-03-02T14:36:34.277Z [INFO]: Socket disconnected: omEeKnXbcenGjKAdAAAG
-2025-03-02T14:36:42.227Z [INFO]: New socket connected: cUwnHcITAFoVU3pVAAAO
-2025-03-02T14:36:42.232Z [INFO]: New socket connected: okRPRG82UX1mSudJAAAP
-2025-03-02T14:36:42.545Z [INFO]: New connection from route: /home
-2025-03-02T14:36:42.546Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:36:42.548Z [INFO]: Disconnection from route: /home
-2025-03-02T14:36:42.548Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:36:42.550Z [INFO]: New connection from route: /home
-2025-03-02T14:36:42.550Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:36:43.407Z [INFO]: Disconnection from route: /home
-2025-03-02T14:36:43.409Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:36:43.486Z [INFO]: Socket disconnected: cUwnHcITAFoVU3pVAAAO
-2025-03-02T14:36:43.488Z [INFO]: Socket disconnected: okRPRG82UX1mSudJAAAP
-2025-03-02T14:36:44.352Z [INFO]: Active players: 0
-2025-03-02T14:36:44.352Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 3/2/2025, 10:36:44 PM
-2025-03-02T14:36:44.358Z [INFO]: Active players: 0
-2025-03-02T14:36:44.359Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 3/2/2025, 10:36:44 PM
-2025-03-02T14:36:44.393Z [INFO]: Active players: 0
-2025-03-02T14:36:44.393Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 0 as of 3/2/2025, 10:36:44 PM
-2025-03-02T14:36:44.485Z [INFO]: Active players: 0
-2025-03-02T14:36:44.486Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 0 as of 3/2/2025, 10:36:44 PM
-2025-03-02T14:37:07.537Z [INFO]: New socket connected: HwfhW2eZbRUzATWiAAAS
-2025-03-02T14:37:07.541Z [INFO]: New socket connected: 7cLlR1DatMElwj57AAAT
-2025-03-02T14:37:07.668Z [INFO]: New connection from route: /home
-2025-03-02T14:37:07.670Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:37:07.792Z [INFO]: Disconnection from route: /home
-2025-03-02T14:37:07.793Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:37:07.797Z [INFO]: New connection from route: /home
-2025-03-02T14:37:07.797Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:37:09.498Z [INFO]: Active players: 1
-2025-03-02T14:37:09.498Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:37:09 PM
-2025-03-02T14:37:09.649Z [INFO]: Active players: 1
-2025-03-02T14:37:09.650Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:37:09 PM
-2025-03-02T14:37:09.654Z [INFO]: Active players: 1
-2025-03-02T14:37:09.655Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:37:09 PM
-2025-03-02T14:37:15.488Z [INFO]: New socket connected: rI8Q-X8xxS5iUYSZAAAW
-2025-03-02T14:37:15.495Z [INFO]: New socket connected: dT6M-A1TjDVSnvIuAAAX
-2025-03-02T14:37:15.878Z [INFO]: New connection from route: /home
-2025-03-02T14:37:15.880Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:37:15.883Z [INFO]: Disconnection from route: /home
-2025-03-02T14:37:15.883Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:37:15.885Z [INFO]: New connection from route: /home
-2025-03-02T14:37:15.886Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:37:16.133Z [INFO]: Active players: 1
-2025-03-02T14:37:16.133Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:37:16 PM
-2025-03-02T14:37:16.134Z [INFO]: Active players: 1
-2025-03-02T14:37:16.135Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:37:16 PM
-2025-03-02T14:37:16.138Z [INFO]: Active players: 1
-2025-03-02T14:37:16.138Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:37:16 PM
-2025-03-02T14:37:16.478Z [INFO]: Disconnection from route: /home
-2025-03-02T14:37:16.478Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:37:16.478Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:37:16 PM
-2025-03-02T14:37:16.591Z [INFO]: Socket disconnected: 7cLlR1DatMElwj57AAAT
-2025-03-02T14:37:16.592Z [INFO]: Socket disconnected: HwfhW2eZbRUzATWiAAAS
-2025-03-02T14:37:17.245Z [INFO]: Disconnection from route: /home
-2025-03-02T14:37:17.245Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:37:17.246Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:37:17 PM
-2025-03-02T14:37:17.318Z [INFO]: Socket disconnected: dT6M-A1TjDVSnvIuAAAX
-2025-03-02T14:37:17.320Z [INFO]: Socket disconnected: rI8Q-X8xxS5iUYSZAAAW
-2025-03-02T14:38:46.898Z [INFO]: New socket connected: jK5B0-7toEUcVBc0AAAa
-2025-03-02T14:38:46.924Z [INFO]: New socket connected: dU9K9bCMEvKeIceWAAAb
-2025-03-02T14:38:47.953Z [INFO]: New connection from route: /home
-2025-03-02T14:38:47.953Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:38:47.955Z [INFO]: Disconnection from route: /home
-2025-03-02T14:38:47.956Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:38:47.957Z [INFO]: New connection from route: /home
-2025-03-02T14:38:47.957Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:38:49.637Z [INFO]: Active players: 1
-2025-03-02T14:38:49.637Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:38:49 PM
-2025-03-02T14:38:49.761Z [INFO]: Active players: 1
-2025-03-02T14:38:49.761Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:38:49 PM
-2025-03-02T14:38:49.769Z [INFO]: Active players: 1
-2025-03-02T14:38:49.770Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:38:49 PM
-2025-03-02T14:39:28.449Z [INFO]: New socket connected: uPNGCUp9E75sJsNHAAAe
-2025-03-02T14:39:28.475Z [INFO]: New socket connected: 6K0_qr6Nj-4DTszQAAAf
-2025-03-02T14:39:29.424Z [INFO]: New connection from route: /home
-2025-03-02T14:39:29.424Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:39:29.427Z [INFO]: Disconnection from route: /home
-2025-03-02T14:39:29.427Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:39:29.429Z [INFO]: New connection from route: /home
-2025-03-02T14:39:29.429Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:39:31.378Z [INFO]: Active players: 1
-2025-03-02T14:39:31.378Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:39:31 PM
-2025-03-02T14:39:31.440Z [INFO]: Active players: 1
-2025-03-02T14:39:31.440Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:39:31 PM
-2025-03-02T14:39:31.450Z [INFO]: Active players: 1
-2025-03-02T14:39:31.451Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:39:31 PM
-2025-03-02T14:39:44.103Z [INFO]: Disconnection from route: /home
-2025-03-02T14:39:44.103Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:39:44.104Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:39:44 PM
-2025-03-02T14:39:44.155Z [INFO]: Socket disconnected: dU9K9bCMEvKeIceWAAAb
-2025-03-02T14:39:44.157Z [INFO]: Socket disconnected: jK5B0-7toEUcVBc0AAAa
-2025-03-02T14:39:44.612Z [INFO]: Disconnection from route: /home
-2025-03-02T14:39:44.612Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:39:44.613Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:39:44 PM
-2025-03-02T14:39:44.693Z [INFO]: Socket disconnected: uPNGCUp9E75sJsNHAAAe
-2025-03-02T14:39:44.694Z [INFO]: Socket disconnected: 6K0_qr6Nj-4DTszQAAAf
-2025-03-02T14:43:10.271Z [INFO]: New socket connected: OimKpeWa0ZvPkqCzAAAC
-2025-03-02T14:43:10.280Z [INFO]: New socket connected: vqrBH0gdSFhkw5NaAAAD
-2025-03-02T14:47:39.367Z [INFO]: New socket connected: vcML9eMb1Eqsir8uAAAC
-2025-03-02T14:47:39.402Z [INFO]: New socket connected: ZuzlXYNlTVcTjcZ7AAAD
-2025-03-02T14:48:01.500Z [INFO]: New socket connected: NFPdsybpnodH2eO3AAAG
-2025-03-02T14:48:01.569Z [INFO]: New socket connected: jUHaRFHbMivZOWtGAAAH
-2025-03-02T14:48:02.353Z [INFO]: New connection from route: /home
-2025-03-02T14:48:02.354Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:48:02.365Z [INFO]: Disconnection from route: /home
-2025-03-02T14:48:02.366Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:48:02.368Z [INFO]: New connection from route: /home
-2025-03-02T14:48:02.368Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:48:02.965Z [INFO]: Active players: 1
-2025-03-02T14:48:02.966Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:48:02 PM
-2025-03-02T14:48:02.987Z [INFO]: Active players: 1
-2025-03-02T14:48:02.987Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:48:02 PM
-2025-03-02T14:48:03.189Z [INFO]: Active players: 1
-2025-03-02T14:48:03.190Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:48:03 PM
-2025-03-02T14:48:08.881Z [INFO]: Disconnection from route: /home
-2025-03-02T14:48:08.882Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:48:08.883Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:48:08 PM
-2025-03-02T14:48:08.986Z [INFO]: Socket disconnected: jUHaRFHbMivZOWtGAAAH
-2025-03-02T14:48:08.988Z [INFO]: Socket disconnected: NFPdsybpnodH2eO3AAAG
-2025-03-02T14:49:54.498Z [INFO]: New socket connected: s04togKQr8FPo4kbAAAC
-2025-03-02T14:49:54.510Z [INFO]: New socket connected: T7gFSCgCfI7wMgIkAAAD
-2025-03-02T14:51:28.438Z [INFO]: New socket connected: Y8R1GaynqKXXpB42AAAG
-2025-03-02T14:51:28.458Z [INFO]: New socket connected: awaUmXCwvw3KenMyAAAH
-2025-03-02T14:51:29.030Z [INFO]: New connection from route: /home
-2025-03-02T14:51:29.031Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:51:29.042Z [INFO]: Disconnection from route: /home
-2025-03-02T14:51:29.043Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:51:29.045Z [INFO]: New connection from route: /home
-2025-03-02T14:51:29.045Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:51:30.850Z [INFO]: Active players: 1
-2025-03-02T14:51:30.850Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:51:30 PM
-2025-03-02T14:51:30.873Z [INFO]: Active players: 1
-2025-03-02T14:51:30.873Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:51:30 PM
-2025-03-02T14:51:30.886Z [INFO]: Active players: 1
-2025-03-02T14:51:30.886Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:51:30 PM
-2025-03-02T14:52:17.265Z [INFO]: New socket connected: qXd5iDDbsmq1oz3IAAAC
-2025-03-02T14:52:17.272Z [INFO]: New socket connected: vuzE75c9TBvdExJdAAAD
-2025-03-02T14:54:12.284Z [INFO]: New socket connected: 7-sxvMDWHmXsAqD0AAAC
-2025-03-02T14:54:12.302Z [INFO]: New socket connected: uf7-dWSFoq1Nwea8AAAD
-2025-03-02T14:54:13.339Z [INFO]: New socket connected: a8eAvVVqQ6iwVaYKAAAF
-2025-03-02T14:54:15.054Z [INFO]: New socket connected: VNVMVLBD8NgwQtHsAAAH
-2025-03-02T14:54:15.097Z [INFO]: New connection from route: /home
-2025-03-02T14:54:15.099Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:54:15.114Z [INFO]: Disconnection from route: /home
-2025-03-02T14:54:15.114Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:54:15.117Z [INFO]: New connection from route: /home
-2025-03-02T14:54:15.117Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:54:16.344Z [INFO]: Active players: 1
-2025-03-02T14:54:16.371Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:54:16 PM
-2025-03-02T14:54:16.521Z [INFO]: Active players: 1
-2025-03-02T14:54:16.522Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:54:16 PM
-2025-03-02T14:54:16.565Z [INFO]: Active players: 1
-2025-03-02T14:54:16.566Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:54:16 PM
-2025-03-02T14:54:30.286Z [INFO]: Disconnection from route: /home
-2025-03-02T14:54:30.287Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:54:30.287Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:54:30 PM
-2025-03-02T14:54:30.355Z [INFO]: Socket disconnected: a8eAvVVqQ6iwVaYKAAAF
-2025-03-02T14:54:30.356Z [INFO]: Socket disconnected: VNVMVLBD8NgwQtHsAAAH
-2025-03-02T14:55:02.633Z [INFO]: New socket connected: AoaI1aLHEfu8NMhwAAAK
-2025-03-02T14:55:02.636Z [INFO]: New socket connected: vqStvNmBavMsaWIsAAAL
-2025-03-02T14:55:03.001Z [INFO]: New connection from route: /home
-2025-03-02T14:55:03.002Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:55:03.051Z [INFO]: Disconnection from route: /home
-2025-03-02T14:55:03.089Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:55:03.102Z [INFO]: New connection from route: /home
-2025-03-02T14:55:03.112Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:55:03.601Z [INFO]: Active players: 1
-2025-03-02T14:55:03.602Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:55:03 PM
-2025-03-02T14:55:03.848Z [INFO]: Active players: 1
-2025-03-02T14:55:03.849Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:55:03 PM
-2025-03-02T14:55:04.182Z [INFO]: Active players: 1
-2025-03-02T14:55:04.203Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:55:04 PM
-2025-03-02T14:58:22.054Z [INFO]: Disconnection from route: /home
-2025-03-02T14:58:22.054Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:58:22.054Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:58:22 PM
-2025-03-02T14:59:51.210Z [INFO]: New socket connected: roDCJQU1_vGT1wyGAAAO
-2025-03-02T14:59:51.225Z [INFO]: New socket connected: ChBVVVsYwbgV6uc4AAAP
-2025-03-02T14:59:51.837Z [INFO]: New connection from route: /home
-2025-03-02T14:59:51.838Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:59:51.840Z [INFO]: Disconnection from route: /home
-2025-03-02T14:59:51.841Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:59:51.843Z [INFO]: New connection from route: /home
-2025-03-02T14:59:51.843Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T14:59:52.281Z [INFO]: Active players: 1
-2025-03-02T14:59:52.281Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:59:52 PM
-2025-03-02T14:59:52.505Z [INFO]: Active players: 1
-2025-03-02T14:59:52.506Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 10:59:52 PM
-2025-03-02T14:59:52.732Z [INFO]: Active players: 1
-2025-03-02T14:59:52.733Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 10:59:52 PM
-2025-03-02T15:06:38.074Z [INFO]: New socket connected: v4Wtgfl-nSbJNXCuAAAS
-2025-03-02T15:06:38.094Z [INFO]: New socket connected: lgumQsG5biq1GwJaAAAT
-2025-03-02T15:06:38.714Z [INFO]: New connection from route: /home
-2025-03-02T15:06:38.715Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:06:38.717Z [INFO]: Disconnection from route: /home
-2025-03-02T15:06:38.718Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:06:38.719Z [INFO]: New connection from route: /home
-2025-03-02T15:06:38.719Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:06:39.017Z [INFO]: Active players: 1
-2025-03-02T15:06:39.017Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:06:39 PM
-2025-03-02T15:06:39.273Z [INFO]: Active players: 1
-2025-03-02T15:06:39.273Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:06:39 PM
-2025-03-02T15:06:39.528Z [INFO]: Active players: 1
-2025-03-02T15:06:39.529Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:06:39 PM
-2025-03-02T15:06:59.324Z [INFO]: Disconnection from route: /home
-2025-03-02T15:06:59.325Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:06:59.327Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:06:59 PM
-2025-03-02T15:11:13.636Z [INFO]: Socket disconnected: vqStvNmBavMsaWIsAAAL
-2025-03-02T15:11:13.638Z [INFO]: Socket disconnected: AoaI1aLHEfu8NMhwAAAK
-2025-03-02T15:11:16.295Z [INFO]: Disconnection from route: /home
-2025-03-02T15:11:16.296Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:11:16.296Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:11:16 PM
-2025-03-02T15:11:16.383Z [INFO]: Socket disconnected: roDCJQU1_vGT1wyGAAAO
-2025-03-02T15:11:16.384Z [INFO]: Socket disconnected: ChBVVVsYwbgV6uc4AAAP
-2025-03-02T15:11:17.816Z [INFO]: Socket disconnected: v4Wtgfl-nSbJNXCuAAAS
-2025-03-02T15:11:17.817Z [INFO]: Socket disconnected: lgumQsG5biq1GwJaAAAT
-2025-03-02T15:14:33.307Z [INFO]: New socket connected: 5_5INTSSywLBYNlyAAAC
-2025-03-02T15:14:33.332Z [INFO]: New socket connected: euA8-rYpa4lVW6hrAAAD
-2025-03-02T15:26:01.440Z [INFO]: New socket connected: t2FWOPphSQm5pZq0AAAG
-2025-03-02T15:26:01.464Z [INFO]: New socket connected: ZnDdcsZzzJgu49lnAAAH
-2025-03-02T15:26:01.828Z [INFO]: New connection from route: /home
-2025-03-02T15:26:01.845Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:26:01.877Z [INFO]: Disconnection from route: /home
-2025-03-02T15:26:01.902Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:26:01.906Z [INFO]: New connection from route: /home
-2025-03-02T15:26:01.933Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:26:02.301Z [INFO]: Active players: 1
-2025-03-02T15:26:02.301Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:26:02 PM
-2025-03-02T15:26:02.525Z [INFO]: Active players: 1
-2025-03-02T15:26:02.526Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:26:02 PM
-2025-03-02T15:26:02.754Z [INFO]: Active players: 1
-2025-03-02T15:26:02.755Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:26:02 PM
-2025-03-02T15:26:03.450Z [INFO]: Disconnection from route: /home
-2025-03-02T15:26:03.452Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:26:03.452Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:26:03 PM
-2025-03-02T15:26:03.634Z [INFO]: Socket disconnected: t2FWOPphSQm5pZq0AAAG
-2025-03-02T15:26:03.636Z [INFO]: Socket disconnected: ZnDdcsZzzJgu49lnAAAH
-2025-03-02T15:26:45.963Z [INFO]: New socket connected: 1-6YhVry_9W6JnOHAAAC
-2025-03-02T15:26:45.976Z [INFO]: New socket connected: WBZ-rLGCFaqTxSshAAAD
-2025-03-02T15:33:26.271Z [INFO]: New socket connected: O3Vt3JW_-6Q0Tnc_AAAC
-2025-03-02T15:33:26.293Z [INFO]: New socket connected: gUfFz_9Av6L-YsgzAAAD
-2025-03-02T15:34:18.210Z [INFO]: New socket connected: w5z7lJE6Xfg7Uy16AAAC
-2025-03-02T15:34:18.223Z [INFO]: New socket connected: KBjoF2NawEhkPHyIAAAD
-2025-03-02T15:34:52.269Z [INFO]: Socket disconnected: w5z7lJE6Xfg7Uy16AAAC
-2025-03-02T15:34:52.275Z [INFO]: Socket disconnected: KBjoF2NawEhkPHyIAAAD
-2025-03-02T15:34:53.051Z [INFO]: New socket connected: MlrxvvVGFprvjoKqAAAG
-2025-03-02T15:34:53.066Z [INFO]: New socket connected: 0udGD-1f-TRxPW0TAAAH
-2025-03-02T15:34:53.342Z [INFO]: New connection from route: /home
-2025-03-02T15:34:53.343Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:34:53.363Z [INFO]: Disconnection from route: /home
-2025-03-02T15:34:53.363Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:34:53.367Z [INFO]: New connection from route: /home
-2025-03-02T15:34:53.368Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:34:53.784Z [INFO]: Active players: 1
-2025-03-02T15:34:53.812Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:34:53 PM
-2025-03-02T15:34:53.830Z [INFO]: Active players: 1
-2025-03-02T15:34:53.830Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:34:53 PM
-2025-03-02T15:34:54.012Z [INFO]: Active players: 1
-2025-03-02T15:34:54.012Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:34:54 PM
-2025-03-02T15:34:56.551Z [INFO]: Disconnection from route: /home
-2025-03-02T15:34:56.552Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:34:56.553Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:34:56 PM
-2025-03-02T15:36:51.605Z [INFO]: Socket disconnected: MlrxvvVGFprvjoKqAAAG
-2025-03-02T15:36:51.609Z [INFO]: Socket disconnected: 0udGD-1f-TRxPW0TAAAH
-2025-03-02T15:36:52.080Z [INFO]: New socket connected: 9aUjOlZYD6G31XKQAAAK
-2025-03-02T15:36:52.086Z [INFO]: New socket connected: NMfqtroAfSQQCEVSAAAL
-2025-03-02T15:46:38.311Z [INFO]: New socket connected: 3Wfru4xl3jaICbJpAAAC
-2025-03-02T15:46:38.415Z [INFO]: New socket connected: W_Q1HxpCYEIOLYVcAAAD
-2025-03-02T15:47:59.672Z [INFO]: New socket connected: rbrHJ32hiVRe3knYAAAC
-2025-03-02T15:47:59.682Z [INFO]: New socket connected: YjBH2iMc4kkJ-13zAAAD
-2025-03-02T15:49:15.609Z [INFO]: Socket disconnected: rbrHJ32hiVRe3knYAAAC
-2025-03-02T15:49:15.621Z [INFO]: Socket disconnected: YjBH2iMc4kkJ-13zAAAD
-2025-03-02T15:49:16.191Z [INFO]: New socket connected: FPD1smChAGZuQXHlAAAF
-2025-03-02T15:49:16.286Z [INFO]: New socket connected: 8jgBxm_PkTaUhqNLAAAH
-2025-03-02T15:49:31.965Z [INFO]: Socket disconnected: 8jgBxm_PkTaUhqNLAAAH
-2025-03-02T15:49:31.967Z [INFO]: Socket disconnected: FPD1smChAGZuQXHlAAAF
-2025-03-02T15:49:32.238Z [INFO]: New socket connected: v2GToI9ABA0yryB4AAAK
-2025-03-02T15:49:32.248Z [INFO]: New socket connected: 1LcSVUs7Oy0mU2-rAAAL
-2025-03-02T15:49:34.663Z [INFO]: Socket disconnected: 1LcSVUs7Oy0mU2-rAAAL
-2025-03-02T15:49:34.665Z [INFO]: Socket disconnected: v2GToI9ABA0yryB4AAAK
-2025-03-02T15:49:42.308Z [INFO]: New socket connected: pNmH6_kKeZGPUpCyAAAO
-2025-03-02T15:49:42.418Z [INFO]: New socket connected: NZ2lt4NRm7kIYcAbAAAP
-2025-03-02T15:49:43.890Z [INFO]: Socket disconnected: pNmH6_kKeZGPUpCyAAAO
-2025-03-02T15:49:43.892Z [INFO]: Socket disconnected: NZ2lt4NRm7kIYcAbAAAP
-2025-03-02T15:49:44.283Z [INFO]: New socket connected: xoJ4dbxiHQAnaUadAAAS
-2025-03-02T15:49:44.291Z [INFO]: New socket connected: 6ezgy6bLXf5gYsjiAAAT
-2025-03-02T15:49:53.958Z [INFO]: New connection from route: /home
-2025-03-02T15:49:53.961Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:49:53.976Z [INFO]: Disconnection from route: /home
-2025-03-02T15:49:53.977Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:49:53.979Z [INFO]: New connection from route: /home
-2025-03-02T15:49:53.979Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:49:54.273Z [INFO]: Active players: 1
-2025-03-02T15:49:54.299Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:49:54 PM
-2025-03-02T15:49:54.497Z [INFO]: Active players: 1
-2025-03-02T15:49:54.498Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:49:54 PM
-2025-03-02T15:49:54.724Z [INFO]: Active players: 1
-2025-03-02T15:49:54.724Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:49:54 PM
-2025-03-02T15:49:57.111Z [INFO]: Disconnection from route: /home
-2025-03-02T15:49:57.114Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:49:57.115Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:49:57 PM
-2025-03-02T15:49:58.455Z [INFO]: New connection from route: /home
-2025-03-02T15:49:58.455Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:49:58.463Z [INFO]: Disconnection from route: /home
-2025-03-02T15:49:58.463Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:49:58.465Z [INFO]: New connection from route: /home
-2025-03-02T15:49:58.466Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:49:58.689Z [INFO]: Active players: 1
-2025-03-02T15:49:58.690Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:49:58 PM
-2025-03-02T15:49:58.696Z [INFO]: Active players: 1
-2025-03-02T15:49:58.697Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:49:58 PM
-2025-03-02T15:49:58.703Z [INFO]: Active players: 1
-2025-03-02T15:49:58.704Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:49:58 PM
-2025-03-02T15:50:00.751Z [INFO]: Disconnection from route: /home
-2025-03-02T15:50:00.756Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:50:00.757Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:50:00 PM
-2025-03-02T15:52:55.586Z [INFO]: Socket disconnected: 6ezgy6bLXf5gYsjiAAAT
-2025-03-02T15:52:55.650Z [INFO]: Socket disconnected: xoJ4dbxiHQAnaUadAAAS
-2025-03-02T15:52:56.781Z [INFO]: New socket connected: kVZcVt3Oyq5WpzuBAAAW
-2025-03-02T15:52:56.785Z [INFO]: New socket connected: f-ESfIwA2NV1v4JkAAAX
-2025-03-02T15:53:28.514Z [INFO]: New connection from route: /game
-2025-03-02T15:53:28.521Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:53:28.524Z [INFO]: Disconnection from route: /game
-2025-03-02T15:53:28.534Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:53:28.536Z [INFO]: New connection from route: /game
-2025-03-02T15:53:28.536Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:53:28.772Z [INFO]: Active players: 1
-2025-03-02T15:53:28.773Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:53:28 PM
-2025-03-02T15:53:28.997Z [INFO]: Active players: 1
-2025-03-02T15:53:28.997Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:53:28 PM
-2025-03-02T15:53:29.222Z [INFO]: Active players: 1
-2025-03-02T15:53:29.223Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:53:29 PM
-2025-03-02T15:53:29.499Z [INFO]: Disconnection from route: /game
-2025-03-02T15:53:29.500Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:53:29.500Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:53:29 PM
-2025-03-02T15:53:30.777Z [INFO]: New connection from route: /home
-2025-03-02T15:53:30.778Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:53:30.788Z [INFO]: Disconnection from route: /home
-2025-03-02T15:53:30.788Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:53:30.790Z [INFO]: New connection from route: /home
-2025-03-02T15:53:30.791Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:53:31.010Z [INFO]: Active players: 1
-2025-03-02T15:53:31.012Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:53:31 PM
-2025-03-02T15:53:31.026Z [INFO]: Active players: 1
-2025-03-02T15:53:31.026Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:53:31 PM
-2025-03-02T15:53:31.054Z [INFO]: Active players: 1
-2025-03-02T15:53:31.055Z [INFO]: User Ervhynedalugdog@gmail.com joined. Active players: 1 as of 3/2/2025, 11:53:31 PM
-2025-03-02T15:53:36.074Z [INFO]: Disconnection from route: /home
-2025-03-02T15:53:36.085Z [INFO]: Email received: Ervhynedalugdog@gmail.com
-2025-03-02T15:53:36.085Z [INFO]: User Ervhynedalugdog@gmail.com left. Active players: 1 as of 3/2/2025, 11:53:36 PM
-2025-03-02T15:56:16.390Z [INFO]: New socket connected: uZMUJsBXc23uLIhHAAAC
-2025-03-02T15:56:16.455Z [INFO]: New socket connected: POVPmS3Lbzt9JFhVAAAD
-2025-03-02T15:56:22.659Z [INFO]: Socket disconnected: POVPmS3Lbzt9JFhVAAAD
-2025-03-02T15:56:22.665Z [INFO]: Socket disconnected: uZMUJsBXc23uLIhHAAAC
-2025-03-02T15:56:22.993Z [INFO]: New socket connected: uuMBPuAZNTRK2elWAAAG
-2025-03-02T15:56:22.998Z [INFO]: New socket connected: oX7UTn0OVWw4_7muAAAH
-2025-03-02T15:56:26.155Z [INFO]: Socket disconnected: uuMBPuAZNTRK2elWAAAG
-2025-03-02T15:56:26.159Z [INFO]: Socket disconnected: oX7UTn0OVWw4_7muAAAH
-2025-03-02T15:56:26.446Z [INFO]: New socket connected: Mjyirk0IhmgaNqGjAAAK
-2025-03-02T15:56:26.451Z [INFO]: New socket connected: j9pAqP5szDd72_okAAAL
-2025-03-02T15:57:18.271Z [INFO]: New socket connected: WUrWnaQPURZh_iP-AAAC
-2025-03-02T15:57:18.278Z [INFO]: New socket connected: DNB_XFNJYiEo3glvAAAD
-2025-03-02T15:57:57.270Z [INFO]: New socket connected: Ij59VTmgADopourDAAAC
-2025-03-02T15:57:57.276Z [INFO]: New socket connected: a7zDiYjHXcqnSyjbAAAD
-2025-03-02T15:58:11.876Z [INFO]: Socket disconnected: a7zDiYjHXcqnSyjbAAAD
-2025-03-02T15:58:11.878Z [INFO]: Socket disconnected: Ij59VTmgADopourDAAAC
-2025-03-02T15:58:17.701Z [INFO]: New socket connected: 9r5MPDNTfEYhLBbbAAAG
-2025-03-02T15:58:17.706Z [INFO]: New socket connected: 6R9K6Vg3oaH76hLiAAAH
-2025-03-02T15:58:28.008Z [INFO]: Socket disconnected: 6R9K6Vg3oaH76hLiAAAH
-2025-03-02T15:58:28.010Z [INFO]: Socket disconnected: 9r5MPDNTfEYhLBbbAAAG
+2025-03-09T15:56:20.093Z [INFO]: New socket connected: p314aQVUQ0mH3dU8AAAD
+2025-03-09T15:56:20.100Z [INFO]: New socket connected: Wh2EdDxK7nMZ4ohqAAAE
+2025-03-09T15:56:20.102Z [INFO]: New socket connected: _mumD7d6cbhLx-_lAAAF
+2025-03-09T16:00:35.097Z [INFO]: Socket disconnected: p314aQVUQ0mH3dU8AAAD
+2025-03-09T16:00:35.102Z [INFO]: Socket disconnected: _mumD7d6cbhLx-_lAAAF
+2025-03-09T16:00:35.103Z [INFO]: Socket disconnected: Wh2EdDxK7nMZ4ohqAAAE
+2025-03-09T16:00:35.622Z [INFO]: New socket connected: D-kbs025-NuTIKepAAAJ
+2025-03-09T16:00:35.626Z [INFO]: New socket connected: 9HP6IXsgkGMooStNAAAK
+2025-03-09T16:00:35.629Z [INFO]: New socket connected: hWIyBVc0sSk7wKXdAAAL
+2025-03-09T16:01:05.719Z [INFO]: New socket connected: BU-ETGpxKBvJwdWGAAAB
+2025-03-09T16:01:09.865Z [INFO]: New socket connected: Vx5h3oswIK_ftJIZAAAE
+2025-03-09T16:01:09.868Z [INFO]: New socket connected: IqvK16TIs2Nb-dzYAAAF
+2025-03-09T16:02:47.334Z [INFO]: Socket disconnected: BU-ETGpxKBvJwdWGAAAB
+2025-03-09T16:02:47.339Z [INFO]: Socket disconnected: IqvK16TIs2Nb-dzYAAAF
+2025-03-09T16:02:47.341Z [INFO]: Socket disconnected: Vx5h3oswIK_ftJIZAAAE
+2025-03-09T16:02:47.770Z [INFO]: New socket connected: ariF3diDZx8gx-uaAAAJ
+2025-03-09T16:02:47.775Z [INFO]: New socket connected: Ie7atoociGb390qyAAAK
+2025-03-09T16:02:47.778Z [INFO]: New socket connected: Krvl3Q8ffQW2-GL2AAAL
+2025-03-09T16:02:59.704Z [INFO]: Socket disconnected: ariF3diDZx8gx-uaAAAJ
+2025-03-09T16:02:59.709Z [INFO]: Socket disconnected: Ie7atoociGb390qyAAAK
+2025-03-09T16:02:59.710Z [INFO]: Socket disconnected: Krvl3Q8ffQW2-GL2AAAL
+2025-03-09T16:28:24.870Z [INFO]: New socket connected: TVN0SfCIqNhh8W-ZAAAE
+2025-03-09T16:28:24.873Z [INFO]: New socket connected: PrRJT9IBrpfthCF1AAAF
+2025-03-09T16:28:24.876Z [INFO]: New socket connected: k-2rCLAZuAmIwOwjAAAG
+2025-03-09T16:28:24.882Z [INFO]: New socket connected: qX1lodMszgD_Yne-AAAH
+2025-03-09T16:28:26.870Z [INFO]: New socket connected: g5F8TGRn-kS-0Pi0AAAK
+2025-03-09T16:28:26.874Z [INFO]: New socket connected: Pyq3BP_zSo0Qle_VAAAL
+2025-03-09T16:28:43.631Z [INFO]: Socket disconnected: k-2rCLAZuAmIwOwjAAAG
+2025-03-09T16:28:43.634Z [INFO]: Socket disconnected: Pyq3BP_zSo0Qle_VAAAL
+2025-03-09T16:28:43.635Z [INFO]: Socket disconnected: g5F8TGRn-kS-0Pi0AAAK
+2025-03-09T16:28:44.046Z [INFO]: New socket connected: 2M48ikMgGbFTeoYhAAAP
+2025-03-09T16:28:44.049Z [INFO]: New socket connected: OZv0f0eXZUIvZNv2AAAQ
+2025-03-09T16:28:44.054Z [INFO]: New socket connected: FqrZy2zEQDZzTu58AAAR
+2025-03-09T16:30:09.702Z [INFO]: New socket connected: VQ2i-ixmlV14voKJAAAE
+2025-03-09T16:30:09.705Z [INFO]: New socket connected: m_tZT2SbsjdRrvL8AAAF
+2025-03-09T16:30:09.709Z [INFO]: New socket connected: nX5swW09vf7hW_xVAAAG
+2025-03-09T16:30:09.716Z [INFO]: New socket connected: okcyRFDceDI6Nmt1AAAH
+2025-03-09T16:30:13.860Z [INFO]: New socket connected: ePR_P24hTvx6hydxAAAJ
+2025-03-09T16:30:14.855Z [INFO]: New socket connected: xG3HVnfrCviOnRZHAAAL
+2025-03-09T16:31:20.474Z [INFO]: New socket connected: koCTkiAzzXnN36WtAAAF
+2025-03-09T16:31:20.478Z [INFO]: New socket connected: EwuQm8K82TNbJ81wAAAG
+2025-03-09T16:31:20.479Z [INFO]: New socket connected: AQD5hqCGWKZWNKMiAAAH
+2025-03-09T16:31:20.482Z [INFO]: New socket connected: OFP_3O2vKXMAXOX9AAAI
+2025-03-09T16:31:20.485Z [INFO]: New socket connected: 87XYloY-wwTuz4iWAAAJ
+2025-03-09T16:31:25.863Z [INFO]: New socket connected: 1cTrYnbltL73aPJdAAAL
+2025-03-09T16:31:51.891Z [INFO]: New socket connected: F6ODBtkBKnQGyt9iAAAE
+2025-03-09T16:31:51.899Z [INFO]: New socket connected: D4bPZPDccm3KkOb0AAAF
+2025-03-09T16:31:51.905Z [INFO]: New socket connected: uGmMb_HdIKdwY9K5AAAG
+2025-03-09T16:31:51.906Z [INFO]: New socket connected: GF68r8ITYOmyVAZxAAAH
+2025-03-09T16:31:53.858Z [INFO]: New socket connected: 3W4f9CH6VBBynD8XAAAJ
+2025-03-09T16:31:54.863Z [INFO]: New socket connected: 4z50zYpdzTDhPqUgAAAL
+2025-03-09T16:32:59.876Z [INFO]: New socket connected: nzDT6h8FFEEImpcPAAAD
+2025-03-09T16:32:59.879Z [INFO]: New socket connected: Y6NgAmPH5Ca_QyilAAAE
+2025-03-09T16:32:59.885Z [INFO]: New socket connected: bY_3itEviA160BdFAAAF
+2025-03-09T16:33:00.859Z [INFO]: New socket connected: azmfMD_bMBQXo-VeAAAH
+2025-03-09T16:33:01.860Z [INFO]: New socket connected: XRJ6yGKmgFGYcS29AAAK
+2025-03-09T16:33:01.862Z [INFO]: New socket connected: KQSfxDtQ_4nVWgDMAAAL
+2025-03-09T16:34:33.869Z [INFO]: New socket connected: LoGmVdINQ6eM6tgjAAAB
+2025-03-09T16:34:35.872Z [INFO]: New socket connected: RNPKGgxGHXhMD_gZAAAD
+2025-03-09T16:34:36.861Z [INFO]: New socket connected: ynzDakcC7KuLVOJJAAAI
+2025-03-09T16:34:36.863Z [INFO]: New socket connected: PKcBuw0WcrN9WoDJAAAJ
+2025-03-09T16:34:36.865Z [INFO]: New socket connected: spTI8Lv8lAh8PKdbAAAK
+2025-03-09T16:34:36.867Z [INFO]: New socket connected: oAUB4KnH3kW3p6O1AAAL
+2025-03-09T16:36:02.676Z [INFO]: New socket connected: 2RK6IOtAE8QFKYBSAAAP
+2025-03-09T16:36:02.678Z [INFO]: New socket connected: FSJfyJBMlYRZBQp9AAAQ
+2025-03-09T16:36:02.679Z [INFO]: New socket connected: CRYfgsVBoxB18y4kAAAR
+2025-03-09T16:36:05.710Z [INFO]: Socket disconnected: 2RK6IOtAE8QFKYBSAAAP
+2025-03-09T16:36:05.712Z [INFO]: Socket disconnected: CRYfgsVBoxB18y4kAAAR
+2025-03-09T16:36:05.712Z [INFO]: Socket disconnected: FSJfyJBMlYRZBQp9AAAQ
+2025-03-09T16:36:05.822Z [INFO]: New socket connected: oz6uJar3BWL3jEjIAAAV
+2025-03-09T16:36:05.829Z [INFO]: New socket connected: Vwu75FDosMmSstqCAAAW
+2025-03-09T16:36:05.843Z [INFO]: New socket connected: CwF4C8R0RiPSmPnHAAAX
+2025-03-09T16:36:16.434Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T16:36:16.434Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1MzgxNzQsImV4cCI6MTc0MTU0MTc3NH0.EU8H3WFzCDzFIt7Webg4M27yrnW55SZYAHOLOLELrlY
+2025-03-09T16:36:16.435Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T16:36:16.441Z [INFO]: Disconnection from route: /home
+2025-03-09T16:36:16.442Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T16:36:16.443Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T16:36:16.444Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1MzgxNzQsImV4cCI6MTc0MTU0MTc3NH0.EU8H3WFzCDzFIt7Webg4M27yrnW55SZYAHOLOLELrlY
+2025-03-09T16:36:16.444Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T16:36:16.929Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/10/2025, 12:36:16 AM
+2025-03-09T16:36:17.375Z [INFO]: Active players: 1
+2025-03-09T16:36:17.376Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-09T16:36:17.376Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/10/2025, 12:36:17 AM
+2025-03-09T16:36:17.603Z [INFO]: Active players: 1
+2025-03-09T16:36:17.603Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/10/2025, 12:36:17 AM
+2025-03-09T16:36:24.099Z [INFO]: Disconnection from route: /home
+2025-03-09T16:36:24.100Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T16:36:46.180Z [INFO]: New socket connected: eyTya-fiTuQCInFCAAAI
+2025-03-09T16:36:46.185Z [INFO]: New socket connected: Z8O3BUTL63GB-hWnAAAJ
+2025-03-09T16:36:46.189Z [INFO]: New socket connected: qJO636pzuOUHbVt4AAAK
+2025-03-09T16:36:46.190Z [INFO]: New socket connected: cU1-bYsQv6jUtXHdAAAL
+2025-03-09T16:36:46.193Z [INFO]: New socket connected: jwemzXcuhsZwJurKAAAM
+2025-03-09T16:36:46.196Z [INFO]: New socket connected: 7wQteyB68KSkfX7iAAAN
+2025-03-09T16:36:46.199Z [INFO]: New socket connected: 9joyJnFL44vSISqgAAAO
+2025-03-09T16:36:46.201Z [INFO]: New socket connected: TpnipK3wgP382DSFAAAP
+2025-03-09T16:36:46.866Z [INFO]: New socket connected: q2Qe_Dhv-HrZDqoLAAAR
+2025-03-09T16:37:33.114Z [INFO]: New socket connected: hafikVZmQkd0lQjYAAAB
+2025-03-09T16:37:34.868Z [INFO]: New socket connected: _NUR2rswABIfqug-AAAE
+2025-03-09T16:37:34.872Z [INFO]: New socket connected: -n9gbNJw7PLikCaHAAAF
+2025-03-09T16:37:35.867Z [INFO]: New socket connected: aFfnuz5nl4QfCVbUAAAJ
+2025-03-09T16:37:35.870Z [INFO]: New socket connected: csRq0BLWvodrSc15AAAK
+2025-03-09T16:37:35.873Z [INFO]: New socket connected: RhYf6TTwgMXR3blSAAAL
+2025-03-09T16:37:36.861Z [INFO]: New socket connected: bZrrPGM9VGON_q3nAAAP
+2025-03-09T16:37:36.863Z [INFO]: New socket connected: 3g3373q6uB1jNAnmAAAQ
+2025-03-09T16:37:36.865Z [INFO]: New socket connected: 07IJQxFz3WjxS3UyAAAR
+2025-03-09T16:38:41.717Z [INFO]: New socket connected: n3zanVIuyMxK0y1gAAAB
+2025-03-09T16:38:41.855Z [INFO]: New socket connected: JLc-P4KTEdBVqC6BAAAD
+2025-03-09T16:38:42.860Z [INFO]: New socket connected: cAIGPuGJtTKexAsGAAAF
+2025-03-09T16:38:44.864Z [INFO]: New socket connected: DHE35X0Cb-2RCfJLAAAI
+2025-03-09T16:38:44.870Z [INFO]: New socket connected: GvPjU8bcFLdkkJQNAAAJ
+2025-03-09T16:38:45.865Z [INFO]: New socket connected: nD1-PpjvaAeuOjuWAAAL
+2025-03-09T16:38:46.875Z [INFO]: New socket connected: nHvCaNXmX-TR7EtjAAAP
+2025-03-09T16:38:46.883Z [INFO]: New socket connected: Zs27yBcX4TpIhgadAAAQ
+2025-03-09T16:38:46.885Z [INFO]: New socket connected: 1xORTTaxN7asRmsMAAAR
+2025-03-09T16:40:01.183Z [INFO]: New socket connected: H1TZKi48tT3IPykrAAAD
+2025-03-09T16:40:01.191Z [INFO]: New socket connected: dBLg7LcZgFXbL5UPAAAE
+2025-03-09T16:40:01.198Z [INFO]: New socket connected: 6YXhLmne0zM_5YHXAAAF
+2025-03-09T16:40:01.880Z [INFO]: New socket connected: OXdUzcbGFjkFsE8EAAAH
+2025-03-09T16:40:02.690Z [INFO]: New socket connected: xUQJ1bY4zMyjYyvSAAAJ
+2025-03-09T16:40:02.868Z [INFO]: New socket connected: 5dPSRA4Ton6Mr3WxAAAL
+2025-03-09T16:40:03.854Z [INFO]: New socket connected: p7W4CfetwXUNfyekAAAN
+2025-03-09T16:40:04.857Z [INFO]: New socket connected: ljFSF0eqkrXh17wTAAAQ
+2025-03-09T16:40:04.859Z [INFO]: New socket connected: I4qcIlricu68Rp0yAAAR
+2025-03-09T16:40:48.016Z [INFO]: Socket disconnected: dBLg7LcZgFXbL5UPAAAE
+2025-03-09T16:40:48.018Z [INFO]: Socket disconnected: H1TZKi48tT3IPykrAAAD
+2025-03-09T16:40:48.020Z [INFO]: Socket disconnected: xUQJ1bY4zMyjYyvSAAAJ
+2025-03-09T16:41:11.507Z [INFO]: New socket connected: XXPQzeNeE4RZWRsiAAAV
+2025-03-09T16:41:11.512Z [INFO]: New socket connected: C3vZ9ioyRoZXBUqOAAAW
+2025-03-09T16:41:11.514Z [INFO]: New socket connected: DdXUH85nkWptKojKAAAX
+2025-03-09T16:41:15.222Z [INFO]: Socket disconnected: DdXUH85nkWptKojKAAAX
+2025-03-09T16:41:15.223Z [INFO]: Socket disconnected: C3vZ9ioyRoZXBUqOAAAW
+2025-03-09T16:41:15.223Z [INFO]: Socket disconnected: XXPQzeNeE4RZWRsiAAAV
+2025-03-09T16:41:15.543Z [INFO]: New socket connected: Q-rt6uScDAESbPnJAAAb
+2025-03-09T16:41:15.546Z [INFO]: New socket connected: rUypkKd4r1BrhIfoAAAc
+2025-03-09T16:41:15.548Z [INFO]: New socket connected: NvEEcjF9kGXYPUSeAAAd
+2025-03-09T16:41:15.607Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T16:41:15.607Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1MzgxNzQsImV4cCI6MTc0MTU0MTc3NH0.EU8H3WFzCDzFIt7Webg4M27yrnW55SZYAHOLOLELrlY
+2025-03-09T16:41:15.608Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T16:41:15.612Z [INFO]: Disconnection from route: /home
+2025-03-09T16:41:15.612Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T16:41:15.614Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T16:41:15.614Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1MzgxNzQsImV4cCI6MTc0MTU0MTc3NH0.EU8H3WFzCDzFIt7Webg4M27yrnW55SZYAHOLOLELrlY
+2025-03-09T16:41:15.615Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T16:41:17.409Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/10/2025, 12:41:17 AM
+2025-03-09T16:41:17.636Z [INFO]: Active players: 1
+2025-03-09T16:41:17.636Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-09T16:41:17.637Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/10/2025, 12:41:17 AM
+2025-03-09T16:41:17.820Z [INFO]: Active players: 1
+2025-03-09T16:41:17.821Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/10/2025, 12:41:17 AM
+2025-03-09T16:41:21.147Z [INFO]: Disconnection from route: /home
+2025-03-09T16:41:21.147Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T16:42:03.182Z [INFO]: Socket disconnected: Q-rt6uScDAESbPnJAAAb
+2025-03-09T16:42:03.183Z [INFO]: Socket disconnected: NvEEcjF9kGXYPUSeAAAd
+2025-03-09T16:42:03.184Z [INFO]: Socket disconnected: rUypkKd4r1BrhIfoAAAc
+2025-03-09T16:42:03.670Z [INFO]: New socket connected: 7sFQhFSKlyaV9cYHAAAh
+2025-03-09T16:42:03.673Z [INFO]: New socket connected: NbnHaMAYQ7q9_4DKAAAi
+2025-03-09T16:42:03.674Z [INFO]: New socket connected: cCe-pw7jIw5_5CeIAAAj
+2025-03-09T16:42:57.904Z [INFO]: New socket connected: 5h3f0k0Wuo7GR6_EAAAE
+2025-03-09T16:42:57.909Z [INFO]: New socket connected: QOSp00GfX2yy-_lvAAAF
+2025-03-09T16:42:57.914Z [INFO]: New socket connected: ppKodBw_IfqubymMAAAG
+2025-03-09T16:42:57.918Z [INFO]: New socket connected: NnozL-Tm4ElVZYNOAAAH
+2025-03-09T16:43:01.869Z [INFO]: New socket connected: 18z4P91hM6zjPJYtAAAK
+2025-03-09T16:43:01.872Z [INFO]: New socket connected: g837Wo43pMRlbDqfAAAL
+2025-03-09T16:43:02.861Z [INFO]: New socket connected: u-TP9JeiB9VRNbNKAAAP
+2025-03-09T16:43:02.865Z [INFO]: New socket connected: a__dk3xfYgqXPrOFAAAQ
+2025-03-09T16:43:02.867Z [INFO]: New socket connected: -4lZ-9EbrFiV7r2hAAAR

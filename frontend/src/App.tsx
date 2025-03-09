@@ -40,6 +40,7 @@ import BanTestPage from './pages/BanTestPage';
 // Session Components
 import SessionTracker from './sessions/components/SessionTracker';
 import { clearSession } from './sessions/api-calls/visitedPagesSession';
+import AdminLogin from './Admin/AdminLogin';
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
@@ -138,9 +139,11 @@ function App() {
           <Route 
             path="/game/:id" 
             element={
-              <WebSocketProvider>
-                <GameScreen />
-              </WebSocketProvider>
+              <ProtectedRoute>
+                <WebSocketProvider>
+                  <GameScreen />
+                </WebSocketProvider>
+              </ProtectedRoute>
             } 
           />
           <Route path="/editing-page" element={<AdventureEditor />} />
@@ -150,7 +153,6 @@ function App() {
               <GameCreation 
                 onBack={() => {}} 
                 onNext={() => {}} 
-                onSkip={() => {}} 
               />
             } 
           />
@@ -183,6 +185,7 @@ function App() {
           <Route path="/Admin/Banned" element={<BannedList/>} />
           <Route path="/Admin/PlayerList" element={<AdminPlayerList />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
         </Routes>
       </LoadingProvider>
     </Router>

@@ -8,29 +8,35 @@ import Item from "../model/transaction/ItemModel"; // Adjust path if needed
 import Chat from "../model/chat/chat";
 import Ban from '../model/ban/ban';
 import defineAssociations from "../model/associations";
+import TokenPackage from "../model/transaction/TokenPackageModel";
+import SubscriptionOffers from "../model/transaction/SubscriptionOffersModel";
+import Subscriber from "../model/transaction/SubscriberModel";
 
 export const initializeModels = async () => {
-    try {
-        // Reference models to ensure they’re initialized
-        User;
-        Game;
-        Comment;
-        Rating;
-        Order;
-        Item;
-        Chat;
-        Ban;
+  try {
+    // First create tables without foreign keys
+    await User.sync({alter: true});
+    await Game.sync({alter: true});
+    
+    // Then sync {alter: true}dependent models
+    await Comment.sync({alter: true});
+    await Rating.sync({alter: true});
+    await Order.sync({alter: true});
+    await Item.sync({alter: true});
+    await Chat.sync({alter: true});
+    await Ban.sync({alter: true});
+    await TokenPackage.sync({alter: true});
+    await SubscriptionOffers.sync({alter: true});
+    await Subscriber.sync({alter: true});
+    
+    // Define associations
+    defineAssociations();
 
-        // Define associations
-        defineAssociations();
-
-        // Sync the database
-        await sequelize.sync({ alter: true });
-        console.log("Database and models synchronized successfully.");
-    } catch (error) {
-        console.error("Error synchronizing database and models:", error);
-        throw error;
-    }
+    console.log("Database tables synchronized successfully.");
+  } catch (error) {
+    console.error("Error synchronizing database:", error);
+    throw error;
+  }
 };
 
 // Export models for use elsewhere

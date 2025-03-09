@@ -7,10 +7,7 @@ import { RegisterRequestBody } from "../../interfaces/auth/RegisterRequestBody";
 import { validatePassword } from "../../utils/passwordValidator";
 import { sendVerificationEmail, sendResetPasswordEmail } from '../../service/auth/emailService';
 import crypto from 'crypto';
-
-const generateVerificationToken = () => {
-    return crypto.randomBytes(32).toString('hex');
-};
+import { generateVerificationToken } from '../../service/auth/authService';
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
@@ -49,12 +46,15 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             private: isPrivate || true, // Default to true if not provided
             model: model || "gpt-4",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
+            emailVerified: false,       // Default to false
             verificationToken,
             verificationTokenExpires,
             createdAt: new Date(),
             updatedAt: new Date(),
             totalCoins: 0,
         });
+
+        // Send verification email
 
         // Send verification email
         const emailSent = await sendVerificationEmail(email, verificationToken, username);
@@ -134,8 +134,8 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
         }
 
         user.emailVerified = true;
-        user.verificationToken = null;
-        user.verificationTokenExpires = null;
+        user.verificationToken = undefined;
+        user.verificationTokenExpires = undefined;
         await user.save();
 
         res.status(200).json({ message: "Email verified successfully" });
@@ -209,8 +209,8 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
-        user.resetPasswordToken = null;
-        user.resetPasswordExpires = null;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
         await user.save();
 
         res.status(200).json({ message: 'Password reset successfully' });
@@ -267,6 +267,7 @@ export const checkAuth = async (req: Request, res: Response): Promise<void> => {
         }
 
         res.status(200).json({ username: user.username });
+
     } catch (error) {
         console.error('Error during authentication check:', error);
         res.status(401).json({ message: 'Unauthorized' });
@@ -275,27 +276,20 @@ export const checkAuth = async (req: Request, res: Response): Promise<void> => {
 
 // New function to verify the token and return the user
 // New function to verify the token and return the user
-export const verifyToken = async (req: Request, res: Response): Promise<void> => {
-    const { token } = req.body;
-
+export const verifyToken = async (token: string): Promise<User | null> => {
     try {
         if (!token) {
-            res.status(400).json({ message: 'Token is missing' });
-            return;
+            throw new Error('Token is missing');
         }
-
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string };
         const user = await User.findOne({ where: { email: decoded.email } });
-
         if (!user) {
-            res.status(401).json({ message: 'User not found' });
-            return;
+            throw new Error('User not found');
         }
-
-        res.status(200).json({ valid: true, message: 'Token is valid' });
+        return user;
     } catch (error: any) {
         console.error('Token verification error:', error.message);
-        res.status(401).json({ valid: false, message: 'Invalid token' });
+        return null;
     }
 };
 

@@ -38,9 +38,9 @@ const LandingPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#1E1E1E] text-white">
             {/* fade in animation for he page */}
-            <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${background})` }}></div>
+            <div className="absolute top-0 left-0 w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}></div>
             <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-black to-transparent"></div>
-            <div className="flex justify-center items-center h-[950px] bg-cover bg-center fade-in relative" style={{ backgroundImage: `url(${background})` }}>
+            <div className="flex justify-center items-center h-[950px] bg-cover bg-center fade-in relative" style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
                 <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black to-transparent"></div>
                 <div ref={contentRef} className="text-center opacity-100 flex flex-col justify-center items-center mx-[5%] -translate-y-[105px] h-[1332px]">
                     <img src="/SageAI.png" alt="logo" className="w-[90%] h-auto responsive-logo" />

@@ -164,7 +164,9 @@ export const generateGameCoverImage = async (req: Request, res: Response): Promi
       prompt_text: '',
       prompt_model: 'gpt-3.5-turbo',
       image_prompt_text: prompt,
-      image_prompt_name: 'Generated Image'
+      image_prompt_name: 'Generated Image',
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
 
     res.json({ 
