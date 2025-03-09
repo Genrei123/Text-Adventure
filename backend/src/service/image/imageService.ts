@@ -1,58 +1,40 @@
 import multer from 'multer';
-import { Request, Response } from 'express';
-import User from '../../model/user/user';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 
-// Extend the Express Request type to include multer's file property
-interface MulterRequest extends Request {
-    file?: Express.Multer.File; // Use Express.Multer.File type
+// Create upload directory if it doesn't exist
+const uploadDir = path.join('public', 'images', 'user-profile');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Define storage configuration with proper types
-export const storage = multer.diskStorage({
-    destination: function (
-        req: Request, // Or MulterRequest if you need file here
-        file: Express.Multer.File,
-        cb: (error: Error | null, destination: string) => void
-    ) {
-        cb(null, 'public/images');
-    },
-    filename: function (
-        req: Request, // Or MulterRequest if you need file here
-        file: Express.Multer.File,
-        cb: (error: Error | null, filename: string) => void
-    ) {
-        const uniqueName = `${Date.now()}-${file.originalname}`;
-        cb(null, uniqueName);
-    }
+// Configure storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    // Generate a unique filename with original extension
+    const uniqueFilename = `${uuidv4()}${path.extname(file.originalname)}`;
+    cb(null, uniqueFilename);
+  }
 });
 
-// Configure multer upload
-export const upload = multer({ storage: storage }).single('image');  
-
-// Upload profile image handler
-export const uploadProfileImage = async (req: MulterRequest, res: Response) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: 'No file uploaded' });
-        }
-        if (!req.user) {
-            return res.status(401).json({ message: 'User not authenticated' });
-        }
-
-        // Use req.user to restrict to the authenticated user
-        const imageUrl = `/image/${req.file.filename}`;
-        const updatedRows = await User.update(
-            { image_url: imageUrl },
-            { where: { id: (req.user as any).id } } // Consider typing req.user properly
-        );
-
-        if (updatedRows[0] === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        res.status(200).json({ message: 'Image uploaded successfully', imageUrl });
-    } catch (error) {
-        console.error('Upload error:', error);
-        return res.status(500).json({ message: 'Failed to upload image' });
-    }
+// File filter to only allow image files
+const fileFilter = (req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Not an image! Please upload only images.'));
+  }
 };
+
+// Configure multer
+export const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: fileFilter,
+}).single('image'); // 'image' is the field name in the form

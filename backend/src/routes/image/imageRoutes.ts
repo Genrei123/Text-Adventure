@@ -1,9 +1,12 @@
+// routes/image/index.ts
 import express from 'express';
-import { upload as multerUpload } from '../../service/image/imageService'; // Import Multer
-import { upload } from '../../controllers/image/imageController';
+import { upload as multerMiddleware } from '../../service/image/imageService';
+import { upload as uploadController } from '../../controllers/image/imageController';
+//import { authenticate } from '../../middleware/auth'; // Adjust path to your auth middleware
 
 const router = express.Router();
 
-router.post('/upload', multerUpload, upload);
+// Apply authentication middleware and multer middleware before the controller
+router.post('/upload', multerMiddleware, uploadController);
 
 export default router;

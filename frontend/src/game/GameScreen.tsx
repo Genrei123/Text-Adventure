@@ -267,23 +267,30 @@ const GameScreen: React.FC = () => {
         </div>
 
         <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
-          <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
+            <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
             <ActionButton action="Do" isSelected={selectedAction === "Do"} onClick={() => setSelectedAction("Do")} />
             <ActionButton action="Say" isSelected={selectedAction === "Say"} onClick={() => setSelectedAction("Say")} />
             <button
               onClick={handleGenerateImage}
               disabled={isGeneratingImage}
-              className={`px-4 py-2 rounded-full font-playfair ${isGeneratingImage ? 'bg-[#634630]/50 text-gray-400 cursor-not-allowed' : `bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}`}
+              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base ${isGeneratingImage ? 'bg-[#634630]/50 text-gray-400 cursor-not-allowed' : `bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}`}
             >
               {isGeneratingImage ? 'Generating...' : 'Visualize Scene'}
             </button>
             <button
               onClick={() => setShowDescription(!showDescription)}
-              className={`px-4 py-2 rounded-full font-playfair bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}
+              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || '#634630'}] text-white hover:bg-[#311F17] transition-colors`}
             >
               {showDescription ? 'Hide Description' : 'Show Description'}
             </button>
-          </div>
+
+            <button
+              onClick={() => alert('End Story')}
+              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || '#634630'}] text-red hover:bg-[#8E1616] transition-colors`}
+            >
+              End Story
+            </button>
+            </div>
 
           <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
             <textarea
