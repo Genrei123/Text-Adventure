@@ -8,6 +8,7 @@ import YourComments from "../profile/components/YourComments.tsx"
 import axiosInstance from "../../config/axiosConfig"
 import { Calendar, Users, Tag, Star, MessageSquare, Heart, Award, Clock } from "lucide-react"
 import LoadingScreen from '../components/LoadingScreen';
+import LastPlayedGame from "../websocket/LastPlayedGame.tsx"
 
 const GameDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()

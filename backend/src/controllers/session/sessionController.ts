@@ -1,5 +1,27 @@
 import { Request, Response } from "express";
-import { createSession, addPageVisits, clearSession, deleteSessionsWithNoEndTime } from "../../service/session/sessionService";
+import { createSession, addPageVisits, clearSession, deleteSessionsWithNoEndTime, getAllSessionsByEmail } from "../../service/session/sessionService";
+
+export const getSessionsController = async (req: Request, res: Response) => {
+  try {
+    console.log("Received getSessions request");
+    res.status(200).json({ message: "Get sessions" });
+  } catch (error) {
+    console.error("Error getting sessions:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getPlayerVisitsController = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    console.log("Received getPlayerVisits request:", req.body);
+    const sessions = await getAllSessionsByEmail(email);
+    res.status(200).json(sessions);
+  } catch (error) {
+    console.error("Error getting player visits:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 export const createSessionController = async (req: Request, res: Response) => {
   try {

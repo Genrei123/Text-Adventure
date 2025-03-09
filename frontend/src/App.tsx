@@ -139,9 +139,11 @@ function App() {
           <Route 
             path="/game/:id" 
             element={
-              <WebSocketProvider>
-                <GameScreen />
-              </WebSocketProvider>
+              <ProtectedRoute>
+                <WebSocketProvider>
+                  <GameScreen />
+                </WebSocketProvider>
+              </ProtectedRoute>
             } 
           />
           <Route path="/editing-page" element={<AdventureEditor />} />

@@ -10,6 +10,7 @@ const includedRoutes: string[] = [
   '/profile',
   '/subscription',
   '/game-details',
+  '/game-details/:id',
   // Add more routes here
 ];
 
