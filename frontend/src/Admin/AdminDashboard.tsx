@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  ArrowLeftRight, Users, UserPlus, Activity, UserX, SortAsc, SortDesc, Search, Clock, Trash2, Plus
+  ArrowLeftRight, Users, UserPlus, Activity, UserX, SortAsc, SortDesc, Search, Clock, Trash2, Plus, Home
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Paper, TextField, Button, Chip, FormControl, Select, MenuItem, InputLabel, CircularProgress, Checkbox, IconButton } from '@mui/material';
@@ -158,9 +158,18 @@ const AdminDashboard: React.FC = () => {
       <div className={`bg-gray-900 text-white transition-all duration-300 ${sidebarCollapsed ? 'w-16' : 'w-64'} flex flex-col`}>
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 className="text-xl font-bold">Admin Dashboard</h2>
-          <button onClick={toggleSidebar}>Toggle</button>
+          <button onClick={toggleSidebar} className="p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+            <ArrowLeftRight className="w-5 h-5" />
+          </button>
         </div>
         <div className="flex-1 overflow-auto">
+          <SidebarItem
+            icon={<Home className="w-5 h-5" />}
+            label="Home"
+            active={activeSection === 'dashboard'}
+            onClick={() => setActiveSection('dashboard')}
+            collapsed={sidebarCollapsed}
+          />
           <SidebarItem
             icon={<Users className="w-5 h-5" />}
             label="Player Directory"
@@ -443,27 +452,43 @@ const AdminDashboard: React.FC = () => {
                 )}
 
                 {players.map((player, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-4 items-center p-4 hover:bg-gray-50 rounded-lg transition-colors">
-                    <div className="col-span-3 font-medium">{player.username}</div>
+                  <div key={index} className="grid grid-cols-12 gap-4 items-center p-4 hover:bg-gray-50 rounded-lg transition-colors even:bg-gray-50">
+                    <div className="col-span-3 font-medium flex items-center">
+                      <span className="inline-block w-2 h-2 rounded-full mr-2" 
+                            style={{ backgroundColor: statusColorMap[player.status] }}></span>
+                      {player.username}
+                    </div>
                     <div className="col-span-2">
                       <Chip
                         label={player.status}
                         size="small"
-                        style={{ backgroundColor: statusColorMap[player.status], color: '#fff' }}
+                        className="uppercase font-medium text-xs"
+                        style={{ 
+                          backgroundColor: `${statusColorMap[player.status]}20`,
+                          color: statusColorMap[player.status]
+                        }}
                       />
                     </div>
                     <div className="col-span-2">
                       <Chip
                         label={player.subscription}
                         size="small"
-                        style={{ backgroundColor: subscriptionColorMap[player.subscription], color: '#fff' }}
+                        className="font-medium"
+                        style={{ 
+                          backgroundColor: subscriptionColorMap[player.subscription],
+                          color: 'white'
+                        }}
                       />
                     </div>
-                    <div className="col-span-2 font-medium">
+                    <div className="col-span-2 font-medium text-indigo-600">
                       {player.coinsBalance.toLocaleString()}
                     </div>
                     <div className="col-span-2 text-sm text-gray-500">
-                      {new Date(player.lastActivity).toLocaleDateString()}
+                      {new Date(player.lastActivity).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
                     </div>
                   </div>
                 ))}

@@ -1,58 +1,66 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeftRight, Activity, Users, UserPlus, LineChart } from 'lucide-react';
+
+const SidebarItem: React.FC<{ icon: React.ReactNode, label: string, active: boolean, onClick: () => void, collapsed: boolean }> = ({ icon, label, active, onClick, collapsed }) => (
+  <button
+    className={`flex items-center w-full p-2 text-left ${active ? 'bg-gray-700' : 'hover:bg-gray-700'} ${collapsed ? 'justify-center' : 'justify-start'}`}
+    onClick={onClick}
+  >
+    {icon}
+    {!collapsed && <span className="ml-2">{label}</span>}
+  </button>
+);
 
 const Sidebar: React.FC = () => {
-    return (
-    <> 
-        <div className="bg-[#1e1e1e] w-17 md:w-40 lg:w-60 h-screen fixed left-0 shadow-[10px_0_15px_-3px_rgba(0,0,0,10)] flex flex-col items-center justify-start pt-40 hidden md:flex overflow-hidden">
-            <h1 className="text-white text-xl md:text-2xl lg:text-3xl mb-8 absolute top-20">Admin Page</h1>
-            <Link to="/Admin/Dashboard">
-            <button className="group flex items-center w-full px-7 py-2 text-white hover:bg-[#333] mb-4 justify-start">
-            <img src="/Dashboard.svg" alt="Dashboard Icon" className="w-7 h-7 group-hover:hidden" />
-            <img src="/Dashboard-after.svg" alt="Dashboard Icon Hover" className="w-7 h-7 hidden group-hover:block" />
-            <span className="ml-2 group-hover:text-[#C9B57B] hidden md:inline">Dashboard</span>
-            </button>
-            </Link>
-            <Link to="/Admin/Banned">
-            <button className="group flex items-center w-full px-7 py-2 text-white hover:bg-[#333] mb-4 justify-start">
-            <img src="/Ban.svg" alt="Banned Players Icon" className="w-7 h-7 group-hover:hidden" />
-            <img src="/Ban-after.svg" alt="Banned Players Icon Hover" className="w-7 h-7 hidden group-hover:block" />
-            <span className="ml-2 group-hover:text-[#C9B57B] hidden md:inline">Banned</span>
-            </button>
-            </Link>    
-            <Link to="/Admin/PlayerList">
-            <button className="group flex items-center w-full px-7 py-2 text-white hover:bg-[#333] justify-start">
-            <img src="/List.svg" alt="Player List Icon" className="w-7 h-7 group-hover:hidden" />
-            <img src="/List-after.svg" alt="Player List Icon Hover" className="w-7 h-7 hidden group-hover:block" />
-            <span className="ml-2 group-hover:text-[#C9B57B] hidden md:inline">Players</span>
-            </button>
-            </Link>
-            <div className="bg-[#B28F4C] rounded-full h-10 w-20 fixed left-[1%] bottom-10 flex items-center justify-center md:w-40 mx-4">
-            <button className="group flex items-center w-full px-7 py-2 text-white hover:bg-[#9C551F] rounded-full justify-center">
-                <span className="group-hover:text-[#ffffff] md:inline">Logout</span>
-            </button>
-            </div>
-        </div>  
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [activeSection, setActiveSection] = useState('dashboard');
 
-        <div className="bg-[#1e1e1e] w-full h-12 fixed top-0 shadow-[0_10px_15px_-3px_rgba(0,0,0,10)] flex items-center justify-around pt-10 md:hidden">
-            <h1 className="text-white text-xl mb-2 translate-y-[-40%]">Admin Page</h1>
-            <button className="group flex items-center px-4 py-1 text-white hover:bg-[#333] mb-4 -translate-y-2">
-            <img src="/Dashboard.svg" alt="Dashboard Icon" className="w-7 h-7 group-hover:hidden" />
-            <img src="/Dashboard-after.svg" alt="Dashboard Icon Hoyver" className="w-7 h-7 hidden group-hover:block" />
-            </button>
-            <button className="group flex items-center px-4 py-1 text-white hover:bg-[#333] mb-4 -translate-y-2">
-            <img src="/Ban.svg" alt="Banned Players Icon" className="w-7 h-7 group-hover:hidden" />
-            <img src="/Ban-after.svg" alt="Banned Players Icon Hover" className="w-7 h-7 hidden group-hover:block" />
-            </button>
-            <button className="group flex items-center px-4 py-1 text-white hover:bg-[#333] mb-4 -translate-y-2">
-            <img src="/List.svg" alt="Player List Icon" className="w-7 h-7 group-hover:hidden" />
-            <img src="/List-after.svg" alt="Player List Icon Hover" className="w-7 h-7 hidden group-hover:block" />
-            </button>
+  const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
+
+  return (
+    <div className={`bg-gray-800 text-white transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'w-20' : 'w-64'} flex flex-col`}>
+      <div className="flex items-center justify-between p-4 bg-gray-900">
+        {!sidebarCollapsed && <h2 className="text-xl font-bold tracking-tight">Admin Console</h2>}
+        <button onClick={toggleSidebar} className="text-gray-400 hover:text-white">
+          <ArrowLeftRight className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="flex-1 overflow-auto p-2 space-y-1">
+        <SidebarItem
+          icon={<Activity className="w-5 h-5" />}
+          label="Dashboard"
+          active={activeSection === 'dashboard'}
+          onClick={() => setActiveSection('dashboard')}
+          collapsed={sidebarCollapsed}
+        />
+        <SidebarItem
+          icon={<Users className="w-5 h-5" />}
+          label="Player Directory"
+          active={activeSection === 'players'}
+          onClick={() => setActiveSection('players')}
+          collapsed={sidebarCollapsed}
+        />
+        <SidebarItem
+          icon={<UserPlus className="w-5 h-5" />}
+          label="User Management"
+          active={activeSection === 'users'}
+          onClick={() => setActiveSection('users')}
+          collapsed={sidebarCollapsed}
+        />
+        <div className="px-4 pt-4 border-t border-gray-700">
+          <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Analytics</p>
+          <SidebarItem
+            icon={<LineChart className="w-5 h-5" />}
+            label="Reports"
+            active={activeSection === 'reports'}
+            onClick={() => setActiveSection('reports')}
+            collapsed={sidebarCollapsed}
+          />
         </div>
-
-
-    </>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default Sidebar;
