@@ -13,6 +13,8 @@ export const fetchPlayers = async (params: {
   subscription?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  page?: string;
+  limit?: string;
 }) => {
   const response = await axios.get(`${API_URL}/api/players`, { params });
   return response.data;

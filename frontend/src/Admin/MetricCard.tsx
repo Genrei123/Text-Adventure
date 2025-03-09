@@ -1,4 +1,5 @@
 import React from 'react';
+import { UserPlus, Users, UserX, Activity } from 'lucide-react';
 
 interface MetricCardProps {
   title: string;

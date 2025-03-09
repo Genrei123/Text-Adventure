@@ -38,6 +38,19 @@ const mockRecentGames = [
   }
 ];
 
+// Define color maps
+const statusColorMap = {
+  "online": "#22C55E",
+  "offline": "#6B7280"
+};
+
+const subscriptionColorMap = {
+  "Free": "#4F46E5",
+  "Basic": "#0EA5E9",
+  "Pro": "#F59E0B",
+  "Premium": "#8B5CF6"
+};
+
 const AdminDashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -436,17 +449,14 @@ const AdminDashboard: React.FC = () => {
                       <Chip
                         label={player.status}
                         size="small"
-                        color={player.status === 'online' ? 'success' : 'default'}
+                        style={{ backgroundColor: statusColorMap[player.status], color: '#fff' }}
                       />
                     </div>
                     <div className="col-span-2">
                       <Chip
                         label={player.subscription}
                         size="small"
-                        color={
-                          player.subscription === 'Premium' ? 'primary' :
-                          player.subscription === 'Pro' ? 'secondary' : 'default'
-                        }
+                        style={{ backgroundColor: subscriptionColorMap[player.subscription], color: '#fff' }}
                       />
                     </div>
                     <div className="col-span-2 font-medium">
