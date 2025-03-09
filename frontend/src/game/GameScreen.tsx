@@ -5,6 +5,7 @@ import Sidebar from '../components/Sidebar';
 import GameHeader from '../components/GameHeader';
 import ActionButton from './components/ActionButton';
 import { motion } from "framer-motion";
+import axios from 'axios';
 
 interface GameDetails {
   title: string;
@@ -34,6 +35,44 @@ const GameScreen: React.FC = () => {
     image_url?: string;
   }>>([]);
   const [isAnimating, setIsAnimating] = useState(true);
+  interface GameSummaryResponse {
+    summary: string;
+    imageUrl: string;
+  }
+  
+  // Update the state declaration
+  const [gameSummary, setGameSummary] = useState<GameSummaryResponse | null>(null);
+  
+  // Update the handleSummary function
+  const handleSummary = async () => {
+    if (!userId || !gameId) {
+      setError('User ID or Game ID not found. Please log in again.');
+      return;
+    }
+  
+    setError('');
+    setSuccess('');
+    setIsGeneratingImage(true);
+  
+    try {
+      // Show loading state in the modal
+      setShowEndStoryModal(true);
+      
+      const response = await axiosInstance.post("/openai/generateGameSummary", {
+        gameId: parseInt(gameId, 10),
+        userId: userId,
+      });
+  
+      // Set the summary with the new structure
+      setGameSummary(response.data);
+      setSuccess('Summary generated successfully!');
+    } catch (err) {
+      console.error('Error generating summary:', err);
+      setError('Summary generation failed. Please try again.');
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  }
 
   // Fetch userId from localStorage
   useEffect(() => {
@@ -227,6 +266,34 @@ const GameScreen: React.FC = () => {
     }
   };
 
+  const handleShareToFacebook = () => {
+    if (!gameSummary) {
+      setError('Nothing to share yet. Please generate a summary first.');
+      return;
+    }
+    
+    // The URL to your main website that you want to share
+    const websiteUrl = "https://text-adventure-six.vercel.app/"; // Replace with your actual website URL
+    
+    // Prepare the text to share - include some content from the summary
+    const gameTitle = gameDetails?.title || 'My Adventure';
+    
+    // Extract a brief snippet from the summary text (first 100 characters)
+    const summarySnippet = gameSummary.summary 
+      ? gameSummary.summary.split('\n')[0].substring(0, 100) + "..." 
+      : "";
+    
+    // Create the message to share
+    const shareText = `I just finished my adventure "${gameTitle}"! ${summarySnippet} Play your own adventure now!`;
+    
+    // Facebook sharing URL with pre-filled content and link to your website
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(websiteUrl)}&quote=${encodeURIComponent(shareText)}`;
+    
+    // Open the Facebook share dialog in a new window
+    window.open(facebookShareUrl, '_blank', 'width=600,height=400');
+  };
+
+
   return (
     <>
       {isAnimating && (
@@ -286,11 +353,11 @@ const GameScreen: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setShowEndStoryModal(true)} // Updated to show modal
-              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || '#634630'}] text-red hover:bg-[#8E1616] transition-colors`}
-            >
-              End Story
-            </button>
+  onClick={() => setShowEndStoryModal(true)}
+  className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || '#634630'}] text-red hover:bg-[#8E1616] transition-colors`}
+>
+  End Story
+</button>
           </div>
 
           <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
@@ -317,6 +384,8 @@ const GameScreen: React.FC = () => {
         {showDescription && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-[#1E1E1E] p-6 rounded-lg max-w-md w-full">
+              <img src={gameDetails?.image_data || '/warhammer.jpg'} alt="Game Description" className="w-full h-48 object-cover rounded-lg" />
+              <br></br>
               <h2 className="text-xl font-bold mb-4">Game Description</h2>
               <p className="text-sm italic" style={{ color: gameDetails?.primary_color || '#E5D4B3' }}>
                 {gameDetails?.description}
@@ -331,61 +400,100 @@ const GameScreen: React.FC = () => {
           </div>
         )}
 
-        {showEndStoryModal && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.div
-              className="p-6 rounded-lg animate-dark-glow" // Add the Tailwind animation class here
-              style={{
-                width: '75vw',
-                height: '80vh',
-                backgroundColor: '#2F2118',
-                border: '2px solid #1E1E1E',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              transition={{ duration: 0.5 }}
-            >
+{showEndStoryModal && (
+  <motion.div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.5 }}
+  >
+    <motion.div
+      className="p-6 rounded-lg animate-dark-glow"
+      style={{
+        width: '75vw',
+        height: '80vh',
+        backgroundColor: '#2F2118',
+        border: '2px solid #1E1E1E',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
+      initial={{ scale: 0.8 }}
+      animate={{ scale: 1 }}
+      exit={{ scale: 0.8 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div>
+        {/* Image placeholder */}
+        <div
+          className="w-full bg-gray-700 rounded-lg flex items-center justify-center border-4 border-[#634630]"
+          style={{ height: '30vh' }}
+        >
+          {gameSummary && gameSummary.imageUrl ? (
+            <img 
+              src={`${import.meta.env.VITE_BACKEND_URL}${gameSummary.imageUrl}`} 
+              alt="Game Summary" 
+              className="w-full h-full object-cover rounded-lg" 
+            />
+          ) : (
+            <div className="text-[#C9B57B] text-lg flex items-center justify-center">
+              {isGeneratingImage ? 'Generating summary...' : 'No summary available'}
+            </div>
+          )}
+        </div>
+        <br></br>
+        
+        {/* Summary of the game */}
+        <div className="mt-4 text-[#E5D4B3]">
+          <h2 className="text-xl font-bold mb-2 font-cinzel">Game Summary</h2>
+          <div className="max-h-[25vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent mx-4 leading-loose text-base text-lg text-[#C9B57B]">
+            {gameSummary && gameSummary.summary ? (
               <div>
-                {/* Placeholder for picture */}
-                <div
-                  className="w-full bg-gray-700 rounded-lg flex items-center justify-center border-4 border-[#634630]"
-                  style={{ height: '30vh' }} // Updated height to 30% of screen height
-                >
-                  <img src="/warhammer.jpg" alt="Game Summary" className="w-full h-full object-cover rounded-lg" />
-                </div>
-                <br></br>
-                
-                {/* Summary of the game */}
-                <div className="mt-4 text-[#E5D4B3]">
-                  <h2 className="text-xl font-bold mb-2 font-cinzel">Game Summary</h2>
-                  <p className="max-h-[25vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent mx-4 leading-loose text-base text-lg text-[#C9B57B]">
-                    Spider-Man, also known as Peter Parker, is a superhero who gained spider-like abilities after being bitten by a radioactive spider. He uses his powers to fight crime and protect New York City, balancing his responsibilities as a hero with his personal life.
-
-                    Magneto, also known as Erik Lehnsherr, is a powerful mutant with the ability to generate and control magnetic fields. He is often portrayed as a complex character, sometimes as a villain and other times as an anti-hero, fighting for mutant rights and against human oppression.
+                {/* Format the string with line breaks */}
+                {gameSummary.summary.split('\n').map((line, index) => (
+                  <p key={index} className="mb-2">
+                    {line.trim()}
                   </p>
-                </div>
+                ))}
               </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() => setShowEndStoryModal(false)} // Placeholder for actual end story logic
-                  className="px-4 py-3 rounded-full font-playfair text-white hover:bg-[#1e1e1e] transition-colors "
-                >
-                  Go back
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}  
+            ) : (
+              <p>{isGeneratingImage ? 'Creating your adventure summary...' : 'No summary available. Generate a summary to see your adventure recap.'}</p>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-between">
+  <div className="flex space-x-3">
+    <button
+      onClick={handleSummary}
+      disabled={isGeneratingImage}
+      className={`px-4 py-3 rounded-full font-playfair text-white ${isGeneratingImage ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#634630] hover:bg-[#311F17]'} transition-colors`}
+    >
+      {isGeneratingImage ? 'Generating...' : 'Generate Summary'}
+    </button>
+    <button
+      onClick={handleShareToFacebook}
+      disabled={!gameSummary || isGeneratingImage}
+      className={`px-4 py-3 rounded-full font-playfair text-white flex items-center ${!gameSummary || isGeneratingImage ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#4267B2] hover:bg-[#365899]'} transition-colors`}
+    >
+      <span className="mr-2">Share to Facebook</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white">
+        <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+      </svg>
+    </button>
+  </div>
+  <button
+    onClick={() => setShowEndStoryModal(false)}
+    className="px-4 py-3 rounded-full font-playfair text-white bg-[#634630] hover:bg-[#311F17] transition-colors"
+  >
+    Return to Game
+  </button>
+</div>
+      
+    </motion.div>
+  </motion.div>
+)}
         
       </div>
     </>

@@ -165,3 +165,172 @@
 2025-03-09T16:43:02.861Z [INFO]: New socket connected: u-TP9JeiB9VRNbNKAAAP
 2025-03-09T16:43:02.865Z [INFO]: New socket connected: a__dk3xfYgqXPrOFAAAQ
 2025-03-09T16:43:02.867Z [INFO]: New socket connected: -4lZ-9EbrFiV7r2hAAAR
+2025-03-09T16:55:18.703Z [INFO]: New socket connected: 4UsxIObYjZdw_xKTAAAB
+2025-03-09T16:55:18.875Z [INFO]: New socket connected: f5isk5bV9u3MsmM7AAAF
+2025-03-09T16:55:18.879Z [INFO]: New socket connected: amu5mvmnIJ8YDUbRAAAG
+2025-03-09T16:55:18.882Z [INFO]: New socket connected: 8mqsaKwAl6xbJg00AAAH
+2025-03-09T16:55:19.861Z [INFO]: New socket connected: 4YzVQim6wuHes6twAAAJ
+2025-03-09T16:55:20.864Z [INFO]: New socket connected: mU_LYmR-Ls5s7wSHAAAM
+2025-03-09T16:55:20.867Z [INFO]: New socket connected: pddVdT2seVTVNSZzAAAN
+2025-03-09T16:55:21.864Z [INFO]: New socket connected: ZsRHt_XP3iHhNVPPAAAP
+2025-03-09T16:55:23.862Z [INFO]: New socket connected: jIX8JHM95zT6GzFgAAAR
+2025-03-09T17:38:35.886Z [INFO]: New socket connected: tlipeKmsmCgZZ3PwAAAG
+2025-03-09T17:38:35.891Z [INFO]: New socket connected: ga0HkDYZxyGsJBoKAAAH
+2025-03-09T17:38:35.893Z [INFO]: New socket connected: nLdSrDQl6SWX5TOzAAAI
+2025-03-09T17:38:35.898Z [INFO]: New socket connected: P4pE3GBAxLLqVDF7AAAJ
+2025-03-09T17:38:35.900Z [INFO]: New socket connected: f-izKrjsB0x_kgXwAAAK
+2025-03-09T17:38:35.902Z [INFO]: New socket connected: VbebL5DWHnBUAspzAAAL
+2025-03-09T17:38:36.668Z [INFO]: New socket connected: unrOcAgknRGMJb-HAAAN
+2025-03-09T17:38:38.871Z [INFO]: New socket connected: SQ2nWmVMCryEqmKFAAAQ
+2025-03-09T17:38:38.873Z [INFO]: New socket connected: StJSfWoO2nUNrYuBAAAR
+2025-03-09T17:38:42.460Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T17:38:42.460Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1NDE5MjAsImV4cCI6MTc0MTU0NTUyMH0.AriHBweHTC-dGDtYYSFb9hD9av7bk48JSqyIPiV1u_M
+2025-03-09T17:38:42.461Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:38:42.464Z [INFO]: Disconnection from route: /home
+2025-03-09T17:38:42.464Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:38:42.465Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T17:38:42.466Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1NDE5MjAsImV4cCI6MTc0MTU0NTUyMH0.AriHBweHTC-dGDtYYSFb9hD9av7bk48JSqyIPiV1u_M
+2025-03-09T17:38:42.466Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:38:42.717Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/10/2025, 1:38:42 AM
+2025-03-09T17:38:42.986Z [INFO]: Active players: 1
+2025-03-09T17:38:42.987Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-09T17:38:42.987Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/10/2025, 1:38:42 AM
+2025-03-09T17:38:43.084Z [INFO]: Active players: 1
+2025-03-09T17:38:43.085Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/10/2025, 1:38:43 AM
+2025-03-09T17:38:47.851Z [INFO]: Disconnection from route: /home
+2025-03-09T17:38:47.851Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:38:47.860Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T17:38:47.861Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1NDE5MjAsImV4cCI6MTc0MTU0NTUyMH0.AriHBweHTC-dGDtYYSFb9hD9av7bk48JSqyIPiV1u_M
+2025-03-09T17:38:47.862Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:38:47.864Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 2
+2025-03-09T17:38:47.865Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T17:38:47.865Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:38:47.866Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T17:38:47.867Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1NDE5MjAsImV4cCI6MTc0MTU0NTUyMH0.AriHBweHTC-dGDtYYSFb9hD9av7bk48JSqyIPiV1u_M
+2025-03-09T17:38:47.867Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:38:47.868Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 2
+2025-03-09T17:38:48.106Z [ERROR]: Error fetching active player count: read ECONNRESET
+2025-03-09T17:38:48.106Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 0 as of 3/10/2025, 1:38:48 AM
+2025-03-09T17:38:48.467Z [INFO]: Active players: 1
+2025-03-09T17:38:48.467Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/10/2025, 1:38:48 AM
+2025-03-09T17:38:54.754Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T17:38:54.755Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:45:22.208Z [INFO]: New socket connected: eXUE2t1wtN07BwtEAAAC
+2025-03-09T17:45:22.217Z [INFO]: New socket connected: 3azZQ9v62fJaL81YAAAD
+2025-03-09T17:45:22.863Z [INFO]: New socket connected: jtm9SDP9RFps7MrXAAAG
+2025-03-09T17:45:22.866Z [INFO]: New socket connected: LHOhZI_uE2bOWBEeAAAI
+2025-03-09T17:45:22.868Z [INFO]: New socket connected: RE8Qtyycem5O6dTcAAAJ
+2025-03-09T17:45:24.869Z [INFO]: New socket connected: 1qwwNzuTF-2hfq6IAAAM
+2025-03-09T17:45:24.870Z [INFO]: New socket connected: YOKjKysg-fo_OPTrAAAN
+2025-03-09T17:45:25.855Z [INFO]: New socket connected: seTle8ed2ZarNyJIAAAQ
+2025-03-09T17:45:25.857Z [INFO]: New socket connected: 1IfkRrfGqklFSjAdAAAR
+2025-03-09T17:46:27.721Z [INFO]: New socket connected: I3MlIZK-SAvuyNAkAAAB
+2025-03-09T17:46:27.856Z [INFO]: New socket connected: 3tAkx_XiRc6Si9wBAAAE
+2025-03-09T17:46:27.860Z [INFO]: New socket connected: WBMISHBBctekD7CLAAAF
+2025-03-09T17:46:28.866Z [INFO]: New socket connected: 7_k0YZJBbWkqg73lAAAI
+2025-03-09T17:46:28.874Z [INFO]: New socket connected: hM3hPTJ2B5q1HdqCAAAJ
+2025-03-09T17:46:29.857Z [INFO]: New socket connected: qiOEoD5-vbY3O_siAAAM
+2025-03-09T17:46:29.860Z [INFO]: New socket connected: ghHPWcSoVOaHS4VKAAAN
+2025-03-09T17:46:31.864Z [INFO]: New socket connected: jW78iO-13odlyG0hAAAQ
+2025-03-09T17:46:31.865Z [INFO]: New socket connected: foRunN_TiUlgApKYAAAR
+2025-03-09T17:47:34.213Z [INFO]: New socket connected: SK5xjlMf6tyt60KhAAAD
+2025-03-09T17:47:34.221Z [INFO]: New socket connected: upC9FX0g3HGZ4RD9AAAE
+2025-03-09T17:47:34.223Z [INFO]: New socket connected: B3XHvLI9AdD4q8EbAAAF
+2025-03-09T17:47:36.871Z [INFO]: New socket connected: OXmdlgpp3pBoYB48AAAL
+2025-03-09T17:47:36.873Z [INFO]: New socket connected: lO6e5hR93vbfa4OOAAAM
+2025-03-09T17:47:36.874Z [INFO]: New socket connected: jcTSLGqk3hEwZJVWAAAN
+2025-03-09T17:47:36.876Z [INFO]: New socket connected: 6m9Cor7ygn4PrtaxAAAO
+2025-03-09T17:47:36.879Z [INFO]: New socket connected: mgCgX5O0DBe471S1AAAP
+2025-03-09T17:47:37.852Z [INFO]: New socket connected: JppcjSE9JRl7tQZ9AAAR
+2025-03-09T17:53:05.387Z [INFO]: New socket connected: Hy3pvfvM5Ibx6yfpAAAD
+2025-03-09T17:53:05.392Z [INFO]: New socket connected: IqeMc4EKto19mZucAAAE
+2025-03-09T17:53:05.396Z [INFO]: New socket connected: SgR9vlWSbavuv9v7AAAF
+2025-03-09T17:53:05.857Z [INFO]: New socket connected: eUUXDdA_3SIXKaz4AAAI
+2025-03-09T17:53:05.859Z [INFO]: New socket connected: V5rmGNHtDFW522NlAAAJ
+2025-03-09T17:53:06.863Z [INFO]: New socket connected: yZ_t83WVFu7oKA2FAAAL
+2025-03-09T17:53:07.869Z [INFO]: New socket connected: 8B_zoIkk2H2wV5WFAAAO
+2025-03-09T17:53:07.870Z [INFO]: New socket connected: oqK917ePFM2FYYftAAAP
+2025-03-09T17:53:09.862Z [INFO]: New socket connected: R9YjpLH6XKDgDx9_AAAR
+2025-03-09T17:53:10.318Z [INFO]: Socket disconnected: SgR9vlWSbavuv9v7AAAF
+2025-03-09T17:53:10.320Z [INFO]: Socket disconnected: oqK917ePFM2FYYftAAAP
+2025-03-09T17:53:10.321Z [INFO]: Socket disconnected: V5rmGNHtDFW522NlAAAJ
+2025-03-09T17:53:10.702Z [INFO]: New socket connected: HgFkdyYH-fm8WKIOAAAV
+2025-03-09T17:53:10.704Z [INFO]: New socket connected: yL78r-bYc9grw4_-AAAW
+2025-03-09T17:53:10.706Z [INFO]: New socket connected: Wpi6bZkQ30IOx3WGAAAX
+2025-03-09T17:56:26.833Z [INFO]: Socket disconnected: Wpi6bZkQ30IOx3WGAAAX
+2025-03-09T17:56:26.835Z [INFO]: Socket disconnected: yL78r-bYc9grw4_-AAAW
+2025-03-09T17:56:26.837Z [INFO]: Socket disconnected: HgFkdyYH-fm8WKIOAAAV
+2025-03-09T17:56:27.287Z [INFO]: New socket connected: U2XQt3gcCmW4lgevAAAb
+2025-03-09T17:56:27.291Z [INFO]: New socket connected: Q_4wuov0VlYw6r1RAAAc
+2025-03-09T17:56:27.292Z [INFO]: New socket connected: h5da6Eh6mEdPl0DVAAAd
+2025-03-09T17:59:15.872Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T17:59:15.873Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1NDE5MjAsImV4cCI6MTc0MTU0NTUyMH0.AriHBweHTC-dGDtYYSFb9hD9av7bk48JSqyIPiV1u_M
+2025-03-09T17:59:15.875Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:59:15.880Z [INFO]: Disconnection from route: /home
+2025-03-09T17:59:15.881Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:59:15.884Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-09T17:59:15.885Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1NDE5MjAsImV4cCI6MTc0MTU0NTUyMH0.AriHBweHTC-dGDtYYSFb9hD9av7bk48JSqyIPiV1u_M
+2025-03-09T17:59:15.886Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:59:16.338Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/10/2025, 1:59:16 AM
+2025-03-09T17:59:16.767Z [INFO]: Active players: 1
+2025-03-09T17:59:16.767Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-09T17:59:16.767Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/10/2025, 1:59:16 AM
+2025-03-09T17:59:17.037Z [INFO]: Active players: 1
+2025-03-09T17:59:17.038Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/10/2025, 1:59:17 AM
+2025-03-09T17:59:20.798Z [INFO]: Disconnection from route: /home
+2025-03-09T17:59:20.798Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:59:20.812Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T17:59:20.813Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1NDE5MjAsImV4cCI6MTc0MTU0NTUyMH0.AriHBweHTC-dGDtYYSFb9hD9av7bk48JSqyIPiV1u_M
+2025-03-09T17:59:20.814Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:59:20.816Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 2
+2025-03-09T17:59:20.816Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T17:59:20.816Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:59:20.818Z [INFO]: New connection from route: http://localhost:5173/game-details/2
+2025-03-09T17:59:20.818Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE3NDE1NDE5MjAsImV4cCI6MTc0MTU0NTUyMH0.AriHBweHTC-dGDtYYSFb9hD9av7bk48JSqyIPiV1u_M
+2025-03-09T17:59:20.818Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T17:59:20.819Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 2
+2025-03-09T17:59:21.268Z [INFO]: Active players: 0
+2025-03-09T17:59:21.268Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 0 as of 3/10/2025, 1:59:21 AM
+2025-03-09T17:59:21.271Z [INFO]: Active players: 0
+2025-03-09T17:59:21.271Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 0 as of 3/10/2025, 1:59:21 AM
+2025-03-09T17:59:25.142Z [INFO]: Disconnection from route: /game-details/2
+2025-03-09T17:59:25.143Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-09T18:00:38.118Z [INFO]: New socket connected: r9ecKZaaqlkXXGUKAAAG
+2025-03-09T18:00:38.120Z [INFO]: New socket connected: DB-qOmqmQ_jxrRuBAAAH
+2025-03-09T18:00:38.122Z [INFO]: New socket connected: giexvNaF0djgO5VgAAAI
+2025-03-09T18:00:38.124Z [INFO]: New socket connected: XuCyPxQlrphq5c0wAAAJ
+2025-03-09T18:00:38.126Z [INFO]: New socket connected: VFq4VimDpAfI9YqfAAAK
+2025-03-09T18:00:38.127Z [INFO]: New socket connected: 4tTgh11c5y3JoXP9AAAL
+2025-03-09T18:00:38.131Z [INFO]: New socket connected: 4AgQsH-KAcD6AKasAAAN
+2025-03-09T18:00:38.857Z [INFO]: New socket connected: ETuo1QzlNqOa6rmiAAAP
+2025-03-09T18:00:41.871Z [INFO]: New socket connected: ddsypp1F3XHMAOm9AAAR
+2025-03-09T18:01:36.184Z [INFO]: New socket connected: 474cA2uTXhndI2scAAAC
+2025-03-09T18:01:36.193Z [INFO]: New socket connected: l1FjA3v7ICaCBnTgAAAD
+2025-03-09T18:01:36.856Z [INFO]: New socket connected: FZvKycWmapcJSx3SAAAG
+2025-03-09T18:01:36.858Z [INFO]: New socket connected: 65713W7GWF7WFRfIAAAH
+2025-03-09T18:01:37.108Z [INFO]: New socket connected: p7ao3BbDMXr0udbnAAAJ
+2025-03-09T18:01:37.861Z [INFO]: New socket connected: v12DwiBI2DsxgpNVAAAL
+2025-03-09T18:01:38.868Z [INFO]: New socket connected: LgE_bYC-D8m2S1MvAAAO
+2025-03-09T18:01:38.870Z [INFO]: New socket connected: 5v4S4EUnnyvnhitEAAAP
+2025-03-09T18:01:39.857Z [INFO]: New socket connected: Sp4Aae9lBFlhqXgCAAAR
+2025-03-09T18:06:28.369Z [INFO]: Socket disconnected: 474cA2uTXhndI2scAAAC
+2025-03-09T18:06:28.371Z [INFO]: Socket disconnected: p7ao3BbDMXr0udbnAAAJ
+2025-03-09T18:06:28.372Z [INFO]: Socket disconnected: l1FjA3v7ICaCBnTgAAAD
+2025-03-09T18:06:28.827Z [INFO]: New socket connected: P0dJoLigsjC5tRGlAAAV
+2025-03-09T18:06:28.829Z [INFO]: New socket connected: AsQht6ejCIvftFWMAAAW
+2025-03-09T18:06:28.835Z [INFO]: New socket connected: R_4sSLGOfMGczxosAAAX
+2025-03-09T18:13:15.013Z [INFO]: New socket connected: WGuHWDBFiEjO7tg5AAAb
+2025-03-09T18:13:15.014Z [INFO]: New socket connected: 1JoOOPls26xiIwmXAAAc
+2025-03-09T18:13:15.023Z [INFO]: New socket connected: oG3p55WLngE7B14pAAAd
+2025-03-09T18:13:17.351Z [INFO]: Socket disconnected: WGuHWDBFiEjO7tg5AAAb
+2025-03-09T18:13:17.352Z [INFO]: Socket disconnected: oG3p55WLngE7B14pAAAd
+2025-03-09T18:13:17.353Z [INFO]: Socket disconnected: 1JoOOPls26xiIwmXAAAc
+2025-03-09T18:16:19.705Z [INFO]: New socket connected: Cg7dMIZzugwJzBdYAAAE
+2025-03-09T18:16:19.709Z [INFO]: New socket connected: 8thYRQsiMkKP3lj7AAAF
+2025-03-09T18:16:19.711Z [INFO]: New socket connected: SwR_g6Hgbit0IEjnAAAG
+2025-03-09T18:16:19.715Z [INFO]: New socket connected: tjXdvUPN8ERYX0ElAAAH
+2025-03-09T18:16:19.867Z [INFO]: New socket connected: QuRIb7yOQo-zWUCUAAAJ
+2025-03-09T18:16:20.861Z [INFO]: New socket connected: FlFmuYkJK1UMeAf2AAAM
+2025-03-09T18:16:20.862Z [INFO]: New socket connected: SRCGjvJPTEsibIqNAAAN
+2025-03-09T18:16:22.854Z [INFO]: New socket connected: hTNweUshNZVn1k9cAAAP
+2025-03-09T18:16:24.858Z [INFO]: New socket connected: Qltx72Np4Nu0zF0uAAAR
