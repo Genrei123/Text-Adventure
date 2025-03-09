@@ -1,55 +1,103 @@
-// THIS WILL ONLY WORK WHEN I RUN COMFYUI ON MY LOCAL MACHINE
-// I WILL NEED TO RUN COMFYUI ON THE SERVER TO MAKE THIS WORK ! ! !
-// THEN HAVE API RAN OR SOME STUFF CYKA ! ! !
-
-/*
-import { Request, Response } from 'express';
-import { exec } from 'child_process';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import axios, { AxiosError } from 'axios';
+import { Request, Response } from 'express';
 
-const modelPath = path.join(__dirname, '../../../path/to/sd3_medium_incl_clips.safetensors');
-const workflowPath = path.join(__dirname, '../../../img2img.json');
-const outputDir = path.join(__dirname, '../../../generated_images');
+// Define a basic type for ComfyUI history response
+interface ComfyUIHistory {
+  [promptId: string]: {
+    status: { completed: boolean };
+    outputs: {
+      [nodeId: string]: {
+        images?: Array<{
+          filename: string;
+          // Add other fields if needed (e.g., type, subtype)
+        }>;
+      };
+    };
+  };
+}
+
+// ComfyUI Server URL (Local)
+const comfyUIUrl = 'http://127.0.0.1:8188';
+
+// Output directory for generated images (Local)
+const outputDir = path.join(__dirname, '../../../../../../Stable Diffusion/ComfyUI_windows_portable/ComfyUI/output');
+
+// NGROK URL (NAGBABAGO LAGI RAAAAA)
+// Every start of the server, the URL will become invalid. So, you need to update the URL when you run ngrok once more.
+const publicBaseUrl = 'https://54f0-2405-8d40-4819-a640-e505-70e1-b0bf-8421.ngrok-free.app';
 
 export const generateImage = async (req: Request, res: Response) => {
-  const { prompt } = req.body;
-
-  if (!prompt) {
-    return res.status(400).json({ error: 'Prompt is required' });
-  }
-
   try {
-    // Update the workflow JSON with the new prompt
-    const workflow = JSON.parse(fs.readFileSync(workflowPath, 'utf-8'));
-    workflow['7'].inputs.text = prompt;
+    console.log('Server received request at:', new Date());
+    const workflowPath = path.join(__dirname, '../../imagegen/comfyui/workflows/prompt2img.json');
+    const workflowData = JSON.parse(fs.readFileSync(workflowPath, 'utf-8'));
 
-    // Save the updated workflow to a temporary file
-    const tempWorkflowPath = path.join(outputDir, 'temp_workflow.json');
-    fs.writeFileSync(tempWorkflowPath, JSON.stringify(workflow, null, 2));
+    workflowData['7'].inputs.text = req.body.prompt || "A cyberpunk cityscape with neon lights";
+    if (req.body.negativePrompt) {
+      workflowData['8'].inputs.text = req.body.negativePrompt;
+    }
+    workflowData['4'].inputs.seed = Math.floor(Math.random() * 1000000000000);
 
-    // Run ComfyUI with the updated workflow
-    exec(`comfyui --workflow ${tempWorkflowPath} --output ${outputDir}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error generating image: ${error.message}`);
-        return res.status(500).json({ error: 'Failed to generate image' });
+    // Send prompt to ComfyUI
+    const response = await axios.post(`${comfyUIUrl}/prompt`, { prompt: workflowData });
+    const promptId = response.data.prompt_id;
+    console.log('Prompt ID:', promptId);
+
+    // Poll ComfyUI history to wait for completion
+    let latestFile: string | undefined;
+    const startTime = Date.now();
+    const maxWaitTime = 60000; // 60 seconds max wait
+
+    while (Date.now() - startTime < maxWaitTime) {
+      const historyResponse = await axios.get(`${comfyUIUrl}/history/${promptId}`);
+      const historyData = historyResponse.data as ComfyUIHistory; // Type the entire response
+      const promptData = historyData[promptId]; // Access dynamically
+
+      if (promptData && promptData.status && promptData.status.completed) {
+        // Extract the output filename from the history
+        const outputs = promptData.outputs;
+        const saveImageNode = Object.values(outputs).find((output: any) =>
+          output && output.images && output.images.length > 0
+        );
+        if (saveImageNode && saveImageNode.images) {
+          const imageInfo = saveImageNode.images[0];
+          latestFile = imageInfo.filename;
+          console.log('Image generation completed. Filename from history:', latestFile);
+          break;
+        }
       }
 
-      // Find the generated image
-      const files = fs.readdirSync(outputDir);
-      const imageFile = files.find(file => file.endsWith('.png'));
+      console.log('Waiting for generation to complete...');
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+    }
 
-      if (!imageFile) {
-        return res.status(500).json({ error: 'No image generated' });
-      }
+    if (!latestFile) {
+      throw new Error('Image generation did not complete within 60 seconds');
+    }
 
-      const imageUrl = `http://localhost:3000/generated_images/${imageFile}`;
-      res.json({ imageUrl });
+    // Verify the file exists
+    const filePath = path.join(outputDir, latestFile);
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`Generated file ${latestFile} not found in ${outputDir}`);
+    }
+
+    console.log('Output Dir:', outputDir);
+    console.log('Output Dir Contents:', fs.readdirSync(outputDir));
+    console.log('Latest File:', latestFile);
+    console.log('Generated URL:', `${publicBaseUrl}/images/${latestFile}`);
+
+    const imageUrl = `/images/${latestFile}`;
+
+    res.json({
+      promptId,
+      message: 'Image generation queued with ComfyUI',
+      imageUrl: `${publicBaseUrl}${imageUrl}`
     });
   } catch (error) {
-    console.error(`Error: ${error.message}`);
-    res.status(500).json({ error: 'Internal server error' });
+    const axiosError = error as AxiosError;
+    console.error('Server Error:', axiosError.response?.data || axiosError.message);
+    res.status(500).json({ error: axiosError.message });
   }
 };
-
-*/ // Had to comment this out because I have to do OpenAI API stuff first before this.

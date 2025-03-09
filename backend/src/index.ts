@@ -20,13 +20,15 @@ import gameRoutes from './routes/game/gameRoutes';
 import paymentRoutes from './routes/transaction/shopRoutes';
 import sessionRoutes from './routes/statistics/sessionRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
-import openaiRoute from './routes/img-generation/openaiRoute';
+import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation
+import comfyuiRoute from './routes/img-generation/comfyuiRoute';
 import banRoutes from './routes/banRoutes';
 import metricsRouter from './routes/metrics';
 import playersRouter from './routes/players';
 import imageRoutes from './routes/image/imageRoutes';
 import jwtAuth from './middlware/auth/auth';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 import seedTokenPackages from './service/transaction/tokenPackageSeeder';
 import { initializeModels } from './service/models';
 
@@ -67,7 +69,8 @@ app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
 app.use("/sessions", sessionRoutes);
 app.use('/nih', nihRoutes);
-app.use('/openai', openaiRoute);
+app.use('/openai', openaiRoute); // Dall-E image generation 
+app.use('/comfyui', comfyuiRoute); // ComfyUI - image generation for SDXL, SD3, etc. (P.S. YOU CAN'T RUN THIS WITHOUT MY PRECIOUS RTX 4060 Ti WAHAHAHAHA! (I meant if my PC is off.))
 app.use('/bans', banRoutes);
 app.use('/api/bans', banRoutes);
 app.use('/api/metrics', metricsRouter);
@@ -110,5 +113,8 @@ server.listen(PORT, async () => {
   }
   console.log(`Server is running on port ${PORT}`);
 });
+
+const outputPath = path.join(__dirname, '../../../../Stable Diffusion/ComfyUI_windows_portable/ComfyUI/output');
+app.use('/images', express.static(outputPath));
 
 export default app;
