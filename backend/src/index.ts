@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import cors from 'cors';
 import corsOptions from './config/cors';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import database from './service/database';
 import routes from './routes/auth/routes';
@@ -14,19 +14,21 @@ import chatRoutes from './routes/chat/chatRoutes';
 import User from './model/user/user';
 import coinRoutes from './routes/coins/coinRoutes';
 import { createServer } from './websocket/socket';
-import statsRoutes from './routes/statistics/statsRoutes'; // Import the new stats route
+import statsRoutes from './routes/statistics/statsRoutes';
+import playerActivityRoutes from './routes/statistics/playerActivityRoutes';
 import gameRoutes from './routes/game/gameRoutes';
-import { initializeModels } from './service/models';
 import paymentRoutes from './routes/transaction/shopRoutes';
-import sessionRoutes from './routes/statistics/sessionRoutes'; // Import the session routes
+import sessionRoutes from './routes/statistics/sessionRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
-import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation
+import openaiRoute from './routes/img-generation/openaiRoute';
 import banRoutes from './routes/banRoutes';
+import metricsRouter from './routes/metrics';
+import playersRouter from './routes/players';
 import imageRoutes from './routes/image/imageRoutes';
 import jwtAuth from './middlware/auth/auth';
 import cookieParser from 'cookie-parser';
 import seedTokenPackages from './service/transaction/tokenPackageSeeder';
-
+import { initializeModels } from './service/models';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -34,8 +36,7 @@ const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 declare module 'express-session' {
   interface SessionData {
-    userId?: string;
-    // Add other session properties you need
+    userId: number;
   }
 }
 
@@ -60,32 +61,50 @@ app.use('/shop', shopRoutes);
 app.use('/webhook', webhookRoutes);
 app.use('/gameplay', coinRoutes);
 app.use('/ai', chatRoutes);
-app.use('/statistics/statsRoutes', statsRoutes); // Use the new stats route
+app.use('/statistics/statsRoutes', statsRoutes);
+app.use('/statistics/playerActivityRoutes', playerActivityRoutes);
 app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
-app.use("/sessions", sessionRoutes); // Add the session routes
+app.use("/sessions", sessionRoutes);
 app.use('/nih', nihRoutes);
-app.use('/openai', openaiRoute); // Image generation
+app.use('/openai', openaiRoute);
 app.use('/bans', banRoutes);
-app.use('/api/bans', banRoutes);  // Fixes 404 for /api/bans
+app.use('/api/bans', banRoutes);
+app.use('/api/metrics', metricsRouter);
+app.use('/api/games', gameRoutes);
+app.use('/api/players', playersRouter);
 app.use('/image', jwtAuth, imageRoutes);
-
-
 app.use('/images', express.static('public/images'));
-
 
 // Auth routes setup
 const authRouter = createAuthRouter(frontendUrl);
 app.use('/auth', authRouter);
 
+// Error handling middleware
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('Global Error Handler:', err);
+  res.status(err.status || 500).json({
+    error: process.env.NODE_ENV === 'production' 
+      ? 'Server Error' 
+      : err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
+
+// Global error handlers
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 const server = createServer(app);
 server.listen(PORT, async () => { 
   try {
-    //await database.authenticate();
     await initializeModels();
     console.log('Connection to the database has been established successfully.');
-    await User.sync({ alter: true });
-    console.log('User table has been synchronized.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }

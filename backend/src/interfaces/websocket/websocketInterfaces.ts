@@ -14,3 +14,14 @@ export interface LastPlayedPayload {
   timestamp: number;
   gameName?: string;
 }
+
+export interface SessionData {
+  startTime: Date;
+  endTime?: Date;
+  sessionData: {
+    interactions: { [key: string]: any };
+    gamesCreated: { [key: string]: any };
+    gamesPlayed: { [key: string]: any };
+    visitedPages: { [key: string]: any };
+  };
+}
