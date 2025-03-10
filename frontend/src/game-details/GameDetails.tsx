@@ -27,6 +27,7 @@ interface Comment {
   };
   likes?: number;
 }
+import LastPlayedGame from "../websocket/LastPlayedGame.tsx"
 
 const GameDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
