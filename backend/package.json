@@ -4,11 +4,11 @@
   "description": "\"Text-based adventure game with the use of Generative AI as it's narrator\"",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "clear && ts-node src/index.ts",
     "build": "tsc",
     "serve": "node dist/index.js",
     "test": "jest --verbose",
-    "nodemon": "nodemon src/index.ts"
+    "nodemon": "clear && nodemon src/index.ts"
   },
   "repository": {
     "type": "git",

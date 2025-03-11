@@ -3,6 +3,7 @@ import passport from '../../middlware/auth/google/passport';
 import Jwt from 'jsonwebtoken';
 import cookieJwtAuth from '../../middlware/auth/auth';
 import { forgotPassword, resetPassword, validateResetToken, verifyEmail, checkUsername, checkEmail } from '../../controllers/auth/authController';
+import User from '../../model/user/user';
 
 // Create a function that returns the configured router
 const createAuthRouter = (frontendUrl: string) => {
@@ -14,23 +15,49 @@ const createAuthRouter = (frontendUrl: string) => {
   router.post('/check-username', checkUsername);
   router.post('/check-email', checkEmail);
 
-  router.get('/', (req: Request, res: Response) => {
-    res.send("Hello World!");
-  });
-
   router.get('/google',
     passport.authenticate('google', { scope: ['profile', 'email'] })
   );
   
-  router.get('/google/callback',
+  router.get('/google/callback', 
     passport.authenticate('google', { failureRedirect: '/' }),
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
       if (req.user) {
-        const user = req.user as any;
-        const username = user.displayName || user.emails[0]?.value;
-        const token = Jwt.sign({ id: user.id, username }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-        res.cookie('token', token, { httpOnly: true });
-        res.redirect(`${frontendUrl}/home?username=${encodeURIComponent(username)}&token=${encodeURIComponent(token)}`);
+        const req_user = req.user as any;
+        const username = req_user.displayName || req_user.emails[0]?.value;
+        // Check if the user is in the database already
+        // If not, create a new user
+        // If yes, block the user from creating a new account
+
+        try {
+          console.log('Checking if user exists:', req_user.emails[0]?.value);
+          const userExists = await User.findOne({ where: {email: req_user.emails[0]?.value}})
+          if (userExists) {
+            console.log('User exists:', userExists);
+          } else {
+            console.log('Creating new user:', req_user.emails[0]?.value);
+            const newUser = await User.create({
+              email: req_user.emails[0]?.value,
+              username: username,
+              private: false,
+              model: 'gpt-3.5',
+              password: '',
+              admin: false,
+              emailVerified: true,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            });
+
+            console.log('New user created:', newUser);
+          }
+        } catch (error) {
+          console.error('Error creating user:', error);
+          res.redirect(`${frontendUrl}/forbidden`);
+          return;
+        }
+        const token = Jwt.sign({ id: req_user.id, username, email: req_user.emails[0]?.value }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+        //res.redirect(`${frontendUrl}/?token=${token}`);
+        res.redirect(`${frontendUrl}/home?token=${token}`);
       } else {
         res.redirect('/?error=authentication_failed');
       }
