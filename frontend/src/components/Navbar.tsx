@@ -1,8 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Search, ChevronDown, X, LogOut} from "lucide-react";
+import { Search, ChevronDown, X, LogOut } from "lucide-react";
 import socketIOClient from 'socket.io-client';
 import { addPageVisits } from '../sessions/api-calls/visitedPagesSession';
+import axiosInstance from "../../config/axiosConfig";
+import { Link } from 'react-router-dom';
 
 const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
@@ -31,21 +33,22 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
-  
+  const [profilePicture, setProfilePicture] = useState<string>();
+
   const searchInputRef = useRef<HTMLInputElement>(null);
   const isMobile = windowWidth < 768; // Define mobile breakpoint
-  
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const isHomePage = location.pathname === "/home";
-  
+
   // Extract unique genres and subgenres from actual data
   const genres = [...new Set(games.map(game => game.genre))].filter(Boolean);
-  
+
   // Use subgenres as tags
   const tags = [...new Set(games.map(game => game.subgenre))].filter(Boolean);
-  
+
   const popularityOptions = [
     { label: "Past Day", value: "1day" },
     { label: "Past Moon", value: "30days" },
@@ -57,10 +60,9 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await fetch('http://localhost:3000/game/');
-        if (response.ok) {
-          const data = await response.json();
-          setGames(data);
+        const response = await axiosInstance.get('/game/');
+        if (response.data) {
+          setGames(response.data);
         } else {
           console.error('Failed to fetch games');
         }
@@ -69,6 +71,29 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
       }
     };
 
+    const fetchUserData = async () => {
+      // Get username
+      const email = localStorage.getItem('email');
+      // Fetch by username
+      try {
+        const response = await axiosInstance.get('/admin/users/verify/' + email);
+        console.log(response.data);
+        if (response.data) {
+          setUsername(response.data.username);
+
+          console.log(response.data.image_url);
+
+          if (response.data.image_url != null) { 
+            setProfilePicture(import.meta.env.VITE_SITE_URL + response.data.image_url);
+          }
+        }
+
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    }
+
+    fetchUserData();
     fetchGames();
   }, []);
 
@@ -82,7 +107,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     };
 
     window.addEventListener('resize', handleResize);
-    
+
     // Clean up event listener
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -90,31 +115,8 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   }, [isSearchExpanded]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const storedUserData = localStorage.getItem('userData');
-      if (!storedUserData) {
-          return null;
-      }
 
-      const userData = JSON.parse(storedUserData);
-      if (!userData) {
-        setUsername("testing");
-        return null;
-      }
-      const username = userData.username;
-      setUsername(username);
-    };
-
-    const params = new URLSearchParams(window.location.search);
-    const usernameParam = params.get('username');
-    if (usernameParam) {
-      setUsername(decodeURIComponent(usernameParam));
-      localStorage.setItem("email", decodeURIComponent(usernameParam));
-    }
-
-    fetchUserData();
-    
-  }, []);
+  });
 
   // Focus search input when expanded
   useEffect(() => {
@@ -126,7 +128,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   // Update suggestions based on search query using actual game data
   useEffect(() => {
     if (searchQuery.length > 0) {
-      const filteredGames = games.filter(game => 
+      const filteredGames = games.filter(game =>
         game.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setSuggestions(filteredGames); // Store entire game objects
@@ -179,34 +181,34 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   // Get a consistent color based on username
   const getProfileColor = () => {
     if (!username) return "#8B4513";
-    
+
     // Simple hash function to generate a color
     let hash = 0;
     for (let i = 0; i < username.length; i++) {
       hash = username.charCodeAt(i) + ((hash << 5) - hash);
     }
-    
+
     // Convert to hex color (keeping it in brown/gold palette)
     const hue = Math.abs(hash) % 60 + 30; // 30-90 range (browns/golds)
     const saturation = 70 + (Math.abs(hash) % 30); // 70-100%
     const lightness = 40 + (Math.abs(hash) % 20); // 40-60%
-    
+
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
 
   return (
     <>
-      <nav className="bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
-        <div className="flex flex-col space-y-4">
+      <nav className="sticky top-0 bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
+        <div className=" sticky top-0 flex flex-col space-y-4">
           {/* Top Bar */}
           <div className="flex justify-between items-center">
             {/* Logo - Hidden when search is expanded on mobile */}
             {!(isMobile && isSearchExpanded) && (
               <div className="flex items-center">
-                <img 
-                  src="/SageAI.png" 
-                  alt="Sage.AI Logo" 
-                  className="h-10" 
+                <img
+                  src="/SageAI.png"
+                  alt="Sage.AI Logo"
+                  className="h-10"
                   onClick={() => navigate("/home")}
                   style={{ cursor: 'pointer' }}
                 />
@@ -244,9 +246,8 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                           className="absolute right-3 top-2.5 text-[#8B4513]"
                         >
                           <ChevronDown
-                            className={`transform transition-transform ${
-                              showFilters ? "rotate-180" : ""
-                            }`}
+                            className={`transform transition-transform ${showFilters ? "rotate-180" : ""
+                              }`}
                             size={20}
                           />
                         </button>
@@ -261,9 +262,9 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                                 {/* Game Icon */}
                                 <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
                                   {game.icon ? (
-                                    <img 
-                                      src={game.icon} 
-                                      alt={`${game.title} icon`} 
+                                    <img
+                                      src={game.icon}
+                                      alt={`${game.title} icon`}
                                       className="w-full h-full object-cover"
                                     />
                                   ) : (
@@ -313,9 +314,9 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                             {/* Game Icon */}
                             <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
                               {game.icon ? (
-                                <img 
-                                  src={game.icon} 
-                                  alt={`${game.title} icon`} 
+                                <img
+                                  src={game.icon}
+                                  alt={`${game.title} icon`}
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
@@ -340,9 +341,8 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                   >
                     Filter
                     <ChevronDown
-                      className={`ml-1 transform transition-transform ${
-                        showFilters ? "rotate-180" : ""
-                      }`}
+                      className={`ml-1 transform transition-transform ${showFilters ? "rotate-180" : ""
+                        }`}
                       size={20}
                     />
                   </button>
@@ -371,7 +371,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                         Welcome, {username}
                       </span>
                     )}
-                    
+
                     {/* Logout Button */}
                     {isMobile ? (
                       <button
@@ -382,12 +382,34 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                         <LogOut size={18} />
                       </button>
                     ) : (
-                      <button
-                        className="bg-[#8B4513] hover:bg-[#723A10] px-3 py-1 rounded text-sm font-medium text-[#E5D4B3] border border-[#C8A97E]"
-                        onClick={openLogoutModal}
-                      >
-                        Leave Realm
-                      </button>
+
+                      <div className="dropdown dropdown-end">
+                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                          <div className="w-10 rounded-full">
+                            <img
+                              alt="Tailwind CSS Navbar component"
+                              src= {profilePicture ? profilePicture : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}  />
+                          </div>
+                        </div>
+                        <ul
+                          tabIndex={0}
+                          className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                          <li>
+                          <Link to={`/${username}`}>
+                            <a>Profile</a>
+                          </Link>
+                          </li>
+
+                          <li>
+                            <Link to="/subscription">
+                              <a>Subscription</a>
+                            </Link>
+                            </li>
+                            <li>
+                              <a onClick={openLogoutModal}>Logout</a>
+                            </li>
+                        </ul>
+                      </div>
                     )}
                   </div>
                 ) : (

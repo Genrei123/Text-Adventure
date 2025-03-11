@@ -36,11 +36,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
 
   useEffect(() => {
     let isMounted = true;
-
-    console.log("Token: " + localStorage.getItem('token'));
-    console.log("Email: " + localStorage.getItem('email'));
-    console.log("Username: " + localStorage.getItem('username'));
-
     const initializeHomepage = async () => {
       try {
         // Fetch carousel games
@@ -118,7 +113,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
       </div>
 
       <div className="flex flex-col w-full h-full pt-16 z-100">
-        <Sidebar />
+        {/* <Sidebar /> */}
 
         <div className="w-full">
           {/* Carousel Section */}

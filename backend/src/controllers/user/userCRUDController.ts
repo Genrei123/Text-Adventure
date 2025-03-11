@@ -37,6 +37,19 @@ export const getUserByUsername = async (req: Request, res: Response) => {
     }
 };
 
+export const getUserByEmail = async (req: Request, res: Response) => {
+    try {
+        const user = await UserService.getUserByEmail(req.params.email);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user' });
+    }
+};
+
 export const addUser = async (req: Request, res: Response) => {
     try {
         const addedUser = await UserService.addUser(req.body);

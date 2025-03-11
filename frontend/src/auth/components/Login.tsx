@@ -35,8 +35,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   // Check if user is already logged in when component mounts
   useEffect(() => {
+    // Clear any existing tokens
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("userData");
+
     const token = localStorage.getItem("token");
-    console.log('Debug token:', token);
     if (token) {
       axiosInstance
         .post("/auth/verify-token", { token })
@@ -164,15 +168,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       // Construct the authentication URL
       const authUrl = `${import.meta.env.VITE_SITE_URL}/oauth/${provider.toLowerCase()}`;
       
-      // Additional logging for debugging
-      console.log('Social Login URL:', authUrl);
-  
       // Create new window
       window.location.href = authUrl;
-
-      // Check if we get localStorage data
-      const token = localStorage.getItem('token');
-      console.log('Social Login Token:', token);
     } catch (error) {
       console.error(`Error during ${provider} login:`, error);
       toast.error(`Failed to log in with ${provider}.`);

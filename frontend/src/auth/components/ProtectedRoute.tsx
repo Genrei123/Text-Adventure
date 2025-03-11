@@ -42,10 +42,13 @@ const ProtectedRoute = ({ children, requiresUsername = false }: ProtectedRoutePr
         const verifyToken = async () => {
             try {
                 const params = new URLSearchParams(location.search);
-                console.log('URL params:', params.get('token'));
                 const token = params.get('token');
+
+                if (!token) {
+                    return;
+                }
+                
                 const response = await axios.post('/auth/verify-token', { token });
-                console.log('Token verified:', response);
 
                 if (response.data) {
                     const { token, user } = response.data as LoginResponse;

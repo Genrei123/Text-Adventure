@@ -183,7 +183,7 @@ export default function ProfilePage() {
       <Navbar />
 
       <div className="flex flex-col md:flex-row">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <main className="flex-1 p-4 md:p-8">
           <div className="max-w-4xl mx-auto">
             {updateSuccess && (
