@@ -173,7 +173,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       // Check if we get localStorage data
       const token = localStorage.getItem('token');
       console.log('Social Login Token:', token);
-      alert("Debug token: " + token);
     } catch (error) {
       console.error(`Error during ${provider} login:`, error);
       toast.error(`Failed to log in with ${provider}.`);
