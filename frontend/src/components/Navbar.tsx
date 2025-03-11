@@ -97,6 +97,10 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
       }
 
       const userData = JSON.parse(storedUserData);
+      if (!userData) {
+        setUsername("testing");
+        return null;
+      }
       const username = userData.username;
       setUsername(username);
     };
@@ -133,6 +137,10 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
   const handleLogout = async () => {
     if (onLogout) {
+      localStorage.removeItem('userData');
+      localStorage.removeItem('email');
+      localStorage.removeItem('token');
+      setUsername(null);
       await onLogout();
     }
   };
@@ -386,7 +394,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                   <>
                     {!isMobile && (
                       <span className="font-playfair text-[#E5D4B3]">
-                        Not logged in
+                        Not logged in!
                       </span>
                     )}
                     <button

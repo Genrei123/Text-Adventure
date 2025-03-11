@@ -37,6 +37,10 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
   useEffect(() => {
     let isMounted = true;
 
+    console.log("Token: " + localStorage.getItem('token'));
+    console.log("Email: " + localStorage.getItem('email'));
+    console.log("Username: " + localStorage.getItem('username'));
+
     const initializeHomepage = async () => {
       try {
         // Fetch carousel games
@@ -73,6 +77,8 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
           setUsername(decodeURIComponent(usernameParam));
           localStorage.setItem("username", usernameParam);
         }
+
+        setUsername(localStorage.getItem("username"));
 
       } catch (error) {
         console.error('Error initializing homepage:', error);
