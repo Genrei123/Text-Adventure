@@ -77,7 +77,7 @@ const ReviewPage: React.FC<ReviewPageProps> = ({
 
     return (
         <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col md:flex-row">
-            <Sidebar />
+            {/* <Sidebar /> */}
             <div className="flex-1 flex flex-col items-center">
                 <nav className="bg-[#1e1e1e] py-4 px-6 shadow-lg w-full flex justify-between items-center">
                     <div className="text-2xl font-cinzel text-[#C8A97E]">Sage.AI</div>

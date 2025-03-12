@@ -71,7 +71,7 @@ const ImageGeneratorScreen: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
             <GameHeader />
-            <Sidebar />
+            {/* <Sidebar /> */}
             <br />
             <br />
             <br />

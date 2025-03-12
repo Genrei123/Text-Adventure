@@ -332,7 +332,7 @@ const GameDetails: React.FC = () => {
 
   const gameDetails = {
     genre: game.genre || "Adventure, RPG",
-    developer: game.developer || "Game Studio",
+    developer: game.userId || "Game Studio",
     releaseDate: game.releaseDate || "2025",
     platform: game.platform || "Web Browser",
     playTime: game.playTime || "10-15 hours",
@@ -348,7 +348,7 @@ const GameDetails: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 bg-cover bg-center bg-[url('/UserBG.svg')] text-white pb-16">
       <Navbar />
-      <Sidebar />
+      {/* <Sidebar /> */}
       <ToastContainer
         position="bottom-right"
         autoClose={5000}

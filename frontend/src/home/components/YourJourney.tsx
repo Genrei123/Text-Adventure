@@ -36,36 +36,44 @@ const YourJourney: React.FC<YourJourneyProps> = ({ setCard }) => {
           return;
         }
 
-        console.log(email);
-
         // Fetch session data
-        const response = await axiosInstance.get('/sessions/get-sessions-by-email', {
-          params: { email }
-        });
-
-        // Process the session data to extract visited games
-        const visitedGames: GameVisit[] = [];
-        
-        if (response.data && response.data.length > 0) {
-          const latestSession = response.data[0]; // Assuming the first session is the latest
-          
-          // Transform the visitedPages object to an array of game visits
-          Object.entries(latestSession.sessionData.visitedPages).forEach(([page, count]) => {
-            // Check if the page is a game details page
-            if (page.startsWith('/game-details/')) {
-              const gameId = page.replace('/game-details/', '');
-              visitedGames.push({
-                gameId,
-                visitCount: count as number
-              });
-            }
+        try {
+          const response = await axiosInstance.get('/sessions/get-sessions-by-email', {
+            params: { email }
           });
+
+          if (response.data && response.data.length > 0) {
+            const latestSession = response.data[0]; // Assuming the first session is the latest
+            
+            // Transform the visitedPages object to an array of game visits
+            Object.entries(latestSession.sessionData.visitedPages).forEach(([page, count]) => {
+              // Check if the page is a game details page
+              if (page.startsWith('/game-details/')) {
+                const gameId = page.replace('/game-details/', '');
+                visitedGames.push({
+                  gameId,
+                  visitCount: count as number
+                });
+              }
+            });
+          
+
+          // Process the session data to extract visited games
+          const visitedGames: GameVisit[] = [];
+  
+          setSessionData({
+            visitedGames,
+            isLoading: false
+          });
+
+        } else {
+          return;
         }
 
-        setSessionData({
-          visitedGames,
-          isLoading: false
-        });
+        } catch (error) {
+          console.error("Error fetching session data:", error);
+          setSessionData(prev => ({ ...prev, isLoading: false }));
+        }
       } catch (error) {
         console.error("Error fetching session data:", error);
         setSessionData(prev => ({ ...prev, isLoading: false }));

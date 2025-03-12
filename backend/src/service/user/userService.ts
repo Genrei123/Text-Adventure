@@ -14,6 +14,10 @@ class UserService {
         return await User.findOne({ where: { username } });
     }
 
+    static async getUserByEmail(email: string) {
+        return await User.findOne({ where: { email } });
+    }
+
     static async addUser(userData: any) {
         // Check for duplicate username
         const existingUserByUsername = await User.findOne({ where: { username: userData.username } });
@@ -33,6 +37,7 @@ class UserService {
 
         return await User.create(userData);
     }
+    
 
     static async updateUser(id: number, updatedData: any) {
         try {

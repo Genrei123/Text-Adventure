@@ -21,6 +21,17 @@ interface UserDetails {
   image_url?: string;
 }
 
+interface Subscription {
+  id: string;
+  email: string;
+  subscribedAt: string;
+  startDate: string;
+  endDate: string | null;
+  subscriptionType: string;
+  status: string;
+  duration: number;
+}
+
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("games");
   const [showUserModal, setShowUserModal] = useState(false);
@@ -28,6 +39,7 @@ export default function ProfilePage() {
   const [showBioModal, setShowBioModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [userSubscription, setUserSubscription] = useState<Subscription | null>(null);
   const cropperRef = useRef<ReactCropperElement>(null);
   const [copied, setCopied] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
@@ -56,6 +68,37 @@ export default function ProfilePage() {
       try {
         const response = await axios.get(`/admin/users/username/${username}`);
         setUserDetails(response.data);
+        
+        // Fetch user subscription data
+        if (response.data && response.data.email) {
+          try {
+            const subscriptionResponse = await axios.get(`/shop/subscription/user/${response.data.email}`);
+            if (subscriptionResponse.data && subscriptionResponse.data.length > 0) {
+              // Get the most recent active subscription
+              const activeSubscriptions = subscriptionResponse.data.filter(
+                (sub: Subscription) => sub.status === 'active'
+              );
+              
+              if (activeSubscriptions.length > 0) {
+                // Sort by startDate in descending order to get the most recent one
+                const sortedSubscriptions = activeSubscriptions.sort(
+                  (a: Subscription, b: Subscription) => 
+                    new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+                );
+                setUserSubscription(sortedSubscriptions[0]);
+              } else {
+                // If no active subscription, get the most recent one regardless of status
+                const sortedSubscriptions = subscriptionResponse.data.sort(
+                  (a: Subscription, b: Subscription) => 
+                    new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+                );
+                setUserSubscription(sortedSubscriptions[0]);
+              }
+            }
+          } catch (subError) {
+            console.error('Error fetching user subscription:', subError);
+          }
+        }
       } catch (error) {
         console.error('Error fetching user profile:', error);
         navigateWithLoading('/forbidden');
@@ -167,6 +210,16 @@ export default function ProfilePage() {
     }
   };
 
+  // Function to format subscription information
+  const formatSubscriptionInfo = () => {
+    if (!userSubscription) {
+      return 'Freedom Sword';
+    }
+    
+    // Just return the subscription type without status or expiration date
+    return userSubscription.subscriptionType;
+  };
+
   if (isInitialLoading) {
     return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />;
   }
@@ -183,7 +236,7 @@ export default function ProfilePage() {
       <Navbar />
 
       <div className="flex flex-col md:flex-row">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <main className="flex-1 p-4 md:p-8">
           <div className="max-w-4xl mx-auto">
             {updateSuccess && (
@@ -242,10 +295,10 @@ export default function ProfilePage() {
                 </div>
 
                 <p className="text-[#ffffff]/80 mb-6 self-start text-2xl">
-                  {userDetails?.email || 'Email'}
+                  {formatSubscriptionInfo()}
                 </p>
 
-                <p className="text-[#ffffff]/80 mb-4 text-left text-xl">
+                {/* <p className="text-[#ffffff]/80 mb-4 text-left text-xl">
                   {userDetails?.bio
                     ? userDetails.bio.match(/.{1,40}/g)?.map((line, index) => (
                     <span key={index}>{line}<br /></span>
@@ -297,14 +350,15 @@ export default function ProfilePage() {
                       </form>
                     </div>
                   </div>
-                )}
-
+                )} */}
+                {/*
                 <button
                   onClick={() => setShowUserModal(true)}
                   className="px-4 py-2 bg-[#B39C7D] text-[#1e1e1e] rounded hover:bg-[#ffffff] transition-colors duration-300"
                 >
                   EDIT PROFILE
                 </button>
+                */}
               </div>
             </div>
 

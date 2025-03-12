@@ -11,7 +11,6 @@ const Template: StoryFn = (args) => <LoginScreen {...args} onLogin={(username: s
 export const Default = Template.bind({});
 Default.args = {
   onLogin: (username: string) => {
-    console.log(`Logged in as ${username}`);
   },
 };
 

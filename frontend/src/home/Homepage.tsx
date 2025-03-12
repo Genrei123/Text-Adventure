@@ -36,7 +36,6 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
 
   useEffect(() => {
     let isMounted = true;
-
     const initializeHomepage = async () => {
       try {
         // Fetch carousel games
@@ -74,6 +73,8 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
           localStorage.setItem("username", usernameParam);
         }
 
+        setUsername(localStorage.getItem("username"));
+
       } catch (error) {
         console.error('Error initializing homepage:', error);
       } finally {
@@ -107,12 +108,12 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <Navbar onLogout={handleLogout} />
+      <div className="sticky top-0 left-0 right-0 z-50">
+      <Navbar onLogout={handleLogout} />
       </div>
 
       <div className="flex flex-col w-full h-full pt-16 z-100">
-        <Sidebar />
+        {/* <Sidebar /> */}
 
         <div className="w-full">
           {/* Carousel Section */}

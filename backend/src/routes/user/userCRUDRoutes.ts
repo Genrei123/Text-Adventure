@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, getUserByUsername, addUser, updateUser, deleteUser, getUserCommentsById, getUserRatingsById, getUserRatingsByUsername, getUserCommentsByUsername } from '../../controllers/user/userCRUDController';
+import { getAllUsers, getUserById, getUserByUsername, addUser, updateUser, deleteUser, getUserCommentsById, getUserRatingsById, getUserRatingsByUsername, getUserCommentsByUsername, getUserByEmail } from '../../controllers/user/userCRUDController';
 import { get } from 'http';
 
 const router = express.Router();
@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/users', getAllUsers);
 router.get('/users/:id', getUserById);
 router.get('/users/username/:username', getUserByUsername);
+router.get('/users/verify/:email', getUserByEmail);
 router.post('/users', addUser);
 router.put('/users/:id', updateUser);
 router.delete('/users/:id', deleteUser);
