@@ -164,3 +164,61 @@ export const getUserSubscriptions = async (req: Request, res: Response): Promise
     res.status(500).json({ error: 'Failed to fetch user subscriptions' });
   }
 };
+
+export const unsubscribeUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, subscriptionId } = req.body;
+    
+    if (!email || !subscriptionId) {
+      res.status(400).json({ error: 'Email and subscriptionId are required' });
+      return;
+    }
+    
+    // Find the subscription
+    const subscription = await Subscriber.findOne({
+      where: { 
+        id: subscriptionId,
+        email: { [Op.iLike]: email }
+      }
+    });
+    
+    if (!subscription) {
+      res.status(404).json({ error: 'Subscription not found' });
+      return;
+    }
+    
+    // Only active subscriptions can be cancelled
+    if (subscription.status !== 'active') {
+      res.status(400).json({ error: `Cannot unsubscribe a subscription with status: ${subscription.status}` });
+      return;
+    }
+    
+    // Update the subscription status to 'cancelled'
+    // We don't actually delete the subscription record, just mark it as cancelled
+    // This helps with keeping subscription history and analytics
+    await subscription.update({
+      status: 'cancelled',
+      // If you want to set an endDate for reporting purposes, you can do:
+      // endDate: new Date() // This means benefits end immediately
+      // OR keep the original endDate to allow benefits until the end of billing period
+    });
+    
+    const formattedDate = new Date().toLocaleString();
+    console.log(`-------------- Subscription Cancelled --------------`);
+    console.log(`Status: Success
+Subscription ID: ${subscriptionId}
+Email: ${email}
+Subscription Type: ${subscription.subscriptionType}
+Date Cancelled: ${formattedDate}`);
+    console.log(`-----------------------------------------------------`);
+    console.log(` `);
+    
+    res.status(200).json({ 
+      message: 'Subscription successfully cancelled',
+      subscription
+    });
+  } catch (error: any) {
+    console.error('Error cancelling subscription:', error);
+    res.status(500).json({ error: 'Failed to cancel subscription' });
+  }
+};
