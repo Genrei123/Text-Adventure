@@ -1,5 +1,5 @@
-import Ban from '../model/ban/ban';
-import User from '../model/user/user';
+import Ban from '../../model/ban/ban';
+import User from '../../model/user/user';
 import { Request, Response } from 'express';
 
 /**

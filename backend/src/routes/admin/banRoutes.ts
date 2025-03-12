@@ -1,5 +1,5 @@
 import express from 'express';
-import { createBan, updateBan, getAllBans, getTemporaryBans, getPermanentBans, deleteBan, searchUsers } from '../service/banService';
+import { createBan, updateBan, getAllBans, getTemporaryBans, getPermanentBans, deleteBan, searchUsers } from '../../service/banService';
 
 const router = express.Router();
 

@@ -22,9 +22,9 @@ import sessionRoutes from './routes/statistics/sessionRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
 import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation for OPENAI
 import comfyuiRoute from './routes/img-generation/comfyuiRoute'; // Image generation for Stable Diffusion
-import banRoutes from './routes/banRoutes';
-import metricsRouter from './routes/metrics';
-import playersRouter from './routes/players';
+import banRoutes from './routes/admin/banRoutes';
+import metricsRouter from './routes/admin/metricsRoutes';
+import playersRouter from './routes/admin/playersRoutes';
 import imageRoutes from './routes/image/imageRoutes';
 import jwtAuth from './middlware/auth/auth';
 import cookieParser from 'cookie-parser';

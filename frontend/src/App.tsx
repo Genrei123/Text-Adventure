@@ -21,9 +21,8 @@ import Homepage from './home/Homepage';
 import UserProfile from './profile/UserProfile';
 import GameScreen from './game/GameScreen';
 import GameDetails from './game-details/GameDetails';
-import AdminDashboard from './Admin/AdminDashboard';
-import AdminPlayerList from './Admin/AdminPlayerList';
-import BannedList from './Admin/AdminBannedList';
+
+import AdminPage from './Admin/AdminPage';
 import Subscription from './subscription/Subscription';
 
 // Work in Progress Components [EXPERIMENTAL - Do not include in main app!]
@@ -41,6 +40,9 @@ import BanTestPage from './pages/BanTestPage';
 import SessionTracker from './sessions/components/SessionTracker';
 import { clearSession } from './sessions/api-calls/visitedPagesSession';
 import AdminLogin from './Admin/AdminLogin';
+
+// Admin Components
+import AdminRoute from './Admin/components/AdminRoute';
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
@@ -176,16 +178,24 @@ function App() {
           <Route path="/ban-test" element={<BanTestPage />} />
           
           {/* Error Routes */}
+          {/* Add a banned user page for banned users. */}
+          {/* <Route path="/banned" element ={</>} />*/} 
           <Route path="/forbidden" element={<Forbidden />} />
           <Route path="/server-error" element={<ServerError />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/game-details" element={<GameDetails />} />
-          {/* admin side */}
-          <Route path="/Admin/Banned" element={<BannedList/>} />
-          <Route path="/Admin/PlayerList" element={<AdminPlayerList />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
+          
+          {/* Admin Routes */}
+          <Route path="/Admin/Login" element={<AdminLogin />} />
+          <Route 
+            path="/Admin/Page" 
+            element={
+              <AdminRoute>
+                <AdminPage />
+              </AdminRoute>
+            } 
+          />
         </Routes>
       </LoadingProvider>
     </Router>
