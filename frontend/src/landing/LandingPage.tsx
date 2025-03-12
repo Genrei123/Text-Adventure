@@ -8,6 +8,7 @@ const LandingPage: React.FC = () => {
     const backgrounds = ['/landing1.gif', '/landing2.gif', '/landing3.gif'];
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const { navigateWithLoading } = useLoading();
+    const [hasRated, setHasRated] = useState(false);
 
     useEffect(() => {
         let index = 0;
@@ -24,6 +25,16 @@ const LandingPage: React.FC = () => {
         }, 2000);
         return () => clearTimeout(timer);
     }, []);
+
+    const handleRate = () => {
+        if (!hasRated) {
+            // Logic to handle rating
+            setHasRated(true);
+            alert('Thank you for rating!');
+        } else {
+            alert('You have already rated this game.');
+        }
+    };
 
     if (isInitialLoading) {
         return (
@@ -87,6 +98,12 @@ const LandingPage: React.FC = () => {
                             <div className="absolute right-0 top-0 h-full w-4 bg-[#b28f4c] transform translate-x-1/2"></div>
                         </button>
                     </div>
+                    <button
+                        className="mt-5 font-cinzel bg-[#1e1e1e] text-white py-2 px-5 rounded-lg cursor-pointer transition duration-300 hover:shadow-[0_0_30px_#b28f4c] hover:scale-110 hover:bg-[#b28f4c] hover:text-black hover:font-bold"
+                        onClick={handleRate}
+                    >
+                        Rate this game
+                    </button>
                 </div>
             </div>
 
