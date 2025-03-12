@@ -121,7 +121,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
               <Carousel slides={carouselData} />
             </div>
 
-          <YourJourney setCard={setCard} />
+          {/* <YourJourney setCard={setCard} /> */}
 
           <StartAdventure 
             onCreateStory={() => navigateWithLoading("/game-creation")}
@@ -130,12 +130,12 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
 
           <GameList />
 
-          <div>
+          {/* <div>
             <h1>Main Application</h1>
             <button onClick={() => navigateWithLoading('/ban-test')}>
               Go to Ban Test Page
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
