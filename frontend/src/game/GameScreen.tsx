@@ -41,6 +41,9 @@ const GameScreen: React.FC = () => {
   const modelDropdownRef = useRef<HTMLDivElement>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isAnimating, setIsAnimating] = useState(true);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(true);
+  const [isWaitingForAI, setIsWaitingForAI] = useState(false);
+  
   interface GameSummaryResponse {
     summary: string;
     imageUrl: string;
@@ -128,26 +131,39 @@ const GameScreen: React.FC = () => {
     };
 
     const fetchChatMessages = async () => {
+      setIsLoadingMessages(true);
       try {
         const response = await axiosInstance.post("/ai/get-chat", {
           userId,
           gameId: Number.parseInt(gameId, 10),
         });
-        const formattedMessages = response.data.map((msg: any) => ({
-          content: msg.content,
-          isUser: msg.role === "user",
-          timestamp: new Date(msg.createdAt).toLocaleTimeString(),
-          image_url: msg.image_url || undefined,
-        }));
-        console.log("Fetched chat messages:", formattedMessages);
-        setChatMessages(formattedMessages);
+        
+        // Make sure we have data to process
+        if (response.data && Array.isArray(response.data)) {
+          const formattedMessages = response.data.map((msg: any) => ({
+            content: msg.content,
+            isUser: msg.role === "user",
+            timestamp: new Date(msg.createdAt).toLocaleTimeString(),
+            image_url: msg.image_url || undefined,
+          }));
+          console.log("Fetched chat messages:", formattedMessages);
+          setChatMessages(formattedMessages);
+        } else {
+          console.warn("No chat messages returned or invalid format", response.data);
+          setChatMessages([]);
+        }
       } catch (error) {
         console.error("Error fetching chat messages:", error);
+        setError("Failed to load chat history.");
+      } finally {
+        setIsLoadingMessages(false);
       }
     };
 
-    fetchGameDetails();
-    fetchChatMessages();
+    // Execute both fetches
+    Promise.all([fetchGameDetails(), fetchChatMessages()])
+      .catch(err => console.error("Error in initial data fetch:", err));
+      
   }, [userId, gameId]);
 
   // Scroll to bottom when messages update
@@ -193,6 +209,7 @@ const GameScreen: React.FC = () => {
 
     const payload = { userId, gameId: Number.parseInt(gameId, 10), message, action: selectedAction };
     setMessage("");
+    setIsWaitingForAI(true);
 
     try {
       const displayMessage = `[${selectedAction}] ${message}`;
@@ -200,6 +217,7 @@ const GameScreen: React.FC = () => {
       setChatMessages((prev) => [...prev, tempUserMessage]);
 
       const response = await axiosInstance.post("/ai/chat", payload);
+      
       const aiResponse: ChatMessage = {
         content: response.data.ai_response.content || "This is a simulated AI response.",
         isUser: false,
@@ -231,6 +249,8 @@ const GameScreen: React.FC = () => {
     } catch (err) {
       console.error("Error sending message:", err);
       setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsWaitingForAI(false);
     }
   };
 
@@ -285,6 +305,7 @@ const GameScreen: React.FC = () => {
   
       console.log(`Sending request to ${apiEndpoint} with:`, { prompt: imagePrompt, userId, gameId, model: selectedModel.toLowerCase() });
       
+      // Use the appropriate endpoint based on selected model
       const response = await axios.post(import.meta.env.VITE_SDXL_ENV + apiEndpoint, {
         prompt: imagePrompt,
         userId,
@@ -300,7 +321,7 @@ const GameScreen: React.FC = () => {
       const { imageUrl } = response.data;
       console.log("Image URL received:", imageUrl);
   
-      await axiosInstance.post("/ai/store-image", {
+      await axios.post(import.meta.env.VITE_SDXL_ENV + "/ai/store-image", {
         userId,
         gameId: Number.parseInt(gameId, 10),
         content: `Scene visualized with ${selectedModel}:`,
@@ -308,7 +329,7 @@ const GameScreen: React.FC = () => {
         role: "assistant",
       });
       
-      console.log("Store-image response:", await axiosInstance.post("/ai/store-image", {
+      console.log("Store-image response:", await axios.post(import.meta.env.VITE_SDXL_ENV + "/ai/store-image", {
         userId,
         gameId: Number.parseInt(gameId, 10),
         content: `Scene visualized with ${selectedModel}:`,
@@ -376,6 +397,38 @@ const GameScreen: React.FC = () => {
     window.open(facebookShareUrl, '_blank', 'width=600,height=400');
   };
 
+  // Render waiting bubble for AI
+  const renderWaitingBubble = () => {
+    if (!isWaitingForAI) return null;
+    
+    return (
+      <div className="mb-4 text-left">
+        <div className="inline-block p-3 rounded-lg bg-[#634630] text-[#E5D4B3]">
+          <div className="flex space-x-2">
+            <div className="h-2 w-2 bg-[#E5D4B3] rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+            <div className="h-2 w-2 bg-[#E5D4B3] rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+            <div className="h-2 w-2 bg-[#E5D4B3] rounded-full animate-bounce" style={{ animationDelay: "600ms" }}></div>
+          </div>
+        </div>
+        <p className="text-xs text-gray-500 mt-1">{new Date().toLocaleTimeString()}</p>
+      </div>
+    );
+  };
+
+  // Function to get the correct image URL based on environment
+  const getImageUrl = (imageUrl: string) => {
+    if (!imageUrl) return '';
+    
+    // If it's already an absolute URL, return it
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    
+    // Otherwise, build the URL based on the environment
+    const baseUrl = import.meta.env.VITE_SDXL_ENV || '';
+    return `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+  };
+
   return (
     <>
       {isAnimating && (
@@ -415,54 +468,54 @@ const GameScreen: React.FC = () => {
         </div>
 
         <div className="flex-grow flex justify-center items-start mt-[-5%] pt-4">
-  <div
-    ref={chatContainerRef}
-    className="w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto h-[calc(100vh-200px)] scrollbar-hide bg-[#1E1E1E]/50 backdrop-blur-sm text-white"
-    style={{ scrollbarColor: "#634630 #1E1E1E" }}
-  >
-    {chatMessages.map((msg, index) => (
-      <div key={index} className={`mb-4 ${msg.isUser ? "text-right" : "text-left"}`}>
-        <p
-          className={`inline-block p-2 rounded-lg ${msg.isUser ? "bg-[#311F17] text-white" : "bg-[#634630] text-[#E5D4B3]"}`}
-        >
-          {msg.content}
-        </p>
-        {msg.image_url && (
-          <div className={`mt-2 ${msg.isUser ? "text-right" : "text-left"}`}>
-            <img
-              src={
-                `${import.meta.env.VITE_BACKEND_URL}${msg.image_url.startsWith('/') ? '' : '/'}${msg.image_url}`
-              }
-              alt="Generated"
-              className="max-w-full h-auto rounded-lg inline-block"
-              onError={(e) => {
-                console.error("Image load error with backend URL:", e.currentTarget.src);
-                
-                // If loading with backend URL fails, try using the SDXL URL
-                const sdxlUrl = `${import.meta.env.VITE_SDXL_ENV}${msg.image_url.startsWith('/') ? '' : '/'}${msg.image_url}`;
-                console.log("Attempting with SDXL URL:", sdxlUrl);
-                e.currentTarget.src = sdxlUrl;
-                
-                // Add a second error handler for the SDXL attempt
-                e.currentTarget.onerror = () => {
-                  console.error("Image load error with SDXL URL as well:", sdxlUrl);
-                  // Finally, try the local path as last resort
-                  const localPath = `${msg.image_url}`;
-                  console.log("Attempting with local path:", localPath);
-                  e.currentTarget.src = localPath;
-                  
-                  // Clear the error handler to prevent infinite loop
-                  e.currentTarget.onerror = null;
-                };
-              }}
-            />
+          <div
+            ref={chatContainerRef}
+            className="w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto h-[calc(100vh-200px)] scrollbar-hide bg-[#1E1E1E]/50 backdrop-blur-sm text-white"
+            style={{ scrollbarColor: "#634630 #1E1E1E" }}
+          >
+            {isLoadingMessages ? (
+              <div className="flex justify-center items-center h-20">
+                <div className="flex space-x-2">
+                  <div className="h-3 w-3 bg-[#E5D4B3] rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                  <div className="h-3 w-3 bg-[#E5D4B3] rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                  <div className="h-3 w-3 bg-[#E5D4B3] rounded-full animate-bounce" style={{ animationDelay: "600ms" }}></div>
+                </div>
+              </div>
+            ) : chatMessages.length === 0 ? (
+              <div className="text-center py-8 text-gray-400">
+                <p>Your adventure begins here. What would you like to do?</p>
+              </div>
+            ) : (
+              <>
+                {chatMessages.map((msg, index) => (
+                  <div key={index} className={`mb-4 ${msg.isUser ? "text-right" : "text-left"}`}>
+                    <p
+                      className={`inline-block p-2 rounded-lg ${msg.isUser ? "bg-[#311F17] text-white" : "bg-[#634630] text-[#E5D4B3]"}`}
+                    >
+                      {msg.content}
+                    </p>
+                    {msg.image_url && (
+                      <div className={`mt-2 ${msg.isUser ? "text-right" : "text-left"}`}>
+                        <img
+                          src={getImageUrl(msg.image_url)}
+                          alt="Generated"
+                          className="max-w-full md:max-w-md lg:max-w-lg h-auto rounded-lg inline-block"
+                          loading="lazy"
+                          onError={(e) => {
+                            console.error("Image load error:", e.currentTarget.src);
+                            e.currentTarget.onerror = null; 
+                          }}
+                        />
+                      </div>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
+                  </div>
+                ))}
+                {renderWaitingBubble()}
+              </>
+            )}
           </div>
-        )}
-        <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
-      </div>
-    ))}
-  </div>
-</div>
+        </div>
 
         <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
           <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
@@ -533,8 +586,13 @@ const GameScreen: React.FC = () => {
               onKeyDown={handleKeyDown}
               rows={1}
               style={{ minHeight: "56px", height: `${Math.min(message.split("\n").length * 24 + 32, 192)}px` }}
+              disabled={isWaitingForAI}
             />
-            <button className="p-4 bg-transparent rounded-r-2xl relative group self-start" onClick={handleSubmit}>
+            <button 
+              className={`p-4 bg-transparent rounded-r-2xl relative group self-start ${isWaitingForAI ? 'cursor-not-allowed opacity-50' : ''}`} 
+              onClick={handleSubmit}
+              disabled={isWaitingForAI}
+            >
               <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
               <img
                 src="/Enter-after.svg"
@@ -599,9 +657,14 @@ const GameScreen: React.FC = () => {
                 >
                   {gameSummary && gameSummary.imageUrl ? (
                     <img
-                      src={`${import.meta.env.VITE_BACKEND_URL}${gameSummary.imageUrl}`}
+                      src={getImageUrl(gameSummary.imageUrl)}
                       alt="Game Summary"
                       className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        console.error("Summary image load error");
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/placeholder-image.jpg'; // Fallback image path
+                      }}
                     />
                   ) : (
                     <div className="text-[#C9B57B] text-lg flex items-center justify-center">
@@ -619,53 +682,37 @@ const GameScreen: React.FC = () => {
                       <div>
                         {/* Format the string with line breaks */}
                         {gameSummary.summary.split('\n').map((line, index) => (
-                          <p key={index} className="mb-2">
-                            {line.trim()}
-                          </p>
+                          <p key={index}>{line}</p>
                         ))}
                       </div>
                     ) : (
-                      <p>{isGeneratingImage ? 'Creating your adventure summary...' : 'No summary available. Generate a summary to see your adventure recap.'}</p>
+                      <p>{isGeneratingImage ? 'Generating summary...' : 'No summary available'}</p>
                     )}
                   </div>
                 </div>
               </div>
 
-
-              <div className="flex justify-between">
-                <div className="flex space-x-3">
-                  <button
-                    onClick={handleSummary}
-                    disabled={isGeneratingImage}
-                    className={`px-4 py-3 rounded-full font-playfair text-white ${isGeneratingImage ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#634630] hover:bg-[#311F17]'} transition-colors`}
-                  >
-                    {isGeneratingImage ? 'Generating...' : 'Generate Summary'}
-                  </button>
-                  <button
-                    onClick={handleShareToFacebook}
-                    disabled={!gameSummary || isGeneratingImage}
-                    className={`px-4 py-3 rounded-full font-playfair text-white flex items-center ${!gameSummary || isGeneratingImage ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#4267B2] hover:bg-[#365899]'} transition-colors`}
-                  >
-                    <span className="mr-2">Share to Facebook</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white">
-                      <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-                    </svg>
-                  </button>
-                </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={handleShareToFacebook}
+                  className={`px-4 py-2 rounded-full font-playfair bg-[#634630] text-white hover:bg-[#311F17] transition-colors`}
+                >
+                  Share to Facebook
+                </button>
                 <button
                   onClick={() => setShowEndStoryModal(false)}
-                  className="px-4 py-3 rounded-full font-playfair text-white bg-[#634630] hover:bg-[#311F17] transition-colors"
+                  className="ml-4 px-4 py-2 rounded-full font-playfair bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
                 >
-                  Return to Game
+                  Close
                 </button>
               </div>
-
             </motion.div>
           </motion.div>
         )}
       </div>
     </>
   );
-};
+}
 
 export default GameScreen;
+
