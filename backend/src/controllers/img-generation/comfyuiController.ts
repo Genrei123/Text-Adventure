@@ -24,10 +24,6 @@ const comfyUIUrl = 'http://127.0.0.1:8188';
 // Output directory for generated images (Local)
 const outputDir = path.join(__dirname, '../../../../../../Stable Diffusion/ComfyUI_windows_portable/ComfyUI/output');
 
-// NGROK URL (NAGBABAGO LAGI RAAAAA)
-// Every start of the server, the URL will become invalid. So, you need to update the URL when you run ngrok once more.
-const publicBaseUrl = 'https://54f0-2405-8d40-4819-a640-e505-70e1-b0bf-8421.ngrok-free.app';
-
 export const generateImage = async (req: Request, res: Response) => {
   try {
     console.log('Server received request at:', new Date());
@@ -86,14 +82,14 @@ export const generateImage = async (req: Request, res: Response) => {
     console.log('Output Dir:', outputDir);
     console.log('Output Dir Contents:', fs.readdirSync(outputDir));
     console.log('Latest File:', latestFile);
-    console.log('Generated URL:', `${publicBaseUrl}/images/${latestFile}`);
+    console.log('Generated URL:', `${process.env.PUBLIC_BASE_URL}/images/${latestFile}`);
 
     const imageUrl = `/images/${latestFile}`;
 
     res.json({
       promptId,
       message: 'Image generation queued with ComfyUI',
-      imageUrl: `${publicBaseUrl}${imageUrl}`
+      imageUrl: `${process.env.PUBLIC_BASE_URL}${imageUrl}`
     });
   } catch (error) {
     const axiosError = error as AxiosError;

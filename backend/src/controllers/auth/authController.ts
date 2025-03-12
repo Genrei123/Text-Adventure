@@ -49,8 +49,10 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             emailVerified: false,       // Default to false
             verificationToken,
             verificationTokenExpires,
+            created_At: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
+            updated_At: new Date(),
             totalCoins: 0,
         });
 

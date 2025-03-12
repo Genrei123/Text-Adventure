@@ -8,6 +8,159 @@ import { promisify } from 'util';
 const writeFileAsync = promisify(fs.writeFile);
 const mkdirAsync = promisify(fs.mkdir);
 
+// Define types for ComfyUI history response
+interface ComfyUIHistory {
+  [promptId: string]: {
+    status: { completed: boolean };
+    outputs: {
+      [nodeId: string]: ComfyUIOutputNode;
+    };
+  };
+}
+
+interface ComfyUIOutputNode {
+  images?: Array<{
+    filename: string;
+    // Add other fields if needed (e.g., type, subtype)
+  }>;
+  [key: string]: any; // Allow other properties for flexibility
+}
+
+// Existing functions (generateBannerImage, generateGameCoverImage, generateChatImage, getGameImage) remain unchanged...
+
+// NEW: Function for generating images for chat (supports DALL-E and SDXL)
+export const generateImage = async (req: Request, res: Response): Promise<void> => {
+  const { prompt, userId, gameId, model } = req.body;
+
+  if (!prompt || !userId || !gameId || !model) {
+    res.status(400).json({ error: 'Missing required fields: prompt, userId, gameId, or model' });
+    return;
+  }
+
+  try {
+    // Ensure the image directory exists
+    const imageDir = path.join('public', 'images', 'chat-images');
+    await mkdirAsync(imageDir, { recursive: true });
+
+    let imageUrl: string;
+
+    if (model.toLowerCase() === 'sdxl') {
+      // Use ComfyUI for SDXL
+      const comfyUIUrl = 'http://127.0.0.1:8188';
+      const outputDir = path.join(__dirname, '../../../../../../Stable Diffusion/ComfyUI_windows_portable/ComfyUI/output');
+      const workflowPath = path.join(__dirname, '../../imagegen/comfyui/workflows/prompt2img.json');
+      const workflowData = JSON.parse(fs.readFileSync(workflowPath, 'utf-8'));
+
+      // Update the prompt in the workflow
+      workflowData['7'].inputs.text = prompt;
+      workflowData['4'].inputs.seed = Math.floor(Math.random() * 1000000000000);
+
+      // Send prompt to ComfyUI
+      const response = await axios.post(`${comfyUIUrl}/prompt`, { prompt: workflowData });
+      const promptId = response.data.prompt_id;
+      console.log('ComfyUI Prompt ID:', promptId);
+
+      // Poll ComfyUI history to wait for completion
+      let latestFile: string | undefined;
+      const startTime = Date.now();
+      const maxWaitTime = 60000; // 60 seconds max wait
+
+      while (Date.now() - startTime < maxWaitTime) {
+        const historyResponse = await axios.get(`${comfyUIUrl}/history/${promptId}`);
+        const historyData = historyResponse.data as ComfyUIHistory;
+        const promptData = historyData[promptId];
+
+        if (promptData && promptData.status && promptData.status.completed) {
+          const outputs = promptData.outputs;
+          const saveImageNode = Object.values(outputs).find((output: ComfyUIOutputNode) =>
+            output && output.images && output.images.length > 0
+          );
+          if (saveImageNode && saveImageNode.images) {
+            latestFile = saveImageNode.images[0].filename;
+            console.log('ComfyUI Image generation completed. Filename:', latestFile);
+            break;
+          }
+        }
+
+        console.log('Waiting for ComfyUI generation to complete...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      if (!latestFile) {
+        throw new Error('ComfyUI image generation did not complete within 60 seconds');
+      }
+
+      // Verify the file exists
+      const filePath = path.join(outputDir, latestFile);
+      if (!fs.existsSync(filePath)) {
+        throw new Error(`Generated file ${latestFile} not found in ${outputDir}`);
+      }
+
+      // Copy the file to chat-images directory
+      const newFileName = `chat-image-${Date.now()}_${userId}_${gameId}.png`;
+      const publicFilePath = path.join(imageDir, newFileName);
+      fs.copyFileSync(filePath, publicFilePath);
+
+      imageUrl = `/images/chat-images/${newFileName}`;
+    } else {
+      // Default to DALL-E (consistent with existing chat image generation)
+      const openAiResponse = await axios.post(
+        'https://api.openai.com/v1/images/generations',
+        {
+          model: 'dall-e-3',
+          prompt,
+          n: 1,
+          size: '1024x1024',
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.MY_OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const imageUrlFromDalle = openAiResponse.data.data[0].url;
+
+      // Download the DALL-E image
+      const imageResponse = await axios({
+        method: 'get',
+        url: imageUrlFromDalle,
+        responseType: 'arraybuffer',
+      });
+
+      // Generate a unique filename
+      const newFileName = `chat-image-${Date.now()}_${userId}_${gameId}.png`;
+      const publicFilePath = path.join(imageDir, newFileName);
+
+      // Save the image to disk
+      await writeFileAsync(publicFilePath, imageResponse.data);
+
+      imageUrl = `/images/chat-images/${newFileName}`;
+    }
+
+    res.json({ imageUrl, gameId });
+  } catch (error: unknown) {
+    console.error('Full error details:', error);
+
+    if (axios.isAxiosError(error)) {
+      console.error('Axios Error:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      res.status(500).json({
+        error: 'Failed to generate chat image',
+        details: error.response?.data || error.message,
+      });
+    } else {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`Error generating chat image: ${errorMessage}`);
+      res.status(500).json({ error: 'Failed to generate chat image' });
+    }
+  }
+};
+
 // Function specifically for generating banner images
 export const generateBannerImage = async (req: Request, res: Response): Promise<void> => {
   const { prompt } = req.body;
