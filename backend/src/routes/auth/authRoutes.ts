@@ -45,7 +45,9 @@ const createAuthRouter = (frontendUrl: string) => {
               admin: false,
               emailVerified: true,
               createdAt: new Date(),
-              updatedAt: new Date()
+              updatedAt: new Date(),
+              created_At: new Date(),
+              updated_At: new Date(),
             });
 
             console.log('New user created:', newUser);

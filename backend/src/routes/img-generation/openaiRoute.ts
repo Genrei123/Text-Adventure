@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { generateBannerImage, generateChatImage, getGameImage, generateGameSummary} from '../../controllers/img-generation/openaiController';
+import { generateImage, generateBannerImage, generateChatImage, getGameImage, generateGameSummary} from '../../controllers/img-generation/openaiController';
 
 
 const router = Router();
