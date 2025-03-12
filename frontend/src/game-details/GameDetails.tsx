@@ -48,6 +48,9 @@ const GameDetails: React.FC = () => {
   const [userRating, setUserRating] = useState<number | null>(null)
   const [hoveredRating, setHoveredRating] = useState<number | null>(null)
   const [isRatingPopupOpen, setIsRatingPopupOpen] = useState(false)
+  const [hasRated, setHasRated] = useState(false);
+  const [showRateAgainPopup, setShowRateAgainPopup] = useState(false);
+  const [tempRating, setTempRating] = useState<number | null>(null);
   const popupRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -91,6 +94,10 @@ const GameDetails: React.FC = () => {
           const ratings = response.data || []
           const userRatingData = ratings.find((rating: any) => rating.userId === userId)
           setUserRating(userRatingData ? userRatingData.score : null)
+          setHasRated(!!userRatingData); // Set hasRated based on whether the user has rated
+          if (userRatingData) {
+            setIsRatingPopupOpen(true); // Show the rating popup if the user has rated
+          }
         }
       } catch (error: any) {
         console.error("Failed to fetch user rating:", error)
@@ -279,6 +286,17 @@ const GameDetails: React.FC = () => {
   };
 
   const handleRate = async (rating: number) => {
+    if (hasRated) {
+      setTempRating(rating);
+      setShowRateAgainPopup(true);
+      return;
+    }
+
+    await submitRating(rating);
+    setIsRatingPopupOpen(true); // Show the rating popup after rating
+  };
+
+  const submitRating = async (rating: number) => {
     try {
       let userId = 0;
       const userData = localStorage.getItem("userData");
@@ -296,6 +314,7 @@ const GameDetails: React.FC = () => {
       });
       
       setUserRating(rating);
+      setHasRated(true); // Set hasRated to true after rating
       toast.success("Thank you for rating this game!");
       setIsRatingPopupOpen(false);
       
@@ -308,11 +327,24 @@ const GameDetails: React.FC = () => {
     }
   };
 
+  const confirmRateAgain = async () => {
+    if (tempRating !== null) {
+      await submitRating(tempRating);
+    }
+    setShowRateAgainPopup(false);
+  };
+
   function handleClick(): void {
     navigate(`/game/${id}`)
   }
 
-  const toggleRatingPopup = () => setIsRatingPopupOpen((prev) => !prev)
+  const toggleRatingPopup = () => {
+    if (hasRated) {
+      setShowRateAgainPopup(true);
+    } else {
+      setIsRatingPopupOpen((prev) => !prev);
+    }
+  };
 
   if (loading) return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />
   if (error) return (
@@ -393,10 +425,10 @@ const GameDetails: React.FC = () => {
                     <MessageSquare className="w-5 h-5 text-blue-400" />
                     <span>{game.commentsCount || 0}</span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  {/* <div className="flex items-center gap-1">
                     <Heart className="w-5 h-5 text-red-400" />
                     <span>{game.favorites || 0}</span>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="flex flex-row items-center gap-4 relative">
                   <div className="relative" ref={popupRef}>
@@ -404,40 +436,24 @@ const GameDetails: React.FC = () => {
                       className="bg-[#B39C7D] hover:bg-[#8C7A5B] text-white px-4 py-2 rounded-lg transition-all duration-200 font-medium flex items-center gap-2 shadow-lg md:order-1 order-1"
                       onClick={toggleRatingPopup}
                     >
-                      <Star className="w-5 h-5 text-yellow-400" />
+                      {/* <Star className="w-5 h-5 text-yellow-400" /> */}
                       <span className="hidden md:inline">Rate Game</span>
                       <span className="md:hidden">Rate</span>
                     </button>
-                    {isRatingPopupOpen && (
+                    {!hasRated && isRatingPopupOpen && (
                       <div className="absolute bottom-full mb-2 right-0 bg-black/90 p-4 rounded-lg shadow-lg flex items-center gap-2 z-10">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            onClick={() => handleRate(star)}
-                            onMouseEnter={() => setHoveredRating(star)}
-                            onMouseLeave={() => setHoveredRating(null)}
-                            className={`w-8 h-8 flex items-center justify-center ${
-                              (hoveredRating && hoveredRating >= star) || (userRating && userRating >= star && !hoveredRating)
-                                ? 'text-yellow-400'
-                                : 'text-gray-400'
-                            } hover:text-yellow-400 transition-colors duration-200`}
-                            aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
-                          >
-                            <Star
-                              className="w-6 h-6"
-                              fill={
-                                (hoveredRating && hoveredRating >= star) || (userRating && userRating >= star && !hoveredRating)
-                                  ? 'currentColor'
-                                  : 'none'
-                              }
-                            />
-                          </button>
-                        ))}
+                        <p className="text-white">You rated this game {userRating} stars.</p>
+                        <button
+                          onClick={() => setShowRateAgainPopup(true)}
+                          className="bg-[#B39C7D] hover:bg-[#8C7A5B] text-white px-4 py-2 rounded-lg transition-all duration-200 font-medium"
+                        >
+                          Rate Again
+                        </button>
                       </div>
                     )}
                   </div>
                   <button
-                    className="bg-[#B39C7D] hover:bg-[#8C7A5B] text-white px-6 py-3 rounded-lg transition-all duration-200 font-medium flex items-center gap-2 shadow-lg md:order-2 order-2"
+                    className="bg-[#B39C7D] hover:bg-[#8C7A5B] text-white px-4 py-2 rounded-lg transition-all duration-200 font-medium flex items-center gap-2 shadow-lg md:order-1 order-1"
                     onClick={handleClick}
                   >
                     <span>Play Game</span>
@@ -658,7 +674,7 @@ const GameDetails: React.FC = () => {
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                                {/* <button 
+                                <button 
                                   onClick={() => handleLikeComment(comment.id)}
                                   className="text-gray-400 hover:text-[#C8A97E] transition-colors p-1 rounded-full hover:bg-[#C8A97E]/10"
                                   title="Like this comment"
@@ -674,7 +690,7 @@ const GameDetails: React.FC = () => {
                                   title="Report this comment"
                                 >
                                   <Flag className="h-5 w-5" />
-                                </button> */}
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -699,6 +715,45 @@ const GameDetails: React.FC = () => {
           )}
         </div>
       </div>
+      {showRateAgainPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-[#1e1e1e] p-6 rounded-lg border border-[#3A3A3A] max-w-md text-center">
+            <h2 className="text-xl text-[#B39C7D] mb-4">Rate Again</h2>
+            <p className="text-white mb-4">You have already rated this game. Would you like to rate it again?</p>
+            <div className="flex justify-center gap-4 mb-4">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setTempRating(star)}
+                  className={`w-8 h-8 flex items-center justify-center ${
+                    tempRating && tempRating >= star ? 'text-yellow-400' : 'text-gray-400'
+                  } hover:text-yellow-400 transition-colors duration-200`}
+                  aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+                >
+                  <Star
+                    className="w-6 h-6"
+                    fill={tempRating && tempRating >= star ? 'currentColor' : 'none'}
+                  />
+                </button>
+              ))}
+            </div>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setShowRateAgainPopup(false)}
+                className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmRateAgain}
+                className="bg-[#B39C7D] text-white px-4 py-2 rounded-lg hover:bg-[#8C7A5B] transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
