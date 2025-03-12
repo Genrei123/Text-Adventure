@@ -30,8 +30,8 @@ const createAuthRouter = (frontendUrl: string) => {
         // If yes, block the user from creating a new account
 
         try {
-          console.log('Checking if user exists:', req_user.emails[0]?.value);
-          const userExists = await User.findOne({ where: {email: req_user.emails[0]?.value}})
+          console.log('Checking if user exists:', req_user.email);
+          const userExists = await User.findOne({ where: { email: req_user.email }});
           if (userExists) {
             console.log('User exists:', userExists);
           } else {
