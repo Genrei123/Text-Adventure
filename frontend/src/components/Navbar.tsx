@@ -115,10 +115,6 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     };
   }, [isSearchExpanded]);
 
-  useEffect(() => {
-
-  });
-
   // Focus search input when expanded
   useEffect(() => {
     if (isSearchExpanded && searchInputRef.current) {
@@ -199,8 +195,8 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
-        <div className=" sticky top-0 flex flex-col space-y-4">
+      <nav className="sticky top-0 left-0 w-full z-50 bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)]">
+        <div className="flex flex-col space-y-4">
           {/* Top Bar */}
           <div className="flex justify-between items-center">
             {/* Logo - Hidden when search is expanded on mobile */}
@@ -247,8 +243,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                           className="absolute right-3 top-2.5 text-[#8B4513]"
                         >
                           <ChevronDown
-                            className={`transform transition-transform ${showFilters ? "rotate-180" : ""
-                              }`}
+                            className={`transform transition-transform ${showFilters ? "rotate-180" : ""}`}
                             size={20}
                           />
                         </button>
@@ -342,8 +337,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                   >
                     Filter
                     <ChevronDown
-                      className={`ml-1 transform transition-transform ${showFilters ? "rotate-180" : ""
-                        }`}
+                      className={`ml-1 transform transition-transform ${showFilters ? "rotate-180" : ""}`}
                       size={20}
                     />
                   </button>
@@ -383,32 +377,32 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                         <LogOut size={18} />
                       </button>
                     ) : (
-
                       <div className="dropdown dropdown-end">
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                           <div className="w-10 rounded-full">
                             <img
                               alt="Profile Picture"
-                              src= {profilePicture ? profilePicture : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}  />
+                              src={profilePicture ? profilePicture : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
+                            />
                           </div>
                         </div>
                         <ul
                           tabIndex={0}
-                          className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                          className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+                        >
                           <li>
-                          <Link to={`/${username}`}>
-                            <a>Profile</a>
-                          </Link>
+                            <Link to={`/${username}`}>
+                              <a>Profile</a>
+                            </Link>
                           </li>
-
                           <li>
                             <Link to="/subscription">
                               <a>Subscription</a>
                             </Link>
-                            </li>
-                            <li>
-                              <a onClick={openLogoutModal}>Logout</a>
-                            </li>
+                          </li>
+                          <li>
+                            <a onClick={openLogoutModal}>Logout</a>
+                          </li>
                         </ul>
                       </div>
                     )}
@@ -514,7 +508,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100]">
           <div className="bg-[#2A1F17] border-2 border-[#C8A97E] rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
             <h2 className="font-cinzel text-xl text-[#E5D4B3] mb-4 text-center">Leave the Realm?</h2>
             <p className="text-[#C8A97E] mb-6 text-center">
