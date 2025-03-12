@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getMetrics, getGamesCount } from '../controllers/metrics.controller';
+import { getMetrics, getGamesCount } from '../../controllers/admin/metricsController';
 
 const router = Router();
 

@@ -5,6 +5,7 @@ const router = Router();
 
 router.post('/login', login);
 router.post('/register', register);
+router.post('/admin/login', login);
 router.post('/verify-email', verifyEmail);
 router.post('/verify-token', verifyTokenParam);
 

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import sequelize from '../config/sequelize';
+import sequelize from '../../config/sequelize';
 import { QueryTypes } from 'sequelize';
 
 export const getPlayers = async (req: Request, res: Response) => {
