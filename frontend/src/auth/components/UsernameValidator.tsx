@@ -54,7 +54,7 @@ const UsernameValidator: React.FC<UsernameValidatorProps> = ({
 
       setIsChecking(true);
       try {
-        const response = await axiosInstance.post('/auth/check-username', { username });
+        const response = await axiosInstance.post('/oauth/check-username', { username });
         const { available, suggestions: serverSuggestions } = response.data;
 
         if (available) {

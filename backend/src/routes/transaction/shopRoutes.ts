@@ -9,11 +9,15 @@ import {
   getAllItems,
   buyTokenPackage,
   getAllTokenPackages,
-  handlePaymentWebhook,
   getUserOrderHistory
 } from '../../controllers/transaction/shopController';
-import { handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
-import { createSubscription, getSubscriptionOffers, getUserSubscriptions } from '../../controllers/transaction/subscriptionController';
+import { handlePaymentWebhook, handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
+import { 
+  createSubscription, 
+  getSubscriptionOffers, 
+  getUserSubscriptions,
+  unsubscribeUser
+} from '../../controllers/transaction/subscriptionController';
 
 const router = express.Router();
 
@@ -21,6 +25,7 @@ const router = express.Router();
 router.post('/buy-item', buyItem);
 router.post('/payment', handlePaymentCallback);
 router.post('/subscribe', createSubscription);
+router.post('/unsubscribe', unsubscribeUser);
 
 // Route for fetching all items
 router.get('/items', getAllItems);

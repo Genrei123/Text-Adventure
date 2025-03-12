@@ -35,6 +35,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   // Check if user is already logged in when component mounts
   useEffect(() => {
+    // Clear any existing tokens
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("userData");
+
     const token = localStorage.getItem("token");
     if (token) {
       axiosInstance
@@ -161,12 +166,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       toast.info(`Connecting to ${provider}...`);
   
       // Construct the authentication URL
-      const authUrl = `${import.meta.env.VITE_SITE_URL}/auth/${provider.toLowerCase()}`;
+      const authUrl = `${import.meta.env.VITE_SITE_URL}/oauth/${provider.toLowerCase()}`;
       
-      // Additional logging for debugging
-      console.log('Social Login URL:', authUrl);
-  
-      // Redirect to authentication endpoint
+      // Create new window
       window.location.href = authUrl;
     } catch (error) {
       console.error(`Error during ${provider} login:`, error);
@@ -261,7 +263,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               </div>
               <div className="flex justify-center space-x-4">
                 <button
-                  onClick={() => handleSocialLogin("Google")}
+                  onClick={() => handleSocialLogin("google")}
                   className="p-2 rounded-full bg-[#3D2E22] hover:bg-[#4D3E32] disabled:opacity-50"
                   disabled={isProcessing}
                 >

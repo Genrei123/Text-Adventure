@@ -11,6 +11,7 @@ import defineAssociations from "../model/associations";
 import TokenPackage from "../model/transaction/TokenPackageModel";
 import SubscriptionOffers from "../model/transaction/SubscriptionOffersModel";
 import Subscriber from "../model/transaction/SubscriberModel";
+import Session from "../model/session";
 
 export const initializeModels = async () => {
   try {
@@ -28,6 +29,8 @@ export const initializeModels = async () => {
     await TokenPackage.sync({alter: true});
     await SubscriptionOffers.sync({alter: true});
     await Subscriber.sync({alter: true});
+    await Session.sync({alter: true});
+    
     
     // Define associations
     defineAssociations();

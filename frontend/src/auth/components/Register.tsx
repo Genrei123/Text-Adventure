@@ -72,7 +72,7 @@ const Register: React.FC<RegisterProps> = ({ }) => {
       toast.info(`Connecting to ${provider}...`);
   
       try {
-        window.location.href = import.meta.env.VITE_SITE_URL + `/auth/${provider.toLowerCase()}`;
+        window.location.href = import.meta.env.VITE_SITE_URL + `/oauth/${provider.toLowerCase()}`;
     
       } catch (error) {
         console.error(`Error during ${provider} login:`, error);

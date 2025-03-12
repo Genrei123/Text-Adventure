@@ -1,5 +1,5 @@
 import express from 'express';
-import { handlePaymentWebhook } from '../../controllers/transaction/shopController'; // Import the correct function
+import { handlePaymentWebhook } from '../../controllers/transaction/shopWebhookController'; // Import the correct function
 
 const router = express.Router();
 

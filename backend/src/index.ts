@@ -79,9 +79,9 @@ app.use('/api/players', playersRouter);
 app.use('/image', jwtAuth, imageRoutes);
 app.use('/images', express.static('public/images'));
 
-// Auth routes setup
+// OAuth routes setup
 const authRouter = createAuthRouter(frontendUrl);
-app.use('/auth', authRouter);
+app.use('/oauth', authRouter);
 
 // Error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

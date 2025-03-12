@@ -7,19 +7,16 @@ import { verifyToken } from '../controllers/auth/authController';
 import User from '../model/user/user';
 import { activeUserEmails } from '../shared/websocket/activeUser';
 import { JoinPayload, PlayerCount, SessionData, LastPlayedPayload } from '../interfaces/websocket/websocketInterfaces';
-import winston from 'winston';
 import Session from '../model/session';
 import axios from 'axios';
 
-// Initialize Winston Logger
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.printf(({ timestamp, level, message }) => `${timestamp} [${level.toUpperCase()}]: ${message}`)
-  ),
-  transports: [new winston.transports.Console(), new winston.transports.File({ filename: 'server.log' })],
-});
+// Helper function for formatted logging
+const log = {
+  info: (message: string) => console.log(`[INFO] ${new Date().toISOString()}: ${message}`),
+  error: (message: string) => console.error(`[ERROR] ${new Date().toISOString()}: ${message}`),
+  warn: (message: string) => console.warn(`[WARN] ${new Date().toISOString()}: ${message}`),
+  debug: (message: string) => console.log(`[DEBUG] ${new Date().toISOString()}: ${message}`)
+};
 
 // Map to store user sockets
 const userSockets: Map<string, Set<string>> = new Map();
@@ -47,14 +44,14 @@ export function createServer(app: Express) {
     try {
       const response = await axios.get(`${process.env.SITE_URL}/statistics/statsRoutes/player-stats`);
       const activePlayers = response.data.activePlayers;
-      logger.info(`Active players: ${activePlayers}`);
+      log.info(`Active players: ${activePlayers}`);
     } catch (error) {
-      logger.error('Error fetching active player count:', error);
+      log.error('Error fetching active player count:' + error);
     }
   };
 
   io.on('connection', (socket: Socket) => {
-    logger.info(`New socket connected: ${socket.id}`);
+    log.info(`New socket connected: ${socket.id}`);
 
     // Send last played game to user if exists
     socket.on('getLastPlayed', ({ email }: { email: string }) => {
@@ -65,7 +62,7 @@ export function createServer(app: Express) {
 
     // Update last played game
     socket.on('updateLastPlayed', ({ route, email, timestamp, gameName }: LastPlayedPayload) => {
-      logger.debug(`Update last played received: route=${route}, email=${email}, game=${gameName}`);
+      log.debug(`Update last played received: route=${route}, email=${email}, game=${gameName}`);
       
       if (email && route) {
         lastPlayedGames.set(email, {
@@ -75,32 +72,32 @@ export function createServer(app: Express) {
         });
         
         socket.emit('lastPlayedUpdated', { success: true });
-        logger.info(`Updated last played game for ${email}: ${gameName || route}`);
+        log.info(`Updated last played game for ${email}: ${gameName || route}`);
       }
     });
 
     socket.on('join', async ({ route, email, token }: JoinPayload) => {
-      logger.debug(`Join event received: route=${route}, email=${email}, token=${token}`);
+      log.debug(`Join event received: route=${route}, email=${email}, token=${token}`);
       if (!route) {
-        logger.error('Route is missing');
+        log.error('Route is missing');
         return;
       }
 
-      logger.info(`New connection from route: ${route}`);
-      logger.info(`Token received: ${token || 'none'}`);
-      logger.info(`Email received: ${email}`);
+      log.info(`New connection from route: ${route}`);
+      log.info(`Token received: ${token || 'none'}`);
+      log.info(`Email received: ${email}`);
 
       let userEmail = email;
       if (token) {
         try {
           const user = await verifyToken(token);
           if (!user || !user.email) {
-            logger.warn(`Invalid token or user email missing`);
+            log.warn(`Invalid token or user email missing`);
             return;
           }
           userEmail = user.email;
         } catch (error: any) {
-          logger.error(`Error verifying token: ${error.message}`);
+          log.error(`Error verifying token: ${error.message}`);
           return;
         }
       }
@@ -126,7 +123,7 @@ export function createServer(app: Express) {
                 visitedPages: {}
               }
             });
-            logger.info(`Session created for ${userEmail}`);
+            log.info(`Session created for ${userEmail}`);
           }
         }
 
@@ -141,14 +138,14 @@ export function createServer(app: Express) {
           });
         }
 
-        logger.info(`User ${userEmail} joined. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
+        log.info(`User ${userEmail} joined. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
       } else {
-        logger.warn(`Route does not match included routes`);
+        log.warn(`Route does not match included routes`);
       }
     });
 
     socket.on('interaction', ({ email, interaction, page }: { email: string; interaction: string; page: string }) => {
-      logger.debug(`Interaction event received: email=${email}, interaction=${interaction}, page=${page}`);
+      log.debug(`Interaction event received: email=${email}, interaction=${interaction}, page=${page}`);
       const session = playerSessions.get(email);
       if (session) {
         // Push interactions to array instead of using as object
@@ -164,36 +161,36 @@ export function createServer(app: Express) {
         
         if (page) {
           session.sessionData.visitedPages[page] = (session.sessionData.visitedPages[page] || 0) + 1;
-          logger.info(`Visited page added for ${email}: ${page}`);
+          log.info(`Visited page added for ${email}: ${page}`);
         }
-        logger.info(`Interaction logged for ${email}: ${interaction}, page: ${page}`);
-        logger.debug(`Current session data for ${email}: ${JSON.stringify(session)}`);
+        log.info(`Interaction logged for ${email}: ${interaction}, page: ${page}`);
+        log.debug(`Current session data for ${email}: ${JSON.stringify(session)}`);
       } else {
-        logger.warn(`No session found for ${email}`);
+        log.warn(`No session found for ${email}`);
       }
     });
 
     socket.on('leave', async ({ route, email, token }: JoinPayload) => {
-      logger.debug(`Leave event received: route=${route}, email=${email}, token=${token}`);
+      log.debug(`Leave event received: route=${route}, email=${email}, token=${token}`);
       if (!route) {
-        logger.error('Route is missing');
+        log.error('Route is missing');
         return;
       }
 
-      logger.info(`Disconnection from route: ${route}`);
-      logger.info(`Email received: ${email}`);
+      log.info(`Disconnection from route: ${route}`);
+      log.info(`Email received: ${email}`);
 
       let userEmail = email;
       if (token) {
         try {
           const user = await verifyToken(token);
           if (!user || !user.email) {
-            logger.warn(`Invalid token or user email missing`);
+            log.warn(`Invalid token or user email missing`);
             return;
           }
           userEmail = user.email;
         } catch (error: any) {
-          logger.error(`Error verifying token: ${error.message}`);
+          log.error(`Error verifying token: ${error.message}`);
           return;
         }
       }
@@ -210,26 +207,26 @@ export function createServer(app: Express) {
             const session = playerSessions.get(userEmail);
             if (session) {
               session.endTime = new Date();
-              logger.debug(`Final session data for ${userEmail}: ${JSON.stringify(session)}`);
+              log.debug(`Final session data for ${userEmail}: ${JSON.stringify(session)}`);
               await Session.create({
                 email: userEmail,
                 startTime: session.startTime,
                 endTime: session.endTime,
                 sessionData: session.sessionData,
               });
-              logger.info(`Session ended for ${userEmail}: ${JSON.stringify(session)}`);
+              log.info(`Session ended for ${userEmail}: ${JSON.stringify(session)}`);
               playerSessions.delete(userEmail);
             }
           }
-          logger.info(`User ${userEmail} left. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
+          log.info(`User ${userEmail} left. Active players: ${activeUserEmails.size} as of ${new Date().toLocaleString()}`);
         }
       } else {
-        logger.warn(`Route does not match included routes`);
+        log.warn(`Route does not match included routes`);
       }
     });
 
     socket.on('disconnect', async () => {
-      logger.info(`Socket disconnected: ${socket.id}`);
+      log.info(`Socket disconnected: ${socket.id}`);
 
       for (const [userEmail, sockets] of userSockets.entries()) {
         if (sockets.has(socket.id)) {
@@ -243,7 +240,7 @@ export function createServer(app: Express) {
             const session = playerSessions.get(userEmail);
             if (session) {
               session.endTime = new Date();
-              logger.debug(`Final session data for ${userEmail}: ${JSON.stringify(session)}`);
+              log.debug(`Final session data for ${userEmail}: ${JSON.stringify(session)}`);
               await Session.create({
                 email: userEmail,
                 startTime: session.startTime,
@@ -251,7 +248,7 @@ export function createServer(app: Express) {
                 sessionData: session.sessionData,
               });
               playerSessions.delete(userEmail);
-              logger.info(`Cleaned up session for ${userEmail}`);
+              log.info(`Cleaned up session for ${userEmail}`);
             }
           }
           break;

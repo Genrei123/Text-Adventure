@@ -296,7 +296,7 @@ const Subscription: React.FC = () => {
         <>
             <Navbar />
             <div className="bg-cover min-h-screen p-4" style={{ backgroundImage: 'url(Billings.png)' }}>
-                <Sidebar />
+                {/* <Sidebar /> */}
                 <div className="max-w-7xl mx-auto text-center text-white">
                     <h2 className="text-3xl md:text-5xl font-cinzel my-10">Find Your Path</h2>
                     <h4 className="text-lg md:text-xl font-cinzel mb-6">Unlock Your Full Potential</h4>
