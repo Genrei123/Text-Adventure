@@ -18,8 +18,8 @@ interface ComfyUIHistory {
   };
 }
 
-// ComfyUI Server URL (Local)
-const comfyUIUrl = 'http://127.0.0.1:8188';
+// ComfyUI Server URL (Local) NGROK URL THAT MUST BE CHANGED CONSTANTLY CYKAAAA!
+const comfyUIUrl = 'https://f1c9-2405-8d40-4819-a640-b07d-662-c403-9914.ngrok-free.app/';
 
 // Output directory for generated images (Local)
 const outputDir = path.join(__dirname, '../../../../../../Stable Diffusion/ComfyUI_windows_portable/ComfyUI/output');
