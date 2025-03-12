@@ -201,7 +201,7 @@ export default function ProfilePage() {
                     </div>
                   ) : (
                     <img
-                      src={`${import.meta.env.VITE_BACKEND_URL}` + userDetails?.image_url || "/null_Icon.svg"}
+                      src={ userDetails?.image_url ? userDetails.image_url : "/null_Icon.svg" }
                       alt="Profile"
                       className="w-full h-full rounded-full object-cover"
                     />

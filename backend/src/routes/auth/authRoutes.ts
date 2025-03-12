@@ -38,7 +38,7 @@ const createAuthRouter = (frontendUrl: string) => {
           const userExists = await User.findOne({ where: { email: emailFromProvider }});
           if (userExists) {
             console.log('User exists:', userExists);
-            // For login, update missing avatar if needed
+            // For login, if no avatar is set, update with default avatar
             if (!userExists.image_url) {
               await userExists.update({ image_url: defaultAvatar });
             }
@@ -59,7 +59,10 @@ const createAuthRouter = (frontendUrl: string) => {
             console.log('New user created:', newUser);
           }
     
+          // Sign JWT token (preserving existing validations)
           const token = Jwt.sign({ id: req_user.id, username, email: emailFromProvider }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+          // Set token as httpOnly cookie to ensure it is passed in subsequent requests (fixing jwt malformed errors)
+          res.cookie('token', token, { httpOnly: true });
           res.redirect(`${frontendUrl}/home?token=${token}`);
         } else {
           res.redirect('/?error=authentication_failed');
