@@ -286,7 +286,14 @@ const GameScreen: React.FC = () => {
       console.log(`Sending request to ${apiEndpoint} with:`, { prompt: imagePrompt, userId, gameId, model: selectedModel.toLowerCase() });
       
       // Use the appropriate endpoint based on selected model
-      const response = await axiosInstance.post(apiEndpoint, {
+      // const response = await axiosInstance.post(apiEndpoint, {
+      //   prompt: imagePrompt,
+      //   userId,
+      //   gameId: Number.parseInt(gameId, 10),
+      //   model: selectedModel.toLowerCase(),
+      // });
+
+      const response = await axios.post(import.meta.env.VITE_SDXL_ENV + apiEndpoint, {
         prompt: imagePrompt,
         userId,
         gameId: Number.parseInt(gameId, 10),
