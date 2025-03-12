@@ -285,14 +285,6 @@ const GameScreen: React.FC = () => {
   
       console.log(`Sending request to ${apiEndpoint} with:`, { prompt: imagePrompt, userId, gameId, model: selectedModel.toLowerCase() });
       
-      // Use the appropriate endpoint based on selected model
-      // const response = await axiosInstance.post(apiEndpoint, {
-      //   prompt: imagePrompt,
-      //   userId,
-      //   gameId: Number.parseInt(gameId, 10),
-      //   model: selectedModel.toLowerCase(),
-      // });
-
       const response = await axios.post(import.meta.env.VITE_SDXL_ENV + apiEndpoint, {
         prompt: imagePrompt,
         userId,
@@ -423,37 +415,54 @@ const GameScreen: React.FC = () => {
         </div>
 
         <div className="flex-grow flex justify-center items-start mt-[-5%] pt-4">
-        <div
-            ref={chatContainerRef}
-            className="w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto h-[calc(100vh-200px)] scrollbar-hide bg-[#1E1E1E]/50 backdrop-blur-sm text-white"
-            style={{ scrollbarColor: "#634630 #1E1E1E" }}
-          >
-            {chatMessages.map((msg, index) => (
-              <div key={index} className={`mb-4 ${msg.isUser ? "text-right" : "text-left"}`}>
-                <p
-                  className={`inline-block p-2 rounded-lg ${msg.isUser ? "bg-[#311F17] text-white" : "bg-[#634630] text-[#E5D4B3]"}`}
-                >
-                  {msg.content}
-                </p>
-                {msg.image_url && (
-                  <div className={`mt-2 ${msg.isUser ? "text-right" : "text-left"}`}>
-                    <img
-                      src={
-                        import.meta.env.VITE_BACKEND_URL
-                          ? `${import.meta.env.VITE_BACKEND_URL}${msg.image_url.startsWith('/') ? '' : '/'}${msg.image_url}`
-                          : `/images${msg.image_url}` // Fallback for dev if VITE_BACKEND_URL is undefined
-                      }
-                      alt="Generated"
-                      className="max-w-full h-auto rounded-lg inline-block"
-                      onError={(e) => console.error("Image load error:", e.currentTarget.src)}
-                    />
-                  </div>
-                )}
-                <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
-              </div>
-            ))}
+  <div
+    ref={chatContainerRef}
+    className="w-full md:w-1/2 p-4 rounded mt-1 mx-auto overflow-y-auto h-[calc(100vh-200px)] scrollbar-hide bg-[#1E1E1E]/50 backdrop-blur-sm text-white"
+    style={{ scrollbarColor: "#634630 #1E1E1E" }}
+  >
+    {chatMessages.map((msg, index) => (
+      <div key={index} className={`mb-4 ${msg.isUser ? "text-right" : "text-left"}`}>
+        <p
+          className={`inline-block p-2 rounded-lg ${msg.isUser ? "bg-[#311F17] text-white" : "bg-[#634630] text-[#E5D4B3]"}`}
+        >
+          {msg.content}
+        </p>
+        {msg.image_url && (
+          <div className={`mt-2 ${msg.isUser ? "text-right" : "text-left"}`}>
+            <img
+              src={
+                `${import.meta.env.VITE_BACKEND_URL}${msg.image_url.startsWith('/') ? '' : '/'}${msg.image_url}`
+              }
+              alt="Generated"
+              className="max-w-full h-auto rounded-lg inline-block"
+              onError={(e) => {
+                console.error("Image load error with backend URL:", e.currentTarget.src);
+                
+                // If loading with backend URL fails, try using the SDXL URL
+                const sdxlUrl = `${import.meta.env.VITE_SDXL_ENV}${msg.image_url.startsWith('/') ? '' : '/'}${msg.image_url}`;
+                console.log("Attempting with SDXL URL:", sdxlUrl);
+                e.currentTarget.src = sdxlUrl;
+                
+                // Add a second error handler for the SDXL attempt
+                e.currentTarget.onerror = () => {
+                  console.error("Image load error with SDXL URL as well:", sdxlUrl);
+                  // Finally, try the local path as last resort
+                  const localPath = `${msg.image_url}`;
+                  console.log("Attempting with local path:", localPath);
+                  e.currentTarget.src = localPath;
+                  
+                  // Clear the error handler to prevent infinite loop
+                  e.currentTarget.onerror = null;
+                };
+              }}
+            />
           </div>
-        </div>
+        )}
+        <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
+      </div>
+    ))}
+  </div>
+</div>
 
         <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
           <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">

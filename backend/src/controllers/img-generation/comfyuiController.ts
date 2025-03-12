@@ -114,7 +114,7 @@ export const generateImage = async (req: Request, res: Response) => {
     console.log(`Copied image from ${comfyFilePath} to ${publicFilePath}`);
 
     // Create a relative URL for storing in the database (similar to DALL-E implementation)
-    const relativeImageUrl = `/images/chat-images/${newFileName}`;
+    const relativeImageUrl = `/images/chat-images/sdxl/${newFileName}`;
 
     res.json({
       promptId,
