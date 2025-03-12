@@ -227,12 +227,7 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
       const addGameResponse = await axios.post('/game/add-game', gameData);
 
       // Navigate to editing page with game data
-      navigate('/editing-page', { 
-        state: { 
-          ...gameData, 
-          gameId: addGameResponse.data.id 
-        } 
-      });
+      alert('Game created successfully!');
     } catch (error) {
       console.error('Error submitting game:', error);
       // Handle error (show error message to user)
@@ -248,7 +243,7 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
       { field: "title", title: "WHAT IS THE TITLE OF YOUR STORY?", description: "Selecting a great, striking title will help generate a good adventure." },
       { field: "description", title: "DESCRIBE YOUR STORY", description: "Provide a brief description of the setting, plot, and characters." },
       { field: "ending", title: "HOW DOES YOUR STORY END?", description: "Describe the desired conclusion of your adventure." },
-      { field: "bannerPrompt", title: "BANNER PROMPT", description: "Describe what you want the banner to look like.", subComment: "You can only add a customized picture in the editor page." }
+      { field: "bannerPrompt", title: "BANNER PROMPT", description: "Describe what you want the banner to look like."}
     ];
     return steps[step - 1] || { field: "genre", title: "", description: "" };
   };

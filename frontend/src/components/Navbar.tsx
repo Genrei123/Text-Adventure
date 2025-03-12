@@ -14,7 +14,7 @@ interface Game {
   slug: string;
   genre: string;
   subgenre: string;
-  icon?: string; // Added icon property
+  image_data?: string; // Added icon property
 }
 
 interface NavbarProps {
@@ -63,6 +63,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
         const response = await axiosInstance.get('/game/');
         if (response.data) {
           setGames(response.data);
+          console.log("Games: ", games);
         } else {
           console.error('Failed to fetch games');
         }
@@ -198,7 +199,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
   return (
     <>
-      <nav className="sticky top-0 bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
+      <nav className="sticky top-0 z-50 bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
         <div className=" sticky top-0 flex flex-col space-y-4">
           {/* Top Bar */}
           <div className="flex justify-between items-center">
@@ -261,9 +262,9 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                               >
                                 {/* Game Icon */}
                                 <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
-                                  {game.icon ? (
+                                  {game.image_data ? (
                                     <img
-                                      src={game.icon}
+                                      src={game.image_data}
                                       alt={`${game.title} icon`}
                                       className="w-full h-full object-cover"
                                     />
@@ -309,13 +310,13 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                           <div
                             key={index}
                             className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
-                            onClick={() => setSearchQuery(game.title)}
+                            onClick={() => navigate(`/game-details/${game.id}`)}
                           >
                             {/* Game Icon */}
                             <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
-                              {game.icon ? (
+                              {game.image_data ? (
                                 <img
-                                  src={game.icon}
+                                  src={game.image_data}
                                   alt={`${game.title} icon`}
                                   className="w-full h-full object-cover"
                                 />
@@ -387,7 +388,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                           <div className="w-10 rounded-full">
                             <img
-                              alt="Tailwind CSS Navbar component"
+                              alt="Profile Picture"
                               src= {profilePicture ? profilePicture : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}  />
                           </div>
                         </div>

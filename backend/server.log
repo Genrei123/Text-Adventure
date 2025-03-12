@@ -4336,3 +4336,459 @@
 2025-03-11T23:50:36.167Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 7:50:36 AM
 2025-03-11T23:50:36.210Z [INFO]: Active players: 1
 2025-03-11T23:50:36.211Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 7:50:36 AM
+2025-03-11T23:58:15.047Z [INFO]: Disconnection from route: /game-details/1
+2025-03-11T23:58:15.047Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-11T23:58:15.085Z [INFO]: Socket disconnected: fWuTel7CdDYdT8tWAAF2
+2025-03-11T23:58:15.086Z [INFO]: Socket disconnected: giB8w9DTbB3XZlwWAAF3
+2025-03-11T23:58:15.087Z [INFO]: Socket disconnected: TsO3tStrFF--FTWIAAF1
+2025-03-11T23:58:16.969Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-11T23:50:36.167Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-11T23:58:15.048Z"}
+2025-03-11T23:58:16.970Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 7:58:16 AM
+2025-03-12T04:13:21.689Z [INFO]: New socket connected: h5RQLd8FuLaifFQwAAAD
+2025-03-12T04:13:21.694Z [INFO]: New socket connected: 9bCSGPl4qbFgBaPoAAAE
+2025-03-12T04:13:21.696Z [INFO]: New socket connected: 3BX1OvkyoguTu65oAAAF
+2025-03-12T04:13:38.253Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T04:13:38.254Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTI4MTUsImV4cCI6MTc0MTc1NjQxNX0.P1vM_i3VfVx4cr-owD7E79BPmnusshy22_URCEQclj8
+2025-03-12T04:13:38.254Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:13:38.259Z [INFO]: Disconnection from route: /home
+2025-03-12T04:13:38.260Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:13:38.262Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T04:13:38.262Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTI4MTUsImV4cCI6MTc0MTc1NjQxNX0.P1vM_i3VfVx4cr-owD7E79BPmnusshy22_URCEQclj8
+2025-03-12T04:13:38.264Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:13:38.296Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 12:13:38 PM
+2025-03-12T04:13:38.551Z [INFO]: Active players: 1
+2025-03-12T04:13:38.552Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T04:13:38.552Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:13:38 PM
+2025-03-12T04:13:38.786Z [INFO]: Active players: 1
+2025-03-12T04:13:38.787Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:13:38 PM
+2025-03-12T04:13:44.299Z [INFO]: Disconnection from route: /home
+2025-03-12T04:13:44.300Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:13:44.532Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T04:13:38.552Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T04:13:44.302Z"}
+2025-03-12T04:13:44.533Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 12:13:44 PM
+2025-03-12T04:14:28.151Z [INFO]: Socket disconnected: h5RQLd8FuLaifFQwAAAD
+2025-03-12T04:14:28.153Z [INFO]: Socket disconnected: 3BX1OvkyoguTu65oAAAF
+2025-03-12T04:14:28.153Z [INFO]: Socket disconnected: 9bCSGPl4qbFgBaPoAAAE
+2025-03-12T04:14:28.457Z [INFO]: New socket connected: fOxjzGDjO4YgDoVcAAAJ
+2025-03-12T04:14:28.460Z [INFO]: New socket connected: MA4seFNHQyMbxH9iAAAK
+2025-03-12T04:14:28.463Z [INFO]: New socket connected: 3xELa9Kg_oTMnvJmAAAL
+2025-03-12T04:14:49.748Z [INFO]: Socket disconnected: MA4seFNHQyMbxH9iAAAK
+2025-03-12T04:14:49.749Z [INFO]: Socket disconnected: fOxjzGDjO4YgDoVcAAAJ
+2025-03-12T04:14:49.750Z [INFO]: Socket disconnected: 3xELa9Kg_oTMnvJmAAAL
+2025-03-12T04:14:52.519Z [INFO]: New socket connected: 7BYSFqDL7W2r6KevAAAP
+2025-03-12T04:14:52.523Z [INFO]: New socket connected: r4xFGmNyucuGAiMHAAAQ
+2025-03-12T04:14:52.524Z [INFO]: New socket connected: 6irt4HDeTCxjOFqRAAAR
+2025-03-12T04:15:01.150Z [INFO]: Socket disconnected: 7BYSFqDL7W2r6KevAAAP
+2025-03-12T04:15:01.152Z [INFO]: Socket disconnected: 6irt4HDeTCxjOFqRAAAR
+2025-03-12T04:15:01.153Z [INFO]: Socket disconnected: r4xFGmNyucuGAiMHAAAQ
+2025-03-12T04:15:23.808Z [INFO]: New socket connected: 0zg_DotA_LMtolg4AAAV
+2025-03-12T04:15:23.810Z [INFO]: New socket connected: vNin3mya6ZSVujjpAAAW
+2025-03-12T04:15:23.814Z [INFO]: New socket connected: ImawsxA7HrYhni2SAAAX
+2025-03-12T04:15:25.683Z [INFO]: Socket disconnected: ImawsxA7HrYhni2SAAAX
+2025-03-12T04:15:25.684Z [INFO]: Socket disconnected: vNin3mya6ZSVujjpAAAW
+2025-03-12T04:15:25.686Z [INFO]: Socket disconnected: 0zg_DotA_LMtolg4AAAV
+2025-03-12T04:15:31.967Z [INFO]: New socket connected: KK1BQaRlxMeOB2gOAAAb
+2025-03-12T04:15:31.970Z [INFO]: New socket connected: Mr1a9Xt5l-P7CcS2AAAc
+2025-03-12T04:15:31.972Z [INFO]: New socket connected: kH-kVSxmju0SW9HxAAAd
+2025-03-12T04:15:32.126Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T04:15:32.126Z [INFO]: Token received: undefined
+2025-03-12T04:15:32.126Z [INFO]: Email received: genreycristobal99@gmail.com
+2025-03-12T04:15:32.127Z [INFO]: Disconnection from route: /home
+2025-03-12T04:15:32.127Z [INFO]: Email received: genreycristobal99@gmail.com
+2025-03-12T04:15:32.127Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T04:15:32.127Z [INFO]: Token received: undefined
+2025-03-12T04:15:32.128Z [INFO]: Email received: genreycristobal99@gmail.com
+2025-03-12T04:15:32.128Z [WARN]: Invalid token or user email missing
+2025-03-12T04:15:32.128Z [WARN]: Invalid token or user email missing
+2025-03-12T04:15:32.128Z [WARN]: Invalid token or user email missing
+2025-03-12T04:15:41.594Z [INFO]: Disconnection from route: /home
+2025-03-12T04:15:41.594Z [INFO]: Email received: genreycristobal99@gmail.com
+2025-03-12T04:15:41.595Z [WARN]: Invalid token or user email missing
+2025-03-12T04:15:49.287Z [INFO]: Socket disconnected: kH-kVSxmju0SW9HxAAAd
+2025-03-12T04:15:49.289Z [INFO]: Socket disconnected: Mr1a9Xt5l-P7CcS2AAAc
+2025-03-12T04:15:49.289Z [INFO]: Socket disconnected: KK1BQaRlxMeOB2gOAAAb
+2025-03-12T04:18:18.699Z [INFO]: New socket connected: -skEUNkGj1Ze0vSXAAAh
+2025-03-12T04:18:18.700Z [INFO]: New socket connected: FDSNPZPRUgXfviuHAAAi
+2025-03-12T04:18:18.701Z [INFO]: New socket connected: NOp_9ua3-apNgtJTAAAj
+2025-03-12T04:18:35.352Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T04:18:35.353Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTMxMTMsImV4cCI6MTc0MTc1NjcxM30.6YMtMY-jTGFlJxdFUHZIpbx5mAoaeNxCpq6QEruyOak
+2025-03-12T04:18:35.353Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:18:35.355Z [INFO]: Disconnection from route: /home
+2025-03-12T04:18:35.355Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:18:35.356Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T04:18:35.357Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTMxMTMsImV4cCI6MTc0MTc1NjcxM30.6YMtMY-jTGFlJxdFUHZIpbx5mAoaeNxCpq6QEruyOak
+2025-03-12T04:18:35.357Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:18:35.359Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 12:18:35 PM
+2025-03-12T04:18:35.597Z [INFO]: Active players: 1
+2025-03-12T04:18:35.597Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T04:18:35.597Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:18:35 PM
+2025-03-12T04:18:35.822Z [INFO]: Active players: 1
+2025-03-12T04:18:35.822Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:18:35 PM
+2025-03-12T04:18:41.981Z [INFO]: Disconnection from route: /home
+2025-03-12T04:18:41.981Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:18:42.212Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T04:18:35.597Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T04:18:41.983Z"}
+2025-03-12T04:18:42.212Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 12:18:42 PM
+2025-03-12T04:22:22.342Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T04:22:22.343Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTMxMTMsImV4cCI6MTc0MTc1NjcxM30.6YMtMY-jTGFlJxdFUHZIpbx5mAoaeNxCpq6QEruyOak
+2025-03-12T04:22:22.343Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:22.344Z [INFO]: Disconnection from route: /home
+2025-03-12T04:22:22.345Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:22.348Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 12:22:22 PM
+2025-03-12T04:22:22.350Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T04:22:22.350Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTMxMTMsImV4cCI6MTc0MTc1NjcxM30.6YMtMY-jTGFlJxdFUHZIpbx5mAoaeNxCpq6QEruyOak
+2025-03-12T04:22:22.350Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:24.215Z [INFO]: Active players: 1
+2025-03-12T04:22:24.215Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T04:22:24.215Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:22:24 PM
+2025-03-12T04:22:24.245Z [INFO]: Active players: 1
+2025-03-12T04:22:24.245Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:22:24 PM
+2025-03-12T04:22:27.815Z [INFO]: Disconnection from route: /home
+2025-03-12T04:22:27.815Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:27.819Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T04:22:27.819Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTMxMTMsImV4cCI6MTc0MTc1NjcxM30.6YMtMY-jTGFlJxdFUHZIpbx5mAoaeNxCpq6QEruyOak
+2025-03-12T04:22:27.819Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:27.821Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T04:22:27.822Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T04:22:27.823Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:27.825Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T04:22:27.826Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTMxMTMsImV4cCI6MTc0MTc1NjcxM30.6YMtMY-jTGFlJxdFUHZIpbx5mAoaeNxCpq6QEruyOak
+2025-03-12T04:22:27.826Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:27.828Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T04:22:27.834Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T04:22:27.834Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:27.836Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T04:22:27.836Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTMxMTMsImV4cCI6MTc0MTc1NjcxM30.6YMtMY-jTGFlJxdFUHZIpbx5mAoaeNxCpq6QEruyOak
+2025-03-12T04:22:27.837Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:27.838Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T04:22:27.838Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T04:22:27.839Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:27.840Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T04:22:27.840Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NTMxMTMsImV4cCI6MTc0MTc1NjcxM30.6YMtMY-jTGFlJxdFUHZIpbx5mAoaeNxCpq6QEruyOak
+2025-03-12T04:22:27.840Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:27.841Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T04:22:28.074Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T04:22:24.215Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T04:22:27.843Z"}
+2025-03-12T04:22:28.074Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 12:22:28 PM
+2025-03-12T04:22:28.076Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T04:22:24.215Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T04:22:27.843Z"}
+2025-03-12T04:22:28.077Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 12:22:28 PM
+2025-03-12T04:22:28.077Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T04:22:24.215Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T04:22:27.843Z"}
+2025-03-12T04:22:28.077Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 12:22:28 PM
+2025-03-12T04:22:28.083Z [INFO]: Active players: 1
+2025-03-12T04:22:28.083Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T04:22:28.083Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:22:28 PM
+2025-03-12T04:22:28.086Z [INFO]: Active players: 1
+2025-03-12T04:22:28.086Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:22:28 PM
+2025-03-12T04:22:28.302Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T04:22:24.215Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T04:22:27.843Z"}
+2025-03-12T04:22:28.303Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 12:22:28 PM
+2025-03-12T04:22:28.312Z [INFO]: Active players: 1
+2025-03-12T04:22:28.313Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T04:22:28.313Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:22:28 PM
+2025-03-12T04:22:28.320Z [INFO]: Active players: 1
+2025-03-12T04:22:28.320Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 12:22:28 PM
+2025-03-12T04:22:36.625Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T04:22:36.626Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T04:22:36.855Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T04:22:28.313Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T04:22:36.627Z"}
+2025-03-12T04:22:36.856Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 12:22:36 PM
+2025-03-12T09:27:02.857Z [INFO]: New socket connected: dnIeVCj8VYgbzaVfAAAD
+2025-03-12T09:27:02.865Z [INFO]: New socket connected: qaX43E9Flcckyki6AAAE
+2025-03-12T09:27:02.868Z [INFO]: New socket connected: IMPyhn6mxoUEHo9ZAAAF
+2025-03-12T09:27:25.307Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:27:25.307Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:27:25.308Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:27:25.322Z [INFO]: Disconnection from route: /home
+2025-03-12T09:27:25.322Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:27:25.324Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:27:25.325Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:27:25.326Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:27:25.351Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 5:27:25 PM
+2025-03-12T09:27:25.603Z [INFO]: Active players: 1
+2025-03-12T09:27:25.604Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:27:25.604Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:27:25 PM
+2025-03-12T09:27:25.827Z [INFO]: Active players: 1
+2025-03-12T09:27:25.828Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:27:25 PM
+2025-03-12T09:29:16.126Z [INFO]: New socket connected: Z9z1GkiO89ubrixcAAAH
+2025-03-12T09:29:21.682Z [INFO]: New socket connected: cmg_GUefQIaAm4U0AAAJ
+2025-03-12T09:30:17.330Z [INFO]: New socket connected: w5AkJiAW03Pi1jXpAAAL
+2025-03-12T09:30:18.809Z [INFO]: New socket connected: agrwXZMWDu9RQQWXAAAN
+2025-03-12T09:30:21.276Z [INFO]: New socket connected: pfDfac96FjSzwYTmAAAP
+2025-03-12T09:30:29.615Z [INFO]: New socket connected: z_sJbTJem--8zsf9AAAR
+2025-03-12T09:31:23.416Z [INFO]: New socket connected: GjTQrdghVS3OxBTyAAAT
+2025-03-12T09:31:24.689Z [INFO]: Disconnection from route: /home
+2025-03-12T09:31:24.689Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:31:24.718Z [INFO]: Socket disconnected: GjTQrdghVS3OxBTyAAAT
+2025-03-12T09:31:24.719Z [INFO]: Socket disconnected: z_sJbTJem--8zsf9AAAR
+2025-03-12T09:31:24.719Z [INFO]: Socket disconnected: pfDfac96FjSzwYTmAAAP
+2025-03-12T09:31:24.720Z [INFO]: Socket disconnected: agrwXZMWDu9RQQWXAAAN
+2025-03-12T09:31:24.720Z [INFO]: Socket disconnected: w5AkJiAW03Pi1jXpAAAL
+2025-03-12T09:31:24.720Z [INFO]: Socket disconnected: cmg_GUefQIaAm4U0AAAJ
+2025-03-12T09:31:24.721Z [INFO]: Socket disconnected: Z9z1GkiO89ubrixcAAAH
+2025-03-12T09:31:24.721Z [INFO]: Socket disconnected: IMPyhn6mxoUEHo9ZAAAF
+2025-03-12T09:31:24.721Z [INFO]: Socket disconnected: qaX43E9Flcckyki6AAAE
+2025-03-12T09:31:24.722Z [INFO]: Socket disconnected: dnIeVCj8VYgbzaVfAAAD
+2025-03-12T09:31:25.228Z [INFO]: New socket connected: e9byuvqB7Z7zvFjjAAAX
+2025-03-12T09:31:25.231Z [INFO]: New socket connected: J0LARY6MK4pIYDnzAAAY
+2025-03-12T09:31:25.233Z [INFO]: New socket connected: glKF_mHnoIaBVv4hAAAZ
+2025-03-12T09:31:25.279Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:31:25.279Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:31:25.280Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:31:25.281Z [INFO]: Disconnection from route: /home
+2025-03-12T09:31:25.282Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:31:25.283Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:31:25.283Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:31:25.284Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:31:25.817Z [INFO]: Active players: 1
+2025-03-12T09:31:25.818Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:31:25 PM
+2025-03-12T09:31:25.898Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:27:25.604Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:31:25.287Z"}
+2025-03-12T09:31:25.899Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:31:25 PM
+2025-03-12T09:31:26.047Z [INFO]: Active players: 1
+2025-03-12T09:31:26.047Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:31:26.048Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:31:26 PM
+2025-03-12T09:31:26.573Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:27:25.604Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:31:25.287Z"}
+2025-03-12T09:31:26.574Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:31:26 PM
+2025-03-12T09:32:36.812Z [INFO]: New socket connected: Gh4TCjWdmOSpH94TAAAb
+2025-03-12T09:32:40.335Z [INFO]: New socket connected: vEEHinrLmAzgzdk_AAAd
+2025-03-12T09:33:28.126Z [INFO]: Disconnection from route: /home
+2025-03-12T09:33:28.127Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:33:28.128Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 5:33:28 PM
+2025-03-12T09:33:28.146Z [INFO]: Socket disconnected: e9byuvqB7Z7zvFjjAAAX
+2025-03-12T09:33:28.147Z [INFO]: Socket disconnected: vEEHinrLmAzgzdk_AAAd
+2025-03-12T09:33:28.150Z [INFO]: Socket disconnected: Gh4TCjWdmOSpH94TAAAb
+2025-03-12T09:33:28.150Z [INFO]: Socket disconnected: glKF_mHnoIaBVv4hAAAZ
+2025-03-12T09:33:28.151Z [INFO]: Socket disconnected: J0LARY6MK4pIYDnzAAAY
+2025-03-12T09:33:28.697Z [INFO]: New socket connected: zedFy0eOSoV00Rv4AAAh
+2025-03-12T09:33:28.701Z [INFO]: New socket connected: De11vQahREIn69_kAAAi
+2025-03-12T09:33:28.704Z [INFO]: New socket connected: owsOw8JeHgAHvkHdAAAj
+2025-03-12T09:33:28.748Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:33:28.749Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:33:28.749Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:33:28.750Z [INFO]: Disconnection from route: /home
+2025-03-12T09:33:28.750Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:33:28.752Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:33:28.752Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:33:28.752Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:33:28.754Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 5:33:28 PM
+2025-03-12T09:33:30.603Z [INFO]: Active players: 1
+2025-03-12T09:33:30.604Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:33:30.604Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:33:30 PM
+2025-03-12T09:33:30.628Z [INFO]: Active players: 1
+2025-03-12T09:33:30.628Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:33:30 PM
+2025-03-12T09:33:54.921Z [INFO]: Disconnection from route: /home
+2025-03-12T09:33:54.921Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:33:54.934Z [INFO]: Socket disconnected: owsOw8JeHgAHvkHdAAAj
+2025-03-12T09:33:54.934Z [INFO]: Socket disconnected: De11vQahREIn69_kAAAi
+2025-03-12T09:33:54.935Z [INFO]: Socket disconnected: zedFy0eOSoV00Rv4AAAh
+2025-03-12T09:33:55.458Z [INFO]: New socket connected: b1rXeonV0uae4rdnAAAn
+2025-03-12T09:33:55.461Z [INFO]: New socket connected: YZj5tsQabDeNSTD8AAAo
+2025-03-12T09:33:55.464Z [INFO]: New socket connected: 2BAZc40l-OhparKQAAAp
+2025-03-12T09:33:55.625Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:33:55.626Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:33:55.626Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:33:55.627Z [INFO]: Disconnection from route: /home
+2025-03-12T09:33:55.627Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:33:55.628Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:33:55.628Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:33:55.629Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:33:56.763Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:33:30.604Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:33:55.630Z"}
+2025-03-12T09:33:56.763Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:33:56 PM
+2025-03-12T09:33:57.374Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:33:30.604Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:33:55.630Z"}
+2025-03-12T09:33:57.375Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:33:57 PM
+2025-03-12T09:33:57.542Z [INFO]: Active players: 1
+2025-03-12T09:33:57.542Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:33:57.542Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:33:57 PM
+2025-03-12T09:33:57.549Z [INFO]: Active players: 1
+2025-03-12T09:33:57.550Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:33:57 PM
+2025-03-12T09:34:33.426Z [INFO]: New socket connected: 8C4DW5plmPQKOKxaAAAr
+2025-03-12T09:34:37.252Z [INFO]: New socket connected: sWX8-GPnx4aM694zAAAt
+2025-03-12T09:34:45.829Z [INFO]: New socket connected: L-gx-YMnOwt_3NRwAAAv
+2025-03-12T09:34:47.540Z [INFO]: New socket connected: nvfzV2Lr-JAs5kNZAAAx
+2025-03-12T09:34:48.962Z [INFO]: New socket connected: W7lGtv8ftibKcp42AAAz
+2025-03-12T09:34:54.428Z [INFO]: New socket connected: zK-mRNdzsTs571KHAAA1
+2025-03-12T09:34:55.785Z [INFO]: New socket connected: -wAtEg8Hw6nQi2j1AAA3
+2025-03-12T09:35:07.004Z [INFO]: New socket connected: 9HDqkwlZdATJt9_9AAA5
+2025-03-12T09:35:09.331Z [INFO]: Disconnection from route: /home
+2025-03-12T09:35:09.332Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:09.352Z [INFO]: Socket disconnected: b1rXeonV0uae4rdnAAAn
+2025-03-12T09:35:09.354Z [INFO]: Socket disconnected: -wAtEg8Hw6nQi2j1AAA3
+2025-03-12T09:35:09.355Z [INFO]: Socket disconnected: zK-mRNdzsTs571KHAAA1
+2025-03-12T09:35:09.355Z [INFO]: Socket disconnected: W7lGtv8ftibKcp42AAAz
+2025-03-12T09:35:09.355Z [INFO]: Socket disconnected: nvfzV2Lr-JAs5kNZAAAx
+2025-03-12T09:35:09.356Z [INFO]: Socket disconnected: L-gx-YMnOwt_3NRwAAAv
+2025-03-12T09:35:09.356Z [INFO]: Socket disconnected: sWX8-GPnx4aM694zAAAt
+2025-03-12T09:35:09.356Z [INFO]: Socket disconnected: 8C4DW5plmPQKOKxaAAAr
+2025-03-12T09:35:09.356Z [INFO]: Socket disconnected: 2BAZc40l-OhparKQAAAp
+2025-03-12T09:35:09.357Z [INFO]: Socket disconnected: YZj5tsQabDeNSTD8AAAo
+2025-03-12T09:35:09.358Z [INFO]: Socket disconnected: 9HDqkwlZdATJt9_9AAA5
+2025-03-12T09:35:09.566Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:33:57.542Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:35:09.335Z"}
+2025-03-12T09:35:09.567Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 5:35:09 PM
+2025-03-12T09:35:09.987Z [INFO]: New socket connected: xP4L92sY3zEUrTHrAAA9
+2025-03-12T09:35:09.989Z [INFO]: New socket connected: F2ZWiCY_6_8vdTJVAAA-
+2025-03-12T09:35:09.992Z [INFO]: New socket connected: C-ZMACh9MMwOzZeUAAA_
+2025-03-12T09:35:10.036Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:35:10.037Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:35:10.037Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:10.038Z [INFO]: Disconnection from route: /home
+2025-03-12T09:35:10.038Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:10.039Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:35:10.040Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:35:10.040Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:10.044Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 5:35:10 PM
+2025-03-12T09:35:10.277Z [INFO]: Active players: 1
+2025-03-12T09:35:10.277Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:35:10.277Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:35:10 PM
+2025-03-12T09:35:10.533Z [INFO]: Active players: 1
+2025-03-12T09:35:10.533Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:35:10 PM
+2025-03-12T09:35:17.336Z [INFO]: Disconnection from route: /home
+2025-03-12T09:35:17.342Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:17.348Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T09:35:17.348Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:35:17.349Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:17.352Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T09:35:17.352Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T09:35:17.352Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:17.354Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T09:35:17.355Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:35:17.355Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:17.356Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T09:35:17.590Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:35:10.277Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:35:17.360Z"}
+2025-03-12T09:35:17.590Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:35:17 PM
+2025-03-12T09:35:17.591Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:35:10.277Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:35:17.360Z"}
+2025-03-12T09:35:17.591Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:35:17 PM
+2025-03-12T09:35:17.597Z [INFO]: Active players: 1
+2025-03-12T09:35:17.598Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:35:17.598Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:35:17 PM
+2025-03-12T09:35:17.599Z [INFO]: Active players: 1
+2025-03-12T09:35:17.600Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:35:17 PM
+2025-03-12T09:35:21.304Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T09:35:21.304Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:21.308Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:35:21.309Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:35:21.309Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:21.311Z [INFO]: Disconnection from route: /home
+2025-03-12T09:35:21.311Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:21.313Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:35:21.313Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:35:21.315Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:21.548Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:35:17.598Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:35:21.319Z"}
+2025-03-12T09:35:21.549Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:35:21 PM
+2025-03-12T09:35:21.549Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:35:17.598Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:35:21.319Z"}
+2025-03-12T09:35:21.550Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:35:21 PM
+2025-03-12T09:35:21.564Z [INFO]: Active players: 1
+2025-03-12T09:35:21.565Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:35:21.565Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:35:21 PM
+2025-03-12T09:35:21.566Z [INFO]: Active players: 1
+2025-03-12T09:35:21.566Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:35:21 PM
+2025-03-12T09:35:56.848Z [INFO]: Disconnection from route: /home
+2025-03-12T09:35:56.849Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:56.860Z [INFO]: Socket disconnected: xP4L92sY3zEUrTHrAAA9
+2025-03-12T09:35:56.861Z [INFO]: Socket disconnected: C-ZMACh9MMwOzZeUAAA_
+2025-03-12T09:35:56.862Z [INFO]: Socket disconnected: F2ZWiCY_6_8vdTJVAAA-
+2025-03-12T09:35:57.422Z [INFO]: New socket connected: 840arBM6wFa29_f-AABD
+2025-03-12T09:35:57.424Z [INFO]: New socket connected: wDXvCUjhKdUwb3G8AABE
+2025-03-12T09:35:57.425Z [INFO]: New socket connected: RokybkPpcuLSoLfjAABF
+2025-03-12T09:35:57.467Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:35:57.467Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:35:57.468Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:57.469Z [INFO]: Disconnection from route: /home
+2025-03-12T09:35:57.469Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:57.470Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:35:57.470Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:35:57.470Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:35:58.670Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:35:21.565Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:35:57.473Z"}
+2025-03-12T09:35:58.671Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:35:58 PM
+2025-03-12T09:35:59.285Z [INFO]: Active players: 1
+2025-03-12T09:35:59.285Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:35:59.285Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:35:59 PM
+2025-03-12T09:35:59.287Z [INFO]: Active players: 1
+2025-03-12T09:35:59.287Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:35:59 PM
+2025-03-12T09:35:59.288Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:35:21.565Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:35:57.473Z"}
+2025-03-12T09:35:59.288Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:35:59 PM
+2025-03-12T09:39:27.799Z [INFO]: New socket connected: m_cRnOvqQphPzQvrAABH
+2025-03-12T09:39:34.044Z [INFO]: New socket connected: tf1durgMTwvc6t--AABJ
+2025-03-12T09:39:41.643Z [INFO]: New socket connected: CnMP1dtrqI-JjlCDAABL
+2025-03-12T09:41:13.011Z [INFO]: Disconnection from route: /home
+2025-03-12T09:41:13.011Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:41:13.013Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 5:41:13 PM
+2025-03-12T09:41:13.018Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T09:41:13.018Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:41:13.019Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:41:13.020Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T09:41:13.021Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T09:41:13.021Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:41:13.023Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T09:41:13.023Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:41:13.024Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:41:13.025Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T09:41:13.027Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 5:41:13 PM
+2025-03-12T09:41:14.904Z [INFO]: Active players: 1
+2025-03-12T09:41:14.905Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:41:14.905Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:41:14 PM
+2025-03-12T09:41:14.938Z [INFO]: Active players: 1
+2025-03-12T09:41:14.939Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:41:14 PM
+2025-03-12T09:41:47.316Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T09:41:47.318Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:41:47.321Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:41:47.321Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:41:47.322Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:41:47.324Z [INFO]: Disconnection from route: /home
+2025-03-12T09:41:47.328Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:41:47.329Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:41:47.330Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:41:47.330Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:41:49.153Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:41:14.905Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:41:47.332Z"}
+2025-03-12T09:41:49.154Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:41:49 PM
+2025-03-12T09:41:49.161Z [INFO]: Active players: 1
+2025-03-12T09:41:49.162Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:41:49.162Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:41:49 PM
+2025-03-12T09:41:49.169Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:41:14.905Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:41:47.332Z"}
+2025-03-12T09:41:49.170Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 5:41:49 PM
+2025-03-12T09:41:49.204Z [INFO]: Active players: 1
+2025-03-12T09:41:49.204Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:41:49.204Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:41:49 PM
+2025-03-12T09:42:08.245Z [INFO]: Disconnection from route: /home
+2025-03-12T09:42:08.245Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:42:10.108Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:41:49.204Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T09:42:08.247Z"}
+2025-03-12T09:42:10.109Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 5:42:10 PM
+2025-03-12T09:51:12.642Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:51:12.642Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:51:12.643Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:51:12.644Z [INFO]: Disconnection from route: /home
+2025-03-12T09:51:12.645Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:51:12.647Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 5:51:12 PM
+2025-03-12T09:51:12.649Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T09:51:12.649Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T09:51:12.649Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T09:51:16.492Z [INFO]: Active players: 1
+2025-03-12T09:51:16.492Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T09:51:16.493Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:51:16 PM
+2025-03-12T09:51:16.495Z [INFO]: Active players: 1
+2025-03-12T09:51:16.495Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 5:51:16 PM
+2025-03-12T09:53:58.235Z [INFO]: New socket connected: I5q4HWDhTAB3ImWyAABN
+2025-03-12T10:13:29.955Z [INFO]: Disconnection from route: /home
+2025-03-12T10:13:29.956Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T10:13:29.962Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T10:13:29.962Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T10:13:29.962Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T10:13:29.967Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T10:13:29.968Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T10:13:29.968Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T10:13:29.971Z [INFO]: New connection from route: http://localhost:5173/game-details/1
+2025-03-12T10:13:29.971Z [INFO]: Token received: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdlbnJleWNyaXN0b2JhbDAzQGdtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE3NDE3NzE2NDIsImV4cCI6MTc0MTc3NTI0Mn0.0xoBLKnd9nye0DP6lW_IBjDj5AQ557Rm3T-9UKwdJpM
+2025-03-12T10:13:29.972Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T10:13:29.974Z [INFO]: Updated last played game for genreycristobal03@gmail.com: Game 1
+2025-03-12T10:13:33.435Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:51:16.492Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T10:13:29.975Z"}
+2025-03-12T10:13:33.436Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 6:13:33 PM
+2025-03-12T10:13:33.437Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T09:51:16.492Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T10:13:29.975Z"}
+2025-03-12T10:13:33.437Z [INFO]: User genreycristobal03@gmail.com left. Active players: 1 as of 3/12/2025, 6:13:33 PM
+2025-03-12T10:13:33.951Z [INFO]: Active players: 1
+2025-03-12T10:13:33.952Z [INFO]: Session created for genreycristobal03@gmail.com
+2025-03-12T10:13:33.952Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 6:13:33 PM
+2025-03-12T10:13:33.954Z [INFO]: Active players: 1
+2025-03-12T10:13:33.955Z [INFO]: User genreycristobal03@gmail.com joined. Active players: 1 as of 3/12/2025, 6:13:33 PM
+2025-03-12T10:13:35.589Z [INFO]: Disconnection from route: /game-details/1
+2025-03-12T10:13:35.589Z [INFO]: Email received: genreycristobal03@gmail.com
+2025-03-12T10:13:35.824Z [INFO]: Session ended for genreycristobal03@gmail.com: {"startTime":"2025-03-12T10:13:33.952Z","sessionData":{"interactions":[],"gamesCreated":[],"gamesPlayed":[],"visitedPages":{}},"endTime":"2025-03-12T10:13:35.591Z"}
+2025-03-12T10:13:35.824Z [INFO]: User genreycristobal03@gmail.com left. Active players: 0 as of 3/12/2025, 6:13:35 PM
+2025-03-12T10:19:06.823Z [INFO]: Socket disconnected: 840arBM6wFa29_f-AABD
+2025-03-12T10:19:06.825Z [INFO]: Socket disconnected: I5q4HWDhTAB3ImWyAABN
+2025-03-12T10:19:06.825Z [INFO]: Socket disconnected: m_cRnOvqQphPzQvrAABH
+2025-03-12T10:19:06.826Z [INFO]: Socket disconnected: wDXvCUjhKdUwb3G8AABE
+2025-03-12T10:19:06.826Z [INFO]: Socket disconnected: tf1durgMTwvc6t--AABJ
+2025-03-12T10:19:06.826Z [INFO]: Socket disconnected: RokybkPpcuLSoLfjAABF
+2025-03-12T10:19:06.827Z [INFO]: Socket disconnected: CnMP1dtrqI-JjlCDAABL
