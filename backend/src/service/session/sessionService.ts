@@ -219,6 +219,12 @@ export async function getActiveSessionsByEmail(email: string): Promise<Session[]
 export async function getAllSessionsByEmail(email: string): Promise<Session[]> {
   try {
     console.log("getAllSessionsByEmail function called with email:", email);
+    
+    // If email is undefined or empty, warn and return empty array
+    if (!email) {
+      console.warn("Email is undefined in getAllSessionsByEmail");
+      return [];
+    }
 
     // Find all sessions for this email
     const sessions = await Session.findAll({

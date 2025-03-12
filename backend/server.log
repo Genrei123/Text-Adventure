@@ -4340,3 +4340,82 @@
 2025-03-12T04:20:48.054Z [INFO]: Socket disconnected: apkR11M2KuBr-VsqAAAB
 2025-03-12T04:21:01.987Z [INFO]: New socket connected: jaEkmWsuWAiNXHSgAAAD
 2025-03-12T04:21:11.362Z [INFO]: Socket disconnected: jaEkmWsuWAiNXHSgAAAD
+2025-03-12T04:48:27.497Z [INFO]: New socket connected: UakWAAUxDf4eWNQjAAAB
+2025-03-12T04:49:19.099Z [INFO]: Socket disconnected: UakWAAUxDf4eWNQjAAAB
+2025-03-12T04:50:20.108Z [INFO]: New socket connected: zaHay8NTtvWlPcOfAAAB
+2025-03-12T05:10:39.095Z [INFO]: Socket disconnected: zaHay8NTtvWlPcOfAAAB
+2025-03-12T05:16:40.474Z [INFO]: New socket connected: 9uKUrS-_2VvdJwMZAAAB
+2025-03-12T05:17:21.119Z [INFO]: Socket disconnected: 9uKUrS-_2VvdJwMZAAAB
+2025-03-12T05:21:16.355Z [INFO]: New socket connected: nCSCTM2DY8GVgCCBAAAD
+2025-03-12T05:26:00.811Z [INFO]: New socket connected: OpXmu7Pon2SlseFdAAAB
+2025-03-12T05:29:12.159Z [INFO]: Socket disconnected: OpXmu7Pon2SlseFdAAAB
+2025-03-12T05:29:25.030Z [INFO]: New socket connected: SQikfaQH8Hfjc59CAAAD
+2025-03-12T05:29:37.737Z [INFO]: Socket disconnected: SQikfaQH8Hfjc59CAAAD
+2025-03-12T05:29:46.926Z [INFO]: New socket connected: rNVo74jnIgIxDb2CAAAF
+2025-03-12T05:30:16.403Z [INFO]: Socket disconnected: rNVo74jnIgIxDb2CAAAF
+2025-03-12T05:30:19.150Z [INFO]: New socket connected: 0WuLloeXNWFC-aruAAAH
+2025-03-12T05:35:05.552Z [INFO]: New socket connected: Pw86LjsO2sE8gPspAAAB
+2025-03-12T05:36:54.097Z [INFO]: Socket disconnected: Pw86LjsO2sE8gPspAAAB
+2025-03-12T05:37:03.213Z [INFO]: New socket connected: Ry2x0bryoX8JWcBGAAAD
+2025-03-12T05:41:08.547Z [INFO]: New socket connected: FWYWdvuG6Z6Z9FX9AAAB
+2025-03-12T05:45:23.774Z [INFO]: Socket disconnected: FWYWdvuG6Z6Z9FX9AAAB
+2025-03-12T05:45:31.979Z [INFO]: New socket connected: Rf_qygWI23YOSth4AAAD
+2025-03-12T05:45:32.158Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T05:45:32.159Z [INFO]: Token received: undefined
+2025-03-12T05:45:32.160Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T05:45:32.162Z [INFO]: Disconnection from route: /home
+2025-03-12T05:45:32.162Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T05:45:32.163Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T05:45:32.164Z [INFO]: Token received: undefined
+2025-03-12T05:45:32.164Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T05:45:32.165Z [WARN]: Invalid token or user email missing
+2025-03-12T05:45:32.165Z [WARN]: Invalid token or user email missing
+2025-03-12T05:45:32.166Z [WARN]: Invalid token or user email missing
+2025-03-12T05:45:40.464Z [INFO]: Disconnection from route: /home
+2025-03-12T05:45:40.465Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T05:45:40.466Z [WARN]: Invalid token or user email missing
+2025-03-12T06:02:37.148Z [INFO]: New socket connected: LXNxCWw7RyVTD2uUAAAB
+2025-03-12T06:03:22.241Z [INFO]: Socket disconnected: LXNxCWw7RyVTD2uUAAAB
+2025-03-12T06:03:24.331Z [INFO]: New socket connected: -AxVwqOYagrkCBH_AAAD
+2025-03-12T06:03:37.700Z [INFO]: Socket disconnected: -AxVwqOYagrkCBH_AAAD
+2025-03-12T06:03:47.324Z [INFO]: New socket connected: waWV4Px3nLi1tSrmAAAF
+2025-03-12T06:03:47.840Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T06:03:47.841Z [INFO]: Token received: undefined
+2025-03-12T06:03:47.842Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:03:47.843Z [INFO]: Disconnection from route: /home
+2025-03-12T06:03:47.844Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:03:47.845Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T06:03:47.846Z [INFO]: Token received: undefined
+2025-03-12T06:03:47.846Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:03:47.847Z [WARN]: Invalid token or user email missing
+2025-03-12T06:03:47.848Z [WARN]: Invalid token or user email missing
+2025-03-12T06:03:47.848Z [WARN]: Invalid token or user email missing
+2025-03-12T06:04:57.029Z [INFO]: Disconnection from route: /home
+2025-03-12T06:04:57.029Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:04:57.030Z [WARN]: Invalid token or user email missing
+2025-03-12T06:06:34.821Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T06:06:34.822Z [INFO]: Token received: undefined
+2025-03-12T06:06:34.822Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:06:34.823Z [WARN]: Invalid token or user email missing
+2025-03-12T06:10:11.892Z [INFO]: New socket connected: a8J8QF2wvv8OnME1AAAB
+2025-03-12T06:11:08.816Z [INFO]: Disconnection from route: /home
+2025-03-12T06:11:08.816Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:11:08.822Z [WARN]: Invalid token or user email missing
+2025-03-12T06:11:08.827Z [INFO]: Socket disconnected: a8J8QF2wvv8OnME1AAAB
+2025-03-12T06:11:10.707Z [INFO]: New socket connected: p9PXgv4rBClufGzTAAAD
+2025-03-12T06:11:14.065Z [INFO]: Socket disconnected: p9PXgv4rBClufGzTAAAD
+2025-03-12T06:11:24.213Z [INFO]: New socket connected: 2Nr0S5aWhng91h7cAAAF
+2025-03-12T06:11:24.429Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T06:11:24.430Z [INFO]: Token received: undefined
+2025-03-12T06:11:24.431Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:11:24.432Z [INFO]: Disconnection from route: /home
+2025-03-12T06:11:24.432Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:11:24.433Z [INFO]: New connection from route: http://localhost:5173/home
+2025-03-12T06:11:24.434Z [INFO]: Token received: undefined
+2025-03-12T06:11:24.434Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:11:24.435Z [WARN]: Invalid token or user email missing
+2025-03-12T06:11:24.435Z [WARN]: Invalid token or user email missing
+2025-03-12T06:11:24.436Z [WARN]: Invalid token or user email missing
+2025-03-12T06:11:50.308Z [INFO]: Disconnection from route: /home
+2025-03-12T06:11:50.309Z [INFO]: Email received: jkrbn99@gmail.com
+2025-03-12T06:11:50.310Z [WARN]: Invalid token or user email missing

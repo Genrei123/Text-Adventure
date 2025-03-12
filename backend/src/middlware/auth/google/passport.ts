@@ -8,6 +8,7 @@ dotenv.config();
 const googleClientID = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
+
 if (!googleClientID || !googleClientSecret) {
   throw new Error('Missing Google OAuth credentials in environment variables');
 }
@@ -23,9 +24,11 @@ passport.use(new GoogleStrategy({
       if (!email) {
         throw new Error("No email found in Google profile");
       }
-      const username = profile.displayName || email || 'User';
-      // Set default DiceBear avatar URL using the username as seed
-      const defaultAvatar = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(username)}`;
+      // Ensure username is defined by falling back to the email
+      const username = profile.displayName || email;
+      // Use the username (or email) as seed so no "undefined" prefix appears
+      const seed = encodeURIComponent(username);
+      const defaultAvatar = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${seed}`;
       
       // Find existing user or create a new one while setting image_url to defaultAvatar
       let user = await User.findOne({ where: { email } });

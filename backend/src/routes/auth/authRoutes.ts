@@ -22,44 +22,51 @@ const createAuthRouter = (frontendUrl: string) => {
   router.get('/google/callback', 
     passport.authenticate('google', { failureRedirect: '/' }),
     async (req: Request, res: Response) => {
-      if (req.user) {
-        const req_user = req.user as any;
-        const username = req_user.displayName || req_user.emails[0]?.value;
-        // Check if the user is in the database already
-        // If not, create a new user
-        // If yes, block the user from creating a new account
-
-        try {
-          console.log('Checking if user exists:', req_user.email);
-          const userExists = await User.findOne({ where: { email: req_user.email }});
+      try {
+        if (req.user) {
+          const req_user = req.user as any;
+          // Use the email from the user object or fallback to the emails array
+          const emailFromProvider = req_user.email || (req_user.emails && req_user.emails.length > 0 ? req_user.emails[0].value : null);
+          if (!emailFromProvider) {
+            throw new Error("No email provided by Google account");
+          }
+          const username = req_user.displayName || emailFromProvider;
+          // Prepare default avatar URL using DiceBear API
+          const defaultAvatar = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(username)}`;
+          
+          console.log('Checking if user exists:', emailFromProvider);
+          const userExists = await User.findOne({ where: { email: emailFromProvider }});
           if (userExists) {
             console.log('User exists:', userExists);
+            // For login, update missing avatar if needed
+            if (!userExists.image_url) {
+              await userExists.update({ image_url: defaultAvatar });
+            }
           } else {
-            console.log('Creating new user:', req_user.emails[0]?.value);
+            console.log('Creating new user:', emailFromProvider);
             const newUser = await User.create({
-              email: req_user.emails[0]?.value,
+              email: emailFromProvider,
               username: username,
               private: false,
               model: 'gpt-3.5',
               password: '',
               admin: false,
               emailVerified: true,
+              image_url: defaultAvatar,
               createdAt: new Date(),
               updatedAt: new Date()
             });
-
             console.log('New user created:', newUser);
           }
-        } catch (error) {
-          console.error('Error creating user:', error);
-          res.redirect(`${frontendUrl}/forbidden`);
-          return;
+    
+          const token = Jwt.sign({ id: req_user.id, username, email: emailFromProvider }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+          res.redirect(`${frontendUrl}/home?token=${token}`);
+        } else {
+          res.redirect('/?error=authentication_failed');
         }
-        const token = Jwt.sign({ id: req_user.id, username, email: req_user.emails[0]?.value }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
-        //res.redirect(`${frontendUrl}/?token=${token}`);
-        res.redirect(`${frontendUrl}/home?token=${token}`);
-      } else {
-        res.redirect('/?error=authentication_failed');
+      } catch (error) {
+        console.error('Error in Google auth callback:', error);
+        res.redirect(`${frontendUrl}/forbidden`);
       }
     }
   );
