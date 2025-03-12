@@ -19,7 +19,7 @@ interface ComfyUIHistory {
 }
 
 // ComfyUI Server URL (Local) NGROK URL THAT MUST BE CHANGED CONSTANTLY CYKAAAA!
-const comfyUIUrl = 'https://f1c9-2405-8d40-4819-a640-b07d-662-c403-9914.ngrok-free.app/';
+const comfyUIUrl = process.env.COMFYUI_NGROK_URL;
 
 // Output directory for generated images (Local)
 const outputDir = path.join(__dirname, '../../../../../../Stable Diffusion/ComfyUI_windows_portable/ComfyUI/output');
