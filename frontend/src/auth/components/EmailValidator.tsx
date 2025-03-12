@@ -39,7 +39,7 @@ const EmailValidator: React.FC<EmailValidatorProps> = ({
 
       setIsChecking(true);
       try {
-        const response = await axiosInstance.post('/auth/check-email', { email });
+        const response = await axiosInstance.post('/oauth/check-email', { email });
         const { available } = response.data;
 
         if (available) {
