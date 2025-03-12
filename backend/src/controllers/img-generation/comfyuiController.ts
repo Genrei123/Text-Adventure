@@ -40,7 +40,7 @@ export const generateImage = async (req: Request, res: Response) => {
     console.log('Server received image generation request at:', new Date());
     
     // Ensure the image directory exists (similar to DALL-E implementation)
-    const imageDir = path.join('public', 'images', 'sdx', 'chat-images');
+    const imageDir = path.join('public', 'images', 'chat-images');
     await mkdirAsync(imageDir, { recursive: true });
     
     // Load and configure workflow
@@ -114,7 +114,7 @@ export const generateImage = async (req: Request, res: Response) => {
     console.log(`Copied image from ${comfyFilePath} to ${publicFilePath}`);
 
     // Create a relative URL for storing in the database (similar to DALL-E implementation)
-    const relativeImageUrl = `/images/chat-images/sdxl/${newFileName}`;
+    const relativeImageUrl = `/images/chat-images/${newFileName}`;
 
     res.json({
       promptId,
