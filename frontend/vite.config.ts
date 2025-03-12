@@ -5,14 +5,36 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': { // Proxy requests starting with /api to the backend
+      // Existing /api proxy for routes like /api/bans, /api/games, etc.
+      '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
-    }
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      // Additional endpoints without /api prefix
+      '/sessions': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/sessions/, ''),
+      },
+      '/openai': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/openai/, ''),
+      },
+      '/ai': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ai/, ''),
+      },
+      '/images': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/images/, ''),
+      },
+    },
   },
   define: {
-    'process.env': process.env
-  }
+    'process.env': process.env,
+  },
 });

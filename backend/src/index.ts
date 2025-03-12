@@ -20,8 +20,8 @@ import gameRoutes from './routes/game/gameRoutes';
 import paymentRoutes from './routes/transaction/shopRoutes';
 import sessionRoutes from './routes/statistics/sessionRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
-import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation
-import comfyuiRoute from './routes/img-generation/comfyuiRoute';
+import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation for OPENAI
+import comfyuiRoute from './routes/img-generation/comfyuiRoute'; // Image generation for Stable Diffusion
 import banRoutes from './routes/banRoutes';
 import metricsRouter from './routes/metrics';
 import playersRouter from './routes/players';
