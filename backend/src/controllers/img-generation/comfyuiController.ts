@@ -82,14 +82,14 @@ export const generateImage = async (req: Request, res: Response) => {
     console.log('Output Dir:', outputDir);
     console.log('Output Dir Contents:', fs.readdirSync(outputDir));
     console.log('Latest File:', latestFile);
-    console.log('Generated URL:', `${process.env.PUBLIC_BASE_URL}/images/${latestFile}`);
+    console.log('Generated URL:', `${process.env.NGROK_COMFY_URL}/images/${latestFile}`);
 
     const imageUrl = `/images/${latestFile}`;
 
     res.json({
       promptId,
       message: 'Image generation queued with ComfyUI',
-      imageUrl: `${process.env.PUBLIC_BASE_URL}${imageUrl}`
+      imageUrl: `${process.env.NGROK_COMFY_URL}${imageUrl}`
     });
   } catch (error) {
     const axiosError = error as AxiosError;
