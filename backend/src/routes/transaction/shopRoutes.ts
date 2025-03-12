@@ -9,10 +9,9 @@ import {
   getAllItems,
   buyTokenPackage,
   getAllTokenPackages,
-  handlePaymentWebhook,
   getUserOrderHistory
 } from '../../controllers/transaction/shopController';
-import { handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
+import { handlePaymentWebhook, handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
 import { createSubscription, getSubscriptionOffers, getUserSubscriptions } from '../../controllers/transaction/subscriptionController';
 
 const router = express.Router();
