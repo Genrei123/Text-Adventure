@@ -247,43 +247,60 @@ const GameScreen: React.FC = () => {
       setError("User ID or Game ID not found. Please log in again.");
       return;
     }
-
+  
     setError("");
     setSuccess("");
     setIsGeneratingImage(true);
     setShowModelDropdown(false);
-
+  
     try {
       const contextMessage = getContextFromMessages();
-      const imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
+      // Adjust prompt based on model
+      let imagePrompt;
+      let apiEndpoint;
+      
+      if (selectedModel.toUpperCase() === "SDXL") {
+        // SDXL specific formatting
+        imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
+        apiEndpoint = "/comfyui/generate"; // Use ComfyUI endpoint for SDXL
+      } else {
+        // DALL-E formatting
+        imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
+        apiEndpoint = "/openai/generate-image"; // Use OpenAI endpoint for DALL-E
+      }
+  
       const userPromptMessage: ChatMessage = {
         content: `[Generate Image] Visualizing the current scene using ${selectedModel}...`,
         isUser: true,
         timestamp: new Date().toLocaleTimeString(),
       };
       setChatMessages((prev) => [...prev, userPromptMessage]);
-
+  
       const generatingMessage: ChatMessage = {
         content: `Generating image of the current scene with ${selectedModel}...`,
         isUser: false,
         timestamp: new Date().toLocaleTimeString(),
       };
       setChatMessages((prev) => [...prev, generatingMessage]);
-
-      console.log("Sending request to /openai/generate-image with:", { prompt: imagePrompt, userId, gameId, model: selectedModel.toLowerCase() });
-      const response = await axiosInstance.post("/openai/generate-image", {
+  
+      console.log(`Sending request to ${apiEndpoint} with:`, { prompt: imagePrompt, userId, gameId, model: selectedModel.toLowerCase() });
+      
+      // Use the appropriate endpoint based on selected model
+      const response = await axiosInstance.post(apiEndpoint, {
         prompt: imagePrompt,
         userId,
         gameId: Number.parseInt(gameId, 10),
         model: selectedModel.toLowerCase(),
       });
-      console.log("Response from /openai/generate-image:", response.data);
-
+      
+      console.log(response);
+      console.log(`Response from ${apiEndpoint}:`, response.data);
+  
       setChatMessages((prev) => prev.slice(0, -1));
-
+  
       const { imageUrl } = response.data;
       console.log("Image URL received:", imageUrl);
-
+  
       await axiosInstance.post("/ai/store-image", {
         userId,
         gameId: Number.parseInt(gameId, 10),
@@ -291,6 +308,7 @@ const GameScreen: React.FC = () => {
         image_url: imageUrl,
         role: "assistant",
       });
+      
       console.log("Store-image response:", await axiosInstance.post("/ai/store-image", {
         userId,
         gameId: Number.parseInt(gameId, 10),
@@ -298,7 +316,7 @@ const GameScreen: React.FC = () => {
         image_url: imageUrl,
         role: "assistant",
       }).catch(err => console.error("Store-image error:", err)));
-
+  
       const imageResponse: ChatMessage = {
         content: `Scene visualized with ${selectedModel}:`,
         isUser: false,
