@@ -40,7 +40,7 @@ export const generateImage = async (req: Request, res: Response) => {
     console.log('Server received image generation request at:', new Date());
     
     // Ensure the image directory exists (similar to DALL-E implementation)
-    const imageDir = path.join('public', 'images', 'chat-images');
+    const imageDir = path.join('public', 'images', 'sdx', 'chat-images');
     await mkdirAsync(imageDir, { recursive: true });
     
     // Load and configure workflow
