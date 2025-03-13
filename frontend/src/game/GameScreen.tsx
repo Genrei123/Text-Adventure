@@ -663,7 +663,6 @@ const GameScreen: React.FC = () => {
                       onError={(e) => {
                         console.error("Summary image load error");
                         e.currentTarget.onerror = null;
-                        e.currentTarget.src = '/placeholder-image.jpg'; // Fallback image path
                       }}
                     />
                   ) : (
