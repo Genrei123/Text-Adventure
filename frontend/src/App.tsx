@@ -42,7 +42,7 @@ import { clearSession } from './sessions/api-calls/visitedPagesSession';
 import AdminLogin from './Admin/AdminLogin';
 
 // Admin Components
-import AdminRoute from './Admin/Components/AdminRoute';
+import AdminRoute from './Admin/components/AdminRoute';
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
