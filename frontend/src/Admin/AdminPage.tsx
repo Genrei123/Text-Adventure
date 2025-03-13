@@ -15,7 +15,7 @@ import {
   Filter,
   LogOut
 } from 'lucide-react';
-import AdminNavbar from "./Components/adminNavbar";
+import AdminNavbar from "./components/adminNavbar";
 import MetricCard from './MetricCard';
 import SidebarItem from './SidebarItem';
 import axiosInstance from '../../config/axiosConfig';
