@@ -682,14 +682,45 @@ const GameScreen: React.FC = () => {
                       <div>
                         {/* Format the string with line breaks */}
                         {gameSummary.summary.split('\n').map((line, index) => (
-                          <p key={index}>{line}</p>
+                          <p key={index} className="mb-2">
+                            {line.trim()}
+                          </p>
                         ))}
                       </div>
                     ) : (
-                      <p>{isGeneratingImage ? 'Generating summary...' : 'No summary available'}</p>
+                      <p>{isGeneratingImage ? 'Creating your adventure summary...' : 'No summary available. Generate a summary to see your adventure recap.'}</p>
                     )}
                   </div>
                 </div>
+              </div>
+
+
+              <div className="flex justify-between">
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleSummary}
+                    disabled={isGeneratingImage}
+                    className={`px-4 py-3 rounded-full font-playfair text-white ${isGeneratingImage ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#634630] hover:bg-[#311F17]'} transition-colors`}
+                  >
+                    {isGeneratingImage ? 'Generating...' : 'Generate Summary'}
+                  </button>
+                  <button
+                    onClick={handleShareToFacebook}
+                    disabled={!gameSummary || isGeneratingImage}
+                    className={`px-4 py-3 rounded-full font-playfair text-white flex items-center ${!gameSummary || isGeneratingImage ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#4267B2] hover:bg-[#365899]'} transition-colors`}
+                  >
+                    <span className="mr-2">Share to Facebook</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white">
+                      <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+                    </svg>
+                  </button>
+                </div>
+                <button
+                  onClick={() => setShowEndStoryModal(false)}
+                  className="px-4 py-3 rounded-full font-playfair text-white bg-[#634630] hover:bg-[#311F17] transition-colors"
+                >
+                  Return to Game
+                </button>
               </div>
 
               <div className="flex justify-end">
