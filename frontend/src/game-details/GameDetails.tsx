@@ -52,6 +52,9 @@ const GameDetails: React.FC = () => {
   const [showRateAgainPopup, setShowRateAgainPopup] = useState(false);
   const [tempRating, setTempRating] = useState<number | null>(null);
   const popupRef = useRef<HTMLDivElement>(null)
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [commentToReport, setCommentToReport] = useState<number | null>(null);
 
   useEffect(() => {
     if (!id) {
@@ -262,7 +265,22 @@ const GameDetails: React.FC = () => {
     }
   };
   
-  const handleReportComment = async (commentId: number) => {
+  const handleReportComment = (commentId: number) => {
+    const userData = localStorage.getItem("userData");
+    if (!userData) {
+      toast.warning("You must be logged in to report comments.");
+      return;
+    }
+    
+    // Set the comment ID to report and show the modal
+    setCommentToReport(commentId);
+    setReportReason("");
+    setShowReportModal(true);
+  };
+
+  const submitReportComment = async () => {
+    if (!commentToReport) return;
+    
     try {
       const userData = localStorage.getItem("userData");
       if (!userData) {
@@ -273,12 +291,15 @@ const GameDetails: React.FC = () => {
       const parsedData = JSON.parse(userData);
       const userId = parsedData.id;
       
-      await axiosInstance.post(`/game/comments/${commentId}/report`, { 
+      await axiosInstance.post(`/game/comments/${commentToReport}/report`, { 
         userId,
-        reason: "Inappropriate content" // Default reason
+        reason: reportReason || "Inappropriate content"
       });
       
       toast.success("Comment reported. Thank you for helping keep our community safe.");
+      setShowReportModal(false);
+      setCommentToReport(null);
+      setReportReason("");
     } catch (error) {
       console.error("Failed to report comment", error);
       toast.error("Failed to report comment. Please try again.");
@@ -674,7 +695,7 @@ const GameDetails: React.FC = () => {
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                                <button 
+                                {/* <button 
                                   onClick={() => handleLikeComment(comment.id)}
                                   className="text-gray-400 hover:text-[#C8A97E] transition-colors p-1 rounded-full hover:bg-[#C8A97E]/10"
                                   title="Like this comment"
@@ -683,7 +704,7 @@ const GameDetails: React.FC = () => {
                                   {(comment.likes && comment.likes > 0) && (
                                     <span className="text-xs ml-1">{comment.likes}</span>
                                   )}
-                                </button>
+                                </button> */}
                                 <button
                                   onClick={() => handleReportComment(comment.id)}
                                   className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-500/10"
@@ -749,6 +770,38 @@ const GameDetails: React.FC = () => {
                 className="bg-[#B39C7D] text-white px-4 py-2 rounded-lg hover:bg-[#8C7A5B] transition-colors"
               >
                 Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Report Comment Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-[#2A2A2A] rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-cinzel text-[#B39C7D] mb-4">Report Comment</h3>
+            <p className="text-white mb-4">Please provide a reason for reporting this comment:</p>
+            
+            <textarea
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              placeholder="Reason for reporting..."
+              className="w-full p-3 bg-[#1E1E1E] border border-[#3A3A3A] rounded text-white mb-4 focus:outline-none focus:border-[#B39C7D]"
+              rows={4}
+            />
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowReportModal(false)}
+                className="px-4 py-2 bg-[#3D2E22] text-white rounded hover:bg-[#4D3E32] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitReportComment}
+                className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800 transition-colors"
+              >
+                Report
               </button>
             </div>
           </div>

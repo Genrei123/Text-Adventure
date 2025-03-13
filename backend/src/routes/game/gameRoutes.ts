@@ -10,6 +10,7 @@ import {
   getGameByUsername, 
   getGameByTitle 
 } from '../../controllers/game/game-creation/gameController';
+import { reportComment } from '../../controllers/game/commentController';
 
 const router = Router();
 
@@ -30,5 +31,8 @@ router.get('/:id/ratings', getRatings);
 router.post('/:id/comments', addComment);
 router.post('/:id/ratings', addRating);
 router.get('/games/user/:username', getGameByUsername);
+
+// Report a comment
+router.post('/comments/:id/report', reportComment);
 
 export default router;
