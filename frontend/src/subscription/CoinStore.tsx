@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axiosInstance from "../../config/axiosConfig";
 import axios from "axios";
 
 // Define proper type for offers based on API response
