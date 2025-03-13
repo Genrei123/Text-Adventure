@@ -65,7 +65,7 @@ const AdminNavbar = () => {
           {/* Right side controls */}
           <div className="flex items-center space-x-4">
             {/* Theme Toggle Button */}
-            <button
+            {/* <button
               onClick={toggleTheme}
               className="rounded-full p-2 bg-[#2A1F17] border border-[#C8A97E] text-[#C8A97E] hover:text-[#E5D4B3] transition-colors"
               aria-label={
@@ -73,21 +73,21 @@ const AdminNavbar = () => {
               }
             >
               {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            </button> */}
 
             {/* User section */}
-            {username ? (
+            {/* {username ? (
               <>
-                {/* On larger screens show text, on mobile show icon */}
+    
                 <span className="hidden md:inline font-playfair text-[#E5D4B3]">
                   Welcome, {username}
                 </span>
-                {/* Profile icon for mobile */}
+        
                 <div className="md:hidden rounded-full p-2 bg-[#2A1F17] border border-[#C8A97E] text-[#C8A97E]">
                   <User size={20} />
                 </div>
 
-                {/* Removed Leave Realm button and icon */}
+              
               </>
             ) : (
               <>
@@ -98,12 +98,12 @@ const AdminNavbar = () => {
                   className="bg-[#C8A97E] hover:bg-[#B39671] px-3 py-1 rounded text-sm font-medium text-[#1E1E1E] border border-[#E5D4B3]"
                   onClick={() => navigate("/login")}
                 >
-                  {/* Responsive text for login button */}
+                  
                   <span className="hidden md:inline">Enter Realm</span>
                   <span className="md:hidden">Login</span>
                 </button>
               </>
-            )}
+            )} */}
           </div>
         </div>
       </nav>
