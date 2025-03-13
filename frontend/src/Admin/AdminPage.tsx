@@ -72,6 +72,7 @@ interface ReportedPlayer {
   username: string;
   comment: string;
   createdAt: string;
+  reportedContent?: string;
 }
 
 interface Player {
@@ -241,8 +242,9 @@ const AdminPage: React.FC = () => {
       const reportedPlayers: ReportedPlayer[] = reportedBans.map((ban: BannedPlayer) => ({
         id: ban.id,
         username: ban.username,
-        comment: ban.comment || 'No comment provided',
-        createdAt: ban.createdAt
+        comment: ban.reason || 'No reason provided',
+        createdAt: ban.createdAt,
+        reportedContent: ban.comment || 'No comment content available'
       }));
       
       setReportedPlayers(reportedPlayers);
@@ -1302,30 +1304,36 @@ const AdminPage: React.FC = () => {
                         <thead>
                           <tr className="bg-black">
                             <th
-                              className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/4"
+                              className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
                               onClick={() => requestSort("username")}
                             >
                               Username {getSortIndicator("username")}
                             </th>
                             <th
-                              className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/3"
+                              className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
                               onClick={() => requestSort("comment")}
                             >
-                              Comments {getSortIndicator("comment")}
+                              Reason {getSortIndicator("comment")}
                             </th>
                             <th
-                              className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/4"
+                              className="py-4 px-6 font-cinzel cursor-pointer text-left w-2/5"
+                              onClick={() => requestSort("reportedContent")}
+                            >
+                              Reported Content {getSortIndicator("reportedContent")}
+                            </th>
+                            <th
+                              className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
                               onClick={() => requestSort("createdAt")}
                             >
                               Created At {getSortIndicator("createdAt")}
                             </th>
-                            <th className="py-4 px-6 font-cinzel text-left w-1/6">Actions</th>
+                            <th className="py-4 px-6 font-cinzel text-left w-1/5">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
                           {isLoading ? (
                             <tr>
-                              <td colSpan={4} className="py-4 px-6 text-center">
+                              <td colSpan={5} className="py-4 px-6 text-center">
                                 <div className="flex justify-center">
                                   <LoadingBook message="Loading reports..." size="sm" />
                                 </div>
@@ -1333,7 +1341,7 @@ const AdminPage: React.FC = () => {
                             </tr>
                           ) : currentReportedPlayers.length === 0 ? (
                             <tr>
-                              <td colSpan={4} className="py-4 px-6 text-center">No reported players found</td>
+                              <td colSpan={5} className="py-4 px-6 text-center">No reported players found</td>
                             </tr>
                           ) : (
                             currentReportedPlayers.map((player) => (
@@ -1346,6 +1354,9 @@ const AdminPage: React.FC = () => {
                                 </td>
                                 <td className="py-4 px-6 font-playfair text-left truncate">
                                   {player.comment}
+                                </td>
+                                <td className="py-4 px-6 font-playfair text-left truncate">
+                                  {player.reportedContent}
                                 </td>
                                 <td className="py-4 px-6 font-playfair text-left">
                                   {formatDate(player.createdAt)}
