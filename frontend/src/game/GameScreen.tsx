@@ -154,7 +154,6 @@ const GameScreen: React.FC = () => {
         }
       } catch (error) {
         console.error("Error fetching chat messages:", error);
-        setError("Failed to load chat history.");
       } finally {
         setIsLoadingMessages(false);
       }
