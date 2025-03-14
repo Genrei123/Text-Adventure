@@ -137,7 +137,7 @@ const GameScreen: React.FC = () => {
           userId,
           gameId: Number.parseInt(gameId, 10),
         });
-        
+
         // Make sure we have data to process
         if (response.data && Array.isArray(response.data)) {
           const formattedMessages = response.data.map((msg: any) => ({
@@ -146,6 +146,7 @@ const GameScreen: React.FC = () => {
             timestamp: new Date(msg.createdAt).toLocaleTimeString(),
             image_url: msg.image_url || undefined,
           }));
+          
           console.log("Fetched chat messages:", formattedMessages);
           setChatMessages(formattedMessages);
         } else {
@@ -174,7 +175,7 @@ const GameScreen: React.FC = () => {
 
   // Door animation setup
   useEffect(() => {
-    const timer = setTimeout(() => setIsAnimating(false), 5000);
+    const timer = setTimeout(() => setIsAnimating(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -428,6 +429,22 @@ const GameScreen: React.FC = () => {
     return `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
   };
 
+  const resetGame = async () => {
+    try {
+      await axiosInstance.post("/ai/reset-chat", {
+        userId: userId,
+        gameId: gameId
+      });
+
+      alert("Game reset successfully!");
+      window.location.reload();
+    } catch (err) {
+      alert(err);
+    }
+    
+
+  };
+
   return (
     <>
       {isAnimating && (
@@ -572,6 +589,13 @@ const GameScreen: React.FC = () => {
               className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || "#634630"}] text-red hover:bg-[#8E1616] transition-colors`}
             >
               End Story
+            </button>
+
+            <button
+              onClick={() => resetGame()}
+              className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || "#634630"}] text-red hover:bg-[#8E1616] transition-colors`}
+            >
+              Reset Story
             </button>
           </div>
 

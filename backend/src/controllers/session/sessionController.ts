@@ -3,7 +3,7 @@ import { createSession, addPageVisits, clearSession, deleteSessionsWithNoEndTime
 
 export const getSessionsController = async (req: Request, res: Response) => {
   try {
-    console.log("Received getSessions request");
+    //console.log("Received getSessions request");
     res.status(200).json({ message: "Get sessions" });
   } catch (error) {
     console.error("Error getting sessions:", error);
@@ -14,7 +14,7 @@ export const getSessionsController = async (req: Request, res: Response) => {
 export const getPlayerVisitsController = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    console.log("Received getPlayerVisits request:", req.body);
+    //console.log("Received getPlayerVisits request:", req.body);
     const sessions = await getAllSessionsByEmail(email);
     res.status(200).json(sessions);
   } catch (error) {
@@ -26,7 +26,7 @@ export const getPlayerVisitsController = async (req: Request, res: Response) => 
 export const createSessionController = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
-    console.log("Received createSession request:", req.body);
+    //console.log("Received createSession request:", req.body);
     const session = await createSession(email);
     res.status(201).json(session);
   } catch (error) {
@@ -38,7 +38,7 @@ export const createSessionController = async (req: Request, res: Response) => {
 export const addPageVisitController = async (req: Request, res: Response) => {
   try {
     const { sessionId, pages, localStorageData } = req.body; // Include localStorageData
-    console.log("Received addPageVisit request:", req.body);
+    //console.log("Received addPageVisit request:", req.body);
     const session = await addPageVisits(sessionId, pages, localStorageData); // Pass localStorageData
     res.status(200).json(session);
   } catch (error) {
@@ -50,7 +50,7 @@ export const addPageVisitController = async (req: Request, res: Response) => {
 export const clearSessionController = async (req: Request, res: Response) => {
   try {
     const { sessionId, visitedPages } = req.body;
-    console.log("Received clearSession request:", req.body);
+    //console.log("Received clearSession request:", req.body);
     await clearSession(sessionId, visitedPages);
     res.status(200).json({ message: "Session ended successfully" });
   } catch (error) {
@@ -61,7 +61,7 @@ export const clearSessionController = async (req: Request, res: Response) => {
 
 export const deleteSessionsWithNoEndTimeController = async (req: Request, res: Response) => {
   try {
-    console.log("Received deleteSessionsWithNoEndTime request");
+    //console.log("Received deleteSessionsWithNoEndTime request");
     const result = await deleteSessionsWithNoEndTime();
     res.status(200).json({ message: "Sessions with no end time deleted successfully", result });
   } catch (error) {

@@ -1,12 +1,21 @@
 import { Request, Response } from "express";
-import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, initiateGameSession, getConversationHistory } from "../../service/chat/chatService";
+import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, initiateGameSession, getConversationHistory, resetConversationHistory } from "../../service/chat/chatService";
 
 export const getChatHistoryController = async (req: Request, res: Response) => {
     try {
         const { userId, gameId } = req.body;
         await validateUserAndGame(userId, gameId);
         const chatHistory = await getChatHistory(userId, gameId);
-        res.status(200).send(chatHistory);
+
+        if (chatHistory.length === 0) {
+            // Initiate the game
+            initiateGameSession(userId, gameId);
+            res.status(200).send(chatHistory);
+            return;
+        } else {
+            res.status(200).send(chatHistory);
+            return;
+        }
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
         res.status(400).json({ message: errorMessage });
@@ -24,13 +33,13 @@ export const handleChatRequestController = async (req: Request, res: Response): 
         await validateUserAndGame(userId, gameId);
         const session_id = await findOrCreateSession(userId, gameId);
 
-        const gameSession = await initiateGameSession(userId, gameId);
+        //const gameSession = await initiateGameSession(userId, gameId);
         const conversationHistory = await getConversationHistory(session_id, userId, gameId);
 
         const formattedMessages: { role: "system" | "user" | "assistant"; content: string }[] = [
             {
                 role: "system",
-                content: gameSession || "Default game context"
+                content: session_id || "Default game context"
             },
             ...conversationHistory,
             {
@@ -54,7 +63,7 @@ export const handleChatRequestController = async (req: Request, res: Response): 
         res.status(200).json({
             session_id,
             user_message: { content: message, createdAt: new Date() },
-            ai_response: storedResponse
+            ai_response: aiResponse
         });
     } catch (error) {
         console.error(error);
@@ -71,7 +80,6 @@ export const storeBannerImage = async (req: Request, res: Response): Promise<any
             content, 
             imageUrl, 
             role = 'assistant',
-            // Optional roleplay metadata
             roleplay_emotion,
             roleplay_action,
             roleplay_character_state,
@@ -176,3 +184,49 @@ export const storeImageMessage = async (req: Request, res: Response): Promise<an
         });
     }
 };
+
+export const resetGameSession = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { userId, gameId } = req.body;
+        if (!userId || !gameId) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Get session id
+        const session_id = await findOrCreateSession(userId, gameId);
+        if (!session_id) {
+            return res.status(404).json({ error: 'Session not found' });
+        }
+
+        // Reset the game session
+        resetConversationHistory(session_id, userId, gameId);
+        return res.status(200).json({ message: "Game session reset successfully" });
+    } catch(error) {
+        return res.status(500).json({ message: "Database error or Server error"});
+    }
+
+};
+
+export const startGameSession = async (req: Request, res: Response): Promise<any> => {
+    try {
+        const { userId, gameId } = req.body;
+        validateUserAndGame(userId, gameId);
+
+        const session_id = await findOrCreateSession(userId, gameId);
+
+        if (session_id) {
+            return res.status(500).json({ message: "Session already exists "});
+        }
+
+        handleChatRequestController
+        
+
+    } catch (error) {
+
+    }
+
+
+};
+
+
+

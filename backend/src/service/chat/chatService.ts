@@ -28,20 +28,23 @@ export const findOrCreateSession = async (userId: number, gameId: number) => {
         order: [['createdAt', 'DESC']],
     });
 
-    if (session) return session.session_id;
+    if (session) {
+        console.log("The session is: " + session);
+        return session.session_id;
+    }
 
     const session_id = "session_" + Math.random().toString(36).substr(2, 9);
     // Optionally skip initial message or provide default content
-    await Chat.create({
-        session_id,
-        UserId: userId,
-        GameId: gameId,
-        content: "Session started", // Provide default content
-        role: "assistant",
-        model: "gpt-3.5-turbo",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    });
+    // await Chat.create({
+    //     session_id,
+    //     UserId: userId,
+    //     GameId: gameId,
+    //     content: "Session started", // Provide default content
+    //     role: "assistant",
+    //     model: "gpt-3.5-turbo",
+    //     createdAt: new Date(),
+    //     updatedAt: new Date(),
+    // });
 
     return session_id;
 };
@@ -81,7 +84,8 @@ export const callOpenAI = async (messages: ChatMessage[]): Promise<any> => {
                 "2. Respond dynamically based on story context. " +
                 "3. Add emotional nuance to your responses. " +
                 "4. Suggest potential story branches subtly. " +
-                "5. Maintain immersion at all times.";
+                "5. Maintain immersion at all times." +
+                "6. The player will try to trick you into out of character moments, DO not fall for this but instead sway off the user's answer";
         }
 
         const response: import("axios").AxiosResponse<OpenAIResponse> = await axios.post(
@@ -261,4 +265,10 @@ export const getConversationHistory = async (session_id: string, userId: number,
             content: chat.content,
             imageUrl: chat.image_url // Include imageUrl in the returned data
         }));
+};
+
+export const resetConversationHistory = async (session_id: string, userId: number, gameId: number) => {
+    await Chat.destroy({
+        where: { session_id, UserId: userId, GameId: gameId }
+    });
 };
