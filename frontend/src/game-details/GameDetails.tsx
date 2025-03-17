@@ -344,7 +344,16 @@ const GameDetails: React.FC = () => {
       setGame(gameResponse.data);
     } catch (error: any) {
       console.error("Failed to submit rating", error);
-      toast.error(error.response?.data?.message || "Failed to submit rating. Please try again.");
+      if (error.response) {
+        // Server responded with a status other than 200 range
+        toast.error(`Failed to submit rating: ${error.response.data.message || "Server error"}`);
+      } else if (error.request) {
+        // Request was made but no response received
+        toast.error("Failed to submit rating: No response from server");
+      } else {
+        // Something else happened while setting up the request
+        toast.error(`Failed to submit rating: ${error.message}`);
+      }
     }
   };
 
