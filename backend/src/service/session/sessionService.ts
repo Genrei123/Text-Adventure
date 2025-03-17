@@ -22,7 +22,7 @@ export async function createSession(email: string): Promise<Session> {
         visitedPages: {},
       } as SessionData,
     });
-    console.log("Session created:", newSession);
+    //console.log("Session created:", newSession);
     return newSession;
   } catch (error) {
     console.error("Error creating session:", error);
@@ -52,11 +52,11 @@ function countPageVisits(pages: string[], currentCounts: Record<string, number>)
  */
 export async function addPageVisits(sessionId: string, pages: string[], localStorageData: string): Promise<Session | null> {
   try {
-    console.log("addPageVisits function called");
+    //console.log("addPageVisits function called");
 
-    console.log("addPageVisits called with sessionId:", sessionId);
-    console.log("addPageVisits called with pages:", pages);
-    console.log("Local storage data:", localStorageData);
+    //console.log("addPageVisits called with sessionId:", sessionId);
+    //console.log("addPageVisits called with pages:", pages);
+    //console.log("Local storage data:", localStorageData);
 
     // Find the session by ID
     const session = await Session.findByPk(sessionId);
@@ -64,7 +64,7 @@ export async function addPageVisits(sessionId: string, pages: string[], localSto
       throw new Error("Session not found");
     }
 
-    console.log("Session found:", session);
+    ////console.log("Session found:", session);
 
     // Ensure sessionData is correctly initialized
     let sessionData = session.sessionData || {
@@ -77,7 +77,7 @@ export async function addPageVisits(sessionId: string, pages: string[], localSto
     // Ensure visitedPages exists before updating
     sessionData.visitedPages = countPageVisits(pages, sessionData.visitedPages || {});
 
-    console.log("Updated visitedPages:", sessionData.visitedPages);
+    ////console.log("Updated visitedPages:", sessionData.visitedPages);
 
     // ✅ Update session data
     session.set("sessionData", sessionData);
@@ -90,11 +90,11 @@ export async function addPageVisits(sessionId: string, pages: string[], localSto
     // Save changes
     await session.save();
 
-    console.log("Session updated with new page visits and endTime");
+    //console.log("Session updated with new page visits and endTime");
 
     // Fetch updated session from DB to verify changes
     const updatedSession = await Session.findByPk(sessionId);
-    console.log("Updated session from DB:", updatedSession?.sessionData);
+    //console.log("Updated session from DB:", updatedSession?.sessionData);
 
     return updatedSession;
   } catch (error) {
@@ -113,10 +113,10 @@ export async function clearSession(sessionId: string, visitedPages: string[]): P
     // Call deleteSessionsWithNoEndTime directly
     await deleteSessionsWithNoEndTime();
 
-    console.log("clearSession function called");
+    //console.log("clearSession function called");
 
-    console.log("clearSession called with sessionId:", sessionId);
-    console.log("clearSession called with visitedPages:", visitedPages);
+    //console.log("clearSession called with sessionId:", sessionId);
+    //console.log("clearSession called with visitedPages:", visitedPages);
 
     // Find the session by ID
     const session = await Session.findByPk(sessionId);
@@ -124,7 +124,7 @@ export async function clearSession(sessionId: string, visitedPages: string[]): P
       throw new Error("Session not found");
     }
 
-    console.log("Session found:", session);
+    //console.log("Session found:", session);
 
     // Update the session data and endTime
     session.set("endTime", new Date()); // ✅ Ensure Sequelize detects the change
@@ -135,7 +135,7 @@ export async function clearSession(sessionId: string, visitedPages: string[]): P
     // Save changes
     await session.save();
 
-    console.log("Session ended:", session);
+    //console.log("Session ended:", session);
   } catch (error) {
     console.error("Error ending session:", error);
     throw error;
@@ -153,7 +153,7 @@ export async function deleteSessionsWithNoEndTime(): Promise<number> {
           endTime: { [Op.is]: null as any }
       },
   });
-    console.log("Sessions with no end time deleted:", result);
+    //console.log("Sessions with no end time deleted:", result);
     return result;
   } catch (error) {
     console.error("Error deleting sessions with no end time:", error);
@@ -168,17 +168,17 @@ export async function deleteSessionsWithNoEndTime(): Promise<number> {
  */
 export async function getSessionById(sessionId: string): Promise<Session | null> {
   try {
-    console.log("getSessionById function called with sessionId:", sessionId);
+    //console.log("getSessionById function called with sessionId:", sessionId);
 
     // Find the session by ID
     const session = await Session.findByPk(sessionId);
     
     if (!session) {
-      console.log("Session not found for ID:", sessionId);
+      //console.log("Session not found for ID:", sessionId);
       return null;
     }
 
-    console.log("Session found:", session.id);
+    //console.log("Session found:", session.id);
     return session;
   } catch (error) {
     console.error("Error retrieving session:", error);
@@ -193,7 +193,7 @@ export async function getSessionById(sessionId: string): Promise<Session | null>
  */
 export async function getActiveSessionsByEmail(email: string): Promise<Session[]> {
   try {
-    console.log("getActiveSessionsByEmail function called with email:", email);
+    //console.log("getActiveSessionsByEmail function called with email:", email);
 
     // Find active sessions (where endTime is null)
     const sessions = await Session.findAll({
@@ -203,7 +203,7 @@ export async function getActiveSessionsByEmail(email: string): Promise<Session[]
       }
     });
 
-    console.log(`Found ${sessions.length} active sessions for email:`, email);
+    //console.log(`Found ${sessions.length} active sessions for email:`, email);
     return sessions;
   } catch (error) {
     console.error("Error retrieving active sessions:", error);
@@ -218,7 +218,7 @@ export async function getActiveSessionsByEmail(email: string): Promise<Session[]
  */
 export async function getAllSessionsByEmail(email: string): Promise<Session[]> {
   try {
-    console.log("getAllSessionsByEmail function called with email:", email);
+    //console.log("getAllSessionsByEmail function called with email:", email);
 
     // Find all sessions for this email
     const sessions = await Session.findAll({
@@ -226,7 +226,7 @@ export async function getAllSessionsByEmail(email: string): Promise<Session[]> {
       order: [['startTime', 'DESC']]
     });
 
-    console.log(`Found ${sessions.length} sessions for email:`, email);
+    //console.log(`Found ${sessions.length} sessions for email:`, email);
     return sessions;
   } catch (error) {
     console.error("Error retrieving all sessions:", error);
@@ -241,7 +241,7 @@ export async function getAllSessionsByEmail(email: string): Promise<Session[]> {
  */
 export async function getMostRecentSessionByEmail(email: string): Promise<Session | null> {
   try {
-    console.log("getMostRecentSessionByEmail function called with email:", email);
+    //console.log("getMostRecentSessionByEmail function called with email:", email);
 
     // Find most recent session for this email
     const session = await Session.findOne({
@@ -250,11 +250,11 @@ export async function getMostRecentSessionByEmail(email: string): Promise<Sessio
     });
 
     if (!session) {
-      console.log("No sessions found for email:", email);
+      //console.log("No sessions found for email:", email);
       return null;
     }
 
-    console.log("Most recent session found:", session.id);
+    //console.log("Most recent session found:", session.id);
     return session;
   } catch (error) {
     console.error("Error retrieving most recent session:", error);

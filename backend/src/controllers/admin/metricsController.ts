@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { QueryTypes } from 'sequelize';
-import sequelize from '../config/sequelize';
+import sequelize from '../../config/sequelize';
 
 interface CountResult {
   count: string;

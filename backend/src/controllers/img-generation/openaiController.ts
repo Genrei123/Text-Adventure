@@ -46,7 +46,7 @@ export const generateImage = async (req: Request, res: Response): Promise<void> 
 
     if (model.toLowerCase() === 'sdxl') {
       // Use ComfyUI for SDXL
-      const comfyUIUrl = 'http://127.0.0.1:8188';
+      const comfyUIUrl = process.env.COMFYUI_NGROK_URL;
       const outputDir = path.join(__dirname, '../../../../../../Stable Diffusion/ComfyUI_windows_portable/ComfyUI/output');
       const workflowPath = path.join(__dirname, '../../imagegen/comfyui/workflows/prompt2img.json');
       const workflowData = JSON.parse(fs.readFileSync(workflowPath, 'utf-8'));

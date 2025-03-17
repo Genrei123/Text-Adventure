@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "./Components/Sidebar";
-import AdminNavbar from "./Components/adminNavbar";
+import Sidebar from "./components/Sidebar";
+import AdminNavbar from "./components/adminNavbar";
 import { ChevronUp, ChevronDown, Search } from "lucide-react";
 
 const AdminPlayerList: React.FC = () => {

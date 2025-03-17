@@ -7,7 +7,7 @@ interface BanAttributes {
     userId: number;
     username: string; // Add username field
     reason: string;
-    banType: 'temporary' | 'permanent';
+    banType: 'temporary' | 'permanent' | 'reported';
     endDate?: Date;
     comment?: string;
     createdAt: Date;
@@ -21,7 +21,7 @@ class Ban extends Model<BanAttributes, BanCreationAttributes> implements BanAttr
     public userId!: number;
     public username!: string; // Add username field
     public reason!: string;
-    public banType!: 'temporary' | 'permanent';
+    public banType!: 'temporary' | 'permanent' | 'reported';
     public endDate?: Date;
     public comment?: string;
     public createdAt!: Date;
@@ -34,7 +34,7 @@ Ban.init({
     username: { type: DataTypes.STRING, allowNull: false }, // Add username field
     reason: { type: DataTypes.STRING, allowNull: false },
     banType: { 
-        type: DataTypes.ENUM('permanent', 'temporary'),
+        type: DataTypes.ENUM('permanent', 'temporary', 'reported'),
         allowNull: false
     },
     endDate: { type: DataTypes.DATE, allowNull: true },

@@ -51,12 +51,12 @@ const StartAdventure: React.FC<StartAdventureProps> = ({
                 Create Story
               </button>
 
-              <button
+              {/* <button
                 onClick={onBrowse}
                 className="px-6 py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-all duration-300"
               >
                 Browse Stories
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

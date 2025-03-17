@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "../../config/axiosConfig";
+import axios from "axios";
 
 // Define proper type for offers based on API response
 interface TokenPackage {
@@ -40,7 +40,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         }
     
         try {
-            const response = await axios.post('/shop/tokens/purchase', {
+            const response = await axios.post(import.meta.env.VITE_SDXL_ENV + '/shop/tokens/purchase', {
                 packageId: itemId, // Updated parameter name to match backend expectation
                 email: email
             });

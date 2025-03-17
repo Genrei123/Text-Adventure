@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "../../config/axiosConfig"; // Adjust the import path
 import { TextInput, NavigationButtons } from "./component/GameCreationComponents";
 import { useNavigate } from 'react-router-dom';
 import Navbar from "../components/Navbar";
 import { RefreshCw, MoveIcon, Check } from 'lucide-react'; // Import move icon instead of crop
+import LoadingScreen from "../components/LoadingScreen";
 
 interface GameCreationProps {
   onBack: () => void;
@@ -48,6 +49,9 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
     "Cyberpunk", "Post-Apocalyptic", "Historical", "Steampunk", "Western"
   ]);
   const [suggestions, setSuggestions] = useState<string>("");
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [loadingFadeIn, setLoadingFadeIn] = useState(true);
+  const [loadingFadeOut, setLoadingFadeOut] = useState(false);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -124,6 +128,15 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
   };
 
   const generateImagePreview = async () => {
+    // Show loading screen with fade in
+    setShowLoadingScreen(true);
+    setLoadingFadeIn(true);
+    
+    // After a short delay, complete the fade in
+    setTimeout(() => {
+      setLoadingFadeIn(false);
+    }, 500);
+    
     setIsGeneratingImage(true);
     try {
       // Generate banner image
@@ -132,14 +145,31 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
       });
 
       setPreviewImage(`${import.meta.env.VITE_BACKEND_URL}${imageResponse.data.imageUrl}`);
-      setShowPreview(true);
       setImage(imageResponse.data.imageUrl);
       // Reset image position when new image is generated
       setImagePosition({ x: 0, y: 0 });
       setIsRepositioning(false);
+      
+      // Start fade out animation for loading screen
+      setLoadingFadeOut(true);
+      
+      // After animation completes, hide loading screen and show preview
+      setTimeout(() => {
+        setShowLoadingScreen(false);
+        setLoadingFadeOut(false);
+        setShowPreview(true);
+      }, 500);
+      
     } catch (error) {
       console.error('Error generating preview image:', error);
       alert('Failed to generate preview image. Please try again.');
+      
+      // Hide loading screen on error
+      setLoadingFadeOut(true);
+      setTimeout(() => {
+        setShowLoadingScreen(false);
+        setLoadingFadeOut(false);
+      }, 500);
     } finally {
       setIsGeneratingImage(false);
     }
@@ -228,6 +258,7 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
 
       // Navigate to editing page with game data
       alert('Game created successfully!');
+      navigate('/home');
     } catch (error) {
       console.error('Error submitting game:', error);
       // Handle error (show error message to user)
@@ -275,6 +306,10 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
   return (
     <div className="min-h-screen bg-[#1a1a1a] text-white font-inter relative overflow-hidden">
       <Navbar />
+      {/* Loading Screen */}
+      {showLoadingScreen && (
+        <LoadingScreen fadeIn={loadingFadeIn} fadeOut={loadingFadeOut} />
+      )}
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-16">
         <div className="w-full max-w-2xl mx-auto text-center">
