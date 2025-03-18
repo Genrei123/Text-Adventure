@@ -16,7 +16,7 @@ import Session from "../model/session";
 export const initializeModels = async () => {
   try {
     // First create tables without foreign keys
-    await User.sync();
+    await User.sync({alter: true});
     await Game.sync();
     
     // Then sync dependent models

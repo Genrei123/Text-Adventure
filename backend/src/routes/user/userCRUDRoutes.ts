@@ -1,10 +1,11 @@
 import express from 'express';
-import { getAllUsers, getUserById, getUserByUsername, addUser, updateUser, deleteUser, getUserCommentsById, getUserRatingsById, getUserRatingsByUsername, getUserCommentsByUsername, getUserByEmail } from '../../controllers/user/userCRUDController';
+import { getAllUsers, getUserById, getUserByUsername, addUser, updateUser, deleteUser, getUserCommentsById, getUserRatingsById, getUserRatingsByUsername, getUserCommentsByUsername, getUserByEmail, getVerifiedUsers } from '../../controllers/user/userCRUDController';
 import { get } from 'http';
 
 const router = express.Router();
 
 router.get('/users', getAllUsers);
+router.get('/verified', getVerifiedUsers);
 router.get('/users/:id', getUserById);
 router.get('/users/username/:username', getUserByUsername);
 router.get('/users/verify/:email', getUserByEmail);

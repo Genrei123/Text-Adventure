@@ -18,6 +18,10 @@ class UserService {
         return await User.findOne({ where: { email } });
     }
 
+    static async getVerifiedUsers() {
+        return await User.findAll({ where: {emailVerified: true}});
+    }
+
     static async addUser(userData: any) {
         // Check for duplicate username
         const existingUserByUsername = await User.findOne({ where: { username: userData.username } });
