@@ -4,6 +4,7 @@ import Subscriber from '../../model/transaction/SubscriberModel';
 import SubscriptionOffers from '../../model/transaction/SubscriptionOffersModel';
 import dotenv from 'dotenv';
 import { Op } from 'sequelize';
+import User from '../../model/user/user';
 
 dotenv.config();
 
@@ -19,6 +20,22 @@ const generateRandomId = () => {
 const checkSubscriptionIdExists = async (id: string) => {
   const subscription = await Subscriber.findOne({ where: { id } });
   return !!subscription;
+};
+
+// Function to determine AI model based on subscription type
+const getAIModelForSubscription = (subscriptionType: string): string => {
+  switch (subscriptionType) {
+    case 'Freedom Sword':
+      return 'gpt-3.5-turbo'; // GPT-3.5 & Dall-e 2
+    case 'Adventure\'s Entry':
+      return 'gpt-3.5-turbo'; // GPT 3.5-turbo & Dall-e 2
+    case 'Hero\'s Journey':
+      return 'gpt-4o'; // GPT 4o & Dall-e 3
+    case 'Legend\'s Legacy':
+      return 'gpt-4'; // GPT 4 & ComfyUI & Dall-E 3
+    default:
+      return 'gpt-3.5-turbo'; // Default to basic model
+  }
 };
 
 export const createSubscription = async (req: Request, res: Response) => {
@@ -128,6 +145,98 @@ Error: ${error.message}`);
       console.error('Error message:', error.message);
       res.status(500).json({ error: error.message });
     }
+  }
+};
+
+// Add this new function to handle subscription callback/webhook
+export const handleSubscriptionCallback = async (req: Request, res: Response) => {
+  const { id, status, paid_amount, external_id } = req.body;
+  
+  try {
+    // Extract subscription ID from external_id (removing 'subscription-' prefix)
+    const subscriptionId = external_id.startsWith('subscription-') 
+      ? external_id.substring('subscription-'.length) 
+      : external_id;
+    
+    // Find the subscription
+    const subscription = await Subscriber.findOne({ where: { id: subscriptionId } });
+    
+    if (!subscription) {
+      return res.status(404).json({ error: 'Subscription not found' });
+    }
+    
+  
+    
+    if (status === 'PAID' || status === 'SETTLED') {
+      // Calculate end date based on start date and duration
+      const startDate = new Date();
+      const endDate = new Date(startDate);
+      
+      let value: number;
+      let unit: string = 'months'; // Default unit
+      
+      // Handle both string and number formats for duration
+      const duration: string | number = subscription.duration as any; // Cast to workaround type issue
+      
+      if (typeof duration === 'string') {
+        // Handle string format like "3 months"
+        const durationParts = duration.split(' ');
+        value = parseInt(durationParts[0], 10);
+        if (durationParts.length > 1) {
+          unit = durationParts[1].toLowerCase();
+        }
+      } else {
+        // If duration is a number, use it directly with default unit (months)
+        value = Number(duration);
+      }
+      
+      if (unit.includes('day')) {
+        endDate.setDate(endDate.getDate() + value);
+      } else if (unit.includes('month')) {
+        endDate.setMonth(endDate.getMonth() + value);
+      } else if (unit.includes('year')) {
+        endDate.setFullYear(endDate.getFullYear() + value);
+      }
+      
+      // Update subscription status to active and set dates
+      await subscription.update({
+        status: 'active',
+        startDate,
+        endDate
+      });
+      
+      // Find and update the user's AI model
+      const user = await User.findOne({ where: { email: subscription.email } });
+      if (user) {
+        const aiModel = getAIModelForSubscription(subscription.subscriptionType);
+        await user.update({ model: aiModel });
+        
+        console.log(`-------------- User Model Updated --------------`);
+        console.log(`User: ${user.email}
+Old Model: ${user.model}
+New Model: ${aiModel}
+Based on: ${subscription.subscriptionType} subscription
+Updated at: ${new Date().toLocaleString()}`);
+        console.log(`-----------------------------------------------------`);
+      } else {
+        console.log(`Warning: User with email ${subscription.email} not found. Model update skipped.`);
+      }
+      
+      return res.status(200).json({ 
+        message: 'Subscription activated successfully',
+        subscription
+      });
+    } else if (status === 'EXPIRED') {
+      await subscription.update({ status: 'expired' });
+      return res.status(200).json({ message: 'Subscription expired' });
+    } else {
+      // Handle other statuses
+      await subscription.update({ status: status.toLowerCase() });
+      return res.status(200).json({ message: `Subscription status updated to ${status}` });
+    }
+  } catch (error: any) {
+    console.error('Error processing subscription callback:', error);
+    return res.status(500).json({ error: 'Failed to process subscription callback' });
   }
 };
 
