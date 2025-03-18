@@ -8,8 +8,9 @@ import User from '../../model/user/user';
 
 dotenv.config();
 
-const SUCCESS_RETURN_URL = process.env.SUBSCRIPTION_SUCCESS_RETURN_URL;
-const FAILURE_RETURN_URL = process.env.SUBSCRIPTION_FAILURE_RETURN_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
+const SUCCESS_RETURN_URL = `${FRONTEND_URL}/subscription`;
+const FAILURE_RETURN_URL = `${FRONTEND_URL}/subscription`;
 
 // Function to generate a random 6-character alphanumeric string (same as in shopController)
 const generateRandomId = () => {
@@ -165,8 +166,6 @@ export const handleSubscriptionCallback = async (req: Request, res: Response) =>
       return res.status(404).json({ error: 'Subscription not found' });
     }
     
-  
-    
     if (status === 'PAID' || status === 'SETTLED') {
       // Calculate end date based on start date and duration
       const startDate = new Date();
@@ -227,8 +226,8 @@ Updated at: ${new Date().toLocaleString()}`);
         subscription
       });
     } else if (status === 'EXPIRED') {
-      await subscription.update({ status: 'expired' });
-      return res.status(200).json({ message: 'Subscription expired' });
+      await subscription.destroy();
+      return res.status(200).json({ message: 'Subscription expired and deleted' });
     } else {
       // Handle other statuses
       await subscription.update({ status: status.toLowerCase() });
@@ -302,15 +301,8 @@ export const unsubscribeUser = async (req: Request, res: Response): Promise<void
       return;
     }
     
-    // Update the subscription status to 'cancelled'
-    // We don't actually delete the subscription record, just mark it as cancelled
-    // This helps with keeping subscription history and analytics
-    await subscription.update({
-      status: 'cancelled',
-      // If you want to set an endDate for reporting purposes, you can do:
-      // endDate: new Date() // This means benefits end immediately
-      // OR keep the original endDate to allow benefits until the end of billing period
-    });
+    // Delete the subscription record
+    await subscription.destroy();
     
     const formattedDate = new Date().toLocaleString();
     console.log(`-------------- Subscription Cancelled --------------`);

@@ -44,7 +44,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             email,
             password: hashedPassword,
             private: isPrivate || true, // Default to true if not provided
-            model: model || "gpt-4",    // Default to "gpt-4" if not provided
+            model: model || "gpt-3.5",    // Default to "gpt-4" if not provided
             admin: admin || false,      // Default to false if not provided
             emailVerified: false,       // Default to false
             verificationToken,
