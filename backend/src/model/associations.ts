@@ -4,6 +4,7 @@ import Comment from "./game/comments";
 import Rating from "./game/rating";
 import Order from "./transaction/order"; // Adjust path
 import Chat from "./chat/chat"; // Adjust path
+import Subscriber from "./transaction/SubscriberModel";
 
 const defineAssociations = () => {
     // User <-> Game
@@ -37,6 +38,14 @@ const defineAssociations = () => {
     // Game <-> Chat
     Game.hasMany(Chat, { foreignKey: "GameId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
     Chat.belongsTo(Game, { foreignKey: "GameId", onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+
+    // User <-> Subscription
+    User.belongsTo(Subscriber, {
+        foreignKey: 'email',
+        targetKey: 'email',
+        constraints: false
+      });
+
 };
 
 export default defineAssociations;

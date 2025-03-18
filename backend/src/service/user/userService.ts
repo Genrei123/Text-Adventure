@@ -1,5 +1,9 @@
 import User from '../../model/user/user';
 import bcrypt from 'bcrypt';
+import sequelize from '../database';
+import { Query } from 'mongoose';
+import { QueryTypes } from 'sequelize/types';
+import Subscriber from '../../model/transaction/SubscriberModel';
 
 class UserService {
     static async getAllUsers() {
@@ -12,6 +16,25 @@ class UserService {
 
     static async getUserByUsername(username: string) {
         return await User.findOne({ where: { username } });
+    }
+
+    static async getUserPlayersCoins() {
+        const subscribedUsers = await User.findAll({
+            include: [{
+              model: Subscriber,
+              required: true,
+              attributes: [],  // Don't include subscriber attributes in result
+              where: sequelize.where(
+                sequelize.col('User.email'), 
+                '=', 
+                sequelize.col('Subscriber.email')
+              )
+            }]
+          });
+
+          return(subscribedUsers);
+
+          
     }
 
     static async getUserByEmail(email: string) {

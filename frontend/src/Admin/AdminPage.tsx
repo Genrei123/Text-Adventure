@@ -81,7 +81,7 @@ interface Player {
   email: string;
   subscription: string;
   createdAt: string;
-  lastLogin?: string;
+  lastLogin?: Date;
   image_url?: string;
   model?: string;
   emailVerified?: boolean;
@@ -100,7 +100,7 @@ const AdminPage: React.FC = () => {
 
   // State management
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeSection, setActiveSection] = useState('banned'); // Changed default to 'banned' instead of 'dashboard'
+  const [activeSection, setActiveSection] = useState('dashboard'); // Changed default to 'banned' instead of 'dashboard'
   const [activeTab, setActiveTab] = useState("banned"); // "banned" or "reported"
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -415,7 +415,8 @@ const AdminPage: React.FC = () => {
         model: user.model,
         emailVerified: user.emailVerified,
         totalCoins: user.totalCoins,
-        subscriptionFetched: false
+        subscriptionFetched: false,
+        lastLogin: user.lastLogin,
       }));
 
       setPlayers(mappedPlayers);
@@ -1075,11 +1076,12 @@ const AdminPage: React.FC = () => {
                   </div>
                 )}
 
+                {/* Dashboard Players Table */}
                 <div className="bg-[#1E1512] rounded-lg overflow-hidden shadow-lg">
                   <div className="overflow-x-auto">
                     <table className="w-full text-white table-fixed">
                       <thead>
-                        <tr className="bg-black">
+                        <tr className="bg-[#3D2E22] border-b border-[#2F2118]">
                           <th
                             className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
                             onClick={() => requestSort("username")}
@@ -1088,9 +1090,9 @@ const AdminPage: React.FC = () => {
                           </th>
                           <th
                             className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
-                            onClick={() => requestSort("status")}
+                            onClick={() => requestSort("email")}
                           >
-                            Status {getSortIndicator("status")}
+                            Email {getSortIndicator("email")}
                           </th>
                           <th
                             className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
@@ -1104,63 +1106,52 @@ const AdminPage: React.FC = () => {
                           >
                             Coins {getSortIndicator("coins")}
                           </th>
-                          <th className="py-4 px-6 font-cinzel text-left w-1/5">Actions</th>
+                          <th className="py-4 px-6 font-cinzel text-left w-1/5">Last Login</th>
                         </tr>
                       </thead>
                       <tbody>
                         {isLoading ? (
                           <tr>
-                            <td colSpan={6} className="py-4 px-6 text-center">
+                            <td colSpan={5} className="py-4 px-6 text-center">
                               <div className="flex justify-center">
                                 <LoadingBook message="Loading players..." size="sm" />
                               </div>
                             </td>
                           </tr>
-                        ) : currentBannedPlayers.length === 0 ? (
+                        ) : filteredPlayers.length === 0 ? (
                           <tr>
-                            <td colSpan={6} className="py-4 px-6 text-center">No banned players found</td>
+                            <td colSpan={5} className="py-4 px-6 text-center">No players found</td>
                           </tr>
                         ) : (
-                          currentBannedPlayers.map((player) => (
+                          currentPlayers.map((player) => (
                             <tr
                               key={player.id}
                               className="bg-[#6A4E32] border-b border-[#2F2118] hover:bg-[#412e19] transition-colors"
                             >
                               <td className="py-4 px-6 font-playfair text-left truncate">
-                                Username Test
                                 {player.username}
                               </td>
                               <td className="py-4 px-6 font-playfair text-left truncate">
-                                Reason Test
-                                {player.reason}
+                                {player.email}
                               </td>
                               <td className="py-4 px-6 font-playfair text-left">
-                                {player.banType === 'permanent' ? 'Permanent' : 'Temporary'}
-                              </td>
-                              <td className="py-4 px-6 font-playfair text-left">
-                                {formatDate(player.createdAt)}
-                              </td>
-                              <td className="py-4 px-6 font-playfair text-left">
-                                {player.banType === 'permanent' ? (
-                                  'Permanent'
-                                ) : player.endDate ? (
-                                  <div className="relative group">
-                                    <span>{formatDate(player.endDate)}</span>
-                                    <div className="absolute z-10 invisible group-hover:visible bg-[#2A2A2A] text-white p-2 rounded shadow-lg -mt-1 ml-4">
-                                      {calculateDaysRemaining(player.endDate)} days remaining
-                                    </div>
-                                  </div>
+                                {player.subscriptionFetched ? (
+                                  <span className={`px-2 py-1 rounded text-xs ${getSubscriptionBadgeColor(player.subscription)}`}>
+                                    {player.subscription}
+                                  </span>
                                 ) : (
-                                  'N/A'
+                                  <div className="flex items-center">
+                                    <div className="animate-spin h-4 w-4 border-2 border-[#C0A080] border-t-transparent rounded-full mr-2"></div>
+                                    <span className="text-xs">Loading...</span>
+                                  </div>
                                 )}
                               </td>
                               <td className="py-4 px-6 font-playfair text-left">
-                                <button
-                                  onClick={() => handleUnban(player.id, player.username)}
-                                  className="px-3 py-1 bg-[#C0A080] hover:bg-[#D5B591] text-black rounded font-cinzel"
-                                >
-                                  Unban
-                                </button>
+                                {player.totalCoins}
+                                
+                              </td>
+                              <td className="py-4 px-6 font-playfair text-left">
+                                {new Date(player.lastLogin? player.lastLogin : "").toDateString()}
                               </td>
                             </tr>
                           ))
@@ -1169,7 +1160,7 @@ const AdminPage: React.FC = () => {
                     </table>
                   </div>
 
-                  {/* Pagination controls - styled to match the image */}
+                  {/* Pagination controls for players */}
                   <div className="p-4 bg-[#1E1512] border-t border-[#2F2118] flex flex-wrap items-center justify-between">
                     <div className="flex items-center space-x-2 text-white">
                       <span>Show</span>
@@ -1198,13 +1189,13 @@ const AdminPage: React.FC = () => {
                         Previous
                       </button>
                       <span className="bg-[#3D2E22] px-3 py-1 rounded">
-                        Page {currentPage} of {totalBannedPages}
+                        Page {currentPage} of {totalPlayerPages}
                       </span>
                       <button
                         onClick={() =>
-                          setCurrentPage(Math.min(totalBannedPages, currentPage + 1))
+                          setCurrentPage(Math.min(totalPlayerPages, currentPage + 1))
                         }
-                        disabled={currentPage === totalBannedPages}
+                        disabled={currentPage === totalPlayerPages}
                         className="px-3 py-1 bg-[#3D2E22] rounded disabled:opacity-50"
                       >
                         Next
@@ -1212,9 +1203,9 @@ const AdminPage: React.FC = () => {
                     </div>
 
                     <div className="text-white">
-                      Showing {indexOfFirstBannedPlayer + 1} to{" "}
-                      {Math.min(indexOfLastBannedPlayer, bannedPlayers.length)} of{" "}
-                      {bannedPlayers.length} entries
+                      Showing {indexOfFirstPlayer + 1} to{" "}
+                      {Math.min(indexOfLastPlayer, filteredPlayers.length)} of{" "}
+                      {filteredPlayers.length} entries
                     </div>
                   </div>
                 </div>
@@ -1231,8 +1222,8 @@ const AdminPage: React.FC = () => {
                   <div className="flex flex-wrap items-center gap-4">
                     <button
                       className={`px-4 py-2 rounded-lg font-cinzel ${activeTab === "banned"
-                          ? "bg-[#6A4E32] text-white"
-                          : "bg-[#3D2E22] text-gray-300 hover:bg-[#4D3E32]"
+                        ? "bg-[#6A4E32] text-white"
+                        : "bg-[#3D2E22] text-gray-300 hover:bg-[#4D3E32]"
                         }`}
                       onClick={() => {
                         setActiveTab("banned");
@@ -1244,8 +1235,8 @@ const AdminPage: React.FC = () => {
                     </button>
                     <button
                       className={`px-4 py-2 rounded-lg font-cinzel ${activeTab === "reported"
-                          ? "bg-[#6A4E32] text-white"
-                          : "bg-[#3D2E22] text-gray-300 hover:bg-[#4D3E32]"
+                        ? "bg-[#6A4E32] text-white"
+                        : "bg-[#3D2E22] text-gray-300 hover:bg-[#4D3E32]"
                         }`}
                       onClick={() => {
                         setActiveTab("reported");
@@ -1880,8 +1871,8 @@ const AdminPage: React.FC = () => {
                   onClick={handleBanReported}
                   disabled={!usernameSearch || !banReason}
                   className={`px-4 py-2 rounded font-cinzel uppercase ${usernameSearch && banReason
-                      ? 'bg-[#C0A080] hover:bg-[#D5B591] text-black'
-                      : 'bg-gray-500 cursor-not-allowed text-gray-300'
+                    ? 'bg-[#C0A080] hover:bg-[#D5B591] text-black'
+                    : 'bg-gray-500 cursor-not-allowed text-gray-300'
                     }`}
                 >
                   Ban Player

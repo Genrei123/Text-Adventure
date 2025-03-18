@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, getUserById, getUserByUsername, addUser, updateUser, deleteUser, getUserCommentsById, getUserRatingsById, getUserRatingsByUsername, getUserCommentsByUsername, getUserByEmail, getVerifiedUsers } from '../../controllers/user/userCRUDController';
+import { getAllUsers, getUserById, getUserByUsername, addUser, updateUser, deleteUser, getUserCommentsById, getUserRatingsById, getUserRatingsByUsername, getUserCommentsByUsername, getUserByEmail, getVerifiedUsers, playerDirectory } from '../../controllers/user/userCRUDController';
 import { get } from 'http';
 
 const router = express.Router();
@@ -18,5 +18,7 @@ router.get('/users/:id/ratings', getUserRatingsById);
 
 router.get('/users/username/:username/comments', getUserCommentsByUsername);
 router.get('/users/username/:username/ratings', getUserRatingsByUsername);
+
+router.get('/users/subscriptions', playerDirectory);
 
 export default router;

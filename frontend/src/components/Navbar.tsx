@@ -136,6 +136,13 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
   const handleLogout = async () => {
     if (onLogout) {
+      await axiosInstance.post('/auth/logout', {
+        email: localStorage.getItem('email'),
+        
+      });
+
+      
+
       localStorage.removeItem('userData');
       localStorage.removeItem('email');
       localStorage.removeItem('token');
