@@ -64,7 +64,7 @@ export const createSubscription = async (req: Request, res: Response) => {
       return;
     }
 
-    // Create a well-structured subscription ID (similar to orderId in buyItem)
+    // Create a well-structured subscription ID
     const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
     let randomId = generateRandomId();
     let subscriptionId = `sub_${date}_${randomId}`;
@@ -87,7 +87,15 @@ export const createSubscription = async (req: Request, res: Response) => {
       duration: plan.duration, // Assign the duration from the plan
     });
 
-    // UPDATE USER GPT TYPE
+    // Update the user's AI model in the User table
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      const aiModel = getAIModelForSubscription(plan.offerName);
+      await user.update({ model: aiModel });
+      console.log(`User's AI model updated to ${aiModel} for subscription type ${plan.offerName}`);
+    } else {
+      console.log(`Warning: User with email ${email} not found. Model update skipped.`);
+    }
 
     // Create a consistent reference ID format for the external service
     const externalId = `subscription-${subscriptionId}`;
@@ -152,31 +160,31 @@ Error: ${error.message}`);
 // Add this new function to handle subscription callback/webhook
 export const handleSubscriptionCallback = async (req: Request, res: Response) => {
   const { id, status, paid_amount, external_id } = req.body;
-  
+
   try {
     // Extract subscription ID from external_id (removing 'subscription-' prefix)
     const subscriptionId = external_id.startsWith('subscription-') 
       ? external_id.substring('subscription-'.length) 
       : external_id;
-    
+
     // Find the subscription
     const subscription = await Subscriber.findOne({ where: { id: subscriptionId } });
-    
+
     if (!subscription) {
       return res.status(404).json({ error: 'Subscription not found' });
     }
-    
+
     if (status === 'PAID' || status === 'SETTLED') {
       // Calculate end date based on start date and duration
       const startDate = new Date();
       const endDate = new Date(startDate);
-      
+
       let value: number;
       let unit: string = 'months'; // Default unit
-      
+
       // Handle both string and number formats for duration
-      const duration: string | number = subscription.duration as any; // Cast to workaround type issue
-      
+      const duration: string | number = subscription.duration as any;
+
       if (typeof duration === 'string') {
         // Handle string format like "3 months"
         const durationParts = duration.split(' ');
@@ -188,7 +196,7 @@ export const handleSubscriptionCallback = async (req: Request, res: Response) =>
         // If duration is a number, use it directly with default unit (months)
         value = Number(duration);
       }
-      
+
       if (unit.includes('day')) {
         endDate.setDate(endDate.getDate() + value);
       } else if (unit.includes('month')) {
@@ -196,20 +204,20 @@ export const handleSubscriptionCallback = async (req: Request, res: Response) =>
       } else if (unit.includes('year')) {
         endDate.setFullYear(endDate.getFullYear() + value);
       }
-      
+
       // Update subscription status to active and set dates
       await subscription.update({
         status: 'active',
         startDate,
         endDate
       });
-      
+
       // Find and update the user's AI model
       const user = await User.findOne({ where: { email: subscription.email } });
       if (user) {
         const aiModel = getAIModelForSubscription(subscription.subscriptionType);
         await user.update({ model: aiModel });
-        
+
         console.log(`-------------- User Model Updated --------------`);
         console.log(`User: ${user.email}
 Old Model: ${user.model}
@@ -220,13 +228,29 @@ Updated at: ${new Date().toLocaleString()}`);
       } else {
         console.log(`Warning: User with email ${subscription.email} not found. Model update skipped.`);
       }
-      
+
       return res.status(200).json({ 
         message: 'Subscription activated successfully',
         subscription
       });
     } else if (status === 'EXPIRED') {
+      // Delete the subscription record
       await subscription.destroy();
+
+      // Revert the user's AI model to the default (Freedom Sword)
+      const user = await User.findOne({ where: { email: subscription.email } });
+      if (user) {
+        const aiModel = getAIModelForSubscription('Freedom Sword');
+        await user.update({ model: aiModel });
+
+        console.log(`-------------- User Model Reverted --------------`);
+        console.log(`User: ${user.email}
+New Model: ${aiModel}
+Reason: Subscription expired
+Updated at: ${new Date().toLocaleString()}`);
+        console.log(`-----------------------------------------------------`);
+      }
+
       return res.status(200).json({ message: 'Subscription expired and deleted' });
     } else {
       // Handle other statuses
@@ -276,12 +300,12 @@ export const getUserSubscriptions = async (req: Request, res: Response): Promise
 export const unsubscribeUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, subscriptionId } = req.body;
-    
+
     if (!email || !subscriptionId) {
       res.status(400).json({ error: 'Email and subscriptionId are required' });
       return;
     }
-    
+
     // Find the subscription
     const subscription = await Subscriber.findOne({
       where: { 
@@ -289,21 +313,37 @@ export const unsubscribeUser = async (req: Request, res: Response): Promise<void
         email: { [Op.iLike]: email }
       }
     });
-    
+
     if (!subscription) {
       res.status(404).json({ error: 'Subscription not found' });
       return;
     }
-    
+
     // Only active subscriptions can be cancelled
     if (subscription.status !== 'active') {
       res.status(400).json({ error: `Cannot unsubscribe a subscription with status: ${subscription.status}` });
       return;
     }
-    
+
     // Delete the subscription record
     await subscription.destroy();
-    
+
+    // Revert the user's AI model to the default (Freedom Sword)
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      const aiModel = getAIModelForSubscription('Freedom Sword'); // Default to 'Freedom Sword'
+      await user.update({ model: aiModel });
+
+      console.log(`-------------- User Model Reverted --------------`);
+      console.log(`User: ${user.email}
+New Model: ${aiModel}
+Reason: Subscription canceled
+Updated at: ${new Date().toLocaleString()}`);
+      console.log(`-----------------------------------------------------`);
+    } else {
+      console.log(`Warning: User with email ${email} not found. Model update skipped.`);
+    }
+
     const formattedDate = new Date().toLocaleString();
     console.log(`-------------- Subscription Cancelled --------------`);
     console.log(`Status: Success
@@ -313,7 +353,7 @@ Subscription Type: ${subscription.subscriptionType}
 Date Cancelled: ${formattedDate}`);
     console.log(`-----------------------------------------------------`);
     console.log(` `);
-    
+
     res.status(200).json({ 
       message: 'Subscription successfully cancelled',
       subscription
