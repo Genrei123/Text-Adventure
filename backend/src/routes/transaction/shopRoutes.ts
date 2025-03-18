@@ -16,7 +16,8 @@ import {
   createSubscription, 
   getSubscriptionOffers, 
   getUserSubscriptions,
-  unsubscribeUser
+  unsubscribeUser,
+  handleSubscriptionCallback
 } from '../../controllers/transaction/subscriptionController';
 
 const router = express.Router();
@@ -47,5 +48,11 @@ router.get('/orders', getUserOrderHistory);
 // Route for fetching subscription offers
 router.get('/subscription/offers', getSubscriptionOffers);
 router.get('/subscription/user/:email', getUserSubscriptions);
+
+// Subscription webhook callback
+router.post('/subscription/callback', 
+  
+  
+);
 
 export default router;
