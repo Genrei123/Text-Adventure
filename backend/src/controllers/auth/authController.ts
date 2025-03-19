@@ -54,6 +54,7 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
             updatedAt: new Date(),
             updated_At: new Date(),
             totalCoins: 0,
+            lastLogin: new Date(),
         });
 
         // Send verification email
@@ -248,6 +249,12 @@ export const validateResetToken = async (req: Request, res: Response): Promise<v
 };
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
+    const { email } = req.body;
+
+    const user = await User.findOne({ where: { email } });
+    user?.set({ lastLogin: new Date()});
+    await user?.save();
+
     res.clearCookie('token');
     res.status(200).json({ message: 'Logout successful', redirectUrl: '/login' });
 };

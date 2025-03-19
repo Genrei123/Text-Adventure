@@ -20,6 +20,7 @@ interface UserAttributes {
   updated_At: Date;
   updatedAt: Date;
   image_url?: string | null; // Merged from main with null possibility
+  lastLogin: Date;
 }
 
 interface UserCreationAttributes 
@@ -54,6 +55,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public updatedAt!: Date;
   public updated_At!: Date;
   public image_url?: string | null; // Merged from main
+  public lastLogin!: Date;
 }
 
 User.init({
@@ -116,6 +118,7 @@ User.init({
     defaultValue: DataTypes.NOW 
   },
   image_url: { type: DataTypes.STRING, allowNull: true },
+  lastLogin: {type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW }
 }, {
   sequelize,
   modelName: "User",

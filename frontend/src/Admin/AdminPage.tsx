@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ArrowLeftRight, 
-  Users, 
-  UserPlus, 
-  BookOpen, 
-  BarChart3, 
+import {
+  ArrowLeftRight,
+  Users,
+  UserPlus,
+  BookOpen,
+  BarChart3,
   Ban,
   ChevronUp,
   ChevronDown,
@@ -81,7 +81,7 @@ interface Player {
   email: string;
   subscription: string;
   createdAt: string;
-  lastLogin?: string;
+  lastLogin?: Date;
   image_url?: string;
   model?: string;
   emailVerified?: boolean;
@@ -92,15 +92,15 @@ interface Player {
 
 const AdminPage: React.FC = () => {
   const navigate = useNavigate();
-  
+
   // State for initial loading
   const [initialLoading, setInitialLoading] = useState(true);
   const [fadeIn, setFadeIn] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
-  
+
   // State management
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeSection, setActiveSection] = useState('banned'); // Changed default to 'banned' instead of 'dashboard'
+  const [activeSection, setActiveSection] = useState('dashboard'); // Changed default to 'banned' instead of 'dashboard'
   const [activeTab, setActiveTab] = useState("banned"); // "banned" or "reported"
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({
@@ -110,17 +110,17 @@ const AdminPage: React.FC = () => {
   const [playersPerPage, setPlayersPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // Ban modal state
   const [showBanModal, setShowBanModal] = useState(false);
-  const [playerToBan, setPlayerToBan] = useState<{username: string, id: number} | null>(null);
+  const [playerToBan, setPlayerToBan] = useState<{ username: string, id: number } | null>(null);
   const [banReason, setBanReason] = useState("");
   const [banType, setBanType] = useState<'temporary' | 'permanent'>('temporary');
   const [banEndDate, setBanEndDate] = useState("");
   const [usernameSearch, setUsernameSearch] = useState("");
-  const [searchResults, setSearchResults] = useState<{id: number, username: string}[]>([]);
+  const [searchResults, setSearchResults] = useState<{ id: number, username: string }[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  
+
   // Player list state
   const [players, setPlayers] = useState<Player[]>([]);
   const [filteredPlayers, setFilteredPlayers] = useState<Player[]>([]);
@@ -139,7 +139,7 @@ const AdminPage: React.FC = () => {
     { value: "Hero's Journey", label: "Hero's Journey" },
     { value: "Legend's Legacy", label: "Legend's Legacy" }
   ];
-  
+
   // Dashboard data state
   const [dashboardData, setDashboardData] = useState({
     registeredUsers: 0,
@@ -151,7 +151,7 @@ const AdminPage: React.FC = () => {
     storiesCreated: 0,
     storiesCreatedChange: 0,
   });
-  
+
   const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
 
   // Sample banned players data - will be replaced with API data
@@ -216,7 +216,7 @@ const AdminPage: React.FC = () => {
         axiosInstance.get('/bans/permanent'),
         axiosInstance.get('/bans/temporary')
       ]);
-      
+
       // Combine the results
       const allBans = [...permanentResponse.data, ...temporaryResponse.data];
       setBannedPlayers(allBans);
@@ -237,7 +237,7 @@ const AdminPage: React.FC = () => {
       // Fetch all bans and filter for reported type
       const response = await axiosInstance.get('/bans');
       const reportedBans = response.data.filter((ban: BannedPlayer) => ban.banType === 'reported');
-      
+
       // Map to ReportedPlayer format
       const reportedPlayers: ReportedPlayer[] = reportedBans.map((ban: BannedPlayer) => ({
         id: ban.id,
@@ -246,7 +246,7 @@ const AdminPage: React.FC = () => {
         createdAt: ban.createdAt,
         reportedContent: ban.comment || 'No comment content available'
       }));
-      
+
       setReportedPlayers(reportedPlayers);
     } catch (error) {
       console.error('Error fetching reported players:', error);
@@ -262,13 +262,13 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     const adminToken = localStorage.getItem('adminToken');
     const adminUserStr = localStorage.getItem('adminUser');
-    
+
     if (!adminToken || !adminUserStr) {
       toast.error('You must be logged in as an admin to access this page.');
       navigate('/Admin/Login');
       return;
     }
-    
+
     try {
       const adminUser = JSON.parse(adminUserStr);
       if (!adminUser || adminUser.admin !== true) {
@@ -295,22 +295,20 @@ const AdminPage: React.FC = () => {
     setIsLoading(true);
     try {
       // Fetch users with emailVerified=true for registered users count
-      const usersResponse = await axiosInstance.get('/admin/users', {
-        params: { emailVerified: true }
-      });
-      
+      const usersResponse = await axiosInstance.get('/admin/verified');
+
       // Fetch all users for total players count
       const allUsersResponse = await axiosInstance.get('/admin/users');
-      
+
       // Fetch games count
-      const gamesResponse = await axiosInstance.get('/metrics/games');
-      
+      const gamesResponse = await axiosInstance.get('/api/metrics/games');
+
       // Calculate counts
       let registeredUsersCount = 0;
       let totalPlayersCount = 0;
       let gamesCount = 0;
-      
-      // Handle different response formats for registered users
+
+      //Handle different response formats for registered users
       if (usersResponse.data && Array.isArray(usersResponse.data.items)) {
         registeredUsersCount = usersResponse.data.total || usersResponse.data.items.length;
       } else if (Array.isArray(usersResponse.data)) {
@@ -318,7 +316,7 @@ const AdminPage: React.FC = () => {
       } else if (usersResponse.data && usersResponse.data.users) {
         registeredUsersCount = usersResponse.data.users.length;
       }
-      
+
       // Handle different response formats for all users
       if (allUsersResponse.data && Array.isArray(allUsersResponse.data.items)) {
         totalPlayersCount = allUsersResponse.data.total || allUsersResponse.data.items.length;
@@ -327,18 +325,18 @@ const AdminPage: React.FC = () => {
       } else if (allUsersResponse.data && allUsersResponse.data.users) {
         totalPlayersCount = allUsersResponse.data.users.length;
       }
-      
+
       // Get games count
       if (gamesResponse.data && gamesResponse.data.count) {
         gamesCount = gamesResponse.data.count;
       }
-      
+
       // Calculate percentage changes (mock data for now)
       // In a real application, you would fetch historical data to calculate these
       const registeredUsersChange = 2.6;
       const totalPlayersChange = 1.8;
       const gamesCountChange = 3.2;
-      
+
       setDashboardData({
         registeredUsers: registeredUsersCount,
         registeredUsersChange: registeredUsersChange,
@@ -352,7 +350,7 @@ const AdminPage: React.FC = () => {
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       toast.error('Failed to fetch dashboard data');
-      
+
       // Fallback to sample data
       setDashboardData({
         registeredUsers: 11,
@@ -369,6 +367,10 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
   // Fetch players from API
   const fetchPlayers = async () => {
     setIsLoading(true);
@@ -383,10 +385,10 @@ const AdminPage: React.FC = () => {
           limit: playersPerPage
         }
       });
-      
+
       // Handle different response formats
       let playerData = [];
-      
+
       if (response.data && Array.isArray(response.data.items)) {
         // Format 1: { items: [...], total: number }
         playerData = response.data.items;
@@ -400,7 +402,7 @@ const AdminPage: React.FC = () => {
         playerData = response.data.users || [];
         setTotalPlayers(playerData.length);
       }
-      
+
       // Map the data to our Player interface
       const mappedPlayers: Player[] = playerData.map((user: any) => ({
         id: user.id,
@@ -413,12 +415,13 @@ const AdminPage: React.FC = () => {
         model: user.model,
         emailVerified: user.emailVerified,
         totalCoins: user.totalCoins,
-        subscriptionFetched: false
+        subscriptionFetched: false,
+        lastLogin: user.lastLogin,
       }));
-      
+
       setPlayers(mappedPlayers);
       setFilteredPlayers(mappedPlayers);
-      
+
       // Fetch subscription data for each player
       fetchPlayerSubscriptions(mappedPlayers);
     } catch (error) {
@@ -434,46 +437,46 @@ const AdminPage: React.FC = () => {
   // Fetch subscription data for all players
   const fetchPlayerSubscriptions = async (playersList: Player[]) => {
     const updatedPlayers = [...playersList];
-    
+
     // Process players in batches to avoid too many simultaneous requests
     const batchSize = 5;
     for (let i = 0; i < playersList.length; i += batchSize) {
       const batch = playersList.slice(i, i + batchSize);
-      
+
       // Create an array of promises for this batch
-      const promises = batch.map(player => 
+      const promises = batch.map(player =>
         axiosInstance.get(`/shop/subscription/user/${player.email}`)
           .then(response => {
             // Find the player index
             const playerIndex = updatedPlayers.findIndex(p => p.id === player.id);
             if (playerIndex === -1) return;
-            
+
             // Mark as fetched regardless of result
             updatedPlayers[playerIndex].subscriptionFetched = true;
-            
+
             if (response.data && Array.isArray(response.data) && response.data.length > 0) {
               // Get the most recent active subscription
               const activeSubscriptions = response.data.filter(
                 (sub: any) => sub.status === 'active'
               );
-              
+
               let subscription;
               if (activeSubscriptions.length > 0) {
                 // Sort by startDate in descending order to get the most recent one
                 const sortedSubscriptions = activeSubscriptions.sort(
-                  (a: any, b: any) => 
+                  (a: any, b: any) =>
                     new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
                 );
                 subscription = sortedSubscriptions[0];
               } else if (response.data.length > 0) {
                 // If no active subscription, get the most recent one regardless of status
                 const sortedSubscriptions = response.data.sort(
-                  (a: any, b: any) => 
+                  (a: any, b: any) =>
                     new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
                 );
                 subscription = sortedSubscriptions[0];
               }
-              
+
               // Update the player's subscription if found
               if (subscription) {
                 updatedPlayers[playerIndex].subscription = subscription.subscriptionType;
@@ -490,14 +493,14 @@ const AdminPage: React.FC = () => {
             }
           })
       );
-      
+
       // Wait for all promises in this batch to resolve
       await Promise.all(promises);
     }
-    
+
     // Update the players state with subscription data
     setPlayers(updatedPlayers);
-    
+
     // Apply any active filters to the updated players
     const filtered = applyFilters(updatedPlayers);
     setFilteredPlayers(filtered);
@@ -510,13 +513,13 @@ const AdminPage: React.FC = () => {
       if (subscriptionFilter !== 'all' && player.subscription !== subscriptionFilter) {
         return false;
       }
-      
+
       // Apply search filter
-      if (playerSearch && !player.username.toLowerCase().includes(playerSearch.toLowerCase()) && 
-          !player.email.toLowerCase().includes(playerSearch.toLowerCase())) {
+      if (playerSearch && !player.username.toLowerCase().includes(playerSearch.toLowerCase()) &&
+        !player.email.toLowerCase().includes(playerSearch.toLowerCase())) {
         return false;
       }
-      
+
       return true;
     });
   };
@@ -561,7 +564,7 @@ const AdminPage: React.FC = () => {
   // Apply search and sorting for banned players
   useEffect(() => {
     if (activeTab !== 'banned') return;
-    
+
     // If we're still loading, don't apply search and sort
     if (isLoading) return;
 
@@ -613,10 +616,10 @@ const AdminPage: React.FC = () => {
   // Apply search and sorting for reported players
   useEffect(() => {
     if (activeTab !== 'reported') return;
-    
+
     // If we're still loading, don't apply search and sort
     if (isLoading) return;
-    
+
     // Apply search
     if (searchTerm) {
       const filtered = reportedPlayers.filter((player) =>
@@ -669,13 +672,13 @@ const AdminPage: React.FC = () => {
       setSearchResults([]);
       return;
     }
-    
+
     setIsSearching(true);
     try {
       const response = await axiosInstance.get('/bans/users/search', {
         params: { term }
       });
-      
+
       if (Array.isArray(response.data)) {
         setSearchResults(response.data.map((user: any) => ({
           id: user.id,
@@ -694,19 +697,19 @@ const AdminPage: React.FC = () => {
   const handleUsernameSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setUsernameSearch(term);
-    
+
     // Debounce the search to avoid too many API calls
     const handler = setTimeout(() => {
       searchUsers(term);
     }, 300);
-    
+
     return () => {
       clearTimeout(handler);
     };
   };
 
   // Select user from search results
-  const selectUser = (user: {id: number, username: string}) => {
+  const selectUser = (user: { id: number, username: string }) => {
     setPlayerToBan(user);
     setUsernameSearch(user.username);
     setSearchResults([]);
@@ -741,10 +744,10 @@ const AdminPage: React.FC = () => {
       toast.error('Please provide both username and reason for the ban');
       return;
     }
-    
+
     try {
       let userToBan = playerToBan;
-      
+
       // If the username search doesn't match the playerToBan username,
       // we need to search for the user by the new username
       if (!playerToBan || playerToBan.username !== usernameSearch) {
@@ -752,30 +755,30 @@ const AdminPage: React.FC = () => {
         const searchResponse = await axiosInstance.get('/bans/users/search', {
           params: { term: usernameSearch }
         });
-        
+
         if (!searchResponse.data || searchResponse.data.length === 0) {
           toast.error('User not found. Please check the username.');
           return;
         }
-        
+
         // Use the first matching user
         userToBan = {
           id: searchResponse.data[0].id,
           username: searchResponse.data[0].username
         };
       }
-      
+
       // At this point, userToBan should never be null, but let's add a safety check
       if (!userToBan) {
         toast.error('Failed to identify user to ban');
         return;
       }
-      
+
       // If we're banning from reported list, delete the report first
       if (activeTab === 'reported' && playerToBan) {
         await axiosInstance.delete(`/bans/${playerToBan.id}`);
       }
-      
+
       // Create the ban
       const banData = {
         userId: userToBan.id,
@@ -784,17 +787,17 @@ const AdminPage: React.FC = () => {
         banType: banType,
         endDate: banType === 'temporary' ? banEndDate : null
       };
-      
+
       await axiosInstance.post('/bans', banData);
-      
+
       // Refresh banned players list
       fetchBannedPlayers();
-      
+
       // If we're in the reported tab, remove from reported players list
       if (activeTab === 'reported' && playerToBan) {
         setReportedPlayers(reportedPlayers.filter(player => player.id !== playerToBan.id));
       }
-      
+
       toast.success(`${userToBan.username} has been banned!`);
       closeBanModal();
     } catch (error) {
@@ -858,7 +861,7 @@ const AdminPage: React.FC = () => {
   const handlePlayerSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
     setPlayerSearch(searchTerm);
-    
+
     // Apply filters to the current players list
     const filtered = applyFilters(players);
     setFilteredPlayers(filtered);
@@ -868,7 +871,7 @@ const AdminPage: React.FC = () => {
   const handleSubscriptionFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const filter = e.target.value;
     setSubscriptionFilter(filter);
-    
+
     // Apply filters to the current players list
     const filtered = applyFilters(players);
     setFilteredPlayers(filtered);
@@ -879,24 +882,24 @@ const AdminPage: React.FC = () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.get(`/shop/subscription/user/${email}`);
-      
+
       if (response.data && Array.isArray(response.data) && response.data.length > 0) {
         // Get the most recent active subscription
         const activeSubscriptions = response.data.filter(
           (sub: any) => sub.status === 'active'
         );
-        
+
         if (activeSubscriptions.length > 0) {
           // Sort by startDate in descending order to get the most recent one
           const sortedSubscriptions = activeSubscriptions.sort(
-            (a: any, b: any) => 
+            (a: any, b: any) =>
               new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
           );
           setPlayerSubscription(sortedSubscriptions[0]);
         } else {
           // If no active subscription, get the most recent one regardless of status
           const sortedSubscriptions = response.data.sort(
-            (a: any, b: any) => 
+            (a: any, b: any) =>
               new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
           );
           setPlayerSubscription(sortedSubscriptions[0]);
@@ -960,7 +963,7 @@ const AdminPage: React.FC = () => {
     if (player.subscription && player.subscription !== 'Freedom Sword') {
       return player.subscription;
     }
-    
+
     // Default to Freedom Sword (free tier)
     return 'Freedom Sword';
   };
@@ -982,7 +985,7 @@ const AdminPage: React.FC = () => {
   return (
     <>
       {initialLoading && <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />}
-      
+
       <div className="flex flex-col h-screen overflow-hidden">
         {/* Navbar from main branch */}
         <AdminNavbar />
@@ -992,7 +995,7 @@ const AdminPage: React.FC = () => {
           <div className={`bg-[#3D2E22] text-white transition-all duration-300 ${sidebarCollapsed ? 'w-16' : 'w-64'} flex flex-col`}>
             <div className="flex items-center justify-between p-4 border-b border-gray-700">
               {!sidebarCollapsed && <h2 className="text-xl font-bold font-cinzel truncate">Admin Panel</h2>}
-              <button 
+              <button
                 onClick={toggleSidebar}
                 className="p-1 hover:bg-gray-800 rounded-lg transition-colors"
               >
@@ -1001,34 +1004,33 @@ const AdminPage: React.FC = () => {
             </div>
 
             <div className="flex-1 p-2 space-y-1">
-              {/* Commented out Dashboard button
-              <SidebarItem 
-                icon={<BarChart3 className="w-5 h-5" />} 
-                label="Dashboard" 
-                active={activeSection === 'dashboard'} 
+              <SidebarItem
+                icon={<BarChart3 className="w-5 h-5" />}
+                label="Dashboard"
+                active={activeSection === 'dashboard'}
                 onClick={() => setActiveSection('dashboard')}
                 collapsed={sidebarCollapsed}
               />
-              */}
-              <SidebarItem 
-                icon={<Ban className="w-5 h-5" />} 
-                label="Banned Players" 
-                active={activeSection === 'banned'} 
+
+              <SidebarItem
+                icon={<Ban className="w-5 h-5" />}
+                label="Banned Players"
+                active={activeSection === 'banned'}
                 onClick={() => setActiveSection('banned')}
                 collapsed={sidebarCollapsed}
               />
-              <SidebarItem 
-                icon={<Users className="w-5 h-5" />} 
-                label="Player List" 
-                active={activeSection === 'players'} 
+              <SidebarItem
+                icon={<Users className="w-5 h-5" />}
+                label="Player List"
+                active={activeSection === 'players'}
                 onClick={() => setActiveSection('players')}
                 collapsed={sidebarCollapsed}
               />
             </div>
-            
+
             {/* Logout button at the bottom of sidebar */}
             <div className="p-2 border-t border-gray-700">
-              <button 
+              <button
                 onClick={handleLogout}
                 className="flex items-center w-full p-2 rounded-lg hover:bg-gray-800 transition-colors"
               >
@@ -1040,54 +1042,189 @@ const AdminPage: React.FC = () => {
 
           {/* Main Content - combining both */}
           <div className="flex-1 overflow-auto bg-[#2F2118] p-6">
-            {/* Commented out Dashboard section
+
             {activeSection === 'dashboard' && (
               <>
                 <h1 className="text-3xl font-bold text-white font-cinzel mb-8">Dashboard Overview</h1>
-                
+
                 {isLoading ? (
                   <div className="flex justify-center items-center h-64">
                     <LoadingBook message="Loading dashboard data..." size="md" />
                   </div>
                 ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  <MetricCard 
-                    title="Total Registered Users" 
-                    value={dashboardData.registeredUsers} 
-                    percentChange={dashboardData.registeredUsersChange} 
-                    icon={<UserPlus className="w-6 h-6" />}
-                  />
-                  <MetricCard 
-                    title="Total Players" 
-                    value={dashboardData.totalPlayers} 
-                    percentChange={dashboardData.totalPlayersChange} 
-                    icon={<Users className="w-6 h-6" />}
-                  />
-                  <MetricCard 
-                    title="Stories Created" 
-                    value={dashboardData.storiesCreated} 
-                    percentChange={dashboardData.storiesCreatedChange} 
-                    icon={<BookOpen className="w-6 h-6" />}
-                  />
-                </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <MetricCard
+                      title="Total Registered Users"
+                      value={dashboardData.registeredUsers}
+                      percentChange={dashboardData.registeredUsersChange}
+                      icon={<UserPlus className="w-6 h-6" />}
+                    />
+                    <MetricCard
+                      title="Total Players"
+                      value={dashboardData.totalPlayers}
+                      percentChange={dashboardData.totalPlayersChange}
+                      icon={<Users className="w-6 h-6" />}
+                    />
+                    <MetricCard
+                      title="Stories Created"
+                      value={dashboardData.storiesCreated}
+                      percentChange={dashboardData.storiesCreatedChange}
+                      icon={<BookOpen className="w-6 h-6" />}
+                    />
+
+
+                  </div>
                 )}
+
+                {/* Dashboard Players Table */}
+                <div className="bg-[#1E1512] rounded-lg overflow-hidden shadow-lg">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-white table-fixed">
+                      <thead>
+                        <tr className="bg-[#3D2E22] border-b border-[#2F2118]">
+                          <th
+                            className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
+                            onClick={() => requestSort("username")}
+                          >
+                            Username {getSortIndicator("username")}
+                          </th>
+                          <th
+                            className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
+                            onClick={() => requestSort("email")}
+                          >
+                            Email {getSortIndicator("email")}
+                          </th>
+                          <th
+                            className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
+                            onClick={() => requestSort("subscription")}
+                          >
+                            Subscription {getSortIndicator("subscription")}
+                          </th>
+                          <th
+                            className="py-4 px-6 font-cinzel cursor-pointer text-left w-1/5"
+                            onClick={() => requestSort("coins")}
+                          >
+                            Coins {getSortIndicator("coins")}
+                          </th>
+                          <th className="py-4 px-6 font-cinzel text-left w-1/5">Last Login</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {isLoading ? (
+                          <tr>
+                            <td colSpan={5} className="py-4 px-6 text-center">
+                              <div className="flex justify-center">
+                                <LoadingBook message="Loading players..." size="sm" />
+                              </div>
+                            </td>
+                          </tr>
+                        ) : filteredPlayers.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="py-4 px-6 text-center">No players found</td>
+                          </tr>
+                        ) : (
+                          currentPlayers.map((player) => (
+                            <tr
+                              key={player.id}
+                              className="bg-[#6A4E32] border-b border-[#2F2118] hover:bg-[#412e19] transition-colors"
+                            >
+                              <td className="py-4 px-6 font-playfair text-left truncate">
+                                {player.username}
+                              </td>
+                              <td className="py-4 px-6 font-playfair text-left truncate">
+                                {player.email}
+                              </td>
+                              <td className="py-4 px-6 font-playfair text-left">
+                                {player.subscriptionFetched ? (
+                                  <span className={`px-2 py-1 rounded text-xs ${getSubscriptionBadgeColor(player.subscription)}`}>
+                                    {player.subscription}
+                                  </span>
+                                ) : (
+                                  <div className="flex items-center">
+                                    <div className="animate-spin h-4 w-4 border-2 border-[#C0A080] border-t-transparent rounded-full mr-2"></div>
+                                    <span className="text-xs">Loading...</span>
+                                  </div>
+                                )}
+                              </td>
+                              <td className="py-4 px-6 font-playfair text-left">
+                                {player.totalCoins}
+                                
+                              </td>
+                              <td className="py-4 px-6 font-playfair text-left">
+                                {new Date(player.lastLogin? player.lastLogin : "").toDateString()}
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pagination controls for players */}
+                  <div className="p-4 bg-[#1E1512] border-t border-[#2F2118] flex flex-wrap items-center justify-between">
+                    <div className="flex items-center space-x-2 text-white">
+                      <span>Show</span>
+                      <select
+                        className="bg-[#1E1512] border border-[#6A4E32] rounded px-2 py-1"
+                        value={playersPerPage}
+                        onChange={(e) => {
+                          setPlayersPerPage(Number(e.target.value));
+                          setCurrentPage(1);
+                        }}
+                      >
+                        <option value={10}>10</option>
+                        <option value={25}>25</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                      </select>
+                      <span>entries</span>
+                    </div>
+
+                    <div className="flex items-center space-x-2 text-white">
+                      <button
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 bg-[#3D2E22] rounded disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+                      <span className="bg-[#3D2E22] px-3 py-1 rounded">
+                        Page {currentPage} of {totalPlayerPages}
+                      </span>
+                      <button
+                        onClick={() =>
+                          setCurrentPage(Math.min(totalPlayerPages, currentPage + 1))
+                        }
+                        disabled={currentPage === totalPlayerPages}
+                        className="px-3 py-1 bg-[#3D2E22] rounded disabled:opacity-50"
+                      >
+                        Next
+                      </button>
+                    </div>
+
+                    <div className="text-white">
+                      Showing {indexOfFirstPlayer + 1} to{" "}
+                      {Math.min(indexOfLastPlayer, filteredPlayers.length)} of{" "}
+                      {filteredPlayers.length} entries
+                    </div>
+                  </div>
+                </div>
               </>
             )}
-            */}
+
 
             {activeSection === 'banned' && (
               <>
                 <h1 className="text-white text-3xl font-cinzel mb-6">Banned Players</h1>
-                
+
                 {/* Combined controls row - Search bar, tabs, and filter controls inline */}
                 <div className="flex flex-wrap items-center justify-between mb-6">
                   <div className="flex flex-wrap items-center gap-4">
                     <button
-                      className={`px-4 py-2 rounded-lg font-cinzel ${
-                        activeTab === "banned"
-                          ? "bg-[#6A4E32] text-white"
-                          : "bg-[#3D2E22] text-gray-300 hover:bg-[#4D3E32]"
-                      }`}
+                      className={`px-4 py-2 rounded-lg font-cinzel ${activeTab === "banned"
+                        ? "bg-[#6A4E32] text-white"
+                        : "bg-[#3D2E22] text-gray-300 hover:bg-[#4D3E32]"
+                        }`}
                       onClick={() => {
                         setActiveTab("banned");
                         setSearchTerm("");
@@ -1097,11 +1234,10 @@ const AdminPage: React.FC = () => {
                       Banned Players
                     </button>
                     <button
-                      className={`px-4 py-2 rounded-lg font-cinzel ${
-                        activeTab === "reported"
-                          ? "bg-[#6A4E32] text-white"
-                          : "bg-[#3D2E22] text-gray-300 hover:bg-[#4D3E32]"
-                      }`}
+                      className={`px-4 py-2 rounded-lg font-cinzel ${activeTab === "reported"
+                        ? "bg-[#6A4E32] text-white"
+                        : "bg-[#3D2E22] text-gray-300 hover:bg-[#4D3E32]"
+                        }`}
                       onClick={() => {
                         setActiveTab("reported");
                         setSearchTerm("");
@@ -1110,25 +1246,25 @@ const AdminPage: React.FC = () => {
                     >
                       Reported Players
                     </button>
-                    
+
                     {/* Search bar */}
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <Search className="w-5 h-5 text-gray-400" />
-                        </div>
-                        <input
-                          type="text"
-                          className="bg-[#1E1512] text-white pl-10 pr-4 py-2 rounded border border-[#6A4E32] focus:ring-2 focus:ring-[#6A4E32] focus:outline-none"
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <Search className="w-5 h-5 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        className="bg-[#1E1512] text-white pl-10 pr-4 py-2 rounded border border-[#6A4E32] focus:ring-2 focus:ring-[#6A4E32] focus:outline-none"
                         placeholder={`Search ${activeTab === "banned" ? "banned" : "reported"} players...`}
-                          value={searchTerm}
+                        value={searchTerm}
                         onChange={(e) => {
                           setSearchTerm(e.target.value);
                           setCurrentPage(1);
                         }}
-                        />
-                      </div>
+                      />
+                    </div>
                   </div>
-                  
+
                   {/* Add New Ban Button */}
                   <button
                     onClick={() => {
@@ -1202,17 +1338,17 @@ const AdminPage: React.FC = () => {
                             currentBannedPlayers.map((player) => (
                               <tr
                                 key={player.id}
-                              className="bg-[#6A4E32] border-b border-[#2F2118] hover:bg-[#412e19] transition-colors"
+                                className="bg-[#6A4E32] border-b border-[#2F2118] hover:bg-[#412e19] transition-colors"
                               >
                                 <td className="py-4 px-6 font-playfair text-left truncate">
-                                {player.username}
-                              </td>
+                                  {player.username}
+                                </td>
                                 <td className="py-4 px-6 font-playfair text-left truncate">
-                                {player.reason}
-                              </td>
+                                  {player.reason}
+                                </td>
                                 <td className="py-4 px-6 font-playfair text-left">
                                   {player.banType === 'permanent' ? 'Permanent' : 'Temporary'}
-                              </td>
+                                </td>
                                 <td className="py-4 px-6 font-playfair text-left">
                                   {formatDate(player.createdAt)}
                                 </td>
@@ -1231,14 +1367,14 @@ const AdminPage: React.FC = () => {
                                   )}
                                 </td>
                                 <td className="py-4 px-6 font-playfair text-left">
-                                <button
+                                  <button
                                     onClick={() => handleUnban(player.id, player.username)}
                                     className="px-3 py-1 bg-[#C0A080] hover:bg-[#D5B591] text-black rounded font-cinzel"
-                                >
-                                  Unban
-                                </button>
-                              </td>
-                            </tr>
+                                  >
+                                    Unban
+                                  </button>
+                                </td>
+                              </tr>
                             ))
                           )}
                         </tbody>
@@ -1440,7 +1576,7 @@ const AdminPage: React.FC = () => {
             {activeSection === 'players' && (
               <>
                 <h1 className="text-white text-3xl font-cinzel mb-6">Player List</h1>
-                
+
                 {/* Search and filter controls */}
                 <div className="flex flex-wrap items-center justify-between mb-6 gap-4">
                   <div className="flex items-center gap-4">
@@ -1456,7 +1592,7 @@ const AdminPage: React.FC = () => {
                         onChange={handlePlayerSearch}
                       />
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       <Filter className="w-5 h-5 text-gray-400" />
                       <select
@@ -1474,7 +1610,7 @@ const AdminPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Players Table */}
                 <div className="bg-[#1E1512] rounded-lg overflow-hidden shadow-lg">
                   <div className="overflow-x-auto">
@@ -1632,14 +1768,14 @@ const AdminPage: React.FC = () => {
               <h2 className="text-xl font-cinzel text-white text-center w-full uppercase">
                 {playerToBan ? `Ban Player: ${playerToBan.username}` : 'Add New Ban'}
               </h2>
-              <button 
+              <button
                 onClick={closeBanModal}
                 className="text-gray-400 hover:text-white absolute right-6"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="space-y-6">
               {/* Always show username field, even if playerToBan is set */}
               <div>
@@ -1657,11 +1793,11 @@ const AdminPage: React.FC = () => {
                       <div className="animate-spin h-4 w-4 border-2 border-[#C0A080] border-t-transparent rounded-full"></div>
                     </div>
                   )}
-                  
+
                   {searchResults.length > 0 && (
                     <div className="absolute z-10 mt-1 w-full bg-[#2A2A2A] border border-[#6A4E32] rounded-md shadow-lg max-h-60 overflow-auto">
                       {searchResults.map(user => (
-                        <div 
+                        <div
                           key={user.id}
                           className="px-4 py-2 hover:bg-[#3D2E22] cursor-pointer text-white"
                           onClick={() => selectUser(user)}
@@ -1673,7 +1809,7 @@ const AdminPage: React.FC = () => {
                   )}
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-cinzel text-white mb-2 uppercase">Reason for Ban</label>
                 <input
@@ -1684,7 +1820,7 @@ const AdminPage: React.FC = () => {
                   placeholder="Enter reason for ban"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-cinzel text-white mb-2 uppercase">Ban Type</label>
                 <div className="flex space-x-4">
@@ -1710,7 +1846,7 @@ const AdminPage: React.FC = () => {
                   </label>
                 </div>
               </div>
-              
+
               {banType === 'temporary' && (
                 <div>
                   <label className="block text-sm font-cinzel text-white mb-2 uppercase">End Date</label>
@@ -1723,7 +1859,7 @@ const AdminPage: React.FC = () => {
                   />
                 </div>
               )}
-              
+
               <div className="flex justify-between space-x-3 mt-6">
                 <button
                   onClick={closeBanModal}
@@ -1734,11 +1870,10 @@ const AdminPage: React.FC = () => {
                 <button
                   onClick={handleBanReported}
                   disabled={!usernameSearch || !banReason}
-                  className={`px-4 py-2 rounded font-cinzel uppercase ${
-                    usernameSearch && banReason 
-                      ? 'bg-[#C0A080] hover:bg-[#D5B591] text-black' 
-                      : 'bg-gray-500 cursor-not-allowed text-gray-300'
-                  }`}
+                  className={`px-4 py-2 rounded font-cinzel uppercase ${usernameSearch && banReason
+                    ? 'bg-[#C0A080] hover:bg-[#D5B591] text-black'
+                    : 'bg-gray-500 cursor-not-allowed text-gray-300'
+                    }`}
                 >
                   Ban Player
                 </button>
@@ -1755,22 +1890,22 @@ const AdminPage: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-cinzel text-white text-center w-full uppercase">
                 Player Details
-                </h2>
-              <button 
+              </h2>
+              <button
                 onClick={closePlayerModal}
                 className="text-gray-400 hover:text-white absolute right-6"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col space-y-4">
                 <div className="flex justify-center mb-4">
                   {selectedPlayer.image_url ? (
-                    <img 
-                      src={`${import.meta.env.VITE_BACKEND_URL}${selectedPlayer.image_url}`} 
-                      alt={selectedPlayer.username} 
+                    <img
+                      src={`${import.meta.env.VITE_BACKEND_URL}${selectedPlayer.image_url}`}
+                      alt={selectedPlayer.username}
                       className="w-32 h-32 rounded-full object-cover border-4 border-[#B39C7D]"
                     />
                   ) : (
@@ -1779,22 +1914,22 @@ const AdminPage: React.FC = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-400">Username</p>
                   <p className="text-white font-semibold">{selectedPlayer.username}</p>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-400">Email</p>
                   <p className="text-white font-semibold">{selectedPlayer.email}</p>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-400">Model</p>
                   <p className="text-white font-semibold">{selectedPlayer.model || 'gpt-4'}</p>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-400">Email Verified</p>
                   <p className="text-white font-semibold">
@@ -1806,23 +1941,23 @@ const AdminPage: React.FC = () => {
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex flex-col space-y-4">
                 <div>
                   <p className="text-sm text-gray-400">Total Coins</p>
                   <p className="text-white font-semibold">{selectedPlayer.totalCoins || 0}</p>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-400">Created At</p>
                   <p className="text-white font-semibold">{formatDate(selectedPlayer.createdAt)}</p>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-400">Updated At</p>
                   <p className="text-white font-semibold">{formatDate(selectedPlayer.updatedAt || selectedPlayer.createdAt)}</p>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-400 mb-2">Subscription</p>
                   {isLoading ? (
@@ -1858,7 +1993,7 @@ const AdminPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex justify-between mt-6">
               <button
                 onClick={() => banPlayerFromList(selectedPlayer)}

@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../service/database';
 import { ISubscriber } from '../../interfaces/transaction/subscriberInterface';
+import User from '../user/user';
 
 // Database model for the Subscriber table
 class Subscriber extends Model<ISubscriber> implements ISubscriber {

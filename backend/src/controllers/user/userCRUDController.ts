@@ -11,6 +11,15 @@ export const getAllUsers = async (req: Request, res: Response) => {
     }
 };
 
+export const getVerifiedUsers = async (req: Request, res: Response) => {
+    try {
+        const users = await UserService.getVerifiedUsers();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: 'No users'});
+    }
+}
+
 export const getUserById = async (req: Request, res: Response) => {
     try {
         const user = await UserService.getUserById(parseInt(req.params.id));
@@ -133,6 +142,14 @@ export const getUserRatingsByUsername = async (req: Request, res: Response) => {
     }
 };
 
+export const playerDirectory = async (req: Request, res: Response) => {
+    try {
+        const playerDirectory = await UserService.getUserPlayersCoins();
+        res.json(playerDirectory);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user subscriptions' });
+    }
+};
 
 
 

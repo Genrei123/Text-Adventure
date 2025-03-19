@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import passport from '../../middlware/auth/google/passport';
 import Jwt from 'jsonwebtoken';
 import cookieJwtAuth from '../../middlware/auth/auth';
-import { forgotPassword, resetPassword, validateResetToken, verifyEmail, checkUsername, checkEmail } from '../../controllers/auth/authController';
+import { forgotPassword, resetPassword, validateResetToken, verifyEmail, checkUsername, checkEmail, logout } from '../../controllers/auth/authController';
 import User from '../../model/user/user';
 
 // Create a function that returns the configured router
@@ -48,6 +48,7 @@ const createAuthRouter = (frontendUrl: string) => {
               updatedAt: new Date(),
               created_At: new Date(),
               updated_At: new Date(),
+              lastLogin: new Date(),
             });
 
             console.log('New user created:', newUser);
@@ -90,6 +91,8 @@ const createAuthRouter = (frontendUrl: string) => {
   router.get("/protected", cookieJwtAuth, (req: Request, res: Response) => {
     res.send("This is a protected route");
   });
+
+  
 
   router.get('/:provider',
     (req, res, next) => {
