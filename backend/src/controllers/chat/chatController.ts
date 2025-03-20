@@ -33,7 +33,6 @@ export const handleChatRequestController = async (req: Request, res: Response): 
         await validateUserAndGame(userId, gameId);
         const session_id = await findOrCreateSession(userId, gameId);
 
-        //const gameSession = await initiateGameSession(userId, gameId);
         const conversationHistory = await getConversationHistory(session_id, userId, gameId);
 
         const formattedMessages: { role: "system" | "user" | "assistant"; content: string }[] = [
@@ -49,7 +48,10 @@ export const handleChatRequestController = async (req: Request, res: Response): 
         ];
 
         await storeChatMessage(session_id, userId, gameId, "user", message);
-        const aiResponse = await callOpenAI(formattedMessages);
+
+        // Pass both userId and formattedMessages to callOpenAI
+        const aiResponse = await callOpenAI(userId, formattedMessages);
+
         const storedResponse = await storeChatMessage(
             session_id, 
             userId, 
