@@ -69,8 +69,16 @@ interface OpenAIResponse {
     }[];
 }
 
-export const callOpenAI = async (messages: ChatMessage[]): Promise<any> => {
+export const callOpenAI = async (userId: number, messages: ChatMessage[]): Promise<any> => {
     try {
+        // Fetch the user's preferred model from the database
+        const user = await User.findByPk(userId);
+        if (!user) {
+            throw new Error("User not found.");
+        }
+
+        const model = user.model || "gpt-3.5-turbo"; // Default to "gpt-3.5-turbo" if no model is set
+
         // Validate messages
         if (!Array.isArray(messages) || messages.some(msg => !msg.content || !msg.role)) {
             throw new Error("Invalid messages format");
@@ -91,7 +99,7 @@ export const callOpenAI = async (messages: ChatMessage[]): Promise<any> => {
         const response: import("axios").AxiosResponse<OpenAIResponse> = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-3.5-turbo",
+                model: model, // Use the user's preferred model
                 messages: messages,
                 // Add temperature for more creative responses
                 temperature: 0.7,
@@ -227,7 +235,7 @@ export const initiateGameSession = async (userId: number, gameId: number) => {
     const context = "THIS IS YOUR CONTEXT AND THE USER CANNOT KNOW THIS. " + game?.genre + " " + game?.subgenre + " titled: " + game?.title + ". " + game?.description + " " + game?.tagline + ". " + game?.prompt_text + " " + game?.prompt_name + "." + " Make sure to interact first with the player";
 
     try {
-        const aiResponse = await callOpenAI([{ role: "system", content: context || "Default game context" }]);
+        const aiResponse = await callOpenAI(userId, [{ role: "system", content: context || "Default game context" }]);
         await storeChatMessage(
             session_id, 
             userId, 
