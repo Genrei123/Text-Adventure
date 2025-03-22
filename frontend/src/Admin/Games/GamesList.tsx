@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Edit, Trash, ChevronUp, ChevronDown } from 'lucide-react';
+import { Search, Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power } from 'lucide-react';
 import axiosInstance from '../../../config/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
@@ -12,6 +12,7 @@ const GamesList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [sortConfig, setSortConfig] = useState({ key: 'title', direction: 'ascending' });
   const [showModal, setShowModal] = useState(false);
+  const [selectedGames, setSelectedGames] = useState<number[]>([]);
   const [newGame, setNewGame] = useState({
     title: '',
     genre: 'RPG',
@@ -90,16 +91,40 @@ const GamesList: React.FC = () => {
     return sortConfig.direction === 'ascending' ? <ChevronUp className="inline w-4 h-4" /> : <ChevronDown className="inline w-4 h-4" />;
   };
 
+  const handleSelectGame = (id: number) => {
+    setSelectedGames(prev => prev.includes(id) ? prev.filter(gameId => gameId !== id) : [...prev, id]);
+  };
+
+  const handleBulkDelete = async () => {
+    try {
+      await axiosInstance.delete('/api/games/bulk-delete', { data: { ids: selectedGames } });
+      setSelectedGames([]);
+      fetchGames();
+    } catch (error) {
+      console.error('Error deleting games:', error);
+    }
+  };
+
   return (
     <div className="p-6 bg-[#2F2118] text-white">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Games Overview</h1>
-        <button
-          onClick={() => setShowModal(true)}
-          className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-black rounded font-cinzel"
-        >
-          <Plus className="inline w-5 h-5 mr-2" /> Add New Game
-        </button>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => setShowModal(true)}
+            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-black rounded font-cinzel"
+          >
+            <Plus className="inline w-5 h-5 mr-2" /> Add New Game
+          </button>
+          {selectedGames.length > 0 && (
+            <button
+              onClick={handleBulkDelete}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-cinzel"
+            >
+              <Trash className="inline w-5 h-5 mr-2" /> Delete Selected
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-between items-center mb-6">
@@ -137,6 +162,14 @@ const GamesList: React.FC = () => {
         <table className="w-full text-white table-fixed">
           <thead>
             <tr className="bg-[#3D2E22] border-b border-[#2F2118]">
+              <th className="py-4 px-6 font-cinzel cursor-pointer text-left">
+                <input
+                  type="checkbox"
+                  className="w-5 h-5 cursor-pointer"
+                  onChange={toggleSelectAll}
+                  checked={allSelected}
+                />
+              </th>
               <th className="py-4 px-6 font-cinzel cursor-pointer text-left" onClick={() => handleSort('title')}>
                 Title {getSortIndicator('title')}
               </th>
@@ -158,18 +191,44 @@ const GamesList: React.FC = () => {
           <tbody>
             {filteredGames.map(game => (
               <tr key={game.id} className="bg-[#6A4E32] border-b border-[#2F2118] hover:bg-[#412e19] transition-colors">
-                <td className="py-4 px-6 font-playfair text-left truncate">{game.title}</td>
+                <td className="py-4 px-6 font-playfair text-left truncate">
+                  <input
+                    type="checkbox"
+                    checked={selectedGames.includes(game.id)}
+                    onChange={() => handleSelectGame(game.id)}
+                    className="mr-2 w-5 h-5 cursor-pointer"
+                  />
+                  {game.title}
+                </td>
                 <td className="py-4 px-6 font-playfair text-left truncate">{game.genre}</td>
                 <td className="py-4 px-6 font-playfair text-left">{game.players}</td>
                 <td className="py-4 px-6 font-playfair text-left">{new Date(game.createdAt).toLocaleDateString()}</td>
-                <td className="py-4 px-6 font-playfair text-left">{game.status}</td>
                 <td className="py-4 px-6 font-playfair text-left">
-                  <button onClick={() => navigate(`/admin/games/${game.id}`)} className="text-blue-500 hover:text-blue-700">
-                    <Edit className="inline w-5 h-5 mr-2" /> Edit
-                  </button>
-                  <button onClick={() => console.log('Delete game')} className="text-red-500 hover:text-red-700 ml-4">
-                    <Trash className="inline w-5 h-5 mr-2" /> Delete
-                  </button>
+                  {game.status === 'active' ? (
+                    <span className="bg-green-900/20 text-green-500 border border-green-500 px-2 py-1 rounded-full text-xs font-medium">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="bg-gray-800/20 text-gray-400 border border-gray-500 px-2 py-1 rounded-full text-xs font-medium">
+                      Inactive
+                    </span>
+                  )}
+                </td>
+                <td className="py-4 px-6 font-playfair text-left">
+                  <div className="flex space-x-2">
+                    <button onClick={() => navigate(`/admin/games/${game.id}`)} className="text-blue-500 hover:text-blue-700 px-2 py-1 rounded bg-[#1E1512]">
+                      <Eye className="inline w-5 h-5 mr-2" /> View
+                    </button>
+                    <button onClick={() => navigate(`/admin/games/${game.id}/edit`)} className="text-blue-500 hover:text-blue-700 px-2 py-1 rounded bg-[#1E1512]">
+                      <Edit className="inline w-5 h-5 mr-2" /> Edit
+                    </button>
+                    <button onClick={() => console.log('Toggle game status')} className="text-yellow-500 hover:text-yellow-700 px-2 py-1 rounded bg-[#1E1512]">
+                      <Power className="inline w-5 h-5 mr-2" /> {game.status === 'active' ? 'Deactivate' : 'Activate'}
+                    </button>
+                    <button onClick={() => console.log('Delete game')} className="text-red-500 hover:text-red-700 px-2 py-1 rounded bg-[#1E1512]">
+                      <Trash className="inline w-5 h-5 mr-2" /> Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
