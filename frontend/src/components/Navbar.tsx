@@ -389,8 +389,8 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                           <div className="w-10 rounded-full">
                             <img
                               alt="Profile Picture"
-                              src={profilePicture ? profilePicture : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
-                            />
+                              src={profilePicture ? profilePicture : `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${username}`}
+                              />
                           </div>
                         </div>
                         <ul
