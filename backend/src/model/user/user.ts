@@ -121,7 +121,7 @@ User.init({
     type: DataTypes.STRING, 
     allowNull: true,
     defaultValue: function() {
-      return `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${this.username}`;
+      return `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=user`;
     }
   },
   lastLogin: {type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW }
