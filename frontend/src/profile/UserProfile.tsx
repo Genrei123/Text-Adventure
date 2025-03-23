@@ -254,7 +254,7 @@ export default function ProfilePage() {
                     </div>
                   ) : (
                     <img
-                      src={`${import.meta.env.VITE_BACKEND_URL}` + userDetails?.image_url || "/null_Icon.svg"}
+                      src={userDetails?.image_url ? `${import.meta.env.VITE_BACKEND_URL}${userDetails.image_url}` : `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${userDetails?.username}`}
                       alt="Profile"
                       className="w-full h-full rounded-full object-cover"
                     />
