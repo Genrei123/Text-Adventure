@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power } from 'lucide-react';
+import { Search, Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders } from 'lucide-react';
 import axiosInstance from '../../../config/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
+import StatusBadge from './StatusBadge';
+import Loader from './Loader';
 
 const GamesList: React.FC = () => {
   const navigate = useNavigate();
-  const [games, setGames] = useState([]);
+  const [games, setGames] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [genreFilter, setGenreFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
-  const [sortConfig, setSortConfig] = useState({ key: 'title', direction: 'ascending' });
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ 
+    key: 'title', 
+    direction: 'asc' 
+  });
   const [showModal, setShowModal] = useState(false);
   const [selectedGames, setSelectedGames] = useState<number[]>([]);
   const [newGame, setNewGame] = useState({
@@ -20,6 +25,15 @@ const GamesList: React.FC = () => {
     status: 'active',
     prompt: ''
   });
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [dateRange, setDateRange] = useState({ start: '', end: '' });
+
+  const allSelected = selectedGames.length === games.length;
+  
+  const toggleSelectAll = () => {
+    setSelectedGames(allSelected ? [] : games.map(game => game.id));
+  };
 
   useEffect(() => {
     fetchGames();
@@ -46,19 +60,19 @@ const GamesList: React.FC = () => {
   };
 
   const handleSort = (key: string) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
     }
     setSortConfig({ key, direction });
   };
 
   const sortedGames = [...games].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'ascending' ? -1 : 1;
+      return sortConfig.direction === 'asc' ? -1 : 1;
     }
     if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'ascending' ? 1 : -1;
+      return sortConfig.direction === 'asc' ? 1 : -1;
     }
     return 0;
   });
@@ -88,7 +102,7 @@ const GamesList: React.FC = () => {
 
   const getSortIndicator = (key: string) => {
     if (sortConfig.key !== key) return null;
-    return sortConfig.direction === 'ascending' ? <ChevronUp className="inline w-4 h-4" /> : <ChevronDown className="inline w-4 h-4" />;
+    return sortConfig.direction === 'asc' ? <ChevronUp className="inline w-4 h-4" /> : <ChevronDown className="inline w-4 h-4" />;
   };
 
   const handleSelectGame = (id: number) => {
@@ -105,159 +119,113 @@ const GamesList: React.FC = () => {
     }
   };
 
-  return (
-    <div className="p-6 bg-[#2F2118] text-white">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Games Overview</h1>
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setShowModal(true)}
-            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-black rounded font-cinzel"
-          >
-            <Plus className="inline w-5 h-5 mr-2" /> Add New Game
-          </button>
-          {selectedGames.length > 0 && (
-            <button
-              onClick={handleBulkDelete}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-cinzel"
-            >
-              <Trash className="inline w-5 h-5 mr-2" /> Delete Selected
-            </button>
-          )}
-        </div>
+  const handleToggleStatus = async (game: any) => {
+    try {
+      const updatedStatus = game.status === 'active' ? 'inactive' : 'active';
+      await axiosInstance.put(`/api/games/${game.id}`, { ...game, status: updatedStatus });
+      fetchGames();
+    } catch (error) {
+      console.error('Error toggling status:', error);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await axiosInstance.delete(`/api/games/${id}`);
+      fetchGames();
+    } catch (error) {
+      console.error('Error deleting game:', error);
+    }
+  };
+
+  const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
+    <th
+      className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-left cursor-pointer hover:bg-[#534231] transition-colors group"
+      onClick={() => handleSort(sortKey)}
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-[#F0E6DB]">{label}</span>
+        <span className="text-[#C0A080] opacity-0 group-hover:opacity-100 transition-opacity">
+          {getSortIndicator(sortKey)}
+        </span>
       </div>
+    </th>
+  );
 
-      <div className="flex justify-between items-center mb-6">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="w-5 h-5 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            className="bg-[#1E1512] text-white pl-10 pr-4 py-2 rounded border border-[#6A4E32] focus:ring-2 focus:ring-[#6A4E32] focus:outline-none"
-            placeholder="Search games..."
-            value={searchTerm}
-            onChange={handleSearch}
-          />
-        </div>
-
+  const AdvancedFilters = () => (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-[#2F2118] rounded-lg border border-[#6A4E32]/50 mb-6">
+      <div>
+        <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
         <select
-          className="bg-[#1E1512] text-white px-4 py-2 rounded border border-[#6A4E32] focus:ring-2 focus:ring-[#6A4E32] focus:outline-none"
-          value={genreFilter}
-          onChange={handleGenreFilterChange}
+          className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
         >
-          <option value="all">All Genres</option>
-          <option value="RPG">RPG</option>
-          <option value="Adventure">Adventure</option>
-          <option value="Puzzle">Puzzle</option>
-          <option value="Action">Action</option>
+          <option value="all">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
         </select>
       </div>
+      <div>
+        <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Start Date</label>
+        <input
+          type="date"
+          className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50"
+          value={dateRange.start}
+          onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-cinzel text-[#C0A080] mb-2">End Date</label>
+        <input
+          type="date"
+          className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50"
+          value={dateRange.end}
+          onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+        />
+      </div>
+    </div>
+  );
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="loader"></div>
+  const NewGameModal = () => (
+    <Modal
+      isOpen={showModal}
+      onRequestClose={() => setShowModal(false)}
+      className="modal-content bg-[#2F2118] p-8 rounded-xl max-w-2xl mx-4"
+      overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+    >
+      <div className="space-y-6">
+        <div className="flex justify-between items-center border-b border-[#6A4E32]/50 pb-4">
+          <h2 className="text-2xl font-cinzel text-[#F0E6DB]">Create New Game</h2>
+          <button
+            onClick={() => setShowModal(false)}
+            className="text-[#8B7355] hover:text-[#C0A080] transition-colors"
+          >
+            ✕
+          </button>
         </div>
-      ) : (
-        <table className="w-full text-white table-fixed">
-          <thead>
-            <tr className="bg-[#3D2E22] border-b border-[#2F2118]">
-              <th className="py-4 px-6 font-cinzel cursor-pointer text-left">
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 cursor-pointer"
-                  onChange={toggleSelectAll}
-                  checked={allSelected}
-                />
-              </th>
-              <th className="py-4 px-6 font-cinzel cursor-pointer text-left" onClick={() => handleSort('title')}>
-                Title {getSortIndicator('title')}
-              </th>
-              <th className="py-4 px-6 font-cinzel cursor-pointer text-left" onClick={() => handleSort('genre')}>
-                Genre {getSortIndicator('genre')}
-              </th>
-              <th className="py-4 px-6 font-cinzel cursor-pointer text-left" onClick={() => handleSort('players')}>
-                Players {getSortIndicator('players')}
-              </th>
-              <th className="py-4 px-6 font-cinzel cursor-pointer text-left" onClick={() => handleSort('createdAt')}>
-                Created At {getSortIndicator('createdAt')}
-              </th>
-              <th className="py-4 px-6 font-cinzel cursor-pointer text-left" onClick={() => handleSort('status')}>
-                Status {getSortIndicator('status')}
-              </th>
-              <th className="py-4 px-6 font-cinzel text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredGames.map(game => (
-              <tr key={game.id} className="bg-[#6A4E32] border-b border-[#2F2118] hover:bg-[#412e19] transition-colors">
-                <td className="py-4 px-6 font-playfair text-left truncate">
-                  <input
-                    type="checkbox"
-                    checked={selectedGames.includes(game.id)}
-                    onChange={() => handleSelectGame(game.id)}
-                    className="mr-2 w-5 h-5 cursor-pointer"
-                  />
-                  {game.title}
-                </td>
-                <td className="py-4 px-6 font-playfair text-left truncate">{game.genre}</td>
-                <td className="py-4 px-6 font-playfair text-left">{game.players}</td>
-                <td className="py-4 px-6 font-playfair text-left">{new Date(game.createdAt).toLocaleDateString()}</td>
-                <td className="py-4 px-6 font-playfair text-left">
-                  {game.status === 'active' ? (
-                    <span className="bg-green-900/20 text-green-500 border border-green-500 px-2 py-1 rounded-full text-xs font-medium">
-                      Active
-                    </span>
-                  ) : (
-                    <span className="bg-gray-800/20 text-gray-400 border border-gray-500 px-2 py-1 rounded-full text-xs font-medium">
-                      Inactive
-                    </span>
-                  )}
-                </td>
-                <td className="py-4 px-6 font-playfair text-left">
-                  <div className="flex space-x-2">
-                    <button onClick={() => navigate(`/admin/games/${game.id}`)} className="text-blue-500 hover:text-blue-700 px-2 py-1 rounded bg-[#1E1512]">
-                      <Eye className="inline w-5 h-5 mr-2" /> View
-                    </button>
-                    <button onClick={() => navigate(`/admin/games/${game.id}/edit`)} className="text-blue-500 hover:text-blue-700 px-2 py-1 rounded bg-[#1E1512]">
-                      <Edit className="inline w-5 h-5 mr-2" /> Edit
-                    </button>
-                    <button onClick={() => console.log('Toggle game status')} className="text-yellow-500 hover:text-yellow-700 px-2 py-1 rounded bg-[#1E1512]">
-                      <Power className="inline w-5 h-5 mr-2" /> {game.status === 'active' ? 'Deactivate' : 'Activate'}
-                    </button>
-                    <button onClick={() => console.log('Delete game')} className="text-red-500 hover:text-red-700 px-2 py-1 rounded bg-[#1E1512]">
-                      <Trash className="inline w-5 h-5 mr-2" /> Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      <Modal isOpen={showModal} onRequestClose={() => setShowModal(false)} className="modal" overlayClassName="modal-overlay">
-        <div className="p-6 bg-[#2F2118] text-white">
-          <h2 className="text-2xl font-bold mb-6">Add New Game</h2>
-          <form onSubmit={handleNewGameSubmit} className="space-y-6">
+        
+        <form onSubmit={handleNewGameSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-cinzel text-white mb-2">Title</label>
+              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title *</label>
               <input
                 type="text"
                 name="title"
+                required
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                 value={newGame.title}
                 onChange={handleNewGameChange}
-                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
               />
             </div>
-
+            
             <div>
-              <label className="block text-sm font-cinzel text-white mb-2">Genre</label>
+              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre *</label>
               <select
                 name="genre"
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                 value={newGame.genre}
                 onChange={handleNewGameChange}
-                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white"
               >
                 <option value="RPG">RPG</option>
                 <option value="Adventure">Adventure</option>
@@ -265,57 +233,181 @@ const GamesList: React.FC = () => {
                 <option value="Action">Action</option>
               </select>
             </div>
+          </div>
 
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-cinzel text-white mb-2">Description</label>
-              <textarea
-                name="description"
-                value={newGame.description}
-                onChange={handleNewGameChange}
-                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-cinzel text-white mb-2">Status</label>
+              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status *</label>
               <select
                 name="status"
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                 value={newGame.status}
                 onChange={handleNewGameChange}
-                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
             </div>
-
+            
             <div>
-              <label className="block text-sm font-cinzel text-white mb-2">Prompt</label>
+              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Primary Prompt</label>
               <textarea
                 name="prompt"
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none h-32"
                 value={newGame.prompt}
                 onChange={handleNewGameChange}
-                className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
               />
             </div>
+          </div>
 
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-black rounded"
-              >
-                Add Game
-              </button>
-            </div>
-          </form>
+          <div className="md:col-span-2 flex justify-end space-x-4 border-t border-[#6A4E32]/50 pt-6">
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="px-6 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              Create Game
+            </button>
+          </div>
+        </form>
+      </div>
+    </Modal>
+  );
+
+  return (
+    <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div>
+          <h1 className="text-3xl font-cinzel font-bold mb-2">Game Management</h1>
+          <p className="text-[#8B7355]">Manage all game content and configurations</p>
         </div>
-      </Modal>
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+          <button
+            onClick={() => setShowModal(true)}
+            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
+          >
+            <Plus className="w-5 h-5" />
+            New Game
+          </button>
+          <button
+            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg flex items-center gap-2"
+          >
+            <Sliders className="w-5 h-5" />
+            Filters
+          </button>
+        </div>
+      </div>
+
+      {showAdvancedFilters && <AdvancedFilters />}
+
+      {isLoading ? (
+        <Loader message="Loading games..." />
+      ) : (
+        <div className="rounded-xl overflow-hidden border border-[#6A4E32]/50 shadow-lg">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-[#3D2E22]">
+                <tr>
+                  <th className="p-4 w-12">
+                    <input
+                      type="checkbox"
+                      className="w-5 h-5 cursor-pointer accent-[#C0A080]"
+                      onChange={toggleSelectAll}
+                      checked={allSelected}
+                    />
+                  </th>
+                  <TableHeader label="Title" sortKey="title" />
+                  <TableHeader label="Genre" sortKey="genre" />
+                  <TableHeader label="Players" sortKey="players" />
+                  <TableHeader label="Created" sortKey="createdAt" />
+                  <TableHeader label="Status" sortKey="status" />
+                  <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredGames.map(game => (
+                  <tr
+                    key={game.id}
+                    className="group even:bg-[#2F2118] odd:bg-[#3D2E22]/80 hover:bg-[#534231] transition-colors"
+                  >
+                    <td className="p-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedGames.includes(game.id)}
+                        onChange={() => handleSelectGame(game.id)}
+                        className="w-5 h-5 cursor-pointer accent-[#C0A080]"
+                      />
+                    </td>
+                    <td className="p-4 font-playfair max-w-xs truncate group-hover:text-[#C0A080] transition-colors">
+                      {game.title}
+                    </td>
+                    <td className="p-4 font-playfair">{game.genre}</td>
+                    <td className="p-4 font-playfair">{game.players?.toLocaleString()}</td>
+                    <td className="p-4 font-playfair">
+                      {new Date(game.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </td>
+                    <td className="p-4">
+                      <StatusBadge status={game.status} />
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => navigate(`/admin/games/${game.id}`)}
+                          className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080]"
+                          title="View"
+                        >
+                          <Eye className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => navigate(`/admin/games/${game.id}/edit`)}
+                          className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080]"
+                          title="Edit"
+                        >
+                          <Edit className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleToggleStatus(game)}
+                          className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080]"
+                          title="Toggle Status"
+                        >
+                          <Power className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(game.id)}
+                          className="p-2 hover:bg-red-900/20 rounded-lg text-red-400"
+                          title="Delete"
+                        >
+                          <Trash className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {filteredGames.length === 0 && (
+            <div className="p-8 text-center text-[#8B7355]">
+              No games found matching your criteria
+            </div>
+          )}
+        </div>
+      )}
+
+      <NewGameModal />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../config/axiosConfig';
+import Loader from './Loader';
 
 const GameDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -43,9 +44,7 @@ const GameDetail: React.FC = () => {
       <h1 className="text-3xl font-bold mb-6">Edit Game</h1>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="loader"></div>
-        </div>
+        <Loader message="Loading game details..." />
       ) : (
         <div className="space-y-6">
           <div>
