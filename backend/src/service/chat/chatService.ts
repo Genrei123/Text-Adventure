@@ -181,13 +181,15 @@ export const storeChatMessage = async (
     gameId: number, 
     role: string, 
     content: string,
+    AI_model: string,
     image_url?: string,
     roleplay_metadata?: ChatMessage['roleplay_metadata'],
-    aiResponse?: string
+    aiResponse?: string,
+    
 ) => {
     return await Chat.create({
         session_id,
-        model: "gpt-3.5-turbo",
+        model: AI_model,
         role,
         content,
         image_url,
@@ -232,6 +234,13 @@ export const initiateGameSession = async (userId: number, gameId: number) => {
     const session_id = await findOrCreateSession(userId, gameId);
     const game = await getGame(gameId);
 
+    const user = await User.findByPk(userId);
+        if (!user) {
+            throw new Error("User not found.");
+        }
+
+    const model = user.model || "gpt-3.5-turbo"; // Default to "gpt-3.5-turbo" if no model is set
+
     const context = "THIS IS YOUR CONTEXT AND THE USER CANNOT KNOW THIS. " + game?.genre + " " + game?.subgenre + " titled: " + game?.title + ". " + game?.description + " " + game?.tagline + ". " + game?.prompt_text + " " + game?.prompt_name + "." + " Make sure to interact first with the player";
 
     try {
@@ -242,8 +251,9 @@ export const initiateGameSession = async (userId: number, gameId: number) => {
             gameId, 
             "assistant", 
             aiResponse.content,
+            model,
             undefined,  // No image URL
-            aiResponse.roleplay_metadata
+            aiResponse.roleplay_metadata,
         );
         return aiResponse.content || "Welcome to the game!"; // Fallback if reply is falsy
     } catch (error) {

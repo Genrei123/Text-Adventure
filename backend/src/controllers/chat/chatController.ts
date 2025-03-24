@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { validateUserAndGame, getChatHistory, findOrCreateSession, callOpenAI, storeChatMessage, initiateGameSession, getConversationHistory, resetConversationHistory } from "../../service/chat/chatService";
+import User from "../../model/user/user";
 
 export const getChatHistoryController = async (req: Request, res: Response) => {
     try {
@@ -47,7 +48,14 @@ export const handleChatRequestController = async (req: Request, res: Response): 
             }
         ];
 
-        await storeChatMessage(session_id, userId, gameId, "user", message);
+        const user = await User.findByPk(userId);
+        if (!user) {
+            throw new Error("User not found.");
+        }
+
+        const model = user.model || "gpt-3.5-turbo"; // Default to "gpt-3.5-turbo" if no model is set
+
+        await storeChatMessage(session_id, userId, gameId, "user", message, model);
 
         // Pass both userId and formattedMessages to callOpenAI
         const aiResponse = await callOpenAI(userId, formattedMessages);
@@ -58,6 +66,7 @@ export const handleChatRequestController = async (req: Request, res: Response): 
             gameId, 
             "assistant", 
             aiResponse.content,
+            model,
             undefined,  // No image URL
             aiResponse.roleplay_metadata
         );
@@ -99,6 +108,13 @@ export const storeBannerImage = async (req: Request, res: Response): Promise<any
         // Find or create a session
         const session_id = await findOrCreateSession(userId, gameId);
 
+        const user = await User.findByPk(userId);
+        if (!user) {
+            throw new Error("User not found.");
+        }
+
+        const model = user.model || "gpt-3.5-turbo"; // Default to "gpt-3.5-turbo" if no model is set
+
         // Store the image message with optional roleplay metadata
         const storedMessage = await storeChatMessage(
             session_id,
@@ -107,12 +123,13 @@ export const storeBannerImage = async (req: Request, res: Response): Promise<any
             role,
             content || 'Scene visualized:',
             imageUrl,
+            model,
             // Pass roleplay metadata if provided
             {
                 emotion: roleplay_emotion,
                 action: roleplay_action,
                 character_state: roleplay_character_state,
-                narrative_impact: roleplay_narrative_impact
+                narrative_impact: roleplay_narrative_impact,
             }
         );
 
