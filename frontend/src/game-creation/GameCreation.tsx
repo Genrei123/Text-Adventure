@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import axios from "../../config/axiosConfig"; // Adjust the import path
+import axios from "../../config/axiosConfig";
 import { TextInput, NavigationButtons } from "./component/GameCreationComponents";
 import { useNavigate } from 'react-router-dom';
 import Navbar from "../components/Navbar";
-import { RefreshCw, MoveIcon, Check } from 'lucide-react'; // Import move icon instead of crop
+import { RefreshCw, MoveIcon, Check } from 'lucide-react';
 import LoadingScreen from "../components/LoadingScreen";
 
 interface GameCreationProps {
@@ -12,7 +12,7 @@ interface GameCreationProps {
 }
 
 interface FormData {
-  genre: string;
+  genres: string[];
   title: string;
   description: string;
   ending: string;
@@ -29,12 +29,14 @@ interface StepContent {
 export const GameCreation: React.FC<GameCreationProps> = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
-    genre: "",
+    genres: [],
     title: "",
     description: "",
     ending: "",
     bannerPrompt: ""
   });
+  const [mainGenre, setMainGenre] = useState<string | null>(null);
+  const [customGenre, setCustomGenre] = useState<string>(""); // New state for custom genre input
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -55,12 +57,11 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Retrieve user data from localStorage
   const getUserId = () => {
     const userDataString = localStorage.getItem("userData");
     if (userDataString) {
       const userData = JSON.parse(userDataString);
-      return userData.id; // Assuming the user object has an 'id' field
+      return userData.id;
     }
     return null;
   };
@@ -68,10 +69,8 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
   const handleNext = () => {
     if (validateStep()) {
       if (step === 4) {
-        // When moving from step 4 to step 5, show the banner prompt then generate preview
         setStep(5);
       } else if (step === 5) {
-        // After banner prompt is entered, generate the image preview
         generateImagePreview();
       } else {
         setStep((prevStep) => Math.min(5, prevStep + 1));
@@ -82,7 +81,6 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
 
   const handleBack = () => {
     if (showPreview) {
-      // If we're in preview mode, go back to banner prompt
       setShowPreview(false);
     } else {
       setStep((prevStep) => Math.max(1, prevStep - 1));
@@ -90,16 +88,54 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
   };
 
   const handleChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: "" }));
+    if (field === "genres") {
+      setFormData((prev) => {
+        const currentGenres = prev.genres;
+        if (currentGenres.includes(value)) {
+          // If genre is being deselected
+          const newGenres = currentGenres.filter((g) => g !== value);
+          if (value === mainGenre) {
+            setMainGenre(newGenres.length > 0 ? newGenres[0] : null);
+          }
+          return {
+            ...prev,
+            genres: newGenres,
+          };
+        } else if (currentGenres.length < 3) {
+          // If adding a new genre
+          if (!mainGenre) {
+            setMainGenre(value);
+          }
+          return {
+            ...prev,
+            genres: [...currentGenres, value],
+          };
+        }
+        return prev;
+      });
+      setErrors((prev) => ({ ...prev, genres: "" }));
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
+  const handleCustomGenreChange = (value: string) => {
+    setCustomGenre(value);
+  };
+
+  const handleCustomGenreSubmit = () => {
+    if (customGenre.trim() && !formData.genres.includes(customGenre.trim())) {
+      handleChange("genres", customGenre.trim());
+      setCustomGenre(""); // Clear the input after adding
+    }
   };
 
   const generateSuggestions = () => {
-    // Generate suggestions based on current data
-    if (step === 1 && formData.genre) {
-      setSuggestions(`For a ${formData.genre} story, consider titles like "The Lost Realm", "Forgotten Shadows", or "Beyond the Horizon".`);
+    if (step === 1 && formData.genres.length > 0) {
+      setSuggestions(`For a ${formData.genres.join(", ")} story (main genre: ${mainGenre}), consider titles like "The Lost Realm", "Forgotten Shadows", or "Beyond the Horizon".`);
     } else if (step === 2 && formData.title) {
-      setSuggestions(`For "${formData.title}", try a description that establishes the setting and main conflict. For example: "In a world where ${formData.genre.toLowerCase()} elements shape reality, our protagonist faces an unexpected challenge..."`);
+      setSuggestions(`For "${formData.title}", try a description that establishes the setting and main conflict. For example: "In a world where ${formData.genres.join(", ").toLowerCase()} elements shape reality, our protagonist faces an unexpected challenge..."`);
     } else if (step === 3 && formData.description) {
       setSuggestions(`Based on your description, consider an ending where the protagonist either overcomes their challenge or faces a dramatic twist.`);
     } else if (step === 4 && formData.ending) {
@@ -112,7 +148,11 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
   const validateStep = () => {
     const newErrors: Partial<Record<keyof FormData, string>> = {};
     const currentField = getStepContent().field;
-    if (!formData[currentField]) {
+    if (currentField === "genres") {
+      if (formData.genres.length === 0) {
+        newErrors[currentField] = "At least one genre is required.";
+      }
+    } else if (!formData[currentField]) {
       newErrors[currentField] = `${currentField.charAt(0).toUpperCase() + currentField.slice(1)} is required.`;
     }
     setErrors(newErrors);
@@ -128,32 +168,26 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
   };
 
   const generateImagePreview = async () => {
-    // Show loading screen with fade in
     setShowLoadingScreen(true);
     setLoadingFadeIn(true);
     
-    // After a short delay, complete the fade in
     setTimeout(() => {
       setLoadingFadeIn(false);
     }, 500);
     
     setIsGeneratingImage(true);
     try {
-      // Generate banner image
       const imageResponse = await axios.post('/openai/generateBannerImage', {
-        prompt: formData.bannerPrompt || `A banner for a ${formData.genre} story titled ${formData.title}`
+        prompt: formData.bannerPrompt || `A banner for a ${formData.genres.join(", ")} story (main genre: ${mainGenre}) titled ${formData.title}`
       });
 
       setPreviewImage(`${import.meta.env.VITE_BACKEND_URL}${imageResponse.data.imageUrl}`);
       setImage(imageResponse.data.imageUrl);
-      // Reset image position when new image is generated
       setImagePosition({ x: 0, y: 0 });
       setIsRepositioning(false);
       
-      // Start fade out animation for loading screen
       setLoadingFadeOut(true);
       
-      // After animation completes, hide loading screen and show preview
       setTimeout(() => {
         setShowLoadingScreen(false);
         setLoadingFadeOut(false);
@@ -164,7 +198,6 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
       console.error('Error generating preview image:', error);
       alert('Failed to generate preview image. Please try again.');
       
-      // Hide loading screen on error
       setLoadingFadeOut(true);
       setTimeout(() => {
         setShowLoadingScreen(false);
@@ -198,7 +231,6 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
       const deltaX = moveEvent.clientX - startX;
       const deltaY = moveEvent.clientY - startY;
       
-      // Update image position
       setImagePosition({
         x: startPosX + deltaX,
         y: startPosY + deltaY
@@ -216,7 +248,6 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
 
   const confirmRepositioning = () => {
     setIsRepositioning(false);
-    // In a real implementation, you might want to save the position for later use
   };
 
   const handleSubmit = async () => {
@@ -227,41 +258,37 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
 
     setIsLoading(true);
     try {
-      // In a real implementation, you would apply the positioning offset to the image
-      // before submitting, or send the positioning data to the backend
-      
-      // Prepare game data
+      const orderedGenres = mainGenre 
+        ? [mainGenre, ...formData.genres.filter(g => g !== mainGenre)]
+        : formData.genres;
+
       const gameData = {
         title: formData.title,
         slug: generateSlug(formData.title),
         description: formData.description,
         tagline: formData.ending,
-        genre: formData.genre,
-        subgenre: "", // You might want to add a field for this
-        primary_color: "#FF5733", // Default color, could be customizable
+        genre: mainGenre || formData.genres[0] || "",
+        subgenres: orderedGenres.slice(1).join(","),
+        primary_color: "#FF5733",
         prompt_name: "default",
-        prompt_text: `You are in a ${formData.genre} story: ${formData.description}`,
+        prompt_text: `You are in a story combining ${formData.genres.join(", ")} elements (main genre: ${mainGenre}): ${formData.description}`,
         prompt_model: "gpt-3.5-turbo",
         image_prompt_model: "dall-e-3",
         image_prompt_name: "scene",
-        image_prompt_text: formData.bannerPrompt || `A banner for a ${formData.genre} story`,
+        image_prompt_text: formData.bannerPrompt || `A banner for a story combining ${formData.genres.join(", ")} elements (main genre: ${mainGenre})`,
         image_data: image,
-        image_position: imagePosition, // Store the positioning data
-        music_prompt_text: `Create ambient music for a ${formData.genre} story`,
-        music_prompt_seed_image: "", // Optional
+        image_position: imagePosition,
+        music_prompt_text: `Create ambient music for a story combining ${formData.genres.join(", ")} elements (main genre: ${mainGenre})`,
+        music_prompt_seed_image: "",
         private: false,
         UserId: getUserId()
       };
 
-      // Add game to backend
       const addGameResponse = await axios.post('/game/add-game', gameData);
-
-      // Navigate to editing page with game data
       alert('Game created successfully!');
       navigate('/home');
     } catch (error) {
       console.error('Error submitting game:', error);
-      // Handle error (show error message to user)
       alert('Failed to create game. Please try again.');
     } finally {
       setIsLoading(false);
@@ -270,33 +297,74 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
 
   const getStepContent = (): StepContent => {
     const steps: StepContent[] = [
-      { field: "genre", title: "WHAT IS THE GENRE OF YOUR STORY?", description: "Selecting a short, evocative genre will help generate a good adventure." },
+      { field: "genres", title: "WHAT ARE THE GENRES OF YOUR STORY?", description: "Type your custom genres or select up to 3 from suggestions below. The first genre you add will be the main genre." },
       { field: "title", title: "WHAT IS THE TITLE OF YOUR STORY?", description: "Selecting a great, striking title will help generate a good adventure." },
       { field: "description", title: "DESCRIBE YOUR STORY", description: "Provide a brief description of the setting, plot, and characters." },
       { field: "ending", title: "HOW DOES YOUR STORY END?", description: "Describe the desired conclusion of your adventure." },
       { field: "bannerPrompt", title: "BANNER PROMPT", description: "Describe what you want the banner to look like."}
     ];
-    return steps[step - 1] || { field: "genre", title: "", description: "" };
+    return steps[step - 1] || { field: "genres", title: "", description: "" };
   };
 
   const { field, title, description, subComment } = getStepContent();
 
   const renderGenreSuggestions = () => {
-    if (field === "genre") {
+    if (field === "genres") {
       return (
         <div className="mt-4 mb-6">
-          <p className="text-gray-300 mb-2 text-sm">Suggested genres:</p>
+          <div className="mb-4">
+            <TextInput
+              label="Enter your Genre"
+              value={customGenre}
+              onChange={handleCustomGenreChange}
+              error={errors.genres}
+            />
+            <button
+              onClick={handleCustomGenreSubmit}
+              disabled={!customGenre.trim() || formData.genres.length >= 3}
+              className={`mt-2 px-4 py-2 rounded transition-colors ${
+                !customGenre.trim() || formData.genres.length >= 3
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-blue-700 hover:bg-blue-600'
+              }`}
+            >
+              Add Genre
+            </button>
+          </div>
+          <p className="text-gray-300 mb-2 text-sm">
+            Or select from suggested genres (select up to 3, first selected is main genre):
+            {formData.genres.length > 0 && (
+              <span className="ml-2 text-green-400">
+                Selected: {formData.genres.join(", ")} 
+                {mainGenre && ` (Main: ${mainGenre})`}
+              </span>
+            )}
+          </p>
           <div className="flex flex-wrap gap-2">
             {genreSuggestions.map((genre, index) => (
               <button
                 key={index}
-                onClick={() => handleChange("genre", genre)}
-                className="px-3 py-1 rounded bg-gray-700 hover:bg-gray-600 text-sm transition-colors"
+                onClick={() => handleChange("genres", genre)}
+                className={`px-3 py-1 rounded text-sm transition-colors ${
+                  formData.genres.includes(genre)
+                    ? genre === mainGenre
+                      ? "bg-purple-700 hover:bg-purple-600"
+                      : "bg-green-700 hover:bg-green-600"
+                    : "bg-gray-700 hover:bg-gray-600"
+                }`}
+                disabled={
+                  !formData.genres.includes(genre) && formData.genres.length >= 3
+                }
               >
                 {genre}
               </button>
             ))}
           </div>
+          {formData.genres.length === 3 && (
+            <p className="text-yellow-400 text-sm mt-2">
+              Maximum of 3 genres selected. Deselect one to choose another.
+            </p>
+          )}
         </div>
       );
     }
@@ -306,11 +374,9 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
   return (
     <div className="min-h-screen bg-[#1a1a1a] text-white font-inter relative overflow-hidden">
       <Navbar />
-      {/* Loading Screen */}
       {showLoadingScreen && (
         <LoadingScreen fadeIn={loadingFadeIn} fadeOut={loadingFadeOut} />
       )}
-      {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-16">
         <div className="w-full max-w-2xl mx-auto text-center">
           {!showPreview ? (
@@ -325,16 +391,18 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
                 <p className="text-red-400 italic mb-4">{subComment}</p>
               )}
 
-              {renderGenreSuggestions()}
+              {renderGenreSuggestions()} 
 
-              <div className="mb-8">
-                <TextInput
-                  label={field.charAt(0).toUpperCase() + field.slice(1)}
-                  value={formData[field]}
-                  onChange={(value) => handleChange(field, value)}
-                  error={errors[field]}
-                />
-              </div>
+              {field !== "genres" && (
+                <div className="mb-8"> 
+                  <TextInput
+                    label={field.charAt(0).toUpperCase() + field.slice(1)}
+                    value={formData[field] as string}
+                    onChange={(value) => handleChange(field, value)}
+                    error={errors[field]}
+                  />
+                </div>
+              )}
 
               {suggestions && (
                 <div className="mb-6 p-4 bg-gray-800 rounded-lg">
@@ -449,4 +517,4 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
   );
 };
 
-export default GameCreation;
+export default GameCreation;  
