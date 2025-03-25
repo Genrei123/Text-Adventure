@@ -56,7 +56,6 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public updated_At!: Date;
   public image_url?: string | null; // Merged from main
   public lastLogin!: Date;
-  public lastLogin!: Date;
 }
 
 User.init({
@@ -119,14 +118,6 @@ User.init({
     defaultValue: DataTypes.NOW 
   },
   image_url: { type: DataTypes.STRING, allowNull: true },
-  lastLogin: {type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW }
-  image_url: { 
-    type: DataTypes.STRING, 
-    allowNull: true,
-    defaultValue: function() {
-      return `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=user`;
-    }
-  },
   lastLogin: {type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW }
 }, {
   sequelize,
