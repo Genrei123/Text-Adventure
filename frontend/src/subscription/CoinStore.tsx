@@ -19,7 +19,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             try {
                 setLoading(true);
                 // Updated to use the correct API endpoint from your routes
-                const response = await axios.get(import.meta.env.VITE_SDXL_ENV + '/shop/tokens/packages');
+                const response = await axios.get('/shop/tokens/packages');
                 setOffers(response.data);
                 setError(null);
             } catch (error) {
@@ -41,7 +41,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     
         try {
             const response = await axios.post(import.meta.env.VITE_SDXL_ENV + '/shop/tokens/purchase', {
-                packageId: itemId,
+                packageId: itemId, // Updated parameter name to match backend expectation
                 email: email
             });
             const { paymentLink } = response.data;
@@ -50,11 +50,6 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             } else {
                 setError('Payment link not received from server');
             }
-    
-            // Fetch updated coin balance after purchase
-            const coinResponse = await axios.get(`/coins/${email}`);
-            const updatedCoins = coinResponse.data.coins;
-            localStorage.setItem('coins', updatedCoins); // Optional: Store in localStorage
         } catch (error) {
             console.error('Error purchasing token package:', error);
             setError('Failed to process purchase. Please try again later.');

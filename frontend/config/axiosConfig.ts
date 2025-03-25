@@ -8,25 +8,6 @@ const instance = axios.create({
   }
 });
 
-const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_SDXL_ENV || "http://localhost:3000",
-  headers: {
-    'Content-Type': 'application/json',
-    // Include Authorization header if needed
-  }
-});
-
-// Add an interceptor to log requests (for debugging)
-axiosInstance.interceptors.request.use(
-  (config) => {
-    console.log("Request:", config.method?.toUpperCase(), config.url);
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
 // Request interceptor
 instance.interceptors.request.use(
   (config) => {
@@ -44,9 +25,9 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     // Only redirect to login for specific authentication-related errors
-    if (error.response?.status === 401 &&
-      !error.config.url.includes('/auth/') &&
-      !error.config.url.includes('/login')) {
+    if (error.response?.status === 401 && 
+        !error.config.url.includes('/auth/') && 
+        !error.config.url.includes('/login')) {
       localStorage.removeItem('token');
       localStorage.removeItem('email');
       window.location.href = '/login';

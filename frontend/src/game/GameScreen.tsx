@@ -43,21 +43,11 @@ const GameScreen: React.FC = () => {
   const [isAnimating, setIsAnimating] = useState(true);
   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
   const [isWaitingForAI, setIsWaitingForAI] = useState(false);
-  const [coins, setCoins] = useState<number>(0);
-  const [isCheckingCoins, setIsCheckingCoins] = useState<boolean>(false);
-  const [showCoinStore, setShowCoinStore] = useState(false);
-
+  
   interface GameSummaryResponse {
     summary: string;
     imageUrl: string;
   }
-
-  useEffect(() => {
-    if (userId) {
-      console.log("Calling fetchCoins with userId:", userId); // Debugging
-      fetchCoins();
-    }
-  }, [userId]);
 
   // Update the state declaration
   const [gameSummary, setGameSummary] = useState<GameSummaryResponse | null>(null);
@@ -93,34 +83,6 @@ const GameScreen: React.FC = () => {
     }
   }
 
-  const fetchCoins = async () => {
-    if (!userId) return;
-  
-    try {
-      setIsCheckingCoins(true);
-      // Get the email from localStorage
-      const email = localStorage.getItem("email") || localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email;
-      
-      if (!email) {
-        console.error("Email not found in localStorage");
-        return;
-      }
-      
-      // Use the correct endpoint with email parameter
-      const response = await axiosInstance.get(`/shop/coins?email=${encodeURIComponent(email)}`);
-      
-      console.log("Full response from backend:", response);
-      console.log("Fetched coins:", response.data.coins); 
-      
-      // Update coins state
-      setCoins(response.data.coins || 0);
-    } catch (error) {
-      console.error("Error fetching coins:", error);
-    } finally {
-      setIsCheckingCoins(false);
-    }
-  };
-
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -141,7 +103,6 @@ const GameScreen: React.FC = () => {
       try {
         const parsedData = JSON.parse(userData);
         if (parsedData.id) {
-          console.log("Setting userId from localStorage:", parsedData.id); // Debugging
           setUserId(parsedData.id);
         }
       } catch (error) {
@@ -185,7 +146,7 @@ const GameScreen: React.FC = () => {
             timestamp: new Date(msg.createdAt).toLocaleTimeString(),
             image_url: msg.image_url || undefined,
           }));
-
+          
           console.log("Fetched chat messages:", formattedMessages);
           setChatMessages(formattedMessages);
         } else {
@@ -202,7 +163,7 @@ const GameScreen: React.FC = () => {
     // Execute both fetches
     Promise.all([fetchGameDetails(), fetchChatMessages()])
       .catch(err => console.error("Error in initial data fetch:", err));
-
+      
   }, [userId, gameId]);
 
   // Scroll to bottom when messages update
@@ -246,29 +207,17 @@ const GameScreen: React.FC = () => {
       return;
     }
 
-    // Check if user has coins
-    if (coins <= 0) {
-      setError("You don't have enough coins to continue. Please purchase more.");
-      return;
-    }
-
     const payload = { userId, gameId: Number.parseInt(gameId, 10), message, action: selectedAction };
     setMessage("");
     setIsWaitingForAI(true);
 
     try {
-      // Deduct coin first
-      await axiosInstance.post("/deduct-coins", { userId });
-
-      // Update local coin count
-      setCoins(prevCoins => Math.max(0, prevCoins - 1));
-
       const displayMessage = `[${selectedAction}] ${message}`;
       const tempUserMessage = { content: displayMessage, isUser: true, timestamp: new Date().toLocaleTimeString() };
       setChatMessages((prev) => [...prev, tempUserMessage]);
 
       const response = await axiosInstance.post("/ai/chat", payload);
-
+      
       const aiResponse: ChatMessage = {
         content: response.data.ai_response.content || "This is a simulated AI response.",
         isUser: false,
@@ -318,30 +267,18 @@ const GameScreen: React.FC = () => {
       setError("User ID or Game ID not found. Please log in again.");
       return;
     }
-
-    // Check if user has coins
-    if (coins <= 0) {
-      setError("You don't have enough coins to generate an image. Please purchase more.");
-      return;
-    }
-
+  
     setError("");
     setSuccess("");
     setIsGeneratingImage(true);
     setShowModelDropdown(false);
-
+  
     try {
-      // Deduct coin first
-      await axiosInstance.post("/deduct-coins", { userId });
-
-      // Update local coin count
-      setCoins(prevCoins => Math.max(0, prevCoins - 1));
-
       const contextMessage = getContextFromMessages();
       // Adjust prompt based on model
       let imagePrompt;
       let apiEndpoint;
-
+      
       if (selectedModel.toUpperCase() === "SDXL") {
         // SDXL specific formatting
         imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
@@ -351,23 +288,23 @@ const GameScreen: React.FC = () => {
         imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
         apiEndpoint = "/openai/generate-image"; // Use OpenAI endpoint for DALL-E
       }
-
+  
       const userPromptMessage: ChatMessage = {
         content: `[Generate Image] Visualizing the current scene using ${selectedModel}...`,
         isUser: true,
         timestamp: new Date().toLocaleTimeString(),
       };
       setChatMessages((prev) => [...prev, userPromptMessage]);
-
+  
       const generatingMessage: ChatMessage = {
         content: `Generating image of the current scene with ${selectedModel}...`,
         isUser: false,
         timestamp: new Date().toLocaleTimeString(),
       };
       setChatMessages((prev) => [...prev, generatingMessage]);
-
+  
       console.log(`Sending request to ${apiEndpoint} with:`, { prompt: imagePrompt, userId, gameId, model: selectedModel.toLowerCase() });
-
+      
       // Use the appropriate endpoint based on selected model
       const response = await axios.post(import.meta.env.VITE_SDXL_ENV + apiEndpoint, {
         prompt: imagePrompt,
@@ -375,15 +312,15 @@ const GameScreen: React.FC = () => {
         gameId: Number.parseInt(gameId, 10),
         model: selectedModel.toLowerCase(),
       });
-
+      
       console.log(response);
       console.log(`Response from ${apiEndpoint}:`, response.data);
-
+  
       setChatMessages((prev) => prev.slice(0, -1));
-
+  
       const { imageUrl } = response.data;
       console.log("Image URL received:", imageUrl);
-
+  
       await axios.post(import.meta.env.VITE_SDXL_ENV + "/ai/store-image", {
         userId,
         gameId: Number.parseInt(gameId, 10),
@@ -391,7 +328,7 @@ const GameScreen: React.FC = () => {
         image_url: imageUrl,
         role: "assistant",
       });
-
+      
       console.log("Store-image response:", await axios.post(import.meta.env.VITE_SDXL_ENV + "/ai/store-image", {
         userId,
         gameId: Number.parseInt(gameId, 10),
@@ -399,7 +336,7 @@ const GameScreen: React.FC = () => {
         image_url: imageUrl,
         role: "assistant",
       }).catch(err => console.error("Store-image error:", err)));
-
+  
       const imageResponse: ChatMessage = {
         content: `Scene visualized with ${selectedModel}:`,
         isUser: false,
@@ -463,7 +400,7 @@ const GameScreen: React.FC = () => {
   // Render waiting bubble for AI
   const renderWaitingBubble = () => {
     if (!isWaitingForAI) return null;
-
+    
     return (
       <div className="mb-4 text-left">
         <div className="inline-block p-3 rounded-lg bg-[#634630] text-[#E5D4B3]">
@@ -481,12 +418,12 @@ const GameScreen: React.FC = () => {
   // Function to get the correct image URL based on environment
   const getImageUrl = (imageUrl: string) => {
     if (!imageUrl) return '';
-
+    
     // If it's already an absolute URL, return it
     if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
       return imageUrl;
     }
-
+    
     // Otherwise, build the URL based on the environment
     const baseUrl = import.meta.env.VITE_SDXL_ENV || '';
     return `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
@@ -504,7 +441,7 @@ const GameScreen: React.FC = () => {
     } catch (err) {
       alert(err);
     }
-
+    
 
   };
 
@@ -582,7 +519,7 @@ const GameScreen: React.FC = () => {
                           loading="lazy"
                           onError={(e) => {
                             console.error("Image load error:", e.currentTarget.src);
-                            e.currentTarget.onerror = null;
+                            e.currentTarget.onerror = null; 
                           }}
                         />
                       </div>
@@ -604,9 +541,8 @@ const GameScreen: React.FC = () => {
             <div className="relative" ref={modelDropdownRef}>
               <button
                 onClick={toggleModelDropdown}
-                className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base flex items-center gap-1 ${isGeneratingImage || coins <= 0 ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed" : `bg-[${gameDetails?.primary_color || "#634630"}] text-white hover:bg-[#311F17] transition-colors`
-                  }`}
-                disabled={isGeneratingImage || coins <= 0}
+                className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base flex items-center gap-1 ${isGeneratingImage ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed" : `bg-[${gameDetails?.primary_color || "#634630"}] text-white hover:bg-[#311F17] transition-colors`}`}
+                disabled={isGeneratingImage}
               >
                 Visualize Scene
                 {showModelDropdown ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -666,21 +602,19 @@ const GameScreen: React.FC = () => {
           <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
             <textarea
               ref={textareaRef}
-              className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${showScroll ? "overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent" : "overflow-y-hidden"
-                } ${coins <= 0 ? 'opacity-50' : ''}`}
-              placeholder={coins <= 0 ? "Purchase coins to continue your adventure..." : `Type what you want to ${selectedAction.toLowerCase()}...`}
+              className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${showScroll ? "overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent" : "overflow-y-hidden"}`}
+              placeholder={`Type what you want to ${selectedAction.toLowerCase()}...`}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               rows={1}
               style={{ minHeight: "56px", height: `${Math.min(message.split("\n").length * 24 + 32, 192)}px` }}
-              disabled={isWaitingForAI || coins <= 0}
+              disabled={isWaitingForAI}
             />
-            <button
-              className={`p-4 bg-transparent rounded-r-2xl relative group self-start ${isWaitingForAI || coins <= 0 ? 'cursor-not-allowed opacity-50' : ''
-                }`}
+            <button 
+              className={`p-4 bg-transparent rounded-r-2xl relative group self-start ${isWaitingForAI ? 'cursor-not-allowed opacity-50' : ''}`} 
               onClick={handleSubmit}
-              disabled={isWaitingForAI || coins <= 0}
+              disabled={isWaitingForAI}
             >
               <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
               <img
