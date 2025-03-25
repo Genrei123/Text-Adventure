@@ -46,7 +46,10 @@ const GameScreen: React.FC = () => {
   const [coins, setCoins] = useState<number>(0);
   const [isCheckingCoins, setIsCheckingCoins] = useState<boolean>(false);
   const [showCoinStore, setShowCoinStore] = useState(false);
-
+  const lastRefreshTimeRef = useRef<number>(0);
+  const refreshInProgressRef = useRef<boolean>(false);
+  const [gameSummary, setGameSummary] = useState<GameSummaryResponse | null>(null);
+  
   interface GameSummaryResponse {
     summary: string;
     imageUrl: string;
@@ -59,11 +62,33 @@ const GameScreen: React.FC = () => {
     }
   }, [userId]);
 
-  // Update the state declaration
-  const [gameSummary, setGameSummary] = useState<GameSummaryResponse | null>(null);
-
-  const triggerCoinRefresh = async () => {
+  const triggerCoinRefresh = async (force = false, manualBalance?: number) => {
+    // If manualBalance is provided, use it directly
+    if (manualBalance !== undefined) {
+      setCoins(manualBalance);
+      
+      // Dispatch event with the new balance
+      const coinUpdateEvent = new CustomEvent('coinUpdate', { 
+        detail: { newBalance: manualBalance } 
+      });
+      window.dispatchEvent(coinUpdateEvent);
+      return manualBalance;
+    }
+    
+    // Prevent concurrent refreshes
+    if (refreshInProgressRef.current && !force) {
+      return;
+    }
+    
+    const now = Date.now();
+    // Only refresh if forced or it's been more than 2 seconds
+    if (!force && now - lastRefreshTimeRef.current < 2000) {
+      return;
+    }
+    
     try {
+      refreshInProgressRef.current = true;
+      
       const email = localStorage.getItem("email") || 
         (localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email);
   
@@ -76,16 +101,24 @@ const GameScreen: React.FC = () => {
       const response = await axiosInstance.get(`/shop/coins?email=${encodeURIComponent(email)}`);
       console.log("GameScreen: Received updated coin balance:", response.data.coins);
       
-      // Update local state
-      setCoins(response.data.coins || 0);
+      // Update last refresh time
+      lastRefreshTimeRef.current = Date.now();
       
-      // Dispatch a custom event to notify the header
-      const coinUpdateEvent = new CustomEvent('coinUpdate');
+      // Update local state
+      const newBalance = response.data.coins || 0;
+      setCoins(newBalance);
+      
+      // Dispatch a custom event with the new balance
+      const coinUpdateEvent = new CustomEvent('coinUpdate', { 
+        detail: { newBalance: newBalance } 
+      });
       window.dispatchEvent(coinUpdateEvent);
       
-      return response.data.coins;
+      return newBalance;
     } catch (error) {
       console.error("Error refreshing coins:", error);
+    } finally {
+      refreshInProgressRef.current = false;
     }
   };
 
@@ -262,41 +295,63 @@ const GameScreen: React.FC = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
+  
     if (!message.trim()) {
       setError("Message cannot be empty.");
       return;
     }
-
+  
     if (!userId || !gameId) {
       setError("User ID or Game ID not found. Please log in again.");
       return;
     }
-
+  
     // Check if user has coins
     if (coins <= 0) {
       setError("You don't have enough coins to continue. Please purchase more.");
       return;
     }
-
+  
     const payload = { userId, gameId: Number.parseInt(gameId, 10), message, action: selectedAction };
+    const savedMessage = message; // Save message before clearing the input
     setMessage("");
     setIsWaitingForAI(true);
-
+  
     try {
       // Get the email from localStorage
       const email = localStorage.getItem("email") ||
         (localStorage.getItem("userData") &&
           JSON.parse(localStorage.getItem("userData") || "{}").email);
-
+  
       if (!email) {
         console.error("Email not found in localStorage");
         setError("User email not found. Please log in again.");
         setIsWaitingForAI(false);
         return;
       }
-
-      // Deduct coin after successful AI response
+  
+      // Show the user message in the chat (optimistic UI update)
+      const displayMessage = `[${selectedAction}] ${savedMessage}`;
+      const tempUserMessage = { 
+        content: displayMessage, 
+        isUser: true, 
+        timestamp: new Date().toLocaleTimeString() 
+      };
+      setChatMessages((prev) => [...prev, tempUserMessage]);
+  
+      // Log the payload being sent
+      console.log("Sending to /ai/chat with payload:", payload);
+  
+      // Make API call to get AI response
+      const response = await axiosInstance.post("/ai/chat", payload);
+      console.log("AI response:", response.data);
+  
+      // Check if we have a valid response
+      if (!response.data || !response.data.ai_response) {
+        throw new Error("Invalid response format from AI service");
+      }
+  
+      // If AI response was successful, THEN deduct coins
       try {
         // Include both system message and user message for proper token counting
         const deductResponse = await axiosInstance.post("/shop/deduct-coins", {
@@ -304,45 +359,26 @@ const GameScreen: React.FC = () => {
           userId: userId,
           messages: [
             { role: "System", content: "Coin deduction for message" },
-            { role: "User", content: message } // Include the actual user message
+            { role: "User", content: savedMessage } // Include the actual user message
           ]
         });
-
-        console.log("Deduction response:", deductResponse.data);
-
-        // Update local coin count based on the actual number of coins deducted
+        
+        console.log("Coin deduction details:", deductResponse.data);
+        
+        // Get the number of coins deducted from the response
         const coinsDeducted = deductResponse.data.coinsDeducted || 1;
+        
+        // Update local coin count
         setCoins(prevCoins => Math.max(0, prevCoins - coinsDeducted));
-
-        // Trigger a custom event for the header to refresh
-        const coinUpdateEvent = new CustomEvent('coinUpdate', {
-          detail: { newBalance: coins - coinsDeducted }
-        });
-        window.dispatchEvent(coinUpdateEvent);
-
-        // Also call the triggerCoinRefresh function
+        
+        // Trigger coin refresh in the header
         await triggerCoinRefresh();
-
       } catch (deductError) {
-        console.error("Error deducting coins:", deductError);
+        console.error("Error deducting coins (but message was sent):", deductError);
+        // Continue processing the AI response even if coin deduction fails
       }
-
-      const displayMessage = `[${selectedAction}] ${message}`;
-      const tempUserMessage = { content: displayMessage, isUser: true, timestamp: new Date().toLocaleTimeString() };
-      setChatMessages((prev) => [...prev, tempUserMessage]);
-
-      // Log the payload being sent
-      console.log("Sending to /ai/chat with payload:", payload);
-
-      // Proceed with sending the message to AI
-      const response = await axiosInstance.post("/ai/chat", payload);
-      console.log("AI response:", response.data);
-
-      // Check if we have a valid response
-      if (!response.data || !response.data.ai_response) {
-        throw new Error("Invalid response format from AI service");
-      }
-
+  
+      // Process and display the AI response
       const aiResponse: ChatMessage = {
         content: response.data.ai_response.content || "This is a simulated AI response.",
         isUser: false,
@@ -351,10 +387,11 @@ const GameScreen: React.FC = () => {
           : new Date().toLocaleTimeString(),
         image_url: response.data.ai_response.image_url,
       };
-
+  
+      // Update the chat messages with the user message and AI response
       if (response.data.user_message && response.data.user_message.createdAt) {
         setChatMessages((prev) => {
-          const updatedMessages = prev.slice(0, -1);
+          const updatedMessages = prev.slice(0, -1); // Remove the temporary user message
           return [
             ...updatedMessages,
             {
@@ -369,40 +406,16 @@ const GameScreen: React.FC = () => {
       } else {
         setChatMessages((prev) => [...prev.slice(0, -1), tempUserMessage, aiResponse]);
       }
-
-      // Deduct coin after successful AI response
-      try {
-        // Include both system message and user message for proper token counting
-        await axiosInstance.post("/shop/deduct-coins", {
-          email: email,
-          userId: userId,
-          messages: [
-            { role: "System", content: "Coin deduction for message" },
-            { role: "User", content: message } // Include the actual user message
-          ]
-        });
-
-        // Trigger coin refresh to update the header
-        triggerCoinRefresh();
-
-        // Update local coin count
-        setCoins(prevCoins => Math.max(0, prevCoins - 1));
-
-        // Trigger coin refresh to update the header
-        triggerCoinRefresh();
-      } catch (deductError) {
-        console.error("Error deducting coins (but message was sent):", deductError);
-      }
-
+  
       setSuccess("Message sent successfully!");
     } catch (error) {
       console.error("Error in handleSubmit:", error);
-
+  
       // Better error logging
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
         const data = error.response?.data;
-
+        
         console.error("Axios error details:", {
           status,
           data,
@@ -410,7 +423,7 @@ const GameScreen: React.FC = () => {
           method: error.config?.method,
           headers: error.config?.headers
         });
-
+  
         // Handle specific error cases
         if (status === 401) {
           setError("Authentication error. Please log in again.");
@@ -425,7 +438,7 @@ const GameScreen: React.FC = () => {
       } else {
         setError(`An unexpected error occurred: ${(error as Error).message}`);
       }
-
+      
       // Remove the temporary user message since the request failed
       setChatMessages(prev => prev.slice(0, -1));
     } finally {
@@ -442,60 +455,33 @@ const GameScreen: React.FC = () => {
   };
 
   const handleGenerateImage = async () => {
-    if (!userId || !gameId) {
-      setError("User ID or Game ID not found. Please log in again.");
-      return;
-    }
-
-    // Check if user has coins
-    if (coins <= 0) {
-      setError("You don't have enough coins to generate an image. Please purchase more.");
-      return;
-    }
-
-    setError("");
-    setSuccess("");
-    setIsGeneratingImage(true);
-    setShowModelDropdown(false);
-
+    if (isGeneratingImage) return;
+    
     try {
-      // Get the email from localStorage
+      setIsGeneratingImage(true);
+      setError("");
+  
+      // Get email for coin deduction
       const email = localStorage.getItem("email") ||
-        (localStorage.getItem("userData") &&
-          JSON.parse(localStorage.getItem("userData") || "{}").email);
-
+        (localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email);
+  
       if (!email) {
         console.error("Email not found in localStorage");
         setError("User email not found. Please log in again.");
-        setIsGeneratingImage(false);
         return;
       }
-
-      // Log token and request details for debugging
-      console.log("About to send deduct coins request with token:", localStorage.getItem('token'));
-
-      // Deduct coin with proper parameters
-      const deductResponse = await axiosInstance.post("/shop/deduct-coins", {
-        email: email,  // Include email parameter
-        userId: userId, // Keep userId for backward compatibility
-        messages: [
-          { role: "System", content: "Coin deduction for image generation" }
-        ]
-      });
-
-      console.log("Deduction response:", deductResponse);
-
-      // Update local coin count
-      setCoins(prevCoins => Math.max(0, prevCoins - 1));
-
-      // Trigger coin refresh to update the header
-      triggerCoinRefresh();
-
+  
+      // Check if user has enough coins
+      if (coins <= 0) {
+        setError("You don't have enough coins to generate an image. Please purchase more coins.");
+        return;
+      }
+  
       const contextMessage = getContextFromMessages();
       // Adjust prompt based on model
       let imagePrompt;
       let apiEndpoint;
-
+  
       if (selectedModel.toUpperCase() === "SDXL") {
         // SDXL specific formatting
         imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
@@ -505,92 +491,117 @@ const GameScreen: React.FC = () => {
         imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
         apiEndpoint = "/openai/generate-image"; // Use OpenAI endpoint for DALL-E
       }
-
+  
       const userPromptMessage: ChatMessage = {
         content: `[Generate Image] Visualizing the current scene using ${selectedModel}...`,
         isUser: true,
         timestamp: new Date().toLocaleTimeString(),
       };
       setChatMessages((prev) => [...prev, userPromptMessage]);
-
+  
       const generatingMessage: ChatMessage = {
         content: `Generating image of the current scene with ${selectedModel}...`,
         isUser: false,
         timestamp: new Date().toLocaleTimeString(),
       };
       setChatMessages((prev) => [...prev, generatingMessage]);
-
-      console.log(`Sending request to ${apiEndpoint} with:`, { prompt: imagePrompt, userId, gameId, model: selectedModel.toLowerCase() });
-
-      // Use the appropriate endpoint based on selected model
-      const response = await axios.post(import.meta.env.VITE_SDXL_ENV + apiEndpoint, {
+  
+      // Make API call to generate image
+      const response = await axiosInstance.post(apiEndpoint, {
+        userId,
+        gameId,
         prompt: imagePrompt,
-        userId,
-        gameId: Number.parseInt(gameId, 10),
-        model: selectedModel.toLowerCase(),
+        model: selectedModel,
       });
-
-      console.log(response);
-      console.log(`Response from ${apiEndpoint}:`, response.data);
-
-      setChatMessages((prev) => prev.slice(0, -1));
-
-      const { imageUrl } = response.data;
-      console.log("Image URL received:", imageUrl);
-
-      await axios.post(import.meta.env.VITE_SDXL_ENV + "/ai/store-image", {
-        userId,
-        gameId: Number.parseInt(gameId, 10),
-        content: `Scene visualized with ${selectedModel}:`,
-        image_url: imageUrl,
-        role: "assistant",
-      });
-
-      console.log("Store-image response:", await axios.post(import.meta.env.VITE_SDXL_ENV + "/ai/store-image", {
-        userId,
-        gameId: Number.parseInt(gameId, 10),
-        content: `Scene visualized with ${selectedModel}:`,
-        image_url: imageUrl,
-        role: "assistant",
-      }).catch(err => console.error("Store-image error:", err)));
-
-      const imageResponse: ChatMessage = {
-        content: `Scene visualized with ${selectedModel}:`,
-        isUser: false,
-        timestamp: new Date().toLocaleTimeString(),
-        image_url: imageUrl,
-      };
-      setChatMessages((prev) => [...prev, imageResponse]);
-      setSuccess("Scene visualized successfully!");
-    } catch (error) {
-      console.error("Error generating image:", error);
-
-      // Enhanced error logging for debugging
-      if (axios.isAxiosError(error)) {
-        console.error("Axios error details:", {
-          status: error.response?.status,
-          data: error.response?.data,
-          headers: error.response?.headers
+  
+      console.log("Image generation response:", response.data);
+  
+      // If image generation was successful, THEN deduct coins
+      try {
+        const deductResponse = await axiosInstance.post("/shop/deduct-coins", {
+          email: email,
+          userId: userId,
+          messages: [
+            { role: "System", content: "Coin deduction for image generation" },
+            { role: "User", content: contextMessage.substring(0, 500) } // Include partial context
+          ]
         });
-
-        // Handle specific error cases
-        if (error.response?.status === 401) {
-          setError("Authentication error. Please log in again.");
-        } else {
-          setError("Image generation failed. Please try again.");
+        
+        console.log("Coin deduction details for image:", deductResponse.data);
+        
+        // Get the number of coins deducted from the response
+        const coinsDeducted = deductResponse.data.coinsDeducted || 1;
+        
+        // Update local coin count
+        setCoins(prevCoins => Math.max(0, prevCoins - coinsDeducted));
+        
+        // Trigger coin refresh in the header
+        await triggerCoinRefresh();
+      } catch (deductError) {
+        console.error("Error deducting coins (but image was generated):", deductError);
+        // Continue processing the image even if coin deduction fails
+      }
+  
+      // Update message with the generated image
+      if (response.data && response.data.imageUrl) {
+        setChatMessages((prev) => {
+          // Remove the "generating" message
+          const messagesWithoutGenerating = prev.slice(0, -1);
+          
+          // Add the AI response with the image
+          return [
+            ...messagesWithoutGenerating,
+            {
+              content: `Here's a visualization of the current scene:`,
+              isUser: false,
+              timestamp: new Date().toLocaleTimeString(),
+              image_url: response.data.imageUrl,
+            },
+          ];
+        });
+  
+        // Also save the image to chat history
+        try {
+          await axiosInstance.post("/chat/save-image", {
+            userId,
+            gameId,
+            content: "Generated image for the current scene",
+            image_url: response.data.imageUrl,
+          });
+        } catch (saveError) {
+          console.error("Error saving image to chat history:", saveError);
         }
       } else {
-        setError("Image generation failed. Please try again.");
+        throw new Error("Failed to generate image");
       }
-
-      setChatMessages((prev) => [
-        ...prev.slice(0, -1),
-        {
-          content: `Failed to visualize the scene with ${selectedModel}. Please try again.`,
-          isUser: false,
-          timestamp: new Date().toLocaleTimeString(),
-        },
-      ]);
+    } catch (error) {
+      console.error("Error generating image:", error);
+      
+      // Remove the "generating" message
+      setChatMessages((prev) => prev.slice(0, -1));
+      
+      // Handle different error types
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const data = error.response?.data;
+        
+        console.error("Image generation error details:", {
+          status,
+          data,
+          url: error.config?.url,
+          method: error.config?.method
+        });
+        
+        if (status === 401) {
+          setError("Authentication error. Please log in again.");
+        } else if (status === 402) {
+          setError("Not enough coins to generate an image. Please purchase more.");
+        } else {
+          setError(`Image generation failed: ${data?.message || error.message}`);
+        }
+      } else {
+        setError(`Failed to generate image: ${(error as Error).message}`);
+      }
     } finally {
       setIsGeneratingImage(false);
     }

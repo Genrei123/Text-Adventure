@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import CoinStore from "../subscription/CoinStore";
 
@@ -9,7 +9,8 @@ interface GameHeaderProps {
 const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
   const [showModal, setShowModal] = useState(false);
   const [coins, setCoins] = useState<number>(0);
-  const [lastFetchTime, setLastFetchTime] = useState(0);
+  const lastFetchTimeRef = useRef<number>(0);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
   // Improved fetchCoins function with cache control
   const fetchCoins = async (forceRefresh = false) => {
@@ -21,14 +22,14 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
     
     // Only fetch if force refresh or it's been more than 2 seconds
     const now = Date.now();
-    if (forceRefresh || now - lastFetchTime > 2000) {
+    if (forceRefresh || now - lastFetchTimeRef.current > 2000) {
       try {
         console.log("GameHeader: Fetching coins at", new Date().toLocaleTimeString());
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}/shop/coins?email=${encodeURIComponent(email)}`);
         
         console.log("GameHeader: Received coins:", response.data.coins);
         setCoins(response.data.coins);
-        setLastFetchTime(now);
+        lastFetchTimeRef.current = now;
       } catch (error) {
         console.error("Error fetching coins:", error);
       }
@@ -37,21 +38,37 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
   
   // Initial fetch on component mount
   useEffect(() => {
+    // Initial fetch with force refresh
     fetchCoins(true);
     
-    // Set up polling every 5 seconds for background updates
-    const intervalId = setInterval(() => {
+    // Set up polling every 10 seconds (reduced from 5 seconds to decrease API calls)
+    pollingIntervalRef.current = setInterval(() => {
       fetchCoins();
-    }, 5000);
+    }, 10000); 
     
-    return () => clearInterval(intervalId);
+    // Clean up on unmount
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
   }, []);
   
-  // Listen for the custom coinUpdate event
+  // Listen for the custom coinUpdate event with direct balance updates
   useEffect(() => {
-    const handleCoinUpdate = () => {
+    const handleCoinUpdate = (event: Event) => {
       console.log("GameHeader: Coin update event received");
-      fetchCoins(true);
+      
+      // Check if the event has a detail property with newBalance
+      if ((event as CustomEvent)?.detail?.newBalance !== undefined) {
+        // Use the provided balance directly without making an API call
+        console.log("GameHeader: Using provided balance:", (event as CustomEvent).detail.newBalance);
+        setCoins((event as CustomEvent).detail.newBalance);
+        lastFetchTimeRef.current = Date.now();
+      } else {
+        // Only fetch if no balance was provided
+        fetchCoins(true);
+      }
     };
     
     window.addEventListener('coinUpdate', handleCoinUpdate);
@@ -60,6 +77,17 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
       window.removeEventListener('coinUpdate', handleCoinUpdate);
     };
   }, []);
+  
+  // Handle store open/close
+  const handleOpenStore = () => {
+    setShowModal(true);
+    fetchCoins(true); // Force refresh when opening store
+  };
+  
+  const handleCloseStore = () => {
+    setShowModal(false);
+    fetchCoins(true); // Force refresh when closing store
+  };
   
   return (
     <nav className="bg-[#1E1E1E] py-[1.06rem] px-0 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
@@ -77,22 +105,12 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
           </span>
           <button 
             className="mr-1 relative group" 
-            onClick={() => {
-              setShowModal(true);
-              fetchCoins(true); // Force refresh when opening store
-            }}
+            onClick={handleOpenStore}
           >
             <img src="/add.svg" alt="Button" className="w-7 h-6 mr-[10%]" />
             <img src="/add-after.svg" alt="Hover Button" className="w-7 h-6 mr-[10%] absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
-          {showModal && (
-            <CoinStore 
-              onClose={() => {
-                setShowModal(false);
-                fetchCoins(true); // Force refresh when closing store
-              }} 
-            />
-          )}
+          {showModal && <CoinStore onClose={handleCloseStore} />}
         </div>
       </div>
     </nav>
