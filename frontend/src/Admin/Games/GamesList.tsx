@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import StatusBadge from './StatusBadge';
 import Loader from './Loader';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Tooltip } from 'react-tooltip';
 
 const GamesList: React.FC = () => {
   const navigate = useNavigate();
@@ -67,15 +69,12 @@ const GamesList: React.FC = () => {
     setSortConfig({ key, direction });
   };
 
-  const sortedGames = [...games].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? -1 : 1;
-    }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? 1 : -1;
-    }
-    return 0;
-  });
+// Update sorting logic
+const sortedGames = [...games].sort((a, b) => {
+  if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+  if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+  return 0;
+});
 
   const filteredGames = sortedGames.filter(game => {
     return (
@@ -138,15 +137,24 @@ const GamesList: React.FC = () => {
     }
   };
 
+  // Enhanced Table Header Component
   const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
     <th
       className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-left cursor-pointer hover:bg-[#534231] transition-colors group"
       onClick={() => handleSort(sortKey)}
+      aria-sort={sortConfig.key === sortKey ? 
+        (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
     >
       <div className="flex items-center gap-2">
         <span className="text-[#F0E6DB]">{label}</span>
-        <span className="text-[#C0A080] opacity-0 group-hover:opacity-100 transition-opacity">
-          {getSortIndicator(sortKey)}
+        <span className={`text-[#C0A080] transition-opacity ${
+          sortConfig.key === sortKey ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
+        }`}>
+          {sortConfig.key === sortKey ? (
+            sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+          ) : (
+            <ChevronUp className="w-4 h-4 opacity-0" />
+          )}
         </span>
       </div>
     </th>
@@ -333,68 +341,81 @@ const GamesList: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredGames.map(game => (
-                  <tr
-                    key={game.id}
-                    className="group even:bg-[#2F2118] odd:bg-[#3D2E22]/80 hover:bg-[#534231] transition-colors"
-                  >
-                    <td className="p-4">
-                      <input
-                        type="checkbox"
-                        checked={selectedGames.includes(game.id)}
-                        onChange={() => handleSelectGame(game.id)}
-                        className="w-5 h-5 cursor-pointer accent-[#C0A080]"
-                      />
-                    </td>
-                    <td className="p-4 font-playfair max-w-xs truncate group-hover:text-[#C0A080] transition-colors">
-                      {game.title}
-                    </td>
-                    <td className="p-4 font-playfair">{game.genre}</td>
-                    <td className="p-4 font-playfair">{game.players?.toLocaleString()}</td>
-                    <td className="p-4 font-playfair">
-                      {new Date(game.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </td>
-                    <td className="p-4">
-                      <StatusBadge status={game.status} />
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => navigate(`/admin/games/${game.id}`)}
-                          className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080]"
-                          title="View"
-                        >
-                          <Eye className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => navigate(`/admin/games/${game.id}/edit`)}
-                          className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080]"
-                          title="Edit"
-                        >
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleToggleStatus(game)}
-                          className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080]"
-                          title="Toggle Status"
-                        >
-                          <Power className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(game.id)}
-                          className="p-2 hover:bg-red-900/20 rounded-lg text-red-400"
-                          title="Delete"
-                        >
-                          <Trash className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                <AnimatePresence>
+                  {filteredGames.map(game => (
+                    <motion.tr
+                      key={game.id}
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="group even:bg-[#2F2118] odd:bg-[#3D2E22]/80 hover:bg-[#534231] transition-colors"
+                    >
+                      <td className="p-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedGames.includes(game.id)}
+                          onChange={() => handleSelectGame(game.id)}
+                          className="w-5 h-5 cursor-pointer accent-[#C0A080]"
+                        />
+                      </td>
+                      <td className="p-4 font-playfair max-w-xs truncate group-hover:text-[#C0A080] transition-colors">
+                        {game.title}
+                      </td>
+                      <td className="p-4 font-playfair">{game.genre}</td>
+                      <td className="p-4 font-playfair">{game.players?.toLocaleString()}</td>
+                      <td className="p-4 font-playfair">
+                        {new Date(game.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </td>
+                      <td className="p-4">
+                        <StatusBadge status={game.status} />
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => navigate(`/admin/games/${game.id}`)}
+                            className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                            title="View"
+                            aria-label={`View ${game.title}`}
+                            onKeyDown={(e) => e.key === 'Enter' && navigate(`/admin/games/${game.id}`)}
+                          >
+                            <Eye className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => navigate(`/admin/games/${game.id}/edit`)}
+                            className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                            title="Edit"
+                            aria-label={`Edit ${game.title}`}
+                            onKeyDown={(e) => e.key === 'Enter' && navigate(`/admin/games/${game.id}/edit`)}
+                          >
+                            <Edit className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => handleToggleStatus(game)}
+                            className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                            title="Toggle Status"
+                            aria-label={`Toggle status of ${game.title}`}
+                            onKeyDown={(e) => e.key === 'Enter' && handleToggleStatus(game)}
+                          >
+                            <Power className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(game.id)}
+                            className="p-2 hover:bg-red-900/20 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none"
+                            title="Delete"
+                            aria-label={`Delete ${game.title}`}
+                            onKeyDown={(e) => e.key === 'Enter' && handleDelete(game.id)}
+                          >
+                            <Trash className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
               </tbody>
             </table>
           </div>
@@ -408,6 +429,26 @@ const GamesList: React.FC = () => {
       )}
 
       <NewGameModal />
+
+      {/* Add sticky bulk action bar */}
+      {selectedGames.length > 0 && (
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="fixed bottom-4 right-4 bg-[#3D2E22] p-4 rounded-lg shadow-xl flex gap-2 items-center"
+        >
+          <span className="text-sm text-[#C0A080]">
+            {selectedGames.length} selected
+          </span>
+          <button
+            onClick={handleBulkDelete}
+            className="px-3 py-1 bg-red-700/20 hover:bg-red-800/30 text-red-400 rounded flex items-center gap-1"
+          >
+            <Trash className="w-4 h-4" />
+            Delete
+          </button>
+        </motion.div>
+      )}
     </div>
   );
 };
