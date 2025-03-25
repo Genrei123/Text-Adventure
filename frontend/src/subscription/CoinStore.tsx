@@ -19,7 +19,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             try {
                 setLoading(true);
                 // Updated to use the correct API endpoint from your routes
-                const response = await axios.get(import.meta.env.VITE_SDXL_ENV + '/shop/tokens/packages');
+                const response = await axios.get(import.meta.env.VITE_BACKEND_URL + '/shop/tokens/packages');
                 setOffers(response.data);
                 setError(null);
             } catch (error) {
@@ -40,7 +40,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         }
     
         try {
-            const response = await axios.post(import.meta.env.VITE_SDXL_ENV + '/shop/tokens/purchase', {
+            const response = await axios.post(import.meta.env.VITE_BACKEND_URL + '/shop/tokens/purchase', {
                 packageId: itemId,
                 email: email
             });

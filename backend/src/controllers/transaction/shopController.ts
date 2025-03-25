@@ -11,8 +11,9 @@ import TokenPackage from '../../model/transaction/TokenPackageModel';
 dotenv.config();
 
 // Constants for return URLs
-const SUCCESS_RETURN_URL = process.env.SUCCESS_RETURN_URL;
-const FAILURE_RETURN_URL = process.env.FAILURE_RETURN_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
+const SUCCESS_RETURN_URL = `${FRONTEND_URL}/game`;
+const FAILURE_RETURN_URL = `${FRONTEND_URL}/game`;
 
 // Function to generate a random 6-character alphanumeric string
 const generateRandomId = () => {

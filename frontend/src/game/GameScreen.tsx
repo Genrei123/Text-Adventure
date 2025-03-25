@@ -95,23 +95,23 @@ const GameScreen: React.FC = () => {
 
   const fetchCoins = async () => {
     if (!userId) return;
-  
+
     try {
       setIsCheckingCoins(true);
       // Get the email from localStorage
       const email = localStorage.getItem("email") || localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email;
-      
+
       if (!email) {
         console.error("Email not found in localStorage");
         return;
       }
-      
+
       // Use the correct endpoint with email parameter
       const response = await axiosInstance.get(`/shop/coins?email=${encodeURIComponent(email)}`);
-      
+
       console.log("Full response from backend:", response);
-      console.log("Fetched coins:", response.data.coins); 
-      
+      console.log("Fetched coins:", response.data.coins);
+
       // Update coins state
       setCoins(response.data.coins || 0);
     } catch (error) {
@@ -257,17 +257,36 @@ const GameScreen: React.FC = () => {
     setIsWaitingForAI(true);
 
     try {
-      // Deduct coin first
-      await axiosInstance.post("/deduct-coins", { userId });
+      // Get the email from localStorage
+      const email = localStorage.getItem("email") ||
+        (localStorage.getItem("userData") &&
+          JSON.parse(localStorage.getItem("userData") || "{}").email);
 
-      // Update local coin count
-      setCoins(prevCoins => Math.max(0, prevCoins - 1));
+      if (!email) {
+        console.error("Email not found in localStorage");
+        setError("User email not found. Please log in again.");
+        setIsWaitingForAI(false);
+        return;
+      }
+
+      // Skip coin deduction for now to test if the chat endpoint works
+      // We'll add it back after fixing the chat endpoint
 
       const displayMessage = `[${selectedAction}] ${message}`;
       const tempUserMessage = { content: displayMessage, isUser: true, timestamp: new Date().toLocaleTimeString() };
       setChatMessages((prev) => [...prev, tempUserMessage]);
 
+      // Log the payload being sent
+      console.log("Sending to /ai/chat with payload:", payload);
+
+      // Proceed with sending the message to AI
       const response = await axiosInstance.post("/ai/chat", payload);
+      console.log("AI response:", response.data);
+
+      // Check if we have a valid response
+      if (!response.data || !response.data.ai_response) {
+        throw new Error("Invalid response format from AI service");
+      }
 
       const aiResponse: ChatMessage = {
         content: response.data.ai_response.content || "This is a simulated AI response.",
@@ -296,10 +315,52 @@ const GameScreen: React.FC = () => {
         setChatMessages((prev) => [...prev.slice(0, -1), tempUserMessage, aiResponse]);
       }
 
+      // Deduct coin after successful AI response
+      try {
+        await axiosInstance.post("/shop/deduct-coins", {
+          email: email,
+          userId: userId
+        });
+        // Update local coin count
+        setCoins(prevCoins => Math.max(0, prevCoins - 1));
+      } catch (deductError) {
+        console.error("Error deducting coins (but message was sent):", deductError);
+      }
+
       setSuccess("Message sent successfully!");
-    } catch (err) {
-      console.error("Error sending message:", err);
-      setError("An unexpected error occurred. Please try again.");
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+
+      // Better error logging
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const data = error.response?.data;
+
+        console.error("Axios error details:", {
+          status,
+          data,
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers
+        });
+
+        // Handle specific error cases
+        if (status === 401) {
+          setError("Authentication error. Please log in again.");
+        } else if (status === 402) {
+          setError("Not enough coins. Please purchase more.");
+          setCoins(0);
+        } else if (status === 500) {
+          setError("Server error. Please try again later.");
+        } else {
+          setError(`Failed to send message: ${data?.message || error.message}`);
+        }
+      } else {
+        setError(`An unexpected error occurred: ${(error as Error).message}`);
+      }
+
+      // Remove the temporary user message since the request failed
+      setChatMessages(prev => prev.slice(0, -1));
     } finally {
       setIsWaitingForAI(false);
     }
@@ -331,8 +392,31 @@ const GameScreen: React.FC = () => {
     setShowModelDropdown(false);
 
     try {
-      // Deduct coin first
-      await axiosInstance.post("/deduct-coins", { userId });
+      // Get the email from localStorage
+      const email = localStorage.getItem("email") ||
+        (localStorage.getItem("userData") &&
+          JSON.parse(localStorage.getItem("userData") || "{}").email);
+
+      if (!email) {
+        console.error("Email not found in localStorage");
+        setError("User email not found. Please log in again.");
+        setIsGeneratingImage(false);
+        return;
+      }
+
+      // Log token and request details for debugging
+      console.log("About to send deduct coins request with token:", localStorage.getItem('token'));
+
+      // Deduct coin with proper parameters
+      const deductResponse = await axiosInstance.post("/shop/deduct-coins", {
+        email: email,  // Include email parameter
+        userId: userId, // Keep userId for backward compatibility
+        messages: [
+          { role: "System", content: "Coin deduction for image generation" }
+        ]
+      });
+
+      console.log("Deduction response:", deductResponse);
 
       // Update local coin count
       setCoins(prevCoins => Math.max(0, prevCoins - 1));
@@ -408,9 +492,27 @@ const GameScreen: React.FC = () => {
       };
       setChatMessages((prev) => [...prev, imageResponse]);
       setSuccess("Scene visualized successfully!");
-    } catch (err) {
-      console.error("Error generating image:", err);
-      setError("Image generation failed. Please try again.");
+    } catch (error) {
+      console.error("Error generating image:", error);
+
+      // Enhanced error logging for debugging
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          headers: error.response?.headers
+        });
+
+        // Handle specific error cases
+        if (error.response?.status === 401) {
+          setError("Authentication error. Please log in again.");
+        } else {
+          setError("Image generation failed. Please try again.");
+        }
+      } else {
+        setError("Image generation failed. Please try again.");
+      }
+
       setChatMessages((prev) => [
         ...prev.slice(0, -1),
         {
@@ -504,8 +606,6 @@ const GameScreen: React.FC = () => {
     } catch (err) {
       alert(err);
     }
-
-
   };
 
   return (
