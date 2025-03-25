@@ -62,6 +62,33 @@ const GameScreen: React.FC = () => {
   // Update the state declaration
   const [gameSummary, setGameSummary] = useState<GameSummaryResponse | null>(null);
 
+  const triggerCoinRefresh = async () => {
+    try {
+      const email = localStorage.getItem("email") || 
+        (localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email);
+  
+      if (!email) {
+        console.error("Email not found in localStorage");
+        return;
+      }
+  
+      console.log("GameScreen: Refreshing coins at", new Date().toLocaleTimeString());
+      const response = await axiosInstance.get(`/shop/coins?email=${encodeURIComponent(email)}`);
+      console.log("GameScreen: Received updated coin balance:", response.data.coins);
+      
+      // Update local state
+      setCoins(response.data.coins || 0);
+      
+      // Dispatch a custom event to notify the header
+      const coinUpdateEvent = new CustomEvent('coinUpdate');
+      window.dispatchEvent(coinUpdateEvent);
+      
+      return response.data.coins;
+    } catch (error) {
+      console.error("Error refreshing coins:", error);
+    }
+  };
+
   // Update the handleSummary function
   const handleSummary = async () => {
     if (!userId || !gameId) {
@@ -269,8 +296,36 @@ const GameScreen: React.FC = () => {
         return;
       }
 
-      // Skip coin deduction for now to test if the chat endpoint works
-      // We'll add it back after fixing the chat endpoint
+      // Deduct coin after successful AI response
+      try {
+        // Include both system message and user message for proper token counting
+        const deductResponse = await axiosInstance.post("/shop/deduct-coins", {
+          email: email,
+          userId: userId,
+          messages: [
+            { role: "System", content: "Coin deduction for message" },
+            { role: "User", content: message } // Include the actual user message
+          ]
+        });
+
+        console.log("Deduction response:", deductResponse.data);
+
+        // Update local coin count based on the actual number of coins deducted
+        const coinsDeducted = deductResponse.data.coinsDeducted || 1;
+        setCoins(prevCoins => Math.max(0, prevCoins - coinsDeducted));
+
+        // Trigger a custom event for the header to refresh
+        const coinUpdateEvent = new CustomEvent('coinUpdate', {
+          detail: { newBalance: coins - coinsDeducted }
+        });
+        window.dispatchEvent(coinUpdateEvent);
+
+        // Also call the triggerCoinRefresh function
+        await triggerCoinRefresh();
+
+      } catch (deductError) {
+        console.error("Error deducting coins:", deductError);
+      }
 
       const displayMessage = `[${selectedAction}] ${message}`;
       const tempUserMessage = { content: displayMessage, isUser: true, timestamp: new Date().toLocaleTimeString() };
@@ -317,12 +372,24 @@ const GameScreen: React.FC = () => {
 
       // Deduct coin after successful AI response
       try {
+        // Include both system message and user message for proper token counting
         await axiosInstance.post("/shop/deduct-coins", {
           email: email,
-          userId: userId
+          userId: userId,
+          messages: [
+            { role: "System", content: "Coin deduction for message" },
+            { role: "User", content: message } // Include the actual user message
+          ]
         });
+
+        // Trigger coin refresh to update the header
+        triggerCoinRefresh();
+
         // Update local coin count
         setCoins(prevCoins => Math.max(0, prevCoins - 1));
+
+        // Trigger coin refresh to update the header
+        triggerCoinRefresh();
       } catch (deductError) {
         console.error("Error deducting coins (but message was sent):", deductError);
       }
@@ -420,6 +487,9 @@ const GameScreen: React.FC = () => {
 
       // Update local coin count
       setCoins(prevCoins => Math.max(0, prevCoins - 1));
+
+      // Trigger coin refresh to update the header
+      triggerCoinRefresh();
 
       const contextMessage = getContextFromMessages();
       // Adjust prompt based on model
