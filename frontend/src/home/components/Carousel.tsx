@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import LoadingBook from '../../components/LoadingBook';
 
+interface Slide {
+  id: string;
+  title: string;
+  description: string;
+  image_data: string;
+}
+
 interface CarouselProps {
-  slides: Array<{
-    id: string;
-    title: string;
-    description: string;
-    image_data: string;
-  }>;
+  slides: Slide[];
   isLoading?: boolean;
 }
 
 const Carousel: React.FC<CarouselProps> = ({ slides, isLoading }) => {
-  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   if (isLoading) {
@@ -30,7 +30,7 @@ const Carousel: React.FC<CarouselProps> = ({ slides, isLoading }) => {
   const carouselSettings = {
     dots: true,
     infinite: true,
-    speed: 0, // Disable sliding animation
+    speed: 0,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
@@ -48,12 +48,8 @@ const Carousel: React.FC<CarouselProps> = ({ slides, isLoading }) => {
     ),
   };
 
-  const handlePlayGame = (gameId: string) => {
-    navigate(`/game-details/${gameId}`);
-  };
-
   return (
-    <div className="w-full max-w-8xl mx-auto px-4 md:px-8 my-17 relative">
+    <div className="w-[90%] max-w-8xl mx-auto px-4 md:px-8 my-17 relative">
       <Slider {...carouselSettings}>
         {slides.map((slide, index) => (
           <div key={index} className="px-2 relative">
@@ -63,17 +59,26 @@ const Carousel: React.FC<CarouselProps> = ({ slides, isLoading }) => {
               }`}
               style={{ transitionDelay: index === currentSlide ? '150ms' : '0ms' }}
             >
+              {/* Blurred Background Image */}
+              <img
+                src={slide.image_data}
+                alt={`${slide.title} background`}
+                className="absolute inset-0 w-full h-full object-cover filter blur-md brightness-50"
+              />
+
               {/* Dark Overlay */}
-              <div className="absolute inset-0 bg-black/50"></div>
-              <img 
-                src={`${import.meta.env.VITE_BACKEND_URL}${slide.image_data}`} 
-                alt={slide.title} 
-                className="w-full h-full object-cover" 
+              <div className="absolute inset-0 bg-black/50 z-10"></div>
+
+              {/* Main Image */}
+              <img
+                src={slide.image_data}
+                alt={slide.title}
+                className="relative w-full h-full object-cover z-20"
               />
 
               {/* Text Content */}
               <div
-                className={`absolute bottom-4 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-10 text-white drop-shadow-lg px-2 sm:px-0 transition-transform duration-700 ease-in-out ${
+                className={`absolute bottom-4 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-30 text-white drop-shadow-lg px-2 sm:px-0 transition-transform duration-700 ease-in-out ${
                   index === currentSlide ? 'translate-x-0' : '-translate-x-10'
                 }`}
               >
@@ -83,12 +88,6 @@ const Carousel: React.FC<CarouselProps> = ({ slides, isLoading }) => {
                 <p className="text-lg sm:text-2xl font-playfair font-bold text-[#FFFBEA] line-clamp-3">
                   {slide.description}
                 </p>
-                <button 
-                  onClick={() => handlePlayGame(slide.id)}
-                  className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-base sm:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-transform duration-300 hover:scale-105"
-                >
-                  Play Game
-                </button>
               </div>
             </div>
           </div>
