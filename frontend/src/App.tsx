@@ -14,6 +14,7 @@ import ServerError from './auth/components/ServerError';
 import Unauthorized from './auth/components/Unauthorized';
 import NotFound from './auth/components/NotFound';
 import ProtectedRoute from './auth/components/ProtectedRoute';
+import Banned from './auth/components/Banned';
 
 // Main Components
 import LandingPage from './landing/LandingPage';
@@ -178,11 +179,11 @@ function App() {
           <Route path="/ban-test" element={<BanTestPage />} />
           
           {/* Error Routes */}
-          {/* Add a banned user page for banned users. */}
-          {/* <Route path="/banned" element ={</>} />*/} 
+
           <Route path="/forbidden" element={<Forbidden />} />
           <Route path="/server-error" element={<ServerError />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/banned" element={<Banned />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/game-details" element={<GameDetails />} />
           
