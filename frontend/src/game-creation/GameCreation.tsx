@@ -6,6 +6,10 @@ import Navbar from "../components/Navbar";
 import { RefreshCw, MoveIcon, Check } from 'lucide-react';
 import LoadingScreen from "../components/LoadingScreen";
 
+// Replace these with your actual image file paths
+const TORCH_UNLIT_IMAGE = "/path/to/unlit-torch.png"; // Placeholder for unlit torch image
+const TORCH_LIT_IMAGE = "/path/to/lit-torch.png";   // Placeholder for lit torch image
+
 interface GameCreationProps {
   onBack: () => void;
   onNext: () => void;
@@ -36,7 +40,7 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
     bannerPrompt: ""
   });
   const [mainGenre, setMainGenre] = useState<string | null>(null);
-  const [customGenre, setCustomGenre] = useState<string>(""); // New state for custom genre input
+  const [customGenre, setCustomGenre] = useState<string>("");
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -130,7 +134,7 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
       setCustomGenre(""); // Clear the input after adding
     }
   };
-
+  
   const generateSuggestions = () => {
     if (step === 1 && formData.genres.length > 0) {
       setSuggestions(`For a ${formData.genres.join(", ")} story (main genre: ${mainGenre}), consider titles like "The Lost Realm", "Forgotten Shadows", or "Beyond the Horizon".`);
@@ -310,47 +314,55 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
 
   const renderGenreSuggestions = () => {
     if (field === "genres") {
+      // Combine predefined suggestions with custom genres not in suggestions
+      const allGenres = [
+        ...genreSuggestions,
+        ...formData.genres.filter((genre) => !genreSuggestions.includes(genre)),
+      ];
+  
       return (
         <div className="mt-4 mb-6">
-          <div className="mb-4">
-            <TextInput
-              label="Enter your Genre"
-              value={customGenre}
-              onChange={handleCustomGenreChange}
-              error={errors.genres}
-            />
+          <div className="mb-4 flex items-end gap-2">
+            <div className="flex-1">
+              <TextInput
+                label="Enter your Genre"
+                value={customGenre}
+                onChange={handleCustomGenreChange}
+                error={errors.genres}
+              />
+            </div>
             <button
               onClick={handleCustomGenreSubmit}
               disabled={!customGenre.trim() || formData.genres.length >= 3}
-              className={`mt-2 px-4 py-2 rounded transition-colors ${
+              className={`px-4 py-4 rounded transition-colors ${
                 !customGenre.trim() || formData.genres.length >= 3
                   ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-blue-700 hover:bg-blue-600'
+                  : 'bg-[#B28F4C] hover:bg-[#9F7A42]'
               }`}
             >
               Add Genre
             </button>
           </div>
           <p className="text-gray-300 mb-2 text-sm">
-            Or select from suggested genres (select up to 3, first selected is main genre):
+            Select up to 3 genres (first selected is main genre):
             {formData.genres.length > 0 && (
-              <span className="ml-2 text-green-400">
-                Selected: {formData.genres.join(", ")} 
-                {mainGenre && ` (Main: ${mainGenre})`}
+              <span className="ml-2 text-[#B28F4C]">
+                Selected: {formData.genres.join(", ")}{" "}
+                {mainGenre && `(Main: ${mainGenre})`}
               </span>
             )}
           </p>
           <div className="flex flex-wrap gap-2">
-            {genreSuggestions.map((genre, index) => (
+            {allGenres.map((genre, index) => (
               <button
                 key={index}
                 onClick={() => handleChange("genres", genre)}
                 className={`px-3 py-1 rounded text-sm transition-colors ${
                   formData.genres.includes(genre)
                     ? genre === mainGenre
-                      ? "bg-purple-700 hover:bg-purple-600"
-                      : "bg-green-700 hover:bg-green-600"
-                    : "bg-gray-700 hover:bg-gray-600"
+                      ? "bg-[#B28F4C] hover:bg-[#9F7A42]" // Main genre: Golden Brown
+                      : "bg-[#634630] hover:bg-[#4F3726]" // Selected genre: Brown
+                    : "bg-gray-700 hover:bg-gray-600" // Unselected genre
                 }`}
                 disabled={
                   !formData.genres.includes(genre) && formData.genres.length >= 3
@@ -371,6 +383,7 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
     return null;
   };
 
+  
   return (
     <div className="min-h-screen bg-[#1a1a1a] text-white font-inter relative overflow-hidden">
       <Navbar />
@@ -515,6 +528,9 @@ export const GameCreation: React.FC<GameCreationProps> = () => {
       </div>
     </div>
   );
+
 };
+
+
 
 export default GameCreation;  
