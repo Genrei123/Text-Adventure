@@ -50,11 +50,6 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             } else {
                 setError('Payment link not received from server');
             }
-    
-            // Fetch updated coin balance after purchase
-            const coinResponse = await axios.get(`/coins/${email}`);
-            const updatedCoins = coinResponse.data.coins;
-            localStorage.setItem('coins', updatedCoins); // Optional: Store in localStorage
         } catch (error) {
             console.error('Error purchasing token package:', error);
             setError('Failed to process purchase. Please try again later.');

@@ -44,9 +44,9 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     // Only redirect to login for specific authentication-related errors
-    if (error.response?.status === 401 &&
-      !error.config.url.includes('/auth/') &&
-      !error.config.url.includes('/login')) {
+    if (error.response?.status === 401 && 
+        !error.config.url.includes('/auth/') && 
+        !error.config.url.includes('/login')) {
       localStorage.removeItem('token');
       localStorage.removeItem('email');
       window.location.href = '/login';
