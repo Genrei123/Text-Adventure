@@ -13,7 +13,8 @@ import {
   X,
   User,
   Filter,
-  LogOut
+  LogOut,
+  Gamepad
 } from 'lucide-react';
 import AdminNavbar from "./Components/adminNavbar";
 import MetricCard from './MetricCard';
@@ -25,6 +26,10 @@ import { useNavigate } from 'react-router-dom';
 import LoadingBook from '../components/LoadingBook';
 import LoadingScreen from '../components/LoadingScreen';
 
+import GamesList from './Games/GamesList';
+import GameDetail from './Games/GameDetail';
+import GameForm from './Games/GameForm';
+import GameStats from './Games/GameStats';
 // Configure axios instance to include the admin token in all requests
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -1026,6 +1031,13 @@ const AdminPage: React.FC = () => {
                 onClick={() => setActiveSection('players')}
                 collapsed={sidebarCollapsed}
               />
+              <SidebarItem
+                icon={<Gamepad className="w-5 h-5" />}
+                label="Games"
+                active={activeSection === 'games'}
+                onClick={() => setActiveSection('games')}
+                collapsed={sidebarCollapsed}
+              />
             </div>
 
             {/* Logout button at the bottom of sidebar */}
@@ -1755,6 +1767,10 @@ const AdminPage: React.FC = () => {
                   </div>
                 </div>
               </>
+            )}
+
+            {activeSection === 'games' && (
+              <GamesList />
             )}
           </div>
         </div>

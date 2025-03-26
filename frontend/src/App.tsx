@@ -43,6 +43,9 @@ import AdminLogin from './Admin/AdminLogin';
 
 // Admin Components
 import AdminRoute from './Admin/components/AdminRoute';
+import GamesList from './Admin/Games/GamesList';
+import GameDetail from './Admin/Games/GameDetail';
+import GameForm from './Admin/Games/GameForm';
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
@@ -193,6 +196,30 @@ function App() {
             element={
               <AdminRoute>
                 <AdminPage />
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/games" 
+            element={
+              <AdminRoute>
+                <GamesList />
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/games/new" 
+            element={
+              <AdminRoute>
+                <GameForm />
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/admin/games/:id" 
+            element={
+              <AdminRoute>
+                <GameDetail />
               </AdminRoute>
             } 
           />
