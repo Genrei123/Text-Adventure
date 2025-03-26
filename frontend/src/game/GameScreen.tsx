@@ -358,7 +358,7 @@ const GameScreen: React.FC = () => {
           email: email,
           userId: userId,
           messages: [
-            { role: "System", content: "Coin deduction for message" },
+            { role: "System", content: response.data.ai_response.content }, // Include the AI response
             { role: "User", content: savedMessage } // Include the actual user message
           ]
         });
