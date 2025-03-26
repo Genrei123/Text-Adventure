@@ -10,9 +10,8 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
   const [showModal, setShowModal] = useState(false);
   const [coins, setCoins] = useState<number>(0);
   const lastFetchTimeRef = useRef<number>(0);
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Improved fetchCoins function with cache control
+  // Improved fetchCoins function with cache control - but no automatic polling
   const fetchCoins = async (forceRefresh = false) => {
     const email = localStorage.getItem("email") || 
       (localStorage.getItem("userData") && 
@@ -36,22 +35,12 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
     }
   };
   
-  // Initial fetch on component mount
+  // Initial fetch on component mount - but no polling
   useEffect(() => {
     // Initial fetch with force refresh
     fetchCoins(true);
     
-    // Set up polling every 10 seconds (reduced from 5 seconds to decrease API calls)
-    pollingIntervalRef.current = setInterval(() => {
-      fetchCoins();
-    }, 10000); 
-    
-    // Clean up on unmount
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-    };
+    // No polling interval setup
   }, []);
   
   // Listen for the custom coinUpdate event with direct balance updates

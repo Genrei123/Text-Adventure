@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import { deductCoinsByTokens, checkOrderIdExists } from '../../service/transaction/Item Shop/coinService';
 import { getChatTokenDetails } from '../../utils/tokenizer';
 import TokenPackage from '../../model/transaction/TokenPackageModel';
+import { model } from 'mongoose';
 
 dotenv.config();
 
@@ -121,8 +122,15 @@ export const deductCoins = async (req: Request, res: Response): Promise<void> =>
     // Fetch user details
     const user = await getUserDetailsByEmail(email);
     
+    // Get the user's AI model from their profile
+    const userModel = user.model || 'gpt-4'; // Default to gpt-4 if not specified
+    
+    console.log(`Deducting coins for user ${user.id} using model: ${userModel}`);
+    
     // Calculate tokens using the dynamic tokenizer based on user's model
     const tokens = await getChatTokenDetails(messages, user.id);
+    
+    console.log(`Token count for ${userModel}: ${tokens} tokens`);
     
     // Each token costs 1 coin (or whatever your business logic is)
     const coinsToDeduct = tokens;
@@ -145,7 +153,8 @@ export const deductCoins = async (req: Request, res: Response): Promise<void> =>
       message: 'Coins deducted successfully',
       coinsDeducted: coinsToDeduct,
       deductionDetails: `Deducted ${coinsToDeduct} coins for ${tokens} tokens (1 coin per token)`,
-      tokens: messages
+      tokens: messages,
+      model: userModel // Include the model used in the response
     });
   } catch (error: any) {
     console.error('Error in deductCoins:', error);
