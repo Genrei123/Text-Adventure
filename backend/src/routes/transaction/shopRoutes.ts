@@ -17,7 +17,9 @@ import {
   getSubscriptionOffers, 
   getUserSubscriptions,
   unsubscribeUser,
-  handleSubscriptionCallback
+  handleSubscriptionCallback,
+  expireSubscription,
+  checkForExpiredSubscriptions
 } from '../../controllers/transaction/subscriptionController';
 
 const router = express.Router();
@@ -50,9 +52,18 @@ router.get('/subscription/offers', getSubscriptionOffers);
 router.get('/subscription/user/:email', getUserSubscriptions);
 
 // Subscription webhook callback
-router.post('/subscription/callback', 
-  
-  
-);
+router.post('/subscription/callback', handleSubscriptionCallback);
+
+// Route for expiring subscriptions
+router.post('/subscription/expire', expireSubscription);
+
+router.post('/subscription/check-expired', async (req, res) => {
+  try {
+    await checkForExpiredSubscriptions();
+    res.status(200).json({ message: 'Expired subscriptions checked successfully' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export default router;
