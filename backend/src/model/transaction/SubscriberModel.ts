@@ -23,7 +23,6 @@ Subscriber.init({
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   subscribedAt: {
     type: DataTypes.DATE,

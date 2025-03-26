@@ -84,69 +84,86 @@ const Subscription: React.FC = () => {
     const [unsubscribeLoading, setUnsubscribeLoading] = useState(false);
     const [message, setMessage] = useState('');
 
-    // Fetch subscription offers and user's current subscription
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Load subscription offers
-                const offersResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/offers`);
-                console.log('Fetched subscription offers:', offersResponse.data);
-                setSubscriptionOffers(offersResponse.data);
-
-                // Get user's email from localStorage
-                const email = localStorage.getItem('email');
-
-                if (email) {
-                    // Load user's current subscription using the correct endpoint
-                    const subscriptionResponse = await axios.get(
-                        `${import.meta.env.VITE_BACKEND_URL}/shop/subscription/user/${email}`
+    // Define fetchData function outside of useEffect for reuse
+    const fetchData = async () => {
+        try {
+            // Check for expired subscriptions first
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/check-expired`);
+            console.log('Checked for expired subscriptions');
+    
+            // Load subscription offers
+            const offersResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/offers`);
+            console.log('Fetched subscription offers:', offersResponse.data);
+            setSubscriptionOffers(offersResponse.data);
+    
+            // Get user's email from localStorage
+            const email = localStorage.getItem('email');
+    
+            if (email) {
+                // Load user's current subscription using the correct endpoint
+                const subscriptionResponse = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}/shop/subscription/user/${email}`
+                );
+                console.log('User subscription data:', subscriptionResponse.data);
+    
+                // Check if there are any subscriptions in the array
+                if (subscriptionResponse.data && subscriptionResponse.data.length > 0) {
+                    const subscriptions = subscriptionResponse.data;
+    
+                    // Find the most recent active or cancelled subscription
+                    const activeSubscription = subscriptions.find((sub: UserSubscription) =>
+                        (sub.status === 'active' || sub.status === 'cancelled') &&
+                        !isSubscriptionExpired(sub.endDate)
                     );
-                    console.log('User subscription data:', subscriptionResponse.data);
-
-                    // Check if there are any subscriptions in the array
-                    if (subscriptionResponse.data && subscriptionResponse.data.length > 0) {
-                        const subscription = subscriptionResponse.data[0];
-
-                        // Ignore inactive subscriptions
-                        if (subscription.status === "inactive") {
-                            setUserSubscription(null); // Treat as no active subscription
-                        } else {
-                            // Check if subscription is expired but still marked as active
-                            if ((subscription.status === "active" || subscription.status === "cancelled") &&
-                                subscription.endDate &&
-                                isSubscriptionExpired(subscription.endDate)) {
-
-                                // Update the backend
-                                try {
-                                    await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/expire`, {
-                                        email,
-                                        subscriptionId: subscription.id
-                                    });
-
-                                    // Update the local state to show as inactive
-                                    subscription.status = "inactive";
-                                    setUserSubscription(null); // Treat as no active subscription
-                                } catch (error) {
-                                    console.error('Error updating expired subscription:', error);
-                                }
-                            } else {
-                                setUserSubscription(subscription);
-                            }
-                        }
+    
+                    if (activeSubscription) {
+                        setUserSubscription(activeSubscription);
                     } else {
-                        setUserSubscription(null); // No subscription found
+                        setUserSubscription(null); // No active subscription found
                     }
+                } else {
+                    setUserSubscription(null); // No subscription found
                 }
-
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setLoading(false);
             }
-        };
+    
+            setIsInitialLoading(false);
+            setLoading(false); // <-- Add this line to fix the issue
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setIsInitialLoading(false);
+            setLoading(false); // This is already here
+        }
+    };
 
+    useEffect(() => {
+        // Check initially
         fetchData();
+        
+        // Set up interval for periodic checks (every 30 minutes)
+        const interval = setInterval(() => {
+            axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/check-expired`)
+                .then(() => console.log('Periodic check for expired subscriptions'))
+                .catch(err => console.error('Error in periodic check:', err));
+        }, 30 * 60 * 1000); // 30 minutes
+        
+        return () => clearInterval(interval);
     }, []);
+
+    useEffect(() => {
+        const handleRouteChange = () => {
+            // Check subscriptions when navigating to this page
+            axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/check-expired`)
+                .then(() => console.log('Checked expired subscriptions on navigation'))
+                .catch(err => console.error('Error checking expirations on navigation:', err));
+        };
+    
+        // Add event listener for route changes (if using React Router)
+        window.addEventListener('popstate', handleRouteChange);
+        
+        return () => {
+            window.removeEventListener('popstate', handleRouteChange);
+        };
+    }, []);  
 
     // Simulate initial loading screen
     useEffect(() => {
@@ -290,6 +307,16 @@ const Subscription: React.FC = () => {
         }
     };
 
+    // Helper function to check if a subscription is expired
+    const isSubscriptionExpired = (dateString: string | null): boolean => {
+        if (!dateString) return false;
+
+        const endDate = new Date(dateString);
+        const currentDate = new Date();
+
+        return endDate < currentDate;
+    };
+
     // Keep your static plan data for the frontend display
     const displayPlans: PlanDisplay[] = [
         {
@@ -349,23 +376,23 @@ const Subscription: React.FC = () => {
                 isDisabled: false, // Allow clicking
             };
         }
-    
+
         // If the user has an active subscription
         if (userSubscription.subscriptionType === plan.title) {
             return {
                 ...plan,
                 btnText: userSubscription.status === "active" ? "CURRENT PATH" :
                     userSubscription.status === "pending" ? "PENDING ACTIVATION" :
-                    userSubscription.status === "cancelled" ? "CANCELLED" :
-                    "MANAGE SUBSCRIPTION",
+                        userSubscription.status === "cancelled" ? "CANCELLED" :
+                            "MANAGE SUBSCRIPTION",
                 btnColor: userSubscription.status === "active" ? "bg-green-600" :
                     userSubscription.status === "pending" ? "bg-yellow-600" :
-                    userSubscription.status === "cancelled" ? "bg-orange-600" :
-                    "bg-blue-600",
+                        userSubscription.status === "cancelled" ? "bg-orange-600" :
+                            "bg-blue-600",
                 isDisabled: true, // Disable clicking for the current subscription
             };
         }
-    
+
         // For other plans, adjust based on subscription status
         return {
             ...plan,
