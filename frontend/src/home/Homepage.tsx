@@ -112,7 +112,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
       <Navbar onLogout={handleLogout} />
       </div>
 
-      <div className="flex flex-col w-full h-full pt-16 z-100">
+      {/* <div className="flex flex-col w-full h-full pt-16 z-100"> */}
         {/* <Sidebar /> */}
 
         <div className="w-full">
@@ -138,7 +138,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
           </div> */}
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 

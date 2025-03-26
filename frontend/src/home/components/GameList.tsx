@@ -74,7 +74,7 @@ const GameList: React.FC = () => {
   };
 
   return (
-    <div className="w-[90%] mx-auto mt-12">
+    <div className="w-[80%] mx-auto mt-12">
       {/* Section Header with Line */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center w-full">
@@ -90,6 +90,7 @@ const GameList: React.FC = () => {
         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-6">
           {/* Search Input */}
           <div className="relative w-full md:w-auto">
+            {/* gagamit paba ng ganto? may scrollbar namaan */}
             <input
               type="text"
               placeholder="Search your destiny..."
