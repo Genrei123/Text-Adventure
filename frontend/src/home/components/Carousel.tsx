@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import LoadingBook from '../../components/LoadingBook';
 
-interface Slide {
-  id: string;
-  title: string;
-  description: string;
-  image_data: string;
-}
-
 interface CarouselProps {
-  slides: Slide[];
   isLoading?: boolean;
+  slides: {
+    id: string;
+    title: string;
+    description: string;
+    image_data: string;
+  }[];
 }
 
-const Carousel: React.FC<CarouselProps> = ({ slides, isLoading }) => {
+const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   if (isLoading) {
@@ -46,6 +46,10 @@ const Carousel: React.FC<CarouselProps> = ({ slides, isLoading }) => {
     customPaging: () => (
       <div className="w-2 h-2 bg-[#C8A97E]/50 rounded-full hover:bg-[#C8A97E] transition-all duration-300" />
     ),
+  };
+
+  const handlePlayGame = (gameId: string) => {
+    navigate(`/game-details/${gameId}`);
   };
 
   return (
@@ -88,6 +92,12 @@ const Carousel: React.FC<CarouselProps> = ({ slides, isLoading }) => {
                 <p className="text-lg sm:text-2xl font-playfair font-bold text-[#FFFBEA] line-clamp-3">
                   {slide.description}
                 </p>
+                <button
+                  onClick={() => handlePlayGame(slide.id)}
+                  className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-base sm:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-transform duration-300 hover:scale-105"
+                >
+                  Play Game
+                </button>
               </div>
             </div>
           </div>
