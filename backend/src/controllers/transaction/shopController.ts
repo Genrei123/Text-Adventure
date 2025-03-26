@@ -109,27 +109,47 @@ export const addCoinsToUser = async (userId: string | number, tokens: number): P
 };
 
 // Deduct coins based on text input
-export const deductCoins = async (req: Request, res: Response) => {
-  const { userId, messages } = req.body;
-
+export const deductCoins = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Calculate the number of tokens using the tokenizer
-    const tokenCount = getChatTokenDetails(messages);
-
-    // Calculate the number of coins to deduct
-    const coinsToDeduct = tokenCount; // Assuming 1 coin per token
-
-    await deductCoinsByTokens(userId, messages.map((msg: { role: string; content: string }) => msg.content).join(' '));
-    res.status(200).json({ 
-      message: 'Coins deducted successfully', 
-      coinsDeducted: coinsToDeduct, 
-      deductionDetails: `Deducted ${coinsToDeduct} coins for ${tokenCount} tokens (1 coin per token)`,
-      tokens: messages 
+    const { email, userId, messages } = req.body;
+    
+    if (!email) {
+      res.status(400).json({ error: 'Email is required' });
+      return;
+    }
+    
+    // Fetch user details
+    const user = await getUserDetailsByEmail(email);
+    
+    // Calculate tokens using the dynamic tokenizer based on user's model
+    const tokens = await getChatTokenDetails(messages, user.id);
+    
+    // Each token costs 1 coin (or whatever your business logic is)
+    const coinsToDeduct = tokens;
+    
+    // Check if user has enough coins
+    if (user.totalCoins < coinsToDeduct) {
+      res.status(402).json({ 
+        error: 'Not enough coins', 
+        required: coinsToDeduct, 
+        available: user.totalCoins 
+      });
+      return;
+    }
+    
+    // Deduct coins
+    user.totalCoins -= coinsToDeduct;
+    await user.save();
+    
+    res.json({
+      message: 'Coins deducted successfully',
+      coinsDeducted: coinsToDeduct,
+      deductionDetails: `Deducted ${coinsToDeduct} coins for ${tokens} tokens (1 coin per token)`,
+      tokens: messages
     });
-    console.log(`Messages: ${JSON.stringify(messages)}`);
-    console.log(`Coins deducted: ${coinsToDeduct} coins for ${tokenCount} tokens`);
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    console.error('Error in deductCoins:', error);
+    res.status(500).json({ error: error.message || 'An error occurred while deducting coins' });
   }
 };
 
