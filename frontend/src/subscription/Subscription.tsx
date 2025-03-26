@@ -84,7 +84,6 @@ const Subscription: React.FC = () => {
     const [unsubscribeLoading, setUnsubscribeLoading] = useState(false);
     const [message, setMessage] = useState('');
 
-<<<<<<< HEAD
     // Define fetchData function outside of useEffect for reuse
     const fetchData = async () => {
         try {
@@ -119,45 +118,12 @@ const Subscription: React.FC = () => {
     
                     if (activeSubscription) {
                         setUserSubscription(activeSubscription);
-=======
-    // Fetch subscription offers and user's current subscription
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Load subscription offers
-                const offersResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/offers`);
-                console.log('Fetched subscription offers:', offersResponse.data);
-                setSubscriptionOffers(offersResponse.data);
-
-                // Get user's email from localStorage
-                const email = localStorage.getItem('email');
-
-                if (email) {
-                    // Load user's current subscription using the correct endpoint
-                    const subscriptionResponse = await axios.get(
-                        `${import.meta.env.VITE_BACKEND_URL}/shop/subscription/user/${email}`
-                    );
-                    console.log('User subscription data:', subscriptionResponse.data);
-
-                    // Check if there are any subscriptions in the array
-                    if (subscriptionResponse.data && subscriptionResponse.data.length > 0) {
-                        // Get the most recent subscription (assuming they're ordered by date)
-                        setUserSubscription(subscriptionResponse.data[0]);
->>>>>>> 1ea10518 (gotta pull)
                     } else {
                         setUserSubscription(null); // No active subscription found
                     }
                 } else {
                     setUserSubscription(null); // No subscription found
                 }
-<<<<<<< HEAD
-=======
-
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setLoading(false);
->>>>>>> 1ea10518 (gotta pull)
             }
     
             setIsInitialLoading(false);
@@ -321,7 +287,6 @@ const Subscription: React.FC = () => {
             });
 
             console.log('Unsubscribe response:', response.data);
-<<<<<<< HEAD
 
             // Update local subscription state to show cancelled status
             if (userSubscription) {
@@ -333,11 +298,6 @@ const Subscription: React.FC = () => {
 
             setMessage('Successfully cancelled subscription. You will have access until your subscription period ends.');
             setTimeout(() => setMessage(''), 5000);
-=======
-            setMessage('Successfully unsubscribed. You can now subscribe to other plans.');
-            setTimeout(() => setMessage(''), 5000);
-            setUserSubscription(null); // Clear the subscription
->>>>>>> 1ea10518 (gotta pull)
             setConfirmUnsubscribe(false);
         } catch (error: any) {
             console.error('Error unsubscribing:', error);
@@ -399,13 +359,8 @@ const Subscription: React.FC = () => {
 
     // Update button text and color based on user's subscription
     const updatedDisplayPlans = displayPlans.map((plan) => {
-<<<<<<< HEAD
         if (!userSubscription || userSubscription.status === "inactive") {
             // If no subscription exists or the subscription is inactive, "Freedom Sword" is the default
-=======
-        if (!userSubscription) {
-            // If no subscription exists, "Freedom Sword" is the default
->>>>>>> 1ea10518 (gotta pull)
             if (plan.title === "Freedom Sword") {
                 return {
                     ...plan,
@@ -428,38 +383,22 @@ const Subscription: React.FC = () => {
                 ...plan,
                 btnText: userSubscription.status === "active" ? "CURRENT PATH" :
                     userSubscription.status === "pending" ? "PENDING ACTIVATION" :
-<<<<<<< HEAD
                         userSubscription.status === "cancelled" ? "CANCELLED" :
                             "MANAGE SUBSCRIPTION",
                 btnColor: userSubscription.status === "active" ? "bg-green-600" :
                     userSubscription.status === "pending" ? "bg-yellow-600" :
                         userSubscription.status === "cancelled" ? "bg-orange-600" :
                             "bg-blue-600",
-=======
-                        "MANAGE SUBSCRIPTION",
-                btnColor: userSubscription.status === "active" ? "bg-green-600" :
-                    userSubscription.status === "pending" ? "bg-yellow-600" :
-                        "bg-blue-600",
->>>>>>> 1ea10518 (gotta pull)
                 isDisabled: true, // Disable clicking for the current subscription
             };
         }
 
-<<<<<<< HEAD
         // For other plans, adjust based on subscription status
         return {
             ...plan,
             btnText: "EMBARK ON YOUR PATH",
             btnColor: "bg-black",
             isDisabled: false, // Allow clicking
-=======
-        // For other plans, show "Already Subscribed" if the user has a subscription
-        return {
-            ...plan,
-            btnText: userSubscription.status === "active" ? "ALREADY SUBSCRIBED" : "EMBARK ON YOUR PATH",
-            btnColor: userSubscription.status === "active" ? "bg-gray-400" : "bg-black",
-            isDisabled: userSubscription.status === "active", // Disable clicking if already subscribed
->>>>>>> 1ea10518 (gotta pull)
         };
     });
 
@@ -550,18 +489,13 @@ const Subscription: React.FC = () => {
                     <h2 className="text-3xl md:text-5xl font-cinzel my-10">Find Your Path</h2>
                     <h4 className="text-lg md:text-xl font-cinzel mb-6">Unlock Your Full Potential</h4>
 
-<<<<<<< HEAD
                     {userSubscription && userSubscription.status !== "inactive" && userSubscription.subscriptionType !== "Freedom Sword" && (
-=======
-                    {userSubscription && userSubscription.subscriptionType !== "Freedom Sword" && (
->>>>>>> 1ea10518 (gotta pull)
                         <div className="mb-8 p-4 rounded-lg bg-[#563C2D] bg-opacity-70">
                             <h3 className="text-xl font-cinzel mb-2">Current Subscription</h3>
                             <div className="flex flex-col md:flex-row justify-center items-center gap-4">
                                 <div className="text-left">
                                     <p className="font-bold">{userSubscription.subscriptionType}</p>
                                     <p className="text-sm">Status: <span className={
-<<<<<<< HEAD
                                         isSubscriptionExpired(userSubscription.endDate) ? "text-red-400" :
                                             userSubscription.status === "active" ? "text-green-400" :
                                                 userSubscription.status === "pending" ? "text-yellow-300" :
@@ -573,12 +507,6 @@ const Subscription: React.FC = () => {
                                             userSubscription.status === "cancelled" ? "Cancelled (Access until expiry)" :
                                                 getSubscriptionStatus(userSubscription)}
                                     </span></p>
-=======
-                                        userSubscription.status === "active" ? "text-green-400" :
-                                            userSubscription.status === "pending" ? "text-yellow-300" :
-                                                "text-gray-300"
-                                    }>{userSubscription.status.charAt(0).toUpperCase() + userSubscription.status.slice(1)}</span></p>
->>>>>>> 1ea10518 (gotta pull)
                                     <p className="text-sm">Start Date: {formatDate(userSubscription.startDate)}</p>
                                     {userSubscription.endDate && (
                                         <p className="text-sm">Expiry Date: {formatDate(userSubscription.endDate)}</p>
@@ -678,7 +606,6 @@ const Subscription: React.FC = () => {
                         <h3 className="text-xl font-bold text-black mb-4">Manage Subscription</h3>
                         <p className="text-gray-700 mb-4">
                             You are currently subscribed to {selectedPlan?.title}.
-<<<<<<< HEAD
                             {userSubscription?.endDate ? (
                                 <>
                                     {` Your subscription is active until ${formatDate(userSubscription.endDate)}.`}
@@ -700,11 +627,6 @@ const Subscription: React.FC = () => {
                         <p className="text-gray-700 mb-4">
                             If you cancel, you'll still have access until the end of your current billing period,
                             after which your subscription benefits will end.
-=======
-                            {userSubscription?.endDate ?
-                                ` Your subscription is active until ${formatDate(userSubscription.endDate)}.` :
-                                ' Your subscription is currently active.'}
->>>>>>> 1ea10518 (gotta pull)
                         </p>
                         <div className="flex justify-end space-x-3">
                             <button
