@@ -8,6 +8,7 @@ import {
   validateUserAndGame,
 } from '../../../../service/chat/chatService'; // Adjust path to your service file
 import { Json } from 'xendit-node';
+import User from "../../../../model/user/user";
 
 // Define interfaces (if not already in your imported file)
 interface PlayerState {
@@ -113,9 +114,16 @@ export const changeLocation = async (req: Request, res: Response): Promise<Json>
       }
     ];
 
+    const user = await User.findByPk(playerId);
+        if (!user) {
+            throw new Error("User not found.");
+        }
+
+        const model = user.model || "gpt-3.5-turbo"; // Default to "gpt-3.5-turbo" if no model is set
+
     // Call OpenAI for narration
-    const narration = await callOpenAI(prompt);
-    await storeChatMessage(sessionId, playerId, gameId, "assistant", narration.content, undefined, narration.roleplay_metadata);
+    const narration = await callOpenAI(playerId, prompt); // Pass playerId as the first argument
+    await storeChatMessage(sessionId, playerId, gameId, "assistant", narration.content, model, undefined, narration.roleplay_metadata);
 
     // Respond with the new location and narration
     res.status(200).json({
@@ -199,9 +207,16 @@ export const useItem = async (req: Request, res: Response): Promise<Json> => {
       }
     ];
 
+    const user = await User.findByPk(playerId);
+        if (!user) {
+            throw new Error("User not found.");
+        }
+
+        const model = user.model || "gpt-3.5-turbo"; // Default to "gpt-3.5-turbo" if no model is set
+
     // Call OpenAI for narration
-    const narration = await callOpenAI(prompt);
-    await storeChatMessage(sessionId, playerId, gameId, "assistant", narration.content, undefined, narration.roleplay_metadata);
+    const narration = await callOpenAI(playerId, prompt); // Pass playerId as the first argument
+    await storeChatMessage(sessionId, playerId, gameId, "assistant", narration.content, model, undefined, narration.roleplay_metadata);
 
     // Respond with the result
     res.status(200).json({
