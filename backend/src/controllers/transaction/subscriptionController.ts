@@ -57,10 +57,21 @@ export const createSubscription = async (req: Request, res: Response) => {
       return;
     }
 
-    // Check if the subscriber already exists
-    const existingSubscriber = await Subscriber.findOne({ where: { email } });
-    if (existingSubscriber) {
-      res.status(400).json({ error: 'Subscriber with this email already exists' });
+    // Check if the subscriber already has an ACTIVE subscription
+    // Only block new subscription if user has a non-inactive subscription
+    const existingActiveSubscriber = await Subscriber.findOne({ 
+      where: { 
+        email,
+        status: {
+          [Op.notIn]: ['inactive'] // Only block if there's an active/pending/cancelled subscription
+        }
+      } 
+    });
+
+    if (existingActiveSubscriber) {
+      res.status(400).json({ 
+        error: 'User already has an active subscription. Please cancel current subscription before starting a new one.' 
+      });
       return;
     }
 
@@ -158,10 +169,16 @@ Error: ${error.message}`);
 };
 
 // Add this new function to handle subscription callback/webhook
-export const handleSubscriptionCallback = async (req: Request, res: Response) => {
+export const handleSubscriptionCallback = async (req: Request, res: Response): Promise<void> => {
   const { id, status, paid_amount, external_id } = req.body;
 
   try {
+    // Validate required fields
+    if (!id || !status || !external_id) {
+      res.status(400).json({ error: 'Missing required fields in the request body' });
+      return;
+    }
+
     // Extract subscription ID from external_id (removing 'subscription-' prefix)
     const subscriptionId = external_id.startsWith('subscription-') 
       ? external_id.substring('subscription-'.length) 
@@ -171,7 +188,8 @@ export const handleSubscriptionCallback = async (req: Request, res: Response) =>
     const subscription = await Subscriber.findOne({ where: { id: subscriptionId } });
 
     if (!subscription) {
-      return res.status(404).json({ error: 'Subscription not found' });
+      res.status(404).json({ error: 'Subscription not found' });
+      return;
     }
 
     if (status === 'PAID' || status === 'SETTLED') {
@@ -229,7 +247,7 @@ Updated at: ${new Date().toLocaleString()}`);
         console.log(`Warning: User with email ${subscription.email} not found. Model update skipped.`);
       }
 
-      return res.status(200).json({ 
+      res.status(200).json({ 
         message: 'Subscription activated successfully',
         subscription
       });
@@ -251,15 +269,15 @@ Updated at: ${new Date().toLocaleString()}`);
         console.log(`-----------------------------------------------------`);
       }
 
-      return res.status(200).json({ message: 'Subscription expired and deleted' });
+      res.status(200).json({ message: 'Subscription expired and deleted' });
     } else {
       // Handle other statuses
       await subscription.update({ status: status.toLowerCase() });
-      return res.status(200).json({ message: `Subscription status updated to ${status}` });
+      res.status(200).json({ message: `Subscription status updated to ${status}` });
     }
   } catch (error: any) {
     console.error('Error processing subscription callback:', error);
-    return res.status(500).json({ error: 'Failed to process subscription callback' });
+    res.status(500).json({ error: 'Failed to process subscription callback' });
   }
 };
 
@@ -283,11 +301,14 @@ export const getUserSubscriptions = async (req: Request, res: Response): Promise
       return;
     }
     
-    // Find all subscriptions for this user
+    // Find all subscriptions for this user, ordered by most recent first
     const subscriptions = await Subscriber.findAll({
       where: { 
         email: { [Op.iLike]: email } // Case insensitive email matching
-      }
+      },
+      order: [
+        ['subscribedAt', 'DESC'] // Most recent subscriptions first
+      ]
     });
     
     res.status(200).json(subscriptions);
@@ -295,6 +316,23 @@ export const getUserSubscriptions = async (req: Request, res: Response): Promise
     console.error('Error fetching user subscriptions:', error);
     res.status(500).json({ error: 'Failed to fetch user subscriptions' });
   }
+};
+
+// Helper function to get the most recent active subscription for a user
+export const getActiveSubscription = async (email: string): Promise<Subscriber | null> => {
+  const subscription = await Subscriber.findOne({
+    where: {
+      email: { [Op.iLike]: email },
+      status: {
+        [Op.in]: ['active', 'cancelled'] // Include both active and cancelled (since they still have access)
+      }
+    },
+    order: [
+      ['subscribedAt', 'DESC'] // Most recent first
+    ]
+  });
+  
+  return subscription;
 };
 
 export const unsubscribeUser = async (req: Request, res: Response): Promise<void> => {
@@ -325,24 +363,12 @@ export const unsubscribeUser = async (req: Request, res: Response): Promise<void
       return;
     }
 
-    // Delete the subscription record
-    await subscription.destroy();
-
-    // Revert the user's AI model to the default (Freedom Sword)
-    const user = await User.findOne({ where: { email } });
-    if (user) {
-      const aiModel = getAIModelForSubscription('Freedom Sword'); // Default to 'Freedom Sword'
-      await user.update({ model: aiModel });
-
-      console.log(`-------------- User Model Reverted --------------`);
-      console.log(`User: ${user.email}
-New Model: ${aiModel}
-Reason: Subscription canceled
-Updated at: ${new Date().toLocaleString()}`);
-      console.log(`-----------------------------------------------------`);
-    } else {
-      console.log(`Warning: User with email ${email} not found. Model update skipped.`);
-    }
+    // Update the subscription status to 'cancelled' but keep the record
+    // This allows the user to keep access until the end date
+    await subscription.update({ 
+      status: 'cancelled',
+      // Keep endDate as is - user will have access until this date
+    });
 
     const formattedDate = new Date().toLocaleString();
     console.log(`-------------- Subscription Cancelled --------------`);
@@ -350,16 +376,165 @@ Updated at: ${new Date().toLocaleString()}`);
 Subscription ID: ${subscriptionId}
 Email: ${email}
 Subscription Type: ${subscription.subscriptionType}
-Date Cancelled: ${formattedDate}`);
+Date Cancelled: ${formattedDate}
+Access Valid Until: ${subscription.endDate?.toLocaleString() || 'N/A'}`);
     console.log(`-----------------------------------------------------`);
     console.log(` `);
 
     res.status(200).json({ 
-      message: 'Subscription successfully cancelled',
+      message: 'Subscription successfully cancelled. You will have access until your subscription period ends.',
       subscription
     });
   } catch (error: any) {
     console.error('Error cancelling subscription:', error);
     res.status(500).json({ error: 'Failed to cancel subscription' });
+  }
+};
+
+export const expireSubscription = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, subscriptionId } = req.body;
+
+    if (!email || !subscriptionId) {
+      res.status(400).json({ error: 'Email and subscriptionId are required' });
+      return;
+    }
+
+    console.log('Request Body:', req.body);
+
+    // Normalize subscriptionId if it has a prefix
+    const normalizedSubscriptionId = subscriptionId.startsWith('subscription-') 
+      ? subscriptionId.substring('subscription-'.length) 
+      : subscriptionId;
+
+    console.log(`Normalized Subscription ID: ${normalizedSubscriptionId}`);
+    console.log(`Email: ${email}`);
+
+    // Find the subscription
+    const subscription = await Subscriber.findOne({
+      where: { 
+        id: normalizedSubscriptionId,
+        email: { [Op.iLike]: email },
+        status: 'active' // Ensure status is active
+      }
+    });
+
+    if (!subscription) {
+      res.status(404).json({ error: 'Subscription not found' });
+      return;
+    }
+
+    // Check if subscription is expired
+    const endDate = new Date(subscription.endDate).getTime();
+    const currentDate = new Date().getTime();
+
+    console.log(`End Date: ${new Date(subscription.endDate)}`);
+    console.log(`Current Date: ${new Date()}`);
+
+    if (endDate < currentDate && subscription.status === 'active') {
+      // Update status to inactive
+      await subscription.update({ status: 'inactive' });
+
+      console.log(`Subscription ${subscriptionId} marked as inactive`);
+      
+      // Check if this was the user's most recent active subscription
+      const newerActiveSubscription = await Subscriber.findOne({
+        where: {
+          email: subscription.email,
+          status: 'active',
+          subscribedAt: {
+            [Op.gt]: subscription.subscribedAt
+          }
+        }
+      });
+      
+      // If no newer active subscription exists, revert the user's model
+      if (!newerActiveSubscription) {
+        const user = await User.findOne({ where: { email: subscription.email } });
+        if (user) {
+          const aiModel = getAIModelForSubscription('Freedom Sword');
+          await user.update({ model: aiModel });
+          
+          console.log(`-------------- User Model Reverted --------------`);
+          console.log(`User: ${user.email}
+New Model: ${aiModel}
+Reason: Subscription expired with no other active subscriptions
+Updated at: ${new Date().toLocaleString()}`);
+          console.log(`-----------------------------------------------------`);
+        }
+      }
+
+      res.status(200).json({ 
+        message: 'Subscription marked as inactive due to expiration',
+        subscription
+      });
+    } else {
+      res.status(200).json({ 
+        message: 'Subscription is still active or already marked as inactive',
+        subscription
+      });
+    }
+  } catch (error: any) {
+    console.error('Error expiring subscription:', error);
+    res.status(500).json({ error: 'Failed to update subscription status' });
+  }
+};
+
+// Add a scheduled task function to check for expired subscriptions daily
+export const checkForExpiredSubscriptions = async (): Promise<void> => {
+  try {
+    console.log('Running scheduled check for expired subscriptions...');
+    const currentDate = new Date();
+    
+    // Find all active AND CANCELLED subscriptions with end dates in the past
+    const expiredSubscriptions = await Subscriber.findAll({
+      where: {
+        status: {
+          [Op.in]: ['active', 'cancelled'] // Include both active and cancelled
+        },
+        endDate: {
+          [Op.lt]: currentDate
+        }
+      }
+    });
+    
+    console.log(`Found ${expiredSubscriptions.length} expired subscriptions`);
+    
+    // Update each expired subscription
+    for (const subscription of expiredSubscriptions) {
+      await subscription.update({ status: 'inactive' });
+      console.log(`Updated subscription ${subscription.id} for ${subscription.email} to inactive`);
+      
+      // Check if this was the user's most recent active subscription
+      const newerActiveSubscription = await Subscriber.findOne({
+        where: {
+          email: subscription.email,
+          status: {
+            [Op.in]: ['active', 'cancelled'] // Check for any active or cancelled subscription
+          },
+          subscribedAt: {
+            [Op.gt]: subscription.subscribedAt
+          }
+        }
+      });
+      
+      // If no newer active subscription exists, revert the user's model
+      if (!newerActiveSubscription) {
+        const user = await User.findOne({ where: { email: subscription.email } });
+        if (user) {
+          const aiModel = getAIModelForSubscription('Freedom Sword');
+          await user.update({ model: aiModel });
+          
+          console.log(`-------------- User Model Reverted --------------`);
+          console.log(`User: ${user.email}
+New Model: ${aiModel}
+Reason: Subscription expired with no other active subscriptions
+Updated at: ${new Date().toLocaleString()}`);
+          console.log(`-----------------------------------------------------`);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error in scheduled expired subscription check:', error);
   }
 };
