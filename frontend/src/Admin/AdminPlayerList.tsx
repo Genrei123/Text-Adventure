@@ -263,7 +263,7 @@ const AdminPlayerList: React.FC = () => {
               <input
                 type="text"
                 className="bg-[#1E1512] text-white pl-10 pr-4 py-2 rounded border border-[#6A4E32] focus:ring-2 focus:ring-[#6A4E32] focus:outline-none"
-                placeholder="Search players..."
+                placeholder="Search ..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />

@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Search, ChevronDown, X, LogOut } from "lucide-react";
+import { Search, ChevronDown, X, LogOut, User } from "lucide-react";
 import socketIOClient from 'socket.io-client';
-import { addPageVisits } from '../sessions/api-calls/visitedPagesSession';
 import axiosInstance from "../../config/axiosConfig";
 import { Link } from 'react-router-dom';
 
@@ -14,13 +13,14 @@ interface Game {
   slug: string;
   genre: string;
   subgenre: string;
-  image_data?: string; // Added icon property
+  image_data?: string;
 }
 
 interface User {
   id: number;
   username: string;
-  profilePicture?: string;
+  email: string;
+  image_url?: string;
 }
 
 interface NavbarProps {
@@ -30,7 +30,8 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<(Game | User)[]>([]); // Changed to store full Game and User objects
+  const [suggestions, setSuggestions] = useState<(Game | User)[]>([]); 
+  const [searchType, setSearchType] = useState<'games' | 'users'>('games');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -40,10 +41,12 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [userSearchResults, setUserSearchResults] = useState<User[]>([]);
   const [profilePicture, setProfilePicture] = useState<string>();
+  const [noResultsMessage, setNoResultsMessage] = useState<string | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const isMobile = windowWidth < 768; // Define mobile breakpoint
+  const isMobile = windowWidth < 768;
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,8 +55,6 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
   // Extract unique genres and subgenres from actual data
   const genres = [...new Set(games.map(game => game.genre))].filter(Boolean);
-
-  // Use subgenres as tags
   const tags = [...new Set(games.map(game => game.subgenre))].filter(Boolean);
 
   const popularityOptions = [
@@ -63,14 +64,38 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     { label: "All Time", value: "all" },
   ];
 
-  // Fetch games data from API
+  // Function to search users
+  const searchUsers = async (query: string) => {
+    try {
+      const response = await axiosInstance.get(`/admin/users/`);
+      if (response.data) {
+        let filteredUsers = response.data;
+        if (query) {
+          filteredUsers = filteredUsers.filter((user: User) =>
+            Object.values(user).some((value) =>
+              value.toLowerCase().includes(query.toLowerCase())
+            )
+          );
+        }
+        setUserSearchResults(filteredUsers);
+        return filteredUsers;
+      } else {
+        console.error('Failed to search users');
+        return [];
+      }
+    } catch (error) {
+      console.error('Error searching users:', error);
+      return [];
+    }
+  };
+
+  // Fetch games and users data from API
   useEffect(() => {
     const fetchGames = async () => {
       try {
         const response = await axiosInstance.get('/game/');
         if (response.data) {
           setGames(response.data);
-          console.log("Games: ", games);
         } else {
           console.error('Failed to fetch games');
         }
@@ -79,37 +104,9 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
       }
     };
 
-    const fetchUserData = async () => {
-      // Get username
-      const email = localStorage.getItem('email');
-      // Fetch by username
-      try {
-        const response = await axiosInstance.get('/admin/users/verify/' + email);
-        console.log(response.data);
-        if (response.data) {
-          setUsername(response.data.username);
-
-          console.log(response.data.image_url);
-
-          if (response.data.image_url != null) { 
-            setProfilePicture(import.meta.env.VITE_SITE_URL + response.data.image_url);
-          }
-        }
-
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    }
-
-    fetchUserData();
-    fetchGames();
-  }, []);
-
-  // Fetch users data from API
-  useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axiosInstance.get('/users/');
+        const response = await axiosInstance.get('/admin/users/');
         if (response.data) {
           setUsers(response.data);
         } else {
@@ -120,9 +117,30 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
       }
     };
 
+    const fetchUserData = async () => {
+      const email = localStorage.getItem('email');
+      try {
+        const response = await axiosInstance.get('/admin/users/verify/' + email);
+        if (response.data) {
+          setUsername(response.data.username);
+
+          if (response.data.image_url != null) { 
+            setProfilePicture(import.meta.env.VITE_SITE_URL + response.data.image_url);
+          } else {
+            setProfilePicture('/default-profile.png'); // Set default profile picture
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    }
+
+    fetchUserData();
+    fetchGames();
     fetchUsers();
   }, []);
 
+  // Resize and search suggestion effects
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -147,29 +165,50 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     }
   }, [isSearchExpanded]);
 
-  // Update suggestions based on search query using actual game and user data
+  // Update suggestions based on search query and type
   useEffect(() => {
-    if (searchQuery.length > 0) {
-      const filteredGames = games.filter(game =>
-        game.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      const filteredUsers = users.filter(user =>
-        user.username.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setSuggestions([...filteredGames, ...filteredUsers]); // Store entire game and user objects
-    } else {
-      setSuggestions([]);
-    }
-  }, [searchQuery, games, users]);
+    const fetchSuggestions = async () => {
+      if (searchQuery.length > 0) {
+        let filteredResults: (Game | User)[] = [];
 
+        if (searchType === 'games') {
+          filteredResults = games.filter(game =>
+            game.title.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        } else {
+          // Use server-side search for users
+          const searchedUsers = await searchUsers(searchQuery);
+          filteredResults = searchedUsers;
+        }
+
+        setSuggestions(filteredResults);
+        setNoResultsMessage(filteredResults.length === 0 ? 'No results found' : null);
+      } else {
+        setSuggestions([]);
+        setNoResultsMessage(null);
+      }
+    };
+
+    fetchSuggestions();
+  }, [searchQuery, games, users, searchType]);
+
+  // Handle Enter key press in search input
+  const handleSearchKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      if (suggestions.length === 0) {
+        setNoResultsMessage('No results found');
+      } else {
+        setNoResultsMessage(null);
+      }
+    }
+  };
+
+  // Logout handler
   const handleLogout = async () => {
     if (onLogout) {
       await axiosInstance.post('/auth/logout', {
         email: localStorage.getItem('email'),
-        
       });
-
-      
 
       localStorage.removeItem('userData');
       localStorage.removeItem('email');
@@ -179,27 +218,17 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     }
   };
 
-  const openLogoutModal = () => {
-    setShowLogoutModal(true);
-  };
-
-  const closeLogoutModal = () => {
-    setShowLogoutModal(false);
-  };
-
+  // Modal and search toggle handlers
+  const openLogoutModal = () => setShowLogoutModal(true);
+  const closeLogoutModal = () => setShowLogoutModal(false);
   const toggleSearch = () => {
     setIsSearchExpanded(!isSearchExpanded);
     if (!isSearchExpanded) {
-      setShowFilters(false); // Close filters when opening search
+      setShowFilters(false);
     }
   };
 
-  // Get the appropriate placeholder text based on screen width
-  const getPlaceholderText = () => {
-    return windowWidth < 640 ? "Search" : "Search the ancient scrolls...";
-  };
-
-  // Generate initials for the profile circle
+  // Profile color and initial generation
   const getInitials = () => {
     if (!username) return "?";
     return username
@@ -210,22 +239,67 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
       .substring(0, 2);
   };
 
-  // Get a consistent color based on username
   const getProfileColor = () => {
     if (!username) return "#8B4513";
 
-    // Simple hash function to generate a color
     let hash = 0;
     for (let i = 0; i < username.length; i++) {
       hash = username.charCodeAt(i) + ((hash << 5) - hash);
     }
 
-    // Convert to hex color (keeping it in brown/gold palette)
-    const hue = Math.abs(hash) % 60 + 30; // 30-90 range (browns/golds)
-    const saturation = 70 + (Math.abs(hash) % 30); // 70-100%
-    const lightness = 40 + (Math.abs(hash) % 20); // 40-60%
+    const hue = Math.abs(hash) % 60 + 30;
+    const saturation = 70 + (Math.abs(hash) % 30);
+    const lightness = 40 + (Math.abs(hash) % 20);
 
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  };
+
+  // Render search suggestions
+  const renderSearchSuggestions = () => {
+    return suggestions.map((item, index) => (
+      <div
+        key={index}
+        className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
+        onClick={() => {
+          if ('title' in item) {
+            navigate(`/game-details/${item.id}`);
+          } else {
+            navigate(`/${item.username}`);
+          }
+        }}
+      >
+        <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
+          {'title' in item ? (
+            item.image_data ? (
+              <img
+                src={item.image_data}
+                alt={`${item.title} icon`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
+                {item.title.substring(0, 2).toUpperCase()}
+              </div>
+            )
+          ) : (
+            item.image_url ? (
+              <img
+                src={import.meta.env.VITE_SITE_URL + item.image_url}
+                alt={`${item.username} avatar`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
+                {item.username.substring(0, 2).toUpperCase()}
+              </div>
+            )
+          )}
+        </div>
+        <span>
+          {'title' in item ? item.title : item.username}
+        </span>
+      </div>
+    ));
   };
 
   return (
@@ -261,6 +335,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                           placeholder="Search"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
+                          onKeyPress={handleSearchKeyPress}
                           className="w-full p-2 pl-10 rounded-full bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
                         />
                         <Search
@@ -282,65 +357,16 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                             size={20}
                           />
                         </button>
-                        {suggestions.length > 0 && (
+                        {suggestions.length > 0 ? (
                           <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 top-10 shadow-lg overflow-hidden">
-                            {suggestions.filter(s => 'title' in s).length > 0 && (
-                              <>
-                                <div className="p-2 bg-[#C8A97E] text-[#3D2E22] font-bold">Stories</div>
-                                {suggestions.filter(s => 'title' in s).map((game, index) => (
-                                  <div
-                                    key={index}
-                                    className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
-                                    onClick={() => navigate(`/game-details/${game.id}`)}
-                                  >
-                                    {/* Game Icon */}
-                                    <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
-                                      {game.image_data ? (
-                                        <img
-                                          src={game.image_data}
-                                          alt={`${game.title} icon`}
-                                          className="w-full h-full object-cover"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
-                                          {game.title.substring(0, 2).toUpperCase()}
-                                        </div>
-                                      )}
-                                    </div>
-                                    <span>{game.title}</span>
-                                  </div>
-                                ))}
-                              </>
-                            )}
-                            {suggestions.filter(s => 'username' in s).length > 0 && (
-                              <>
-                                <div className="p-2 bg-[#C8A97E] text-[#3D2E22] font-bold">Users</div>
-                                {suggestions.filter(s => 'username' in s).map((user, index) => (
-                                  <div
-                                    key={index}
-                                    className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
-                                    onClick={() => navigate(`/user-profile/${user.id}`)}
-                                  >
-                                    {/* User Profile Picture */}
-                                    <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
-                                      {user.profilePicture ? (
-                                        <img
-                                          src={user.profilePicture}
-                                          alt={`${user.username} profile`}
-                                          className="w-full h-full object-cover"
-                                        />
-                                      ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
-                                          {user.username.substring(0, 2).toUpperCase()}
-                                        </div>
-                                      )}
-                                    </div>
-                                    <span>{user.username}</span>
-                                  </div>
-                                ))}
-                              </>
-                            )}
+                            {renderSearchSuggestions()}
                           </div>
+                        ) : (
+                          noResultsMessage && (
+                            <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 top-10 shadow-lg overflow-hidden text-[#3D2E22] p-2 text-center">
+                              {noResultsMessage}
+                            </div>
+                          )
                         )}
                       </div>
                     ) : (
@@ -356,76 +382,42 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                 ) : (
                   /* Desktop Search */
                   <div className="relative w-40 sm:w-52 md:w-80 lg:w-96">
+                    <div className="absolute left-0 top-0 mt-1 ml-10 flex items-center space-x-2">
+                      <button
+                        onClick={() => setSearchType('games')}
+                        className={`text-xs ${searchType === 'games' ? 'text-[#E5D4B3] underline' : 'text-[#8B4513]'}`}
+                      >
+                        Games
+                      </button>
+                      <button
+                        onClick={() => setSearchType('users')}
+                        className={`text-xs ${searchType === 'users' ? 'text-[#E5D4B3] underline' : 'text-[#8B4513]'}`}
+                      >
+                        Users
+                      </button>
+                    </div>
                     <input
                       type="text"
-                      placeholder={getPlaceholderText()}
+                      placeholder={searchType === 'games' ? "Search the ancient scrolls..." : "Seek a fellow adventurer..."}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full p-2 pl-10 rounded-full bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
+                      onKeyPress={handleSearchKeyPress}
+                      className="w-full p-2 pl-10 rounded-full bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513] pt-6"
                     />
                     <Search
-                      className="absolute left-3 top-2.5 text-[#8B4513]"
+                      className="absolute left-3 top-6 text-[#8B4513]"
                       size={20}
                     />
-                    {suggestions.length > 0 && (
+                    {suggestions.length > 0 ? (
                       <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 shadow-lg overflow-hidden">
-                        {suggestions.filter(s => 'title' in s).length > 0 && (
-                          <>
-                            <div className="p-2 bg-[#C8A97E] text-[#3D2E22] font-bold">Stories</div>
-                            {suggestions.filter(s => 'title' in s).map((game, index) => (
-                              <div
-                                key={index}
-                                className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
-                                onClick={() => navigate(`/game-details/${game.id}`)}
-                              >
-                                {/* Game Icon */}
-                                <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
-                                  {game.image_data ? (
-                                    <img
-                                      src={game.image_data}
-                                      alt={`${game.title} icon`}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
-                                      {game.title.substring(0, 2).toUpperCase()}
-                                    </div>
-                                  )}
-                                </div>
-                                <span>{game.title}</span>
-                              </div>
-                            ))}
-                          </>
-                        )}
-                        {suggestions.filter(s => 'username' in s).length > 0 && (
-                          <>
-                            <div className="p-2 bg-[#C8A97E] text-[#3D2E22] font-bold">Users</div>
-                            {suggestions.filter(s => 'username' in s).map((user, index) => (
-                              <div
-                                key={index}
-                                className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
-                                onClick={() => navigate(`/user-profile/${user.id}`)}
-                              >
-                                {/* User Profile Picture */}
-                                <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
-                                  {user.profilePicture ? (
-                                    <img
-                                      src={user.profilePicture}
-                                      alt={`${user.username} profile`}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
-                                      {user.username.substring(0, 2).toUpperCase()}
-                                    </div>
-                                  )}
-                                </div>
-                                <span>{user.username}</span>
-                              </div>
-                            ))}
-                          </>
-                        )}
+                        {renderSearchSuggestions()}
                       </div>
+                    ) : (
+                      noResultsMessage && (
+                        <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 top-10 shadow-lg overflow-hidden text-[#3D2E22] p-2 text-center">
+                          {noResultsMessage}
+                        </div>
+                      )
                     )}
                   </div>
                 )}
@@ -449,7 +441,6 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
             {/* Theme toggle and User section - Hidden when search is expanded on mobile */}
             {!(isMobile && isSearchExpanded) && (
               <div className="flex items-center space-x-2">
-                {/* User Profile/Login */}
                 {username ? (
                   <div className="flex items-center space-x-2">
                     {isMobile ? (
@@ -483,8 +474,8 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                           <div className="w-10 rounded-full">
                             <img
                               alt="Profile Picture"
-                              src={profilePicture ? profilePicture : `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${username}`}
-                              />
+                              src={profilePicture ? profilePicture : "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"}
+                            />
                           </div>
                         </div>
                         <ul
