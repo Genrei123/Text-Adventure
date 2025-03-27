@@ -140,6 +140,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       navigateWithLoading("/home");
     } catch (error) {
       if (isAxiosError(error)) {
+        // Check if the error is due to a banned account
+        if (error.response?.status === 403 && error.response.data?.banned) {
+          // Redirect to banned page with ban information
+          navigate('/banned', { state: { banInfo: error.response.data.banInfo } });
+          return;
+        }
+
         const message =
           error.response?.data?.message || "Login failed. Please try again.";
         setErrors({ general: message });
