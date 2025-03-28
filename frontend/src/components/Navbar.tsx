@@ -603,25 +603,27 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100]">
-          <div className="bg-[#2A1F17] border-2 border-[#C8A97E] rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
-            <h2 className="font-cinzel text-xl text-[#E5D4B3] mb-4 text-center">Leave the Realm?</h2>
-            <p className="text-[#C8A97E] mb-6 text-center">
-              Are you sure you wish to depart from these mystical lands? Your journey will be paused until your return.
-            </p>
-            <div className="flex justify-center space-x-4">
-              <button
-                onClick={closeLogoutModal}
-                className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#E5D4B3] rounded border border-[#C8A97E]"
-              >
-                Stay
-              </button>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-[#8B4513] hover:bg-[#723A10] text-[#E5D4B3] rounded border border-[#C8A97E]"
-              >
-                Leave
-              </button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[100]">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4">
+            <div className="bg-[#2A1F17] border-2 border-[#C8A97E] rounded-lg p-6 shadow-lg">
+              <h2 className="font-cinzel text-xl text-[#E5D4B3] mb-4 text-center">Leave the Realm?</h2>
+              <p className="text-[#C8A97E] mb-6 text-center">
+                Are you sure you wish to depart from these mystical lands? Your journey will be paused until your return.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={closeLogoutModal}
+                  className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#E5D4B3] rounded border border-[#C8A97E]"
+                >
+                  Stay
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-[#8B4513] hover:bg-[#723A10] text-[#E5D4B3] rounded border border-[#C8A97E]"
+                >
+                  Leave
+                </button>
+              </div>
             </div>
           </div>
         </div>
