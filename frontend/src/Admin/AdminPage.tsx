@@ -125,6 +125,7 @@ const AdminPage: React.FC = () => {
   const [usernameSearch, setUsernameSearch] = useState("");
   const [searchResults, setSearchResults] = useState<{ id: number, username: string }[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [durationPreset, setDurationPreset] = useState<number | null>(null);
 
   // Player list state
   const [players, setPlayers] = useState<Player[]>([]);
@@ -1826,17 +1827,43 @@ const AdminPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Reason for Ban */}
               <div>
                 <label className="block text-sm font-cinzel text-white mb-2 uppercase">Reason for Ban</label>
-                <input
-                  type="text"
-                  value={banReason}
-                  onChange={(e) => setBanReason(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
-                  placeholder="Enter reason for ban"
-                />
+                <div className="relative">
+                  <select
+                    value={banReason === "Other" ? "Other" : banReason}
+                    onChange={(e) => {
+                      if (e.target.value === "Other") {
+                        setBanReason("");
+                      } else {
+                        setBanReason(e.target.value);
+                      }
+                    }}
+                    className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white appearance-none cursor-pointer"
+                  >
+                    <option value="">Select a reason</option>
+                    <option value="Spam">Spam</option>
+                    <option value="Harassment">Harassment</option>
+                    <option value="Cheating">Cheating</option>
+                    <option value="Inappropriate Content">Inappropriate Content</option>
+                    <option value="N-Word">N-Word</option>
+                    <option value="Other">Other (specify below)</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 absolute right-3 top-3 text-gray-400 pointer-events-none" />
+                </div>
+                {banReason === "Other" && (
+                  <input
+                    type="text"
+                    value={banReason}
+                    onChange={(e) => setBanReason(e.target.value)}
+                    className="w-full mt-2 px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white"
+                    placeholder="Enter custom reason"
+                  />
+                )}
               </div>
 
+              {/* Ban Type */}
               <div>
                 <label className="block text-sm font-cinzel text-white mb-2 uppercase">Ban Type</label>
                 <div className="flex space-x-4">
@@ -1863,6 +1890,36 @@ const AdminPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Temporary Ban Duration Presets */}
+              {banType === 'temporary' && (
+                <div className="mt-4">
+                  <label className="block text-sm font-cinzel text-white mb-2 uppercase">Quick Duration Presets</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { days: 1, label: '1 Day', color: 'bg-blue-600 hover:bg-blue-700' },
+                      { days: 3, label: '3 Days', color: 'bg-green-600 hover:bg-green-700' },
+                      { days: 7, label: '7 Days', color: 'bg-yellow-600 hover:bg-yellow-700' },
+                      { days: 14, label: '2 Weeks', color: 'bg-orange-600 hover:bg-orange-700' },
+                      { days: 30, label: '1 Month', color: 'bg-red-600 hover:bg-red-700' },
+                    ].map((preset) => (
+                      <button
+                        key={preset.days}
+                        type="button"
+                        onClick={() => {
+                          const endDate = new Date();
+                          endDate.setDate(endDate.getDate() + preset.days);
+                          setBanEndDate(endDate.toISOString().split("T")[0]);
+                        }}
+                        className={`px-3 py-2 text-white rounded font-cinzel text-sm transition-colors ${preset.color}`}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* End Date Picker */}
               {banType === 'temporary' && (
                 <div>
                   <label className="block text-sm font-cinzel text-white mb-2 uppercase">End Date</label>
@@ -1876,6 +1933,7 @@ const AdminPage: React.FC = () => {
                 </div>
               )}
 
+              {/* Modal Actions */}
               <div className="flex justify-between space-x-3 mt-6">
                 <button
                   onClick={closeBanModal}
