@@ -28,6 +28,8 @@ import Subscription from './subscription/Subscription';
 
 // Work in Progress Components [EXPERIMENTAL - Do not include in main app!]
 import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
+import ButtonExample from './components/ButtonExample';
+import Footer from './components/Footer';
 
 // Game Creation Components
 import GameCreation from './game-creation/GameCreation';
@@ -175,6 +177,8 @@ function App() {
 
           {/* Work in Progress Routes */}
           <Route path="/image-generator" element={<ImageGeneratorScreen />} />
+          <Route path="/button" element={<ButtonExample />} />
+          <Route path="/footer" element={<Footer />} />
           
           {/* Utility Routes */}
           <Route path="/subscription" element={<Subscription />} />

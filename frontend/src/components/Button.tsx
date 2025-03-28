@@ -158,7 +158,7 @@ const Button: React.FC<ButtonProps> = ({
       );
     }
     
-    if (currentState !== 'pressed' && currentState !== 'active') {
+    if (currentState === 'hover') {
       return (
         <div
           className="absolute pointer-events-none opacity-0 group-hover:opacity-30 transition-opacity duration-300 rounded-full bg-white blur-md w-24 h-24"
