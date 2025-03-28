@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef, KeyboardEvent } from "react";
+"use client";
+
+import type React from "react";
+import { useState, useEffect, useRef, type KeyboardEvent } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../config/axiosConfig";
-import Sidebar from "../components/Sidebar";
 import GameHeader from "../components/GameHeader";
 import ActionButton from "./components/ActionButton";
 import { motion } from "framer-motion";
-import { ChevronUp, ChevronDown } from "lucide-react";
-import axios from 'axios';
+import axios from "axios";
 
 interface GameDetails {
   title: string;
@@ -34,11 +35,9 @@ const GameScreen: React.FC = () => {
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
   const [showEndStoryModal, setShowEndStoryModal] = useState(false);
-  const [showModelDropdown, setShowModelDropdown] = useState(false);
-  const [selectedModel, setSelectedModel] = useState("DALL-E");
+  const [selectedModel, setSelectedModel] = useState("DALL-E 3");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const modelDropdownRef = useRef<HTMLDivElement>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isAnimating, setIsAnimating] = useState(true);
   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
@@ -49,71 +48,71 @@ const GameScreen: React.FC = () => {
   const lastRefreshTimeRef = useRef<number>(0);
   const refreshInProgressRef = useRef<boolean>(false);
   const [gameSummary, setGameSummary] = useState<GameSummaryResponse | null>(null);
-  
+  const [showModelSelectionModal, setShowModelSelectionModal] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState("OpenAI");
+  const [selectedBaseModel, setSelectedBaseModel] = useState("DALL-E 3");
+  const [selectedTrainedModel, setSelectedTrainedModel] = useState("");
+  const [activeTab, setActiveTab] = useState("base");
+
   interface GameSummaryResponse {
     summary: string;
     imageUrl: string;
   }
 
+  // Fetch coins when userId changes
   useEffect(() => {
     if (userId) {
-      console.log("Calling fetchCoins with userId:", userId); // Debugging
+      console.log("Calling fetchCoins with userId:", userId);
       fetchCoins();
     }
   }, [userId]);
 
+  // Function to trigger coin refresh
   const triggerCoinRefresh = async (force = false, manualBalance?: number) => {
-    // If manualBalance is provided, use it directly
     if (manualBalance !== undefined) {
       setCoins(manualBalance);
-      
-      // Dispatch event with the new balance
-      const coinUpdateEvent = new CustomEvent('coinUpdate', { 
-        detail: { newBalance: manualBalance } 
+      const coinUpdateEvent = new CustomEvent("coinUpdate", {
+        detail: { newBalance: manualBalance },
       });
       window.dispatchEvent(coinUpdateEvent);
       return manualBalance;
     }
-    
-    // Prevent concurrent refreshes
+
     if (refreshInProgressRef.current && !force) {
       return;
     }
-    
+
     const now = Date.now();
-    // Only refresh if forced or it's been more than 2 seconds
     if (!force && now - lastRefreshTimeRef.current < 2000) {
       return;
     }
-    
+
     try {
       refreshInProgressRef.current = true;
-      
-      const email = localStorage.getItem("email") || 
+
+      const email =
+        localStorage.getItem("email") ||
         (localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email);
-  
+
       if (!email) {
         console.error("Email not found in localStorage");
         return;
       }
-  
+
       console.log("GameScreen: Refreshing coins at", new Date().toLocaleTimeString());
       const response = await axiosInstance.get(`/shop/coins?email=${encodeURIComponent(email)}`);
       console.log("GameScreen: Received updated coin balance:", response.data.coins);
-      
-      // Update last refresh time
+
       lastRefreshTimeRef.current = Date.now();
-      
-      // Update local state
+
       const newBalance = response.data.coins || 0;
       setCoins(newBalance);
-      
-      // Dispatch a custom event with the new balance
-      const coinUpdateEvent = new CustomEvent('coinUpdate', { 
-        detail: { newBalance: newBalance } 
+
+      const coinUpdateEvent = new CustomEvent("coinUpdate", {
+        detail: { newBalance: newBalance },
       });
       window.dispatchEvent(coinUpdateEvent);
-      
+
       return newBalance;
     } catch (error) {
       console.error("Error refreshing coins:", error);
@@ -122,57 +121,55 @@ const GameScreen: React.FC = () => {
     }
   };
 
-  // Update the handleSummary function
+  // Handle game summary generation
   const handleSummary = async () => {
     if (!userId || !gameId) {
-      setError('User ID or Game ID not found. Please log in again.');
+      setError("User ID or Game ID not found. Please log in again.");
       return;
     }
 
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
     setIsGeneratingImage(true);
 
     try {
-      // Show loading state in the modal
       setShowEndStoryModal(true);
 
       const response = await axiosInstance.post("/openai/generateGameSummary", {
-        gameId: parseInt(gameId, 10),
+        gameId: Number.parseInt(gameId, 10),
         userId: userId,
       });
 
-      // Set the summary with the new structure
       setGameSummary(response.data);
-      setSuccess('Summary generated successfully!');
+      setSuccess("Summary generated successfully!");
     } catch (err) {
-      console.error('Error generating summary:', err);
-      setError('Summary generation failed. Please try again.');
+      console.error("Error generating summary:", err);
+      setError("Summary generation failed. Please try again.");
     } finally {
       setIsGeneratingImage(false);
     }
-  }
+  };
 
+  // Fetch coins from the backend
   const fetchCoins = async () => {
     if (!userId) return;
 
     try {
       setIsCheckingCoins(true);
-      // Get the email from localStorage
-      const email = localStorage.getItem("email") || localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email;
+      const email =
+        localStorage.getItem("email") ||
+        (localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email);
 
       if (!email) {
         console.error("Email not found in localStorage");
         return;
       }
 
-      // Use the correct endpoint with email parameter
       const response = await axiosInstance.get(`/shop/coins?email=${encodeURIComponent(email)}`);
 
       console.log("Full response from backend:", response);
       console.log("Fetched coins:", response.data.coins);
 
-      // Update coins state
       setCoins(response.data.coins || 0);
     } catch (error) {
       console.error("Error fetching coins:", error);
@@ -181,20 +178,7 @@ const GameScreen: React.FC = () => {
     }
   };
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (modelDropdownRef.current && !modelDropdownRef.current.contains(event.target as Node)) {
-        setShowModelDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // Fetch userId from localStorage
+  // Fetch user ID from localStorage
   useEffect(() => {
     const userData = localStorage.getItem("userData");
     if (userData) {
@@ -236,7 +220,6 @@ const GameScreen: React.FC = () => {
           gameId: Number.parseInt(gameId, 10),
         });
 
-        // Make sure we have data to process
         if (response.data && Array.isArray(response.data)) {
           const formattedMessages = response.data.map((msg: any) => ({
             content: msg.content,
@@ -244,7 +227,7 @@ const GameScreen: React.FC = () => {
             timestamp: new Date(msg.createdAt).toLocaleTimeString(),
             image_url: msg.image_url || undefined,
           }));
-          
+
           console.log("Fetched chat messages:", formattedMessages);
           setChatMessages(formattedMessages);
         } else {
@@ -258,31 +241,30 @@ const GameScreen: React.FC = () => {
       }
     };
 
-    // Execute both fetches
-    Promise.all([fetchGameDetails(), fetchChatMessages()])
-      .catch(err => console.error("Error in initial data fetch:", err));
-      
+    Promise.all([fetchGameDetails(), fetchChatMessages()]).catch((err) =>
+      console.error("Error in initial data fetch:", err)
+    );
   }, [userId, gameId]);
 
-  // Scroll to bottom when messages update
+  // Scroll to the bottom of the chat when new messages are added
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [chatMessages]);
 
-  // Door animation setup
+  // Handle animation on component mount
   useEffect(() => {
     const timer = setTimeout(() => setIsAnimating(false), 500);
     return () => clearTimeout(timer);
   }, []);
 
-  // Animation variants
   const backgroundVariants = {
     normal: { filter: "blur(50px)" },
     blurred: { filter: "blur(60px)", transition: { duration: 1.5, ease: "easeInOut" } },
   };
 
+  // Handle Enter key press to submit message
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -290,94 +272,80 @@ const GameScreen: React.FC = () => {
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-  
+
     if (!message.trim()) {
       setError("Message cannot be empty.");
       return;
     }
-  
+
     if (!userId || !gameId) {
       setError("User ID or Game ID not found. Please log in again.");
       return;
     }
-  
-    // Check if user has coins
+
     if (coins <= 0) {
       setError("You don't have enough coins to continue. Please purchase more.");
       return;
     }
-  
+
     const payload = { userId, gameId: Number.parseInt(gameId, 10), message, action: selectedAction };
-    const savedMessage = message; // Save message before clearing the input
+    const savedMessage = message;
     setMessage("");
     setIsWaitingForAI(true);
-  
+
     try {
-      // Get the email from localStorage
-      const email = localStorage.getItem("email") ||
-        (localStorage.getItem("userData") &&
-          JSON.parse(localStorage.getItem("userData") || "{}").email);
-  
+      const email =
+        localStorage.getItem("email") ||
+        (localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email);
+
       if (!email) {
         console.error("Email not found in localStorage");
         setError("User email not found. Please log in again.");
         setIsWaitingForAI(false);
         return;
       }
-  
-      // Show the user message in the chat (optimistic UI update)
+
       const displayMessage = `[${selectedAction}] ${savedMessage}`;
-      const tempUserMessage = { 
-        content: displayMessage, 
-        isUser: true, 
-        timestamp: new Date().toLocaleTimeString() 
+      const tempUserMessage = {
+        content: displayMessage,
+        isUser: true,
+        timestamp: new Date().toLocaleTimeString(),
       };
       setChatMessages((prev) => [...prev, tempUserMessage]);
-  
-      // Log the payload being sent
+
       console.log("Sending to /ai/chat with payload:", payload);
-  
-      // Make API call to get AI response
+
       const response = await axiosInstance.post("/ai/chat", payload);
       console.log("AI response:", response.data);
-  
-      // Check if we have a valid response
+
       if (!response.data || !response.data.ai_response) {
         throw new Error("Invalid response format from AI service");
       }
-  
-      // If AI response was successful, THEN deduct coins
+
       try {
-        // Include both system message and user message for proper token counting
         const deductResponse = await axiosInstance.post("/shop/deduct-coins", {
           email: email,
           userId: userId,
           messages: [
-            { role: "System", content: response.data.ai_response.content }, // Include the AI response
-            { role: "User", content: savedMessage } // Include the actual user message
-          ]
+            { role: "System", content: response.data.ai_response.content },
+            { role: "User", content: savedMessage },
+          ],
         });
-        
+
         console.log("Coin deduction details:", deductResponse.data);
-        
-        // Get the number of coins deducted from the response
+
         const coinsDeducted = deductResponse.data.coinsDeducted || 1;
-        
-        // Update local coin count
-        setCoins(prevCoins => Math.max(0, prevCoins - coinsDeducted));
-        
-        // Trigger coin refresh in the header
+        setCoins((prevCoins) => Math.max(0, prevCoins - coinsDeducted));
         await triggerCoinRefresh();
       } catch (deductError) {
         console.error("Error deducting coins (but message was sent):", deductError);
-        // Continue processing the AI response even if coin deduction fails
       }
-  
-      // Process and display the AI response
+
       const aiResponse: ChatMessage = {
         content: response.data.ai_response.content || "This is a simulated AI response.",
         isUser: false,
@@ -386,11 +354,10 @@ const GameScreen: React.FC = () => {
           : new Date().toLocaleTimeString(),
         image_url: response.data.ai_response.image_url,
       };
-  
-      // Update the chat messages with the user message and AI response
+
       if (response.data.user_message && response.data.user_message.createdAt) {
         setChatMessages((prev) => {
-          const updatedMessages = prev.slice(0, -1); // Remove the temporary user message
+          const updatedMessages = prev.slice(0, -1);
           return [
             ...updatedMessages,
             {
@@ -405,25 +372,23 @@ const GameScreen: React.FC = () => {
       } else {
         setChatMessages((prev) => [...prev.slice(0, -1), tempUserMessage, aiResponse]);
       }
-  
+
       setSuccess("Message sent successfully!");
     } catch (error) {
       console.error("Error in handleSubmit:", error);
-  
-      // Better error logging
+
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
         const data = error.response?.data;
-        
+
         console.error("Axios error details:", {
           status,
           data,
           url: error.config?.url,
           method: error.config?.method,
-          headers: error.config?.headers
+          headers: error.config?.headers,
         });
-  
-        // Handle specific error cases
+
         if (status === 401) {
           setError("Authentication error. Please log in again.");
         } else if (status === 402) {
@@ -437,14 +402,14 @@ const GameScreen: React.FC = () => {
       } else {
         setError(`An unexpected error occurred: ${(error as Error).message}`);
       }
-      
-      // Remove the temporary user message since the request failed
-      setChatMessages(prev => prev.slice(0, -1));
+
+      setChatMessages((prev) => prev.slice(0, -1));
     } finally {
       setIsWaitingForAI(false);
     }
   };
 
+  // Get context from recent messages for image generation
   const getContextFromMessages = (): string => {
     const recentMessages = chatMessages.slice(-5);
     const cleanedContents = recentMessages.map((msg) => msg.content.replace(/^\[(Say|Do|See)\]\s+/i, ""));
@@ -453,103 +418,118 @@ const GameScreen: React.FC = () => {
       : `Generate an image of the current scene in the story: ${cleanedContents.join(". ")}`;
   };
 
+  // Open model selection modal
+  const openModelSelectionModal = () => {
+    setShowModelSelectionModal(true);
+  };
+
+  // Handle model selection
+  const handleModelSelection = (provider: string, baseModel: string, trainedModel = "") => {
+    setSelectedProvider(provider);
+    setSelectedBaseModel(baseModel);
+    setSelectedTrainedModel(trainedModel);
+
+    if (trainedModel) {
+      setSelectedModel(`${baseModel} - ${trainedModel}`);
+    } else {
+      setSelectedModel(baseModel);
+    }
+
+    setShowModelSelectionModal(false);
+  };
+
+  // Handle image generation
   const handleGenerateImage = async () => {
     if (isGeneratingImage) return;
-    
+
     try {
       setIsGeneratingImage(true);
       setError("");
-  
-      // Get email for coin deduction
-      const email = localStorage.getItem("email") ||
+
+      const email =
+        localStorage.getItem("email") ||
         (localStorage.getItem("userData") && JSON.parse(localStorage.getItem("userData") || "{}").email);
-  
+
       if (!email) {
         console.error("Email not found in localStorage");
         setError("User email not found. Please log in again.");
         return;
       }
-  
-      // Check if user has enough coins
+
       if (coins <= 0) {
         setError("You don't have enough coins to generate an image. Please purchase more coins.");
         return;
       }
-  
-      const contextMessage = getContextFromMessages();
-      // Adjust prompt based on model
-      let imagePrompt;
-      let apiEndpoint;
 
-      if (selectedModel.toUpperCase() === "SDXL") {
-        // SDXL specific formatting
-        imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
-        apiEndpoint = "/comfyui/generate"; // Use ComfyUI endpoint for SDXL
+      const contextMessage = getContextFromMessages();
+
+      /* let apiEndpoint;
+      let modelParam;
+
+      // If there's a reason why StabilityAI can be used despite the models, it's because of this line of code. LMAO!
+      if (selectedProvider === "OpenAI") {
+        apiEndpoint = "/openai/generate-image";
+        modelParam = selectedBaseModel;
       } else {
-        // DALL-E formatting
-        imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
-        apiEndpoint = "/openai/generate-image"; // Use OpenAI endpoint for DALL-E
-      }
-  
-  
+        apiEndpoint = "/comfyui/generate";
+        modelParam = selectedTrainedModel ? `${selectedBaseModel}-${selectedTrainedModel}` : selectedBaseModel;
+      }*/
+
+      // New API endpoint for image generation
+      const apiEndpoint = "/generate-image"; 
+      const modelParam = selectedTrainedModel ? `${selectedBaseModel}-${selectedTrainedModel}` : selectedBaseModel;
+
+      const imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
+
+      const displayModelName = selectedTrainedModel
+        ? `${selectedBaseModel} - ${selectedTrainedModel}`
+        : selectedBaseModel;
       const userPromptMessage: ChatMessage = {
-        content: `[Generate Image] Visualizing the current scene using ${selectedModel}...`,
+        content: `[Generate Image] Visualizing the current scene using ${displayModelName}...`,
         isUser: true,
         timestamp: new Date().toLocaleTimeString(),
       };
       setChatMessages((prev) => [...prev, userPromptMessage]);
-  
-  
+
       const generatingMessage: ChatMessage = {
-        content: `Generating image of the current scene with ${selectedModel}...`,
+        content: `Generating image of the current scene with ${displayModelName}...`,
         isUser: false,
         timestamp: new Date().toLocaleTimeString(),
       };
       setChatMessages((prev) => [...prev, generatingMessage]);
-  
-      // Make API call to generate image
+
       const response = await axiosInstance.post(apiEndpoint, {
         userId,
         gameId,
         prompt: imagePrompt,
-        model: selectedModel,
+        model: modelParam,
+        provider: selectedProvider,
       });
-  
+
       console.log("Image generation response:", response.data);
-  
-      // If image generation was successful, THEN deduct coins
+
       try {
         const deductResponse = await axiosInstance.post("/shop/deduct-coins", {
           email: email,
           userId: userId,
           messages: [
             { role: "System", content: "Coin deduction for image generation" },
-            { role: "User", content: contextMessage.substring(0, 500) } // Include partial context
-          ]
+            { role: "User", content: contextMessage.substring(0, 500) },
+          ],
         });
-        
+
         console.log("Coin deduction details for image:", deductResponse.data);
-        
-        // Get the number of coins deducted from the response
+
         const coinsDeducted = deductResponse.data.coinsDeducted || 1;
-        
-        // Update local coin count
-        setCoins(prevCoins => Math.max(0, prevCoins - coinsDeducted));
-        
-        // Trigger coin refresh in the header
+        setCoins((prevCoins) => Math.max(0, prevCoins - coinsDeducted));
         await triggerCoinRefresh();
       } catch (deductError) {
         console.error("Error deducting coins (but image was generated):", deductError);
-        // Continue processing the image even if coin deduction fails
       }
-  
-      // Update message with the generated image
+
       if (response.data && response.data.imageUrl) {
         setChatMessages((prev) => {
-          // Remove the "generating" message
           const messagesWithoutGenerating = prev.slice(0, -1);
-          
-          // Add the AI response with the image
           return [
             ...messagesWithoutGenerating,
             {
@@ -560,8 +540,7 @@ const GameScreen: React.FC = () => {
             },
           ];
         });
-  
-        // Also save the image to chat history
+
         try {
           await axiosInstance.post("/chat/save-image", {
             userId,
@@ -577,22 +556,20 @@ const GameScreen: React.FC = () => {
       }
     } catch (error) {
       console.error("Error generating image:", error);
-      
-      // Remove the "generating" message
+
       setChatMessages((prev) => prev.slice(0, -1));
-      
-      // Handle different error types
+
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
         const data = error.response?.data;
-        
+
         console.error("Image generation error details:", {
           status,
           data,
           url: error.config?.url,
-          method: error.config?.method
+          method: error.config?.method,
         });
-        
+
         if (status === 401) {
           setError("Authentication error. Please log in again.");
         } else if (status === 402) {
@@ -608,46 +585,26 @@ const GameScreen: React.FC = () => {
     }
   };
 
-  const toggleModelDropdown = () => {
-    setShowModelDropdown(!showModelDropdown);
-  };
-
-  const selectModel = (model: string) => {
-    setSelectedModel(model);
-    setShowModelDropdown(false);
-  };
-
+  // Handle sharing to Facebook
   const handleShareToFacebook = () => {
     if (!gameSummary) {
-      setError('Nothing to share yet. Please generate a summary first.');
+      setError("Nothing to share yet. Please generate a summary first.");
       return;
     }
 
-    // The URL to your main website that you want to share
-    const websiteUrl = "https://text-adventure-six.vercel.app/"; // Replace with your actual website URL
-
-    // Prepare the text to share - include some content from the summary
-    const gameTitle = gameDetails?.title || 'My Adventure';
-
-    // Extract a brief snippet from the summary text (first 100 characters)
-    const summarySnippet = gameSummary.summary
-      ? gameSummary.summary.split('\n')[0].substring(0, 100) + "..."
-      : "";
-
-    // Create the message to share
+    const websiteUrl = "https://text-adventure-six.vercel.app/";
+    const gameTitle = gameDetails?.title || "My Adventure";
+    const summarySnippet = gameSummary.summary ? gameSummary.summary.split("\n")[0].substring(0, 100) + "..." : "";
     const shareText = `I just finished my adventure "${gameTitle}"! ${summarySnippet} Play your own adventure now!`;
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(websiteUrl)}"e=${encodeURIComponent(shareText)}`;
 
-    // Facebook sharing URL with pre-filled content and link to your website
-    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(websiteUrl)}&quote=${encodeURIComponent(shareText)}`;
-
-    // Open the Facebook share dialog in a new window
-    window.open(facebookShareUrl, '_blank', 'width=600,height=400');
+    window.open(facebookShareUrl, "_blank", "width=600,height=400");
   };
 
-  // Render waiting bubble for AI
+  // Render waiting bubble for AI response
   const renderWaitingBubble = () => {
     if (!isWaitingForAI) return null;
-    
+
     return (
       <div className="mb-4 text-left">
         <div className="inline-block p-3 rounded-lg bg-[#634630] text-[#E5D4B3]">
@@ -662,25 +619,24 @@ const GameScreen: React.FC = () => {
     );
   };
 
-  // Function to get the correct image URL based on environment
+  // Get image URL with proper base URL
   const getImageUrl = (imageUrl: string) => {
-    if (!imageUrl) return '';
-    
-    // If it's already an absolute URL, return it
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    if (!imageUrl) return "";
+
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
       return imageUrl;
     }
-    
-    // Otherwise, build the URL based on the environment
-    const baseUrl = import.meta.env.VITE_SDXL_ENV || '';
-    return `${baseUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+
+    const baseUrl = import.meta.env.VITE_SDXL_ENV || "";
+    return `${baseUrl}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
   };
 
+  // Reset the game
   const resetGame = async () => {
     try {
       await axiosInstance.post("/ai/reset-chat", {
         userId: userId,
-        gameId: gameId
+        gameId: gameId,
       });
 
       alert("Game reset successfully!");
@@ -692,6 +648,7 @@ const GameScreen: React.FC = () => {
 
   return (
     <>
+      {/* Animation overlay */}
       {isAnimating && (
         <div className="fixed top-0 left-0 w-full h-full z-50 flex justify-center items-center">
           <motion.div
@@ -714,6 +671,7 @@ const GameScreen: React.FC = () => {
       )}
 
       <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col relative">
+        {/* Background image with blur effect */}
         <motion.div className="absolute inset-0" variants={backgroundVariants} initial="normal">
           <img src="./UserBG.svg" alt="Background" className="w-full h-full object-cover" />
         </motion.div>
@@ -721,13 +679,13 @@ const GameScreen: React.FC = () => {
         <div className="relative z-10">
           <div className="z-50">
             <GameHeader title={gameDetails?.title} />
-            {/* <Sidebar /> */}
           </div>
           <br />
           <br />
           <br />
         </div>
 
+        {/* Chat container */}
         <div className="flex-grow flex justify-center items-start mt-[-5%] pt-4">
           <div
             ref={chatContainerRef}
@@ -764,7 +722,7 @@ const GameScreen: React.FC = () => {
                           loading="lazy"
                           onError={(e) => {
                             console.error("Image load error:", e.currentTarget.src);
-                            e.currentTarget.onerror = null; 
+                            e.currentTarget.onerror = null;
                           }}
                         />
                       </div>
@@ -778,48 +736,47 @@ const GameScreen: React.FC = () => {
           </div>
         </div>
 
+        {/* Input area */}
         <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
           <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
             <ActionButton action="Do" isSelected={selectedAction === "Do"} onClick={() => setSelectedAction("Do")} />
             <ActionButton action="Say" isSelected={selectedAction === "Say"} onClick={() => setSelectedAction("Say")} />
 
-            <div className="relative" ref={modelDropdownRef}>
+            {/* Visualize Scene button with settings */}
+            <div className="flex rounded-full overflow-hidden">
               <button
-                onClick={toggleModelDropdown}
-                className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base flex items-center gap-1 ${isGeneratingImage ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed" : `bg-[${gameDetails?.primary_color || "#634630"}] text-white hover:bg-[#311F17] transition-colors`}`}
+                onClick={handleGenerateImage}
+                className={`px-2 py-1 md:px-4md:py-2 font-playfair text-xs md:text-base ${
+                  isGeneratingImage
+                    ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed"
+                    : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
+                }`}
                 disabled={isGeneratingImage}
               >
                 Visualize Scene
-                {showModelDropdown ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </button>
-
-              {showModelDropdown && (
-                <div className="absolute top-full left-0 mt-1 w-full bg-[#1E1E1E] border border-[#634630] rounded-md shadow-lg z-50">
-                  <div className="p-1">
-                    <button
-                      onClick={() => selectModel("DALL-E")}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedModel === "DALL-E" ? "bg-[#634630] text-white" : "hover:bg-[#311F17] text-[#E5D4B3]"}`}
-                    >
-                      DALL-E
-                    </button>
-                    <button
-                      onClick={() => selectModel("SDXL")}
-                      className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedModel === "SDXL" ? "bg-[#634630] text-white" : "hover:bg-[#311F17] text-[#E5D4B3]"}`}
-                    >
-                      SDXL
-                    </button>
-                  </div>
-                  <div className="border-t border-[#634630] p-1">
-                    <button
-                      onClick={handleGenerateImage}
-                      disabled={isGeneratingImage}
-                      className="w-full text-left px-3 py-2 text-sm rounded-md hover:bg-[#311F17] text-[#E5D4B3]"
-                    >
-                      {isGeneratingImage ? "Generating..." : `Generate with ${selectedModel}`}
-                    </button>
-                  </div>
-                </div>
-              )}
+              <button
+                onClick={openModelSelectionModal}
+                className={`px-2 py-1 md:px-2 ${isGeneratingImage? "bg-[#634630]/50 text-gray-400 cursor-not-allowed" : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"} border-l border-[#311F17]/30`}
+                aria-label="Select model"
+                disabled={isGeneratingImage}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-settings"
+                >
+                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
             </div>
 
             <button
@@ -844,6 +801,7 @@ const GameScreen: React.FC = () => {
             </button>
           </div>
 
+          {/* Text input and submit button */}
           <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
             <textarea
               ref={textareaRef}
@@ -856,8 +814,8 @@ const GameScreen: React.FC = () => {
               style={{ minHeight: "56px", height: `${Math.min(message.split("\n").length * 24 + 32, 192)}px` }}
               disabled={isWaitingForAI}
             />
-            <button 
-              className={`p-4 bg-transparent rounded-r-2xl relative group self-start ${isWaitingForAI ? 'cursor-not-allowed opacity-50' : ''}`} 
+            <button
+              className={`p-4 bg-transparent rounded-r-2xl relative group self-start ${isWaitingForAI ? "cursor-not-allowed opacity-50" : ""}`}
               onClick={handleSubmit}
               disabled={isWaitingForAI}
             >
@@ -873,144 +831,327 @@ const GameScreen: React.FC = () => {
           {error && <p className="text-red-500 mt-2">{error}</p>}
           {success && <p className="text-green-500 mt-2">{success}</p>}
         </div>
+      </div>
 
-        {showDescription && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-[#1E1E1E] p-6 rounded-lg max-w-md w-full">
-              <img src={gameDetails?.image_data || '/warhammer.jpg'} alt="Game Description" className="w-full h-48 object-cover rounded-lg" />
-              <br></br>
-              <h2 className="text-xl font-bold mb-4">Game Description</h2>
-              <p className="text-sm italic" style={{ color: gameDetails?.primary_color || "#E5D4B3" }}>
-                {gameDetails?.description}
-              </p>
+      {/* Show Description Modal */}
+      {showDescription && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-[#1E1E1E] p-6 rounded-lg max-w-md w-full">
+            <img
+              src={gameDetails?.image_data || "/warhammer.jpg"}
+              alt="Game Description"
+              className="w-full h-48 object-cover rounded-lg"
+            />
+            <br />
+            <h2 className="text-xl font-bold mb-4">Game Description</h2>
+            <p className="text-sm italic" style={{ color: gameDetails?.primary_color || "#E5D4B3" }}>
+              {gameDetails?.description}
+            </p>
+            <button
+              onClick={() => setShowDescription(false)}
+              className="mt-4 px-4 py-2 rounded-full font-playfair bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Model Selection Modal */}
+      {showModelSelectionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-[#1E1E1E] p-6 rounded-lg max-w-md w-full border border-[#634630] shadow-xl">
+            <h2 className="text-xl font-bold mb-4 text-[#E5D4B3]">Select Image Generation Model</h2>
+
+            <div className="flex mb-4">
               <button
-                onClick={() => setShowDescription(false)}
-                className="mt-4 px-4 py-2 rounded-full font-playfair bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
+                onClick={() => setActiveTab("base")}
+                className={`px-4 py-2 flex-1 ${activeTab === "base" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"} rounded-l-md`}
               >
-                Close
+                Base Models
+              </button>
+              <button
+                onClick={() => setActiveTab("others")}
+                className={`px-4 py-2 flex-1 ${activeTab === "others" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"} rounded-r-md`}
+              >
+                Others
+              </button>
+            </div>
+
+            <div className="flex mb-4">
+              <div className="w-1/3 pr-2">
+                <h3 className="text-sm font-semibold mb-2 text-[#E5D4B3]">Provider</h3>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setSelectedProvider("OpenAI")}
+                    className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedProvider === "OpenAI" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                  >
+                    OpenAI
+                  </button>
+                  <button
+                    onClick={() => setSelectedProvider("StabilityAI")}
+                    className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedProvider === "StabilityAI" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                  >
+                    StabilityAI
+                  </button>
+                </div>
+              </div>
+
+              <div className="w-2/3 pl-2">
+                <h3 className="text-sm font-semibold mb-2 text-[#E5D4B3]">
+                  {activeTab === "base" ? "Available Models" : "Trained Models"}
+                </h3>
+
+                {activeTab === "base" && (
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {selectedProvider === "OpenAI" && (
+                      <>
+                        <button
+                          onClick={() => handleModelSelection("OpenAI", "DALL-E 2")}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "DALL-E 2" && selectedProvider === "OpenAI" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          DALL-E 2
+                        </button>
+                        <button
+                          onClick={() => handleModelSelection("OpenAI", "DALL-E 3")}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "DALL-E 3" && selectedProvider === "OpenAI" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          DALL-E 3
+                        </button>
+                      </>
+                    )}
+
+                    {selectedProvider === "StabilityAI" && (
+                      <>
+                        <button
+                          onClick={() => handleModelSelection("StabilityAI", "Stable Diffusion 1.5")}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "Stable Diffusion 1.5" && selectedProvider === "StabilityAI" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          Stable Diffusion 1.5 (v1-5 pruned)
+                        </button>
+                        <button
+                          onClick={() => handleModelSelection("StabilityAI", "Stable Diffusion 3.0")}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "Stable Diffusion 3.0" && selectedProvider === "StabilityAI" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          Stable Diffusion 3.0
+                        </button>
+                        <button
+                          onClick={() => handleModelSelection("StabilityAI", "Stable Diffusion XL")}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "Stable Diffusion XL" && selectedProvider === "StabilityAI" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          Stable Diffusion XL
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === "others" && selectedProvider === "StabilityAI" && (
+                  <div className="space-y-4 max-h-60 overflow-y-auto">
+                    <div>
+                      <h4 className="text-xs font-semibold text-[#E5D4B3] mb-2 border-b border-[#634630]/30 pb-1">
+                        Stable Diffusion 1.5
+                      </h4>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => handleModelSelection("StabilityAI", "Stable Diffusion 1.5", "anythingelse")}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "Stable Diffusion 1.5" && selectedTrainedModel === "anythingelse" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          anythingelseV4 (v4.5)
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-semibold text-[#E5D4B3] mb-2 border-b border-[#634630]/30 pb-1">
+                        Stable Diffusion XL
+                      </h4>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => handleModelSelection("StabilityAI", "Stable Diffusion XL", "Animagine")}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "Stable Diffusion XL" && selectedTrainedModel === "Animagine" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          Animagine XL 4.0
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-semibold text-[#E5D4B3] mb-2 border-b border-[#634630]/30 pb-1">
+                        NoobAI
+                      </h4>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() =>
+                            handleModelSelection("StabilityAI", "Stable Diffusion XL", "NoobAI-Base")
+                          }
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "Stable Diffusion XL" && selectedTrainedModel === "NoobAI-Ikastrious" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          NoobaiXL (Base Model)
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleModelSelection("StabilityAI", "Stable Diffusion XL", "NoobAI-Ikastrious")
+                          }
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "Stable Diffusion XL" && selectedTrainedModel === "NoobAI-Ikastrious" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          Ikastrious (NoobAI-XL)
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-semibold text-[#E5D4B3] mb-2 border-b border-[#634630]/30 pb-1">
+                        Illustrious
+                      </h4>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => handleModelSelection("StabilityAI", "Stable Diffusion XL", "Illustrious-coco")}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "Stable Diffusion XL" && selectedTrainedModel === "Illustrious-coco" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          coco-Illustrious-XL
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleModelSelection("StabilityAI", "Stable Diffusion XL", "Illustrious-Obsession")
+                          }
+                          className={`w-full text-left px-3 py-2 text-sm rounded-md ${selectedBaseModel === "Stable Diffusion XL" && selectedTrainedModel === "Illustrious-Obsession" ? "bg-[#634630] text-white" : "bg-[#311F17] text-[#E5D4B3]"}`}
+                        >
+                          Obsession-Illustrious-XL
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === "others" && selectedProvider === "OpenAI" && (
+                  <div className="p-3 text-sm text-[#E5D4B3] bg-[#311F17] rounded-md">
+                    OpenAI does not have trained models available. For now.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-6">
+              <button
+                onClick={() => setShowModelSelectionModal(false)}
+                className="px-4 py-2 rounded-full font-playfair bg-[#311F17] text-white hover:bg-[#634630] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  handleGenerateImage();
+                  setShowModelSelectionModal(false);
+                }}
+                className="px-4 py-2 rounded-full font-playfair bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
+              >
+                Generate with{" "}
+                {selectedTrainedModel ? `${selectedBaseModel} - ${selectedTrainedModel}` : selectedBaseModel}
               </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {showEndStoryModal && (
+      {/* End Story Modal */}
+      {showEndStoryModal && (
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            className="p-6 rounded-lg animate-dark-glow"
+            style={{
+              width: "75vw",
+              height: "80vh",
+              backgroundColor: "#2F2118",
+              border: "2px solid #1E1E1E",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.8 }}
             transition={{ duration: 0.5 }}
           >
-            <motion.div
-              className="p-6 rounded-lg animate-dark-glow"
-              style={{
-                width: "75vw",
-                height: "80vh",
-                backgroundColor: "#2F2118",
-                border: "2px solid #1E1E1E",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-              }}
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div>
-                {/* Image placeholder */}
-                <div
-                  className="w-full bg-gray-700 rounded-lg flex items-center justify-center border-4 border-[#634630]"
-                  style={{ height: '30vh' }}
-                >
-                  {gameSummary && gameSummary.imageUrl ? (
-                    <img
-                      src={getImageUrl(gameSummary.imageUrl)}
-                      alt="Game Summary"
-                      className="w-full h-full object-cover rounded-lg"
-                      onError={(e) => {
-                        console.error("Summary image load error");
-                        e.currentTarget.onerror = null;
-                      }}
-                    />
-                  ) : (
-                    <div className="text-[#C9B57B] text-lg flex items-center justify-center">
-                      {isGeneratingImage ? 'Generating summary...' : 'No summary available'}
+            <div>
+              <div
+                className="w-full bg-gray-700 rounded-lg flex items-center justify-center border-4 border-[#634630]"
+                style={{ height: "30vh" }}
+              >
+                {gameSummary && gameSummary.imageUrl ? (
+                  <img
+                    src={getImageUrl(gameSummary.imageUrl)}
+                    alt="Game Summary"
+                    className="w-full h-full object-cover rounded-lg"
+                    onError={(e) => {
+                      console.error("Summary image load error");
+                      e.currentTarget.onerror = null;
+                    }}
+                  />
+                ) : (
+                  <div className="text-[#C9B57B] text-lg flex items-center justify-center">
+                    {isGeneratingImage ? "Generating summary..." : "No summary available"}
+                  </div>
+                )}
+              </div>
+              <br />
+
+              <div className="mt-4 text-[#E5D4B3]">
+                <h2 className="text-xl font-bold mb-2 font-cinzel">Game Summary</h2>
+                <div className="max-h-[25vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent mx-4 leading-loose text-base text-lg text-[#C9B57B]">
+                  {gameSummary && gameSummary.summary ? (
+                    <div>
+                      {gameSummary.summary.split("\n").map((line, index) => (
+                        <p key={index} className="mb-2">
+                          {line.trim()}
+                        </p>
+                      ))}
                     </div>
+                  ) : (
+                    <p>{isGeneratingImage ? "Creating your adventure summary..." : "No summary available. Generate a summary to see your adventure recap."}</p>
                   )}
                 </div>
-                <br></br>
-
-                {/* Summary of the game */}
-                <div className="mt-4 text-[#E5D4B3]">
-                  <h2 className="text-xl font-bold mb-2 font-cinzel">Game Summary</h2>
-                  <div className="max-h-[25vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent mx-4 leading-loose text-base text-lg text-[#C9B57B]">
-                    {gameSummary && gameSummary.summary ? (
-                      <div>
-                        {/* Format the string with line breaks */}
-                        {gameSummary.summary.split('\n').map((line, index) => (
-                          <p key={index} className="mb-2">
-                            {line.trim()}
-                          </p>
-                        ))}
-                      </div>
-                    ) : (
-                      <p>{isGeneratingImage ? 'Creating your adventure summary...' : 'No summary available. Generate a summary to see your adventure recap.'}</p>
-                    )}
-                  </div>
-                </div>
               </div>
+            </div>
 
-
-              <div className="flex justify-between">
-                <div className="flex space-x-3">
-                  <button
-                    onClick={handleSummary}
-                    disabled={isGeneratingImage}
-                    className={`px-4 py-3 rounded-full font-playfair text-white ${isGeneratingImage ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#634630] hover:bg-[#311F17]'} transition-colors`}
-                  >
-                    {isGeneratingImage ? 'Generating...' : 'Generate Summary'}
-                  </button>
-                  <button
-                    onClick={handleShareToFacebook}
-                    disabled={!gameSummary || isGeneratingImage}
-                    className={`px-4 py-3 rounded-full font-playfair text-white flex items-center ${!gameSummary || isGeneratingImage ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#4267B2] hover:bg-[#365899]'} transition-colors`}
-                  >
-                    <span className="mr-2">Share to Facebook</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white">
-                      <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-                    </svg>
-                  </button>
-                </div>
+            <div className="flex justify-between">
+              <div className="flex space-x-3">
                 <button
-                  onClick={() => setShowEndStoryModal(false)}
-                  className="px-4 py-3 rounded-full font-playfair text-white bg-[#634630] hover:bg-[#311F17] transition-colors"
+                  onClick={handleSummary}
+                  disabled={isGeneratingImage}
+                  className={`px-4 py-3 rounded-full font-playfair text-white ${isGeneratingImage ? "bg-gray-500 cursor-not-allowed" : "bg-[#634630] hover:bg-[#311F17]"} transition-colors`}
                 >
-                  Return to Game
+                  {isGeneratingImage ? "Generating..." : "Generate Summary"}
                 </button>
-              </div>
-
-              <div className="flex justify-end">
                 <button
                   onClick={handleShareToFacebook}
-                  className={`px-4 py-2 rounded-full font-playfair bg-[#634630] text-white hover:bg-[#311F17] transition-colors`}
+                  disabled={!gameSummary || isGeneratingImage}
+                  className={`px-4 py-3 rounded-full font-playfair text-white flex items-center ${!gameSummary || isGeneratingImage ? "bg-gray-500 cursor-not-allowed" : "bg-[#4267B2] hover:bg-[#365899]"} transition-colors`}
                 >
-                  Share to Facebook
-                </button>
-                <button
-                  onClick={() => setShowEndStoryModal(false)}
-                  className="ml-4 px-4 py-2 rounded-full font-playfair bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
-                >
-                  Close
+                  <span className="mr-2">Share to Facebook</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+                  </svg>
                 </button>
               </div>
-            </motion.div>
+              <button
+                onClick={() => setShowEndStoryModal(false)}
+                className="px-4 py-3 rounded-full font-playfair text-white bg-[#634630] hover:bg-[#311F17] transition-colors"
+              >
+                Return to Game
+              </button>
+            </div>
           </motion.div>
-        )}
-      </div>
+        </motion.div>
+      )}
     </>
   );
-}
+};
 
 export default GameScreen;
-
