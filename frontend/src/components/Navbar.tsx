@@ -604,7 +604,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100]">
-          <div className="bg-[#2A1F17] border-2 border-[#C8A97E] rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
+          <div className="bg-[#2A1F17] border-2 border-[#C8A97E] rounded-lg p-6 max-w-md w-full sm:w-auto mx-auto shadow-lg">
             <h2 className="font-cinzel text-xl text-[#E5D4B3] mb-4 text-center">Leave the Realm?</h2>
             <p className="text-[#C8A97E] mb-6 text-center">
               Are you sure you wish to depart from these mystical lands? Your journey will be paused until your return.
