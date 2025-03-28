@@ -498,7 +498,7 @@ const GameScreen: React.FC = () => {
       };
       setChatMessages((prev) => [...prev, generatingMessage]);
 
-      const response = await axiosInstance.post(apiEndpoint, {
+      const response = await axios.post(import.meta.env.VITE_SDXL_ENV + apiEndpoint, {
         userId,
         gameId,
         prompt: imagePrompt,
