@@ -2,8 +2,16 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useLoading } from '../context/LoadingContext';
 import LoadingBook from '../components/LoadingBook';
 import Button from '../components/Button';
-import VolumeControl from '../components/VolumeControl';
+import AudioToggle from '../components/AudioToggle';
 import bgMusic from '../assets/bgm_torch.mp3';
+import styled from 'styled-components';
+
+const StyledAudioToggle = styled(AudioToggle)`
+    position: fixed !important;
+    top: 30px !important;
+    left: 30px !important;
+    z-index: 9999 !important;
+`;
 
 const LandingPage: React.FC = () => {
     const contentRef = useRef<HTMLDivElement>(null);
@@ -94,10 +102,11 @@ const LandingPage: React.FC = () => {
                 preload="auto"
             />
             
-            <VolumeControl 
+            <StyledAudioToggle 
                 audioRef={audioRef} 
-                initialVolume={0.3} 
-                position={{ bottom: '30px', left: '30px' }}
+                initialVolume={0.7} 
+                color="#F1DC68"
+                size="30px"
             />
             
             <div
