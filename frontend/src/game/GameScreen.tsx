@@ -498,6 +498,7 @@ const GameScreen: React.FC = () => {
       };
       setChatMessages((prev) => [...prev, generatingMessage]);
 
+      // DO NOT CHANGE
       const response = await axios.post(import.meta.env.VITE_SDXL_ENV + apiEndpoint, {
         userId,
         gameId,
@@ -542,7 +543,7 @@ const GameScreen: React.FC = () => {
         });
 
         try {
-          await axiosInstance.post("/chat/save-image", {
+          await axios.post(import.meta.env.VITE_SDXL_ENV + "/chat/save-image", {
             userId,
             gameId,
             content: "Generated image for the current scene",
