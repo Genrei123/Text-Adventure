@@ -84,14 +84,31 @@ const Register: React.FC<RegisterProps> = ({ }) => {
   
   return (
     // register design
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center md:justify-start bg-[#1E1E1E] md:bg-cover md:bg-center fade-in" style={{ backgroundImage: `url(${('/register.gif')})` }}>
-      <img src={('/fadeLogin.png')} className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block" />
-      <div className="w-1/2 flex items-center justify-center">
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-[#1E1E1E] relative overflow-hidden">
+      {/* Background image - responsive handling */}
+      <div className="absolute inset-0 w-full h-full">
+        {/* Mobile background - solid color already set in parent */}
+        {/* Desktop background image */}
+        <img 
+          src={('/register.gif')} 
+          className="hidden md:block absolute inset-0 w-full h-full object-cover" 
+          alt="Background" 
+        />
+        {/* Fade overlay for better text contrast */}
+        <img 
+          src={('/fadeLogin.png')} 
+          className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block" 
+          alt="Fade overlay" 
+        />
+      </div>
+      
+      {/* Left side - empty on mobile, takes space on desktop */}
+      <div className="hidden md:flex md:w-1/2 items-center justify-center">
       </div>
 
       {/* Right Side - Registration Form */}
-      <div className="w-1/2 flex items-center justify-center">
-        <div className="w-[480px] relative">
+      <div className="w-full md:w-1/2 flex items-center justify-center z-10 px-4 py-8 md:py-0">
+        <div className="w-full max-w-[480px] relative">
           {/* Success Message Overlay */}
           {(isProcessing) && (
             <div className="absolute inset-0 flex items-center justify-center z-10">
