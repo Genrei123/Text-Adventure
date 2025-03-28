@@ -30,6 +30,9 @@ import Subscription from './subscription/Subscription';
 import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
 import ButtonExample from './components/ButtonExample';
 import Footer from './components/Footer';
+import AboutPage from './components/AboutUs';
+import TermsOfServicePage from './components/TermsOfService';
+import PrivacyPolicyPage from './components/PrivacyPolicy';
 
 // Game Creation Components
 import GameCreation from './game-creation/GameCreation';
@@ -179,6 +182,9 @@ function App() {
           <Route path="/image-generator" element={<ImageGeneratorScreen />} />
           <Route path="/button" element={<ButtonExample />} />
           <Route path="/footer" element={<Footer />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
           
           {/* Utility Routes */}
           <Route path="/subscription" element={<Subscription />} />
