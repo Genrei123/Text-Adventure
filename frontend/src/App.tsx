@@ -31,6 +31,9 @@ import Subscription from './subscription/Subscription';
 import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
 import ButtonExample from './components/ButtonExample';
 import Footer from './components/Footer';
+import AboutPage from './components/AboutUs';
+import TermsOfServicePage from './components/TermsOfService';
+import PrivacyPolicyPage from './components/PrivacyPolicy';
 
 // Game Creation Components
 import GameCreation from './game-creation/GameCreation';
