@@ -1831,36 +1831,22 @@ const AdminPage: React.FC = () => {
               <div>
                 <label className="block text-sm font-cinzel text-white mb-2 uppercase">Reason for Ban</label>
                 <div className="relative">
-                  <select
-                    value={banReason === "Other" ? "Other" : banReason}
-                    onChange={(e) => {
-                      if (e.target.value === "Other") {
-                        setBanReason("");
-                      } else {
-                        setBanReason(e.target.value);
-                      }
-                    }}
-                    className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white appearance-none cursor-pointer"
-                  >
-                    <option value="">Select a reason</option>
-                    <option value="Spam">Spam</option>
-                    <option value="Harassment">Harassment</option>
-                    <option value="Cheating">Cheating</option>
-                    <option value="Inappropriate Content">Inappropriate Content</option>
-                    <option value="N-Word">N-Word</option>
-                    <option value="Other">Other (specify below)</option>
-                  </select>
-                  <ChevronDown className="w-4 h-4 absolute right-3 top-3 text-gray-400 pointer-events-none" />
-                </div>
-                {banReason === "Other" && (
                   <input
                     type="text"
                     value={banReason}
                     onChange={(e) => setBanReason(e.target.value)}
-                    className="w-full mt-2 px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white"
-                    placeholder="Enter custom reason"
+                    className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
+                    placeholder="Type or select a reason"
+                    list="banReasons"
                   />
-                )}
+                  <datalist id="banReasons">
+                    <option value="Spam" />
+                    <option value="Harassment" />
+                    <option value="Cheating" />
+                    <option value="Inappropriate Content" />
+                    <option value="N-Word" />
+                  </datalist>
+                </div>
               </div>
 
               {/* Ban Type */}
@@ -1890,7 +1876,7 @@ const AdminPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Temporary Ban Duration Presets */}
+              {/* Quick Duration Presets */}
               {banType === 'temporary' && (
                 <div className="mt-4">
                   <label className="block text-sm font-cinzel text-white mb-2 uppercase">Quick Duration Presets</label>
@@ -1901,6 +1887,7 @@ const AdminPage: React.FC = () => {
                       { days: 7, label: '7 Days', color: 'bg-yellow-600 hover:bg-yellow-700' },
                       { days: 14, label: '2 Weeks', color: 'bg-orange-600 hover:bg-orange-700' },
                       { days: 30, label: '1 Month', color: 'bg-red-600 hover:bg-red-700' },
+                      { days: 180, label: '6 Months', color: 'bg-purple-600 hover:bg-purple-700' }, // New 6 Months button
                     ].map((preset) => (
                       <button
                         key={preset.days}
