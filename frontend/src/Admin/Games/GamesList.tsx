@@ -7,16 +7,33 @@ import StatusBadge from './StatusBadge';
 import Loader from './Loader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tooltip } from 'react-tooltip';
+import { ToastContainer, toast } from 'react-toastify';
+import LoadingBook from '../../components/LoadingBook';
+
+interface Game {
+  id: number;
+  title: string;
+  genre: string;
+  createdAt: string;
+  status: string;
+  UserId: number;
+  creator?: string; // Add creator field
+}
+
+interface User {
+  id: number;
+  username: string;
+}
 
 const GamesList: React.FC = () => {
   const navigate = useNavigate();
-  const [games, setGames] = useState<any[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [genreFilter, setGenreFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ 
-    key: 'title', 
-    direction: 'asc' 
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({
+    key: 'title',
+    direction: 'asc'
   });
   const [showModal, setShowModal] = useState(false);
   const [selectedGames, setSelectedGames] = useState<number[]>([]);
@@ -32,7 +49,7 @@ const GamesList: React.FC = () => {
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
 
   const allSelected = selectedGames.length === games.length;
-  
+
   const toggleSelectAll = () => {
     setSelectedGames(allSelected ? [] : games.map(game => game.id));
   };
@@ -44,10 +61,25 @@ const GamesList: React.FC = () => {
   const fetchGames = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get('/api/games');
-      setGames(response.data);
+      const [gamesResponse, usersResponse] = await Promise.all([
+        axiosInstance.get('/api/games/all'),
+        axiosInstance.get('/admin/users'),
+      ]);
+
+      const userMap = new Map<number, string>();
+      (usersResponse.data || []).forEach((user: User) => {
+        userMap.set(user.id, user.username);
+      });
+
+      const enrichedGames = gamesResponse.data.map((game: Game) => ({
+        ...game,
+        creator: userMap.get(game.UserId) || 'Unknown',
+      }));
+
+      setGames(enrichedGames);
     } catch (error) {
-      console.error('Error fetching games:', error);
+      console.error('Error fetching data:', error);
+      toast.error('Failed to load game data');
     } finally {
       setIsLoading(false);
     }
@@ -69,12 +101,11 @@ const GamesList: React.FC = () => {
     setSortConfig({ key, direction });
   };
 
-// Update sorting logic
-const sortedGames = [...games].sort((a, b) => {
-  if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
-  if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
-  return 0;
-});
+  const sortedGames = [...games].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
 
   const filteredGames = sortedGames.filter(game => {
     return (
@@ -140,12 +171,11 @@ const sortedGames = [...games].sort((a, b) => {
   // Enhanced Table Header Component
   const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
     <th
-      className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-left cursor-pointer hover:bg-[#534231] transition-colors group"
+      className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center cursor-pointer hover:bg-[#534231] transition-colors group"
       onClick={() => handleSort(sortKey)}
-      aria-sort={sortConfig.key === sortKey ? 
-        (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
+      aria-sort={sortConfig.key === sortKey ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center gap-2">
         <span className="text-[#F0E6DB]">{label}</span>
         <span className={`text-[#C0A080] transition-opacity ${
           sortConfig.key === sortKey ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
@@ -212,7 +242,7 @@ const sortedGames = [...games].sort((a, b) => {
             ✕
           </button>
         </div>
-        
+
         <form onSubmit={handleNewGameSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
@@ -226,7 +256,7 @@ const sortedGames = [...games].sort((a, b) => {
                 onChange={handleNewGameChange}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre *</label>
               <select
@@ -256,7 +286,7 @@ const sortedGames = [...games].sort((a, b) => {
                 <option value="inactive">Inactive</option>
               </select>
             </div>
-            
+
             <div>
               <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Primary Prompt</label>
               <textarea
@@ -334,10 +364,10 @@ const sortedGames = [...games].sort((a, b) => {
                   </th>
                   <TableHeader label="Title" sortKey="title" />
                   <TableHeader label="Genre" sortKey="genre" />
-                  <TableHeader label="Players" sortKey="players" />
+                  <TableHeader label="Players" sortKey="creator" />
                   <TableHeader label="Created" sortKey="createdAt" />
                   <TableHeader label="Status" sortKey="status" />
-                  <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-left">Actions</th>
+                  <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -362,7 +392,7 @@ const sortedGames = [...games].sort((a, b) => {
                         {game.title}
                       </td>
                       <td className="p-4 font-playfair">{game.genre}</td>
-                      <td className="p-4 font-playfair">{game.players?.toLocaleString()}</td>
+                      <td className="p-4 font-playfair text-center">{game.creator}</td>
                       <td className="p-4 font-playfair">
                         {new Date(game.createdAt).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -374,13 +404,12 @@ const sortedGames = [...games].sort((a, b) => {
                         <StatusBadge status={game.status} />
                       </td>
                       <td className="p-4">
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => navigate(`/admin/games/${game.id}`)}
                             className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                             title="View"
                             aria-label={`View ${game.title}`}
-                            onKeyDown={(e) => e.key === 'Enter' && navigate(`/admin/games/${game.id}`)}
                           >
                             <Eye className="w-5 h-5" />
                           </button>
@@ -389,7 +418,6 @@ const sortedGames = [...games].sort((a, b) => {
                             className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                             title="Edit"
                             aria-label={`Edit ${game.title}`}
-                            onKeyDown={(e) => e.key === 'Enter' && navigate(`/admin/games/${game.id}/edit`)}
                           >
                             <Edit className="w-5 h-5" />
                           </button>
@@ -398,7 +426,6 @@ const sortedGames = [...games].sort((a, b) => {
                             className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                             title="Toggle Status"
                             aria-label={`Toggle status of ${game.title}`}
-                            onKeyDown={(e) => e.key === 'Enter' && handleToggleStatus(game)}
                           >
                             <Power className="w-5 h-5" />
                           </button>
@@ -407,7 +434,6 @@ const sortedGames = [...games].sort((a, b) => {
                             className="p-2 hover:bg-red-900/20 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none"
                             title="Delete"
                             aria-label={`Delete ${game.title}`}
-                            onKeyDown={(e) => e.key === 'Enter' && handleDelete(game.id)}
                           >
                             <Trash className="w-5 h-5" />
                           </button>
@@ -449,6 +475,7 @@ const sortedGames = [...games].sort((a, b) => {
           </button>
         </motion.div>
       )}
+      <ToastContainer />
     </div>
   );
 };
