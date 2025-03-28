@@ -4,6 +4,7 @@ import { Search, ChevronDown, X, LogOut } from "lucide-react";
 import socketIOClient from 'socket.io-client';
 import axiosInstance from "../../config/axiosConfig";
 import { debounce } from "lodash";
+import { useNavbar } from "../context/NavbarContext";
 
 const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
@@ -25,12 +26,10 @@ interface Player {
   profile_image?: string;
 }
 
-interface NavbarProps {
-  onLogout?: () => void;
-}
+interface NavbarProps {}
 
-const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
-  const [username, setUsername] = useState<string | null>(null);
+const Navbar: React.FC<NavbarProps> = () => {
+  const { showLogoutModal, openLogoutModal, closeLogoutModal, handleLogout, username, setUsername } = useNavbar();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<(Game | Player)[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -39,7 +38,6 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
   const [selectedPopularity, setSelectedPopularity] = useState("all");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [profilePicture, setProfilePicture] = useState<string>();
@@ -104,7 +102,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
     fetchUserData();
     fetchData();
-  }, []);
+  }, [setUsername]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -168,28 +166,6 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     }
   };
 
-  const handleLogout = async () => {
-    if (onLogout) {
-      await axiosInstance.post('/auth/logout', {
-        email: localStorage.getItem('email'),
-      });
-
-      localStorage.removeItem('userData');
-      localStorage.removeItem('email');
-      localStorage.removeItem('token');
-      setUsername(null);
-      await onLogout();
-    }
-  };
-
-  const openLogoutModal = () => {
-    setShowLogoutModal(true);
-  };
-
-  const closeLogoutModal = () => {
-    setShowLogoutModal(false);
-  };
-
   const toggleSearch = () => {
     setIsSearchExpanded(!isSearchExpanded);
     if (!isSearchExpanded) {
@@ -197,7 +173,6 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     }
   };
 
-  // Get the appropriate placeholder text based on screen width
   const getPlaceholderText = () => {
     return windowWidth < 640 ? "Search" : "Search the ancient scrolls...";
   };
@@ -603,7 +578,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100]">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
           <div className="bg-[#2A1F17] border-2 border-[#C8A97E] rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
             <h2 className="font-cinzel text-xl text-[#E5D4B3] mb-4 text-center">Leave the Realm?</h2>
             <p className="text-[#C8A97E] mb-6 text-center">
