@@ -20,8 +20,9 @@ import gameRoutes from './routes/game/gameRoutes';
 import paymentRoutes from './routes/transaction/shopRoutes';
 import sessionRoutes from './routes/statistics/sessionRoutes';
 import nihRoutes from './routes/game/nih-game/nihRoutes';
-import openaiRoute from './routes/img-generation/openaiRoute'; // Image generation for OPENAI
-import comfyuiRoute from './routes/img-generation/comfyuiRoute'; // Image generation for Stable Diffusion
+import openaiRoute from './routes/img-generation/openaiRoute';
+import comfyuiRoute from './routes/img-generation/comfyuiRoute';
+import generateImageRoute from './routes/img-generation/generateImageRoute';
 import banRoutes from './routes/admin/banRoutes';
 import metricsRouter from './routes/admin/metricsRoutes';
 import playersRouter from './routes/admin/playersRoutes';
@@ -69,8 +70,9 @@ app.use('/game', gameRoutes);
 app.use('/payments', paymentRoutes);
 app.use("/sessions", sessionRoutes);
 app.use('/nih', nihRoutes);
-app.use('/openai', openaiRoute); // Dall-E image generation 
-app.use('/comfyui', comfyuiRoute); // ComfyUI - image generation for SDXL, SD3, etc. (P.S. YOU CAN'T RUN THIS WITHOUT MY PRECIOUS RTX 4060 Ti WAHAHAHAHA! (I meant if my PC is off.))
+app.use('/openai', openaiRoute);
+app.use('/comfyui', comfyuiRoute);
+app.use('/', generateImageRoute); // So anyway, I was thinking-- I should make a unified endpoint for image generation, so I did HAHAHAHAHA
 app.use('/bans', banRoutes);
 app.use('/api/bans', banRoutes);
 app.use('/api/metrics', metricsRouter);

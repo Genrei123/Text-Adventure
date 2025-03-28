@@ -28,11 +28,30 @@ const comfyUIUrl = process.env.COMFYUI_NGROK_URL;
 // Output directory for generated images (Local ComfyUI directory)
 const comfyOutputDir = path.join(__dirname, '../../../../../../Stable Diffusion/ComfyUI_windows_portable/ComfyUI/output');
 
+// Mapping of Model Names from the GameScreen to Workflow Files.
+// Purpose: Dynamic loading of correct workflow file based on the selected model
+const modeltoWorkflowMap: { [key: string]: string } = {
+  'Stable Diffusion 1.5': 'sd1-5-pruned Workflow.json',
+  'Stable Diffusion 1.5-anythingelse': 'sd1-5-anythingelse Workflow.json',
+  'Stable Diffusion 3.0': 'sd3_medium_t5xxlfp8 Workflow.json',
+  'Stable Diffusion XL': 'sdxl_base Workflow.json',
+  'Stable Diffusion XL-Animagine': 'animagineXL Workflow.json',
+  'Stable Diffusion XL-NoobAI-Base': 'noobaiXL_NAI Workflow.json',
+  'Stable Diffusion XL-NoobAI-Ikastrious': 'ikastriousNoobai Workflow.json',
+  'Stable Diffusion XL-Illustrious-coco': 'cocoIllustrious-v60 Workflow.json',
+  'Stable Diffusion XL-Illustrious-Obsession': 'obsessionIllustrious-vPredV11 Workflow.json',
+};
 export const generateImage = async (req: Request, res: Response) => {
-  const { prompt, negativePrompt, userId, gameId } = req.body;
+  const { prompt, negativePrompt, userId, gameId, model } = req.body;
 
-  if (!prompt) {
-    res.status(400).json({ error: 'Prompt is required' });
+  if (!prompt || !model) {
+    res.status(400).json({ error: 'Prompt and model are required' });
+    return;
+  }
+
+  // Check if the model is supported
+  if (!modeltoWorkflowMap[model]) {
+    res.status(400).json({ error: `Model "${model}" is not supported` });
     return;
   }
 
@@ -40,30 +59,38 @@ export const generateImage = async (req: Request, res: Response) => {
     console.log('Server received image generation request at:', new Date());
     
     // Ensure the image directory exists (similar to DALL-E implementation)
+    // Leads/Creates a directory in public/image/chat-images to store the generated images
     const imageDir = path.join('public', 'images', 'chat-images');
     await mkdirAsync(imageDir, { recursive: true });
     
-    // Load and configure workflow
-    const workflowPath = path.join(__dirname, '../../imagegen/comfyui/workflows/prompt2img.json');
+    // Load and configure workflow file based on the selected model
+    // Purpose: Dynamically loads the correct workflow file for the selected StabilityAI model
+    const workflowFile = modeltoWorkflowMap[model];
+    const workflowPath = path.join(__dirname, '../../imagegen/comfyui/workflows', workflowFile);
     const workflowData = JSON.parse(fs.readFileSync(workflowPath, 'utf-8'));
 
-    workflowData['7'].inputs.text = prompt;
+    // Node 3 or '3' is the (POSITIVE) prompt node in the workflow
+    // Node 4 or '4' is the (NEGATIVE) prompt node in the workflow
+    // Node 2 or '2' is Random Seed (KSampler)
+    // I basically just switched the node numbers to match the workflow file since the old one is just only uses one model.
+    workflowData['3'].inputs.text = prompt;
     if (negativePrompt) {
-      workflowData['8'].inputs.text = negativePrompt;
+      workflowData['4'].inputs.text = negativePrompt;
     }
-    workflowData['4'].inputs.seed = Math.floor(Math.random() * 1000000000000);
+    workflowData['2'].inputs.seed = Math.floor(Math.random() * 1000000000000);
 
     // Send prompt to ComfyUI
+    // POST /prompt endpoint on ComfyUI server (via ngrok URL)
     const response = await axios.post(`${comfyUIUrl}/prompt`, { prompt: workflowData }, {
       timeout: 30000 // 30 second timeout
     });
     const promptId = response.data.prompt_id;
     console.log('Prompt ID:', promptId);
 
-    // Poll ComfyUI history to wait for completion
+    // Checker for the image generation status
     let latestFile: string | undefined;
     const startTime = Date.now();
-    const maxWaitTime = 60000; // 60 seconds max wait
+    const maxWaitTime = 60000; // 60 seconds 
 
     while (Date.now() - startTime < maxWaitTime) {
       try {
@@ -80,8 +107,7 @@ export const generateImage = async (req: Request, res: Response) => {
             output && output.images && output.images.length > 0
           );
           if (saveImageNode && saveImageNode.images) {
-            const imageInfo = saveImageNode.images[0];
-            latestFile = imageInfo.filename;
+            latestFile = saveImageNode.images[0].filename;
             console.log('Image generation completed. Filename from history:', latestFile);
             break;
           }
@@ -105,15 +131,14 @@ export const generateImage = async (req: Request, res: Response) => {
       throw new Error(`Generated file ${latestFile} not found in ${comfyOutputDir}`);
     }
 
-    // Generate a unique filename (similar to DALL-E implementation)
+    // Generate a unique filename and copy the file to the public directory
+    // Purpose: Makes the image accessible via a public URL
     const newFileName = `chat-image-${Date.now()}_${userId || 'unknown'}_${gameId || 'unknown'}.png`;
     const publicFilePath = path.join(imageDir, newFileName);
-    
-    // Copy the file from ComfyUI output to our public directory
     await copyFileAsync(comfyFilePath, publicFilePath);
     console.log(`Copied image from ${comfyFilePath} to ${publicFilePath}`);
 
-    // Create a relative URL for storing in the database (similar to DALL-E implementation)
+    // Create a relative URL for storing in the database
     const relativeImageUrl = `/images/chat-images/${newFileName}`;
 
     res.json({

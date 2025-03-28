@@ -8,27 +8,11 @@ import { promisify } from 'util';
 const writeFileAsync = promisify(fs.writeFile);
 const mkdirAsync = promisify(fs.mkdir);
 
-// Define types for ComfyUI history response
-interface ComfyUIHistory {
-  [promptId: string]: {
-    status: { completed: boolean };
-    outputs: {
-      [nodeId: string]: ComfyUIOutputNode;
-    };
-  };
-}
-
-interface ComfyUIOutputNode {
-  images?: Array<{
-    filename: string;
-    // Add other fields if needed (e.g., type, subtype)
-  }>;
-  [key: string]: any; // Allow other properties for flexibility
-}
-
-// Existing functions (generateBannerImage, generateGameCoverImage, generateChatImage, getGameImage) remain unchanged...
-
-// NEW: Function for generating images for chat (supports DALL-E and SDXL)
+// Removed the ComfyUI specifics and focused on OpenAI
+// Function: generateImage
+// Purpose: Handles image generation using OpenAI's DALL-E models (DALL-E 2 and DALL-E 3)
+// Inputs: Request body containing prompt, userId, gameId, and model
+// Outputs: JSON response with the generated image URL or an error message
 export const generateImage = async (req: Request, res: Response): Promise<void> => {
   const { prompt, userId, gameId, model } = req.body;
 
@@ -37,77 +21,27 @@ export const generateImage = async (req: Request, res: Response): Promise<void> 
     return;
   }
 
+  // Validate the model (only DALL-E 2 and DALL-E 3 are supported)
+  if (!['DALL-E 2', 'DALL-E 3'].includes(model)) {
+    res.status(400).json({ error: `Unsupported OpenAI model: ${model}` });
+    return;
+  }
+
   try {
     // Ensure the image directory exists
+    // Leads to: Creates a directory in public/images/chat-images to store the generated image
     const imageDir = path.join('public', 'images', 'chat-images');
     await mkdirAsync(imageDir, { recursive: true });
 
-    let imageUrl: string;
+    // Map the model name to OpenAI's model identifier
+    const openAiModel = model === 'DALL-E 2' ? 'dall-e-2' : 'dall-e-3';
 
-    if (model.toLowerCase() === 'sdxl') {
-      // Use ComfyUI for SDXL
-      const comfyUIUrl = process.env.COMFYUI_NGROK_URL;
-      const outputDir = path.join(__dirname, '../../../../../../Stable Diffusion/ComfyUI_windows_portable/ComfyUI/output');
-      const workflowPath = path.join(__dirname, '../../imagegen/comfyui/workflows/prompt2img.json');
-      const workflowData = JSON.parse(fs.readFileSync(workflowPath, 'utf-8'));
-
-      // Update the prompt in the workflow
-      workflowData['7'].inputs.text = prompt;
-      workflowData['4'].inputs.seed = Math.floor(Math.random() * 1000000000000);
-
-      // Send prompt to ComfyUI
-      const response = await axios.post(`${comfyUIUrl}/prompt`, { prompt: workflowData });
-      const promptId = response.data.prompt_id;
-      console.log('ComfyUI Prompt ID:', promptId);
-
-      // Poll ComfyUI history to wait for completion
-      let latestFile: string | undefined;
-      const startTime = Date.now();
-      const maxWaitTime = 60000; // 60 seconds max wait
-
-      while (Date.now() - startTime < maxWaitTime) {
-        const historyResponse = await axios.get(`${comfyUIUrl}/history/${promptId}`);
-        const historyData = historyResponse.data as ComfyUIHistory;
-        const promptData = historyData[promptId];
-
-        if (promptData && promptData.status && promptData.status.completed) {
-          const outputs = promptData.outputs;
-          const saveImageNode = Object.values(outputs).find((output: ComfyUIOutputNode) =>
-            output && output.images && output.images.length > 0
-          );
-          if (saveImageNode && saveImageNode.images) {
-            latestFile = saveImageNode.images[0].filename;
-            console.log('ComfyUI Image generation completed. Filename:', latestFile);
-            break;
-          }
-        }
-
-        console.log('Waiting for ComfyUI generation to complete...');
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-
-      if (!latestFile) {
-        throw new Error('ComfyUI image generation did not complete within 60 seconds');
-      }
-
-      // Verify the file exists
-      const filePath = path.join(outputDir, latestFile);
-      if (!fs.existsSync(filePath)) {
-        throw new Error(`Generated file ${latestFile} not found in ${outputDir}`);
-      }
-
-      // Copy the file to chat-images directory
-      const newFileName = `chat-image-${Date.now()}_${userId}_${gameId}.png`;
-      const publicFilePath = path.join(imageDir, newFileName);
-      fs.copyFileSync(filePath, publicFilePath);
-
-      imageUrl = `/images/chat-images/${newFileName}`;
-    } else {
-      // Default to DALL-E (consistent with existing chat image generation)
+    // Send request to OpenAI API to generate the image
+    // Leads to: POST /images/generations endpoint on OpenAI API
       const openAiResponse = await axios.post(
         'https://api.openai.com/v1/images/generations',
         {
-          model: 'dall-e-3',
+          model: openAiModel,
           prompt,
           n: 1,
           size: '1024x1024',
@@ -136,12 +70,16 @@ export const generateImage = async (req: Request, res: Response): Promise<void> 
       // Save the image to disk
       await writeFileAsync(publicFilePath, imageResponse.data);
 
-      imageUrl = `/images/chat-images/${newFileName}`;
-    }
+      // Create a relative URL for storing in the database
+      const relativeImageUrl = `/images/chat-images/${newFileName}`;
 
-    res.json({ imageUrl, gameId });
-  } catch (error: unknown) {
-    console.error('Full error details:', error);
+      // Return the response with the image URL
+      res.json({ 
+        imageUrl: relativeImageUrl, 
+        gameId 
+      });
+        } catch (error: unknown) {
+      console.error('Full error details:', error);
 
     if (axios.isAxiosError(error)) {
       console.error('Axios Error:', {
@@ -161,7 +99,12 @@ export const generateImage = async (req: Request, res: Response): Promise<void> 
   }
 };
 
-// Function specifically for generating banner images
+// Function: generateBannerImage
+// Purpose: Generates a banner image using DALL-E 3
+// Inputs: Request body containing prompt
+// Outputs: JSON response with the generated image URL or an error message
+
+// BY DEFAULT I SET IT AS DALL-E 3 BECAUSE I WANT THE BANNER TO LOOK PRETTY COOL AND ON IT'S LATEST IMAGES CUZ WHY NOTAJIGNAIUGNAIJONGIJOAS
 export const generateBannerImage = async (req: Request, res: Response): Promise<void> => {
   const { prompt } = req.body;
 
@@ -179,7 +122,7 @@ export const generateBannerImage = async (req: Request, res: Response): Promise<
     const openAiResponse = await axios.post(
       'https://api.openai.com/v1/images/generations',
       {
-        model: 'dall-e-3', // Specify CLIP-DALL-E 4 model
+        model: 'dall-e-3',
         prompt,
         n: 1,
         size: '1024x1024',
@@ -199,14 +142,14 @@ export const generateBannerImage = async (req: Request, res: Response): Promise<
     const imageResponse = await axios({
       method: 'get',
       url: imageUrl,
-      responseType: 'arraybuffer', // Ensure the response is treated as binary data
+      responseType: 'arraybuffer',
     });
 
     // Generate a unique filename
     const filename = `banner-image-${Date.now()}.png`;
     const filepath = path.join(imageDir, filename);
 
-    // Save the image to disk
+    // Save Image to Disk
     await writeFileAsync(filepath, imageResponse.data);
 
     // Create a relative URL for storing in the database
@@ -235,7 +178,12 @@ export const generateBannerImage = async (req: Request, res: Response): Promise<
   }
 };
 
-// For game cover images - updates the Game model
+// Function: generateGameCoverImage
+// Purpose: Generates a game cover image using DALL-E 3 and updates the Game model
+// Inputs: Request body containing prompt, gameId, and userId
+// Outputs: JSON response with the generated image URL and gameId
+
+// Yep! I still choosed DALL-E 3 for the game cover image because it looks better than DALL-E 2 and I want the game cover to look pretty cool and on it's latest images CUZ WHY NOTAJIGNAIUGNAIJONGIJOAS (not again... I swear)
 export const generateGameCoverImage = async (req: Request, res: Response): Promise<void> => {
   const { prompt, gameId, userId } = req.body;
 
@@ -253,7 +201,7 @@ export const generateGameCoverImage = async (req: Request, res: Response): Promi
     const openAiResponse = await axios.post(
       'https://api.openai.com/v1/images/generations',
       {
-        model: 'dall-e-3', // Specify DALL-E 3 model
+        model: 'dall-e-3',
         prompt,
         n: 1,
         size: '1024x1024',
@@ -273,7 +221,7 @@ export const generateGameCoverImage = async (req: Request, res: Response): Promi
     const imageResponse = await axios({
       method: 'get',
       url: imageUrl,
-      responseType: 'arraybuffer', // Ensure the response is treated as binary data
+      responseType: 'arraybuffer',
     });
 
     // Generate a unique filename
@@ -348,7 +296,13 @@ export const generateGameCoverImage = async (req: Request, res: Response): Promi
   }
 };
 
-// NEW: Function specifically for chat images - does NOT update Game model
+// Function: generateChatImage
+// Purpose: Generates a chat image using DALL-E 3 (legacy function, can be removed if not needed)
+// Inputs: Request body containing prompt and gameId
+// Outputs: JSON response with the generated image URL and gameId
+
+// No, I'm not saying it again. I just wanted DALL-E 3 by default... ;)
+// Wait, this function, it's for... (shhh, I know.)
 export const generateChatImage = async (req: Request, res: Response): Promise<void> => {
   const { prompt, gameId } = req.body;
 
@@ -393,7 +347,7 @@ export const generateChatImage = async (req: Request, res: Response): Promise<vo
     const filename = `chat-image-${Date.now()}.png`;
     const filepath = path.join(imageDir, filename);
 
-    // Save the image to disk
+    // Save Image to Disk
     await writeFileAsync(filepath, imageResponse.data);
 
     // Create a relative URL for storing in the database
