@@ -543,7 +543,7 @@ const GameScreen: React.FC = () => {
         });
 
         try {
-          await axios.post(import.meta.env.VITE_SDXL_ENV + "/chat/save-image", {
+          await axios.post(import.meta.env.VITE_SDXL_ENV + "/ai/store-image", {
             userId,
             gameId,
             content: "Generated image for the current scene",
