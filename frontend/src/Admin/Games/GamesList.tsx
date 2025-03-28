@@ -47,6 +47,8 @@ const GamesList: React.FC = () => {
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [showGameModal, setShowGameModal] = useState(false);
 
   const allSelected = selectedGames.length === games.length;
 
@@ -166,6 +168,11 @@ const GamesList: React.FC = () => {
     } catch (error) {
       console.error('Error deleting game:', error);
     }
+  };
+
+  const handleViewGame = (game: Game) => {
+    setSelectedGame(game);
+    setShowGameModal(true);
   };
 
   // Enhanced Table Header Component
@@ -319,6 +326,74 @@ const GamesList: React.FC = () => {
     </Modal>
   );
 
+  const GameDetailModal: React.FC<{ game: Game; onClose: () => void }> = ({ game, onClose }) => (
+    <Modal
+      isOpen={true}
+      onRequestClose={onClose}
+      className="modal-content bg-[#2F2118] p-8 rounded-xl max-w-4xl mx-4"
+      overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+    >
+      <div className="space-y-6">
+        <div className="flex justify-between items-center border-b border-[#6A4E32]/50 pb-4">
+          <h2 className="text-2xl font-cinzel text-[#F0E6DB]">{game.title}</h2>
+          <button
+            onClick={onClose}
+            className="text-[#8B7355] hover:text-[#C0A080] transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <p className="text-sm text-[#C0A080]">Genre:</p>
+            <p className="text-[#F0E6DB]">{game.genre}</p>
+          </div>
+          <div>
+            <p className="text-sm text-[#C0A080]">Created At:</p>
+            <p className="text-[#F0E6DB]">{new Date(game.createdAt).toLocaleString()}</p>
+          </div>
+          <div>
+            <p className="text-sm text-[#C0A080]">Description:</p>
+            <p className="text-[#F0E6DB]">{game.description || 'N/A'}</p>
+          </div>
+          <div>
+            <p className="text-sm text-[#C0A080]">Tagline:</p>
+            <p className="text-[#F0E6DB]">{game.tagline || 'N/A'}</p>
+          </div>
+          <div>
+            <p className="text-sm text-[#C0A080]">Prompt Name:</p>
+            <p className="text-[#F0E6DB]">{game.prompt_name || 'N/A'}</p>
+          </div>
+          <div>
+            <p className="text-sm text-[#C0A080]">Prompt Text:</p>
+            <p className="text-[#F0E6DB]">{game.prompt_text || 'N/A'}</p>
+          </div>
+        </div>
+
+        {game.image_data && (
+          <div>
+            <p className="text-sm text-[#C0A080]">Image:</p>
+            <img
+              src={`${import.meta.env.VITE_BACKEND_URL}${game.image_data}`}
+              alt={game.title}
+              className="w-full rounded-lg"
+            />
+          </div>
+        )}
+
+        <div className="flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-black rounded font-cinzel"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+
   return (
     <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -406,7 +481,7 @@ const GamesList: React.FC = () => {
                       <td className="p-4">
                         <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
-                            onClick={() => navigate(`/admin/games/${game.id}`)}
+                            onClick={() => handleViewGame(game)}
                             className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                             title="View"
                             aria-label={`View ${game.title}`}
@@ -455,6 +530,10 @@ const GamesList: React.FC = () => {
       )}
 
       <NewGameModal />
+
+      {showGameModal && selectedGame && (
+        <GameDetailModal game={selectedGame} onClose={() => setShowGameModal(false)} />
+      )}
 
       {/* Add sticky bulk action bar */}
       {selectedGames.length > 0 && (
