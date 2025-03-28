@@ -93,15 +93,20 @@ const UsernameValidator: React.FC<UsernameValidatorProps> = ({
     setTouched(true);
   };
 
+  // Extract the base class without any border-related classes
+  const baseClass = className.replace(/border\S*/g, '').trim();
+  // Add our own border class only if the field is touched and invalid
+  const borderClass = touched && !isValid ? 'border-red-500' : 'border-[#3D2E22]';
+
   return (
     <div className="relative">
-      <div className="relative">
+      <div className={`relative border ${borderClass} rounded overflow-hidden`}>
         <input
           type="text"
           value={username}
           onChange={handleInputChange}
           onBlur={onBlur}
-          className={className}
+          className={`${baseClass} w-full border-none focus:outline-none bg-[#3D2E22]`}
           placeholder="The name whispered in legends"
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -148,4 +153,4 @@ const UsernameValidator: React.FC<UsernameValidatorProps> = ({
   );
 };
 
-export default UsernameValidator; 
+export default UsernameValidator;

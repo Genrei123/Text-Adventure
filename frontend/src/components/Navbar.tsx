@@ -1,39 +1,47 @@
-import { useEffect, useState, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Search, ChevronDown, X, LogOut } from "lucide-react";
 import socketIOClient from 'socket.io-client';
-import { addPageVisits } from '../sessions/api-calls/visitedPagesSession';
 import axiosInstance from "../../config/axiosConfig";
-import { Link } from 'react-router-dom';
+import { debounce } from "lodash";
+import { useNavbar } from "../context/NavbarContext";
 
 const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
+// Game Interface
 interface Game {
   id: number;
   title: string;
   slug: string;
   genre: string;
   subgenre: string;
-  image_data?: string; // Added icon property
+  image_data?: string;
 }
 
-interface NavbarProps {
-  onLogout?: () => void;
+// Player Interface
+interface Player {
+  id: number;
+  username: string;
+  display_name?: string;
+  profile_image?: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
-  const [username, setUsername] = useState<string | null>(null);
+interface NavbarProps {}
+
+const Navbar: React.FC<NavbarProps> = () => {
+  const { showLogoutModal, openLogoutModal, closeLogoutModal, handleLogout, username, setUsername } = useNavbar();
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<Game[]>([]); // Changed to store full Game objects
+  const [suggestions, setSuggestions] = useState<(Game | Player)[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedPopularity, setSelectedPopularity] = useState("all");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [profilePicture, setProfilePicture] = useState<string>();
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const isMobile = windowWidth < 768; // Define mobile breakpoint
@@ -56,47 +64,45 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     { label: "All Time", value: "all" },
   ];
 
-  // Fetch games data from API
+  // Fetch games and players data from API
   useEffect(() => {
-    const fetchGames = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axiosInstance.get('/game/');
-        if (response.data) {
-          setGames(response.data);
-          console.log("Games: ", games);
-        } else {
-          console.error('Failed to fetch games');
+        // Fetch games
+        const gamesResponse = await axiosInstance.get('/game/');
+        if (gamesResponse.data) {
+          setGames(gamesResponse.data);
+        }
+
+        // Fetch players
+        const playersResponse = await axiosInstance.get('/admin/users/');
+        if (playersResponse.data) {
+          setPlayers(playersResponse.data);
         }
       } catch (error) {
-        console.error('Error fetching games:', error);
+        console.error('Error fetching player:', error);
       }
     };
 
     const fetchUserData = async () => {
-      // Get username
       const email = localStorage.getItem('email');
-      // Fetch by username
       try {
         const response = await axiosInstance.get('/admin/users/verify/' + email);
-        console.log(response.data);
         if (response.data) {
           setUsername(response.data.username);
-
-          console.log(response.data.image_url);
 
           if (response.data.image_url != null) { 
             setProfilePicture(import.meta.env.VITE_SITE_URL + response.data.image_url);
           }
         }
-
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     }
 
     fetchUserData();
-    fetchGames();
-  }, []);
+    fetchData();
+  }, [setUsername]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -122,41 +128,42 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     }
   }, [isSearchExpanded]);
 
-  // Update suggestions based on search query using actual game data
+  // Debounced search query update
+  const debouncedSetSearchQuery = useCallback(
+    debounce((query) => setSearchQuery(query), 300),
+    []
+  );
+
+  // Update suggestions based on search query
   useEffect(() => {
     if (searchQuery.length > 0) {
       const filteredGames = games.filter(game =>
         game.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setSuggestions(filteredGames); // Store entire game objects
+
+      const filteredPlayers = players.filter(player =>
+        player.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (player.display_name && player.display_name.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+
+      // Combine and limit suggestions
+      const combinedSuggestions = [...filteredGames, ...filteredPlayers].slice(0, 5);
+      setSuggestions(combinedSuggestions);
+      setHighlightedIndex(-1); // Reset highlighted index
     } else {
       setSuggestions([]);
     }
-  }, [searchQuery, games]);
+  }, [searchQuery, games, players]);
 
-  const handleLogout = async () => {
-    if (onLogout) {
-      await axiosInstance.post('/auth/logout', {
-        email: localStorage.getItem('email'),
-        
-      });
-
-      
-
-      localStorage.removeItem('userData');
-      localStorage.removeItem('email');
-      localStorage.removeItem('token');
-      setUsername(null);
-      await onLogout();
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown") {
+      setHighlightedIndex((prevIndex) => (prevIndex + 1) % suggestions.length);
+    } else if (e.key === "ArrowUp") {
+      setHighlightedIndex((prevIndex) => (prevIndex - 1 + suggestions.length) % suggestions.length);
+    } else if (e.key === "Enter" && highlightedIndex >= 0) {
+      handleSuggestionClick(suggestions[highlightedIndex]);
     }
-  };
-
-  const openLogoutModal = () => {
-    setShowLogoutModal(true);
-  };
-
-  const closeLogoutModal = () => {
-    setShowLogoutModal(false);
   };
 
   const toggleSearch = () => {
@@ -166,7 +173,6 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     }
   };
 
-  // Get the appropriate placeholder text based on screen width
   const getPlaceholderText = () => {
     return windowWidth < 640 ? "Search" : "Search the ancient scrolls...";
   };
@@ -200,9 +206,52 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
 
+  // Render suggestion icon based on type
+  const renderSuggestionIcon = (item: Game | Player) => {
+    if ('title' in item) {
+      // Game suggestion
+      return item.image_data ? (
+        <img
+          src={item.image_data}
+          alt={`${item.title} icon`}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
+          {item.title.substring(0, 2).toUpperCase()}
+        </div>
+      );
+    } else {
+      // Player suggestion
+      return item.profile_image ? (
+        <img
+          src={item.profile_image}
+          alt={`${item.username} avatar`}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
+          {item.username.substring(0, 2).toUpperCase()}
+        </div>
+      );
+    }
+  };
+
+  // Handle suggestion on-click navigation yung sa endpoint
+  const handleSuggestionClick = (item: Game | Player) => {
+    if ('title' in item) {
+      // Game suggestion
+      navigate(`/game-details/${item.id}`);
+    } else {
+      // Player suggestion
+      navigate(`/${item.username}`);
+    }
+    setSearchQuery(''); // Clear search after navigation
+  };
+
   return (
     <>
-      <nav className="sticky top-0 left-0 w-full z-50 bg-[#3D2E22] py-2 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)]">
+      <nav className="sticky top-0 left-0 w-full z-50 bg-[#3D2E22] py-3 px-4 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)]">
         <div className="flex flex-col space-y-4">
           {/* Top Bar */}
           <div className="flex justify-between items-center">
@@ -231,8 +280,8 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                           ref={searchInputRef}
                           type="text"
                           placeholder="Search"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
+                          onChange={(e) => debouncedSetSearchQuery(e.target.value)}
+                          onKeyDown={handleKeyDown}
                           className="w-full p-2 pl-10 rounded-full bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
                         />
                         <Search
@@ -256,27 +305,34 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                         </button>
                         {suggestions.length > 0 && (
                           <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 top-10 shadow-lg overflow-hidden">
-                            {suggestions.map((game, index) => (
+                            {suggestions.some(item => 'title' in item) && (
+                              <div className="p-2 text-[#3D2E22] font-bold">Games</div>
+                            )}
+                            {suggestions.filter(item => 'title' in item).map((item, index) => (
                               <div
-                                key={index}
-                                className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
-                                onClick={() => setSearchQuery(game.title)}
+                                key={`suggestion-game-${index}`}
+                                className={`p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center ${highlightedIndex === index ? 'bg-[#C8A97E]' : ''}`}
+                                onClick={() => handleSuggestionClick(item)}
                               >
-                                {/* Game Icon */}
                                 <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
-                                  {game.image_data ? (
-                                    <img
-                                      src={game.image_data}
-                                      alt={`${game.title} icon`}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
-                                      {game.title.substring(0, 2).toUpperCase()}
-                                    </div>
-                                  )}
+                                  {renderSuggestionIcon(item)}
                                 </div>
-                                <span>{game.title}</span>
+                                <span>{item.title}</span>
+                              </div>
+                            ))}
+                            {suggestions.some(item => 'username' in item) && (
+                              <div className="p-2 text-[#3D2E22] font-bold">Players</div>
+                            )}
+                            {suggestions.filter(item => 'username' in item).map((item, index) => (
+                              <div
+                                key={`suggestion-player-${index}`}
+                                className={`p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center ${highlightedIndex === index ? 'bg-[#C8A97E]' : ''}`}
+                                onClick={() => handleSuggestionClick(item)}
+                              >
+                                <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
+                                  {renderSuggestionIcon(item)}
+                                </div>
+                                <span>{item.display_name || item.username}</span>
                               </div>
                             ))}
                           </div>
@@ -294,12 +350,12 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                   </div>
                 ) : (
                   /* Desktop Search */
-                  <div className="relative w-40 sm:w-52 md:w-80 lg:w-96">
+                  <div className="relative w-60 sm:w-72 md:w-96 lg:w-[45rem]">
                     <input
                       type="text"
                       placeholder={getPlaceholderText()}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => debouncedSetSearchQuery(e.target.value)}
+                      onKeyDown={handleKeyDown}
                       className="w-full p-2 pl-10 rounded-full bg-[#E5D4B3] text-[#3D2E22] placeholder-[#8B4513] border-2 border-[#C8A97E] focus:outline-none focus:border-[#8B4513]"
                     />
                     <Search
@@ -308,27 +364,34 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                     />
                     {suggestions.length > 0 && (
                       <div className="absolute z-50 w-full bg-[#E5D4B3] border-2 border-[#C8A97E] rounded-lg mt-1 shadow-lg overflow-hidden">
-                        {suggestions.map((game, index) => (
+                        {suggestions.some(item => 'title' in item) && (
+                          <div className="p-2 text-[#3D2E22] font-bold">Games</div>
+                        )}
+                        {suggestions.filter(item => 'title' in item).map((item, index) => (
                           <div
-                            key={index}
-                            className="p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center"
-                            onClick={() => navigate(`/game-details/${game.id}`)}
+                            key={`suggestion-game-${index}`}
+                            className={`p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center ${highlightedIndex === index ? 'bg-[#C8A97E]' : ''}`}
+                            onClick={() => handleSuggestionClick(item)}
                           >
-                            {/* Game Icon */}
                             <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
-                              {game.image_data ? (
-                                <img
-                                  src={game.image_data}
-                                  alt={`${game.title} icon`}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-[#E5D4B3] text-xs">
-                                  {game.title.substring(0, 2).toUpperCase()}
-                                </div>
-                              )}
+                              {renderSuggestionIcon(item)}
                             </div>
-                            <span>{game.title}</span>
+                            <span>{item.title}</span>
+                          </div>
+                        ))}
+                        {suggestions.some(item => 'username' in item) && (
+                          <div className="p-2 text-[#3D2E22] font-bold">Players</div>
+                        )}
+                        {suggestions.filter(item => 'username' in item).map((item, index) => (
+                          <div
+                            key={`suggestion-player-${index}`}
+                            className={`p-2 hover:bg-[#C8A97E] cursor-pointer text-[#3D2E22] flex items-center ${highlightedIndex === index ? 'bg-[#C8A97E]' : ''}`}
+                            onClick={() => handleSuggestionClick(item)}
+                          >
+                            <div className="w-8 h-8 mr-2 flex-shrink-0 bg-[#3D2E22] rounded-full overflow-hidden flex items-center justify-center">
+                              {renderSuggestionIcon(item)}
+                            </div>
+                            <span>{item.display_name || item.username}</span>
                           </div>
                         ))}
                       </div>
@@ -390,7 +453,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
                             <img
                               alt="Profile Picture"
                               src={profilePicture ? profilePicture : `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${username}`}
-                              />
+                            />
                           </div>
                         </div>
                         <ul
@@ -515,7 +578,7 @@ const Navbar: React.FC<NavbarProps> = ({ onLogout }) => {
 
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100]">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
           <div className="bg-[#2A1F17] border-2 border-[#C8A97E] rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
             <h2 className="font-cinzel text-xl text-[#E5D4B3] mb-4 text-center">Leave the Realm?</h2>
             <p className="text-[#C8A97E] mb-6 text-center">

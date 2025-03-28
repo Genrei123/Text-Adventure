@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import LoadingProvider from './context/LoadingContext';
+import { NavbarProvider } from './context/NavbarContext';
 
 // Auth Components
 import LoginScreen from './auth/LoginScreen';
@@ -14,6 +15,7 @@ import ServerError from './auth/components/ServerError';
 import Unauthorized from './auth/components/Unauthorized';
 import NotFound from './auth/components/NotFound';
 import ProtectedRoute from './auth/components/ProtectedRoute';
+import Banned from './auth/components/Banned';
 
 // Main Components
 import LandingPage from './landing/LandingPage';
@@ -27,6 +29,11 @@ import Subscription from './subscription/Subscription';
 
 // Work in Progress Components [EXPERIMENTAL - Do not include in main app!]
 import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
+import ButtonExample from './components/ButtonExample';
+import Footer from './components/Footer';
+import AboutPage from './components/AboutUs';
+import TermsOfServicePage from './components/TermsOfService';
+import PrivacyPolicyPage from './components/PrivacyPolicy';
 
 // Game Creation Components
 import GameCreation from './game-creation/GameCreation';
@@ -98,132 +105,136 @@ function App() {
   return (
     <Router>
       <LoadingProvider>
-        {username && (
-          <SessionTracker
-            email={username}
-            setSessionId={setSessionId}
-            visitedPages={visitedPages}
-            setVisitedPages={setVisitedPages}
-          />
-        )}
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginScreen onLogin={handleLogin} />} />
-          <Route path="/register" element={<Register onRegister={handleRegister} />} />
-          <Route path="/game/nih/:id" element={<NihGameScreen />} />
-          
-          {/* Auth Related Routes */}
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/email-confirmation" element={<EmailConfirmation />} />
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
-          
-          {/* Protected Routes with WebSocket */}
-          <Route 
-            path="/home" 
-            element={
-              // <ProtectedRoute>
-                <WebSocketProvider>
-                  <Homepage onLogout={handleLogout} />
-                </WebSocketProvider>
-              // </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/:username" 
-            element={
-              <ProtectedRoute>
-                <WebSocketProvider>
-                  <UserProfile />
-                </WebSocketProvider>
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Game Related Routes */}
-          <Route 
-            path="/game/:id" 
-            element={
-              <ProtectedRoute>
-                <WebSocketProvider>
-                  <GameScreen />
-                </WebSocketProvider>
-              </ProtectedRoute>
-            } 
-          />
-          <Route path="/editing-page" element={<AdventureEditor />} />
-          <Route 
-            path="/game-creation" 
-            element={
-              <GameCreation 
-                onBack={() => {}} 
-                onNext={() => {}} 
-              />
-            } 
-          />
-          <Route 
-            path="/game-details/:id" 
-            element={
-              <ProtectedRoute>
-                <WebSocketRoutes>
-                  <GameDetails />
-                </WebSocketRoutes>
-              </ProtectedRoute>
-            } 
-          />
+        <NavbarProvider onLogout={handleLogout}>
+          {username && (
+            <SessionTracker
+              email={username}
+              setSessionId={setSessionId}
+              visitedPages={visitedPages}
+              setVisitedPages={setVisitedPages}
+            />
+          )}
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginScreen onLogin={handleLogin} />} />
+            <Route path="/register" element={<Register onRegister={handleRegister} />} />
+            <Route path="/game/nih/:id" element={<NihGameScreen />} />
+            
+            {/* Auth Related Routes */}
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/email-confirmation" element={<EmailConfirmation />} />
+            <Route path="/verify-email/:token" element={<VerifyEmail />} />
+            
+            {/* Protected Routes with WebSocket */}
+            <Route 
+              path="/home" 
+              element={
+                // <ProtectedRoute>
+                  <WebSocketProvider>
+                      <Homepage onLogout={handleLogout} />
+                  </WebSocketProvider>
+                // </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/:username" 
+              element={
+                <ProtectedRoute>
+                  <WebSocketProvider>
+                    <UserProfile />
+                  </WebSocketProvider>
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Game Related Routes */}
+            <Route 
+              path="/game/:id" 
+              element={
+                <ProtectedRoute>
+                  <WebSocketProvider>
+                    <GameScreen />
+                  </WebSocketProvider>
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="/editing-page" element={<AdventureEditor />} />
+            <Route 
+              path="/game-creation" 
+              element={
+                <GameCreation 
+                  onBack={() => {}} 
+                  onNext={() => {}} 
+                />
+              } 
+            />
+            <Route 
+              path="/game-details/:id" 
+              element={
+                <ProtectedRoute>
+                  <WebSocketRoutes>
+                    <GameDetails />
+                  </WebSocketRoutes>
+                </ProtectedRoute>
+              } 
+            />
 
-          {/* Work in Progress Routes */}
-          <Route path="/image-generator" element={<ImageGeneratorScreen />} />
-          
-          {/* Utility Routes */}
-          <Route path="/subscription" element={<Subscription />} />
-          <Route path="/active-players" element={<ActivePlayerCount />} />
-          <Route path="/ban-test" element={<BanTestPage />} />
-          
-          {/* Error Routes */}
-          {/* Add a banned user page for banned users. */}
-          {/* <Route path="/banned" element ={</>} />*/} 
-          <Route path="/forbidden" element={<Forbidden />} />
-          <Route path="/server-error" element={<ServerError />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="/game-details" element={<GameDetails />} />
-          
-          {/* Admin Routes */}
-          <Route path="/Admin/Login" element={<AdminLogin />} />
-          <Route 
-            path="/Admin/Page" 
-            element={
-              <AdminRoute>
-                <AdminPage />
-              </AdminRoute>
-            } 
-          />
-          <Route 
-            path="/admin/games" 
-            element={
-              <AdminRoute>
-                <GamesList />
-              </AdminRoute>
-            } 
-          />
-          <Route 
-            path="/admin/games/new" 
-            element={
-              <AdminRoute>
-                <GameForm />
-              </AdminRoute>
-            } 
-          />
-          <Route 
-            path="/admin/games/:id" 
-            element={
-              <AdminRoute>
-                <GameDetail />
-              </AdminRoute>
-            } 
-          />
-        </Routes>
+            {/* Work in Progress Routes */}
+            <Route path="/image-generator" element={<ImageGeneratorScreen />} />
+            <Route path="/button" element={<ButtonExample />} />
+            <Route path="/footer" element={<Footer />} />
+            
+            {/* Utility Routes */}
+            <Route path="/subscription" element={<Subscription />} />
+            <Route path="/active-players" element={<ActivePlayerCount />} />
+            <Route path="/ban-test" element={<BanTestPage />} />
+            
+            {/* Error Routes */}
+
+            <Route path="/forbidden" element={<Forbidden />} />
+            <Route path="/server-error" element={<ServerError />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/banned" element={<Banned />} />
+            <Route path="*" element={<NotFound />} />
+            <Route path="/game-details" element={<GameDetails />} />
+            
+            {/* Admin Routes */}
+            <Route path="/Admin/Login" element={<AdminLogin />} />
+            <Route 
+              path="/Admin/Page" 
+              element={
+                <AdminRoute>
+                  <AdminPage />
+                </AdminRoute>
+              } 
+            />
+            <Route 
+              path="/admin/games" 
+              element={
+                <AdminRoute>
+                  <GamesList />
+                </AdminRoute>
+              } 
+            />
+            <Route 
+              path="/admin/games/new" 
+              element={
+                <AdminRoute>
+                  <GameForm />
+                </AdminRoute>
+              } 
+            />
+            <Route 
+              path="/admin/games/:id" 
+              element={
+                <AdminRoute>
+                  <GameDetail />
+                </AdminRoute>
+              } 
+            />
+          </Routes>
+        </NavbarProvider>
       </LoadingProvider>
     </Router>
   );

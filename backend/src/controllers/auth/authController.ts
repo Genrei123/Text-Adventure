@@ -8,6 +8,7 @@ import { validatePassword } from "../../utils/passwordValidator";
 import { sendVerificationEmail, sendResetPasswordEmail } from '../../service/auth/emailService';
 import crypto from 'crypto';
 import { generateVerificationToken } from '../../service/auth/authService';
+import Ban from '../../model/ban/ban';
 
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
     const { username, email, password, private: isPrivate, model, admin } = req.body;
@@ -106,6 +107,35 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         // Check if the email is verified
         if (!user.emailVerified) {
             res.status(401).json({ message: 'Email not verified. Please check your email for the verification link.' });
+            return;
+        }
+
+        // Check if the user is banned
+        const activeBan = await Ban.findOne({
+            where: {
+                userId: user.id,
+                [Op.or]: [
+                    { banType: 'permanent' },
+                    {
+                        banType: 'temporary',
+                        endDate: {
+                            [Op.gt]: new Date() // End date is in the future
+                        }
+                    }
+                ]
+            }
+        });
+
+        if (activeBan) {
+            res.status(403).json({ 
+                message: 'Your account has been suspended',
+                banned: true,
+                banInfo: {
+                    reason: activeBan.reason,
+                    banType: activeBan.banType,
+                    endDate: activeBan.endDate
+                }
+            });
             return;
         }
 

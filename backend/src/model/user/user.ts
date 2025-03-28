@@ -117,13 +117,7 @@ User.init({
     allowNull: false, // Kept from HEAD
     defaultValue: DataTypes.NOW 
   },
-  image_url: { 
-    type: DataTypes.STRING, 
-    allowNull: true,
-    defaultValue: function() {
-      return `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=user`;
-    }
-  },
+  image_url: { type: DataTypes.STRING, allowNull: true },
   lastLogin: {type: DataTypes.DATE, allowNull: true, defaultValue: DataTypes.NOW }
 }, {
   sequelize,

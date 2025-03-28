@@ -31,7 +31,7 @@ export const Carousel: React.FC = () => {
     <div className="relative w-full h-screen flex items-center justify-center bg-gray-900">
       <button
         onClick={prevSlide}
-git         className="absolute left-5 text-white bg-gray-700 p-4 rounded-full hover:bg-gray-600"
+        className="absolute left-5 text-white bg-gray-700 p-4 rounded-full hover:bg-gray-600"
       >
         ❮
       </button>

@@ -62,9 +62,11 @@ const RegisterCarousel: React.FC<RegisterCarouselProps> = ({ onSubmit }) => {
         if (!email || !emailAvailable) {
           errors.email = true;
         } else {
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          const lastDotIndex = email.lastIndexOf('.');
-          if (!emailRegex.test(email) || lastDotIndex === -1 || lastDotIndex === email.length - 1) {
+          // Since we're now using a dropdown for domain selection,
+          // the email will always have a valid format with our predefined domains
+          // We just need to check if the username part is not empty
+          const [usernamePart] = email.split('@');
+          if (!usernamePart || usernamePart.trim() === '') {
             errors.email = true;
           }
         }
@@ -195,9 +197,7 @@ const RegisterCarousel: React.FC<RegisterCarouselProps> = ({ onSubmit }) => {
               }}
               onBlur={handleBlur}
               onAvailabilityChange={setEmailAvailable}
-              className={`w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355] ${
-                formErrors.email ? 'border-red-500' : ''
-              }`}
+              className={`w-full px-3 py-2 bg-[#3D2E22] text-sm text-white placeholder-[#8B7355]`}
             />
           </div>
         </div>
@@ -309,4 +309,4 @@ const RegisterCarousel: React.FC<RegisterCarouselProps> = ({ onSubmit }) => {
   );
 };
 
-export default RegisterCarousel; 
+export default RegisterCarousel;
