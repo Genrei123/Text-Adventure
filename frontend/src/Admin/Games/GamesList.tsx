@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders } from 'lucide-react';
+import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders } from 'lucide-react';
 import axiosInstance from '../../../config/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import StatusBadge from './StatusBadge';
 import Loader from './Loader';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Tooltip } from 'react-tooltip';
 import { ToastContainer, toast } from 'react-toastify';
-import LoadingBook from '../../components/LoadingBook';
+
+// Set app element for React-Modal
+Modal.setAppElement('#root');
 
 interface Game {
   id: number;
@@ -18,6 +19,17 @@ interface Game {
   status: string;
   UserId: number;
   creator?: string; // Add creator field
+  description?: string;
+  tagline?: string;
+  prompt_name?: string;
+  prompt_text?: string;
+  image_data?: string;
+  primary_color?: string;
+  music_prompt_text?: string;
+  music_prompt_seed_image?: string;
+  image_prompt_text?: string;
+  image_prompt_model?: string;
+  private?: boolean;
 }
 
 interface User {
@@ -31,7 +43,7 @@ const GamesList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [genreFilter, setGenreFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({
+  const [sortConfig, setSortConfig] = useState<{ key: keyof Game; direction: 'asc' | 'desc' }>({
     key: 'title',
     direction: 'asc'
   });
@@ -95,7 +107,7 @@ const GamesList: React.FC = () => {
     setGenreFilter(e.target.value);
   };
 
-  const handleSort = (key: string) => {
+  const handleSort = (key: keyof Game) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
@@ -104,8 +116,8 @@ const GamesList: React.FC = () => {
   };
 
   const sortedGames = [...games].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
-    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+    if (a[sortConfig.key]! < b[sortConfig.key]!) return sortConfig.direction === 'asc' ? -1 : 1;
+    if (a[sortConfig.key]! > b[sortConfig.key]!) return sortConfig.direction === 'asc' ? 1 : -1;
     return 0;
   });
 
@@ -171,12 +183,18 @@ const GamesList: React.FC = () => {
   };
 
   const handleViewGame = (game: Game) => {
+    console.log('Opening View Modal for:', game);
     setSelectedGame(game);
     setShowGameModal(true);
   };
 
+  const closeGameModal = () => {
+    setShowGameModal(false);
+    setSelectedGame(null); // Reset selected game
+  };
+
   // Enhanced Table Header Component
-  const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
+  const TableHeader = ({ label, sortKey }: { label: string; sortKey: keyof Game }) => (
     <th
       className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center cursor-pointer hover:bg-[#534231] transition-colors group"
       onClick={() => handleSort(sortKey)}
@@ -369,6 +387,10 @@ const GamesList: React.FC = () => {
             <p className="text-sm text-[#C0A080]">Prompt Text:</p>
             <p className="text-[#F0E6DB]">{game.prompt_text || 'N/A'}</p>
           </div>
+          <div className="col-span-2">
+            <p className="text-sm text-[#C0A080]">Music Prompt:</p>
+            <p className="text-[#F0E6DB]">{game.music_prompt_text || 'N/A'}</p>
+          </div>
         </div>
 
         {game.image_data && (
@@ -532,7 +554,7 @@ const GamesList: React.FC = () => {
       <NewGameModal />
 
       {showGameModal && selectedGame && (
-        <GameDetailModal game={selectedGame} onClose={() => setShowGameModal(false)} />
+        <GameDetailModal game={selectedGame} onClose={closeGameModal} />
       )}
 
       {/* Add sticky bulk action bar */}
