@@ -83,6 +83,7 @@ const GamesList: React.FC = () => {
     fetchGames();
   }, []);
 
+  // Updated fetchGames function
   const fetchGames = async () => {
     setIsLoading(true);
     try {
@@ -102,9 +103,12 @@ const GamesList: React.FC = () => {
       }));
 
       setGames(enrichedGames);
+      toast.success('Games loaded successfully', { autoClose: 2000 });
     } catch (error) {
       console.error('Error fetching data:', error);
-      toast.error('Failed to load game data');
+      toast.error(`Failed to load games: ${error.message}`, {
+        toastId: 'load-games-error',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -144,14 +148,22 @@ const GamesList: React.FC = () => {
     setNewGame({ ...newGame, [name]: value });
   };
 
+  // Updated handleNewGameSubmit function
   const handleNewGameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await axiosInstance.post('/api/games', newGame);
       setShowModal(false);
       fetchGames();
+      toast.success('Game created successfully', {
+        icon: '🎮',
+        autoClose: 2000,
+      });
     } catch (error) {
       console.error('Error creating game:', error);
+      toast.error(`Game creation failed: ${error.response?.data?.message || error.message}`, {
+        toastId: 'create-game-error',
+      });
     }
   };
 
@@ -164,23 +176,39 @@ const GamesList: React.FC = () => {
     setSelectedGames(prev => prev.includes(id) ? prev.filter(gameId => gameId !== id) : [...prev, id]);
   };
 
+  // Updated handleBulkDelete function
   const handleBulkDelete = async () => {
     try {
       await axiosInstance.delete('/api/games/bulk-delete', { data: { ids: selectedGames } });
       setSelectedGames([]);
       fetchGames();
+      toast.success(`Deleted ${selectedGames.length} games`, {
+        icon: '🔥',
+        autoClose: 2500,
+      });
     } catch (error) {
-      console.error('Error deleting games:', error);
+      console.error('Error deleting selected games:', error);
+      toast.error(`Bulk delete failed: ${error.response?.data?.message || 'Partial deletion may have occurred'}`, {
+        toastId: 'bulk-delete-error',
+        autoClose: 4000,
+      });
     }
   };
 
-  const handleToggleStatus = async (game: any) => {
+  // Updated handleToggleStatus function
+  const handleToggleStatus = async (game: Game) => {
     try {
       const updatedStatus = game.status === 'active' ? 'inactive' : 'active';
       await axiosInstance.put(`/api/games/${game.id}`, { ...game, status: updatedStatus });
       fetchGames();
+      toast.success(`Status changed to ${updatedStatus}`, {
+        icon: game.status === 'active' ? '⏸️' : '▶️',
+      });
     } catch (error) {
-      console.error('Error toggling status:', error);
+      console.error('Error toggling game status:', error);
+      toast.error(`Status update failed: ${error.message}`, {
+        toastId: `status-error-${game.id}`,
+      });
     }
   };
 
@@ -194,43 +222,97 @@ const GamesList: React.FC = () => {
   };
 
   const handleViewGame = (game: Game) => {
-    console.log('Opening View Modal for:', game);
-    setSelectedGame(game);
-    setShowGameModal(true);
-
-    // Prevent URL navigation
-    window.history.replaceState(null, '', window.location.pathname);
+    try {
+      console.log('Opening View Modal for:', game);
+  
+      // Ensure no other modals are open before opening the game detail modal
+      setShowModal(false);
+      setShowEditModal(false);
+      setShowDeleteModal(false);
+  
+      // Check if the modal is already open
+      if (showGameModal) {
+        throw new Error('Modal instance already open. Error Code: MODAL_ALREADY_OPEN');
+      }
+  
+      // Set the selected game and open the game detail modal
+      setSelectedGame(game);
+      setShowGameModal(true);
+    } catch (error) {
+      console.error('Error in handleViewGame:', error);
+  
+      // Display error message using react-toastify
+      toast.error(
+        `Failed to open game details. ${error.message || 'Unknown error occurred.'}`,
+        {
+          toastId: 'view-game-error', // Unique ID to prevent duplicate toasts
+        }
+      );
+    }
   };
 
-  const handleEditGame = (game: Game) => {
-    console.log('Opening Edit Modal for:', game);
-    setEditGameData(game);
-    setShowEditModal(true);
+  const handleEditGame = async (game: Game) => {
+    try {
+      console.log('Opening Edit Modal for:', game);
+      setEditGameData(game);
+      setShowEditModal(true);
+    } catch (error) {
+      console.error('Error opening edit modal:', error);
+      toast.error('Failed to open edit modal. Error Code: EDIT_MODAL_ERROR');
+    }
   };
 
-  const handleDeleteGame = (game: Game) => {
-    console.log('Opening Delete Modal for:', game);
-    setGameToDelete(game);
-    setShowDeleteModal(true);
+  // Updated confirmEditGame function
+  const confirmEditGame = async (updatedGame: Game) => {
+    try {
+      await axiosInstance.put(`/api/games/${updatedGame.id}`, updatedGame);
+      fetchGames();
+      toast.success('Game updated successfully', {
+        icon: '✏️',
+        autoClose: 1500,
+      });
+      setShowEditModal(false);
+    } catch (error) {
+      console.error('Error updating game:', error);
+      toast.error(`Update failed: ${error.response?.data?.message || 'Unknown error'}`, {
+        toastId: `update-error-${updatedGame.id}`,
+      });
+    }
   };
 
+  const handleDeleteGame = async (game: Game) => {
+    try {
+      console.log('Opening Delete Modal for:', game);
+      setGameToDelete(game);
+      setShowDeleteModal(true);
+    } catch (error) {
+      console.error('Error opening delete modal:', error);
+      toast.error('Failed to open delete modal. Error Code: DELETE_MODAL_ERROR');
+    }
+  };
+
+  // Updated confirmDelete function
   const confirmDelete = async () => {
     if (!gameToDelete) return;
-    console.log('Deleting Game:', gameToDelete);
     try {
       await axiosInstance.delete(`/api/games/${gameToDelete.id}`);
       fetchGames();
-      toast.success('Game deleted successfully');
+      toast.success(`"${gameToDelete.title}" deleted permanently`, {
+        icon: '🗑️',
+        autoClose: 2000,
+      });
       setShowDeleteModal(false);
     } catch (error) {
       console.error('Error deleting game:', error);
-      toast.error('Failed to delete game');
+      toast.error(`Deletion failed: ${error.response?.data?.message || 'Server error'}`, {
+        toastId: `delete-error-${gameToDelete.id}`,
+      });
     }
   };
 
   const closeGameModal = () => {
     setShowGameModal(false);
-    setSelectedGame(null); // Reset selected game
+    setSelectedGame(null); // Reset the selected game
   };
 
   // Enhanced Table Header Component
@@ -496,6 +578,9 @@ const GamesList: React.FC = () => {
               className="w-full rounded-lg max-h-96 object-cover"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
+                toast.error('Failed to load banner image', {
+                  toastId: `image-error-${game.id}`,
+                });
               }}
             />
           </div>
@@ -819,10 +904,12 @@ const GamesList: React.FC = () => {
             </table>
           </div>
 
+          {/* Warning for empty search results */}
           {filteredGames.length === 0 && (
-            <div className="p-8 text-center text-[#8B7355]">
-              No games found matching your criteria
-            </div>
+            toast.warning('No games match current filters', {
+              toastId: 'no-results-warning',
+              autoClose: 3000,
+            })
           )}
         </div>
       )}
@@ -831,7 +918,7 @@ const GamesList: React.FC = () => {
 
       {/* Game Detail Modal */}
       {showGameModal && selectedGame && (
-        <GameDetailModal game={selectedGame} onClose={() => setShowGameModal(false)} />
+        <GameDetailModal game={selectedGame} onClose={closeGameModal} />
       )}
 
       {/* Add sticky bulk action bar */}
@@ -853,7 +940,26 @@ const GamesList: React.FC = () => {
           </button>
         </motion.div>
       )}
-      <ToastContainer />
+      {/* ToastContainer configuration */}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        toastStyle={{
+          backgroundColor: '#3D2E22',
+          border: '1px solid #6A4E32',
+        }}
+        progressStyle={{
+          background: '#C0A080',
+        }}
+      />
     </div>
   );
 };
