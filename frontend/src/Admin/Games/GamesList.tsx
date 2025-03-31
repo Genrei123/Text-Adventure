@@ -35,8 +35,6 @@ interface Game {
   UserId: number;
   creator?: string;
   status: string;
-  UserId: number;
-  creator?: string; // Add creator field
 }
 
 interface User {
@@ -72,6 +70,16 @@ const GamesList: React.FC = () => {
   const [editGameData, setEditGameData] = useState<Game | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [gameToDelete, setGameToDelete] = useState<Game | null>(null);
+  const [isModalLoading, setIsModalLoading] = useState(false);
+  const [activeModal, setActiveModal] = useState<'view' | 'edit' | 'delete' | null>(null);
+
+  const openModal = (modalType: 'view' | 'edit' | 'delete') => {
+    setActiveModal(modalType);
+  };
+
+  const closeModal = () => {
+    setActiveModal(null);
+  };
 
   const allSelected = selectedGames.length === games.length;
 
@@ -91,22 +99,22 @@ const GamesList: React.FC = () => {
         axiosInstance.get('/api/games/all'),
         axiosInstance.get('/admin/users'),
       ]);
-
+  
       const userMap = new Map<number, string>();
       (usersResponse.data || []).forEach((user: User) => {
         userMap.set(user.id, user.username);
       });
-
+  
       const enrichedGames = gamesResponse.data.map((game: Game) => ({
         ...game,
         creator: userMap.get(game.UserId) || 'Unknown',
       }));
-
+  
       setGames(enrichedGames);
       toast.success('Games loaded successfully', { autoClose: 2000 });
     } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error(`Failed to load games: ${error.message}`, {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      toast.error(`Failed to load games: ${errorMessage}`, {
         toastId: 'load-games-error',
       });
     } finally {
@@ -130,11 +138,15 @@ const GamesList: React.FC = () => {
     setSortConfig({ key, direction });
   };
 
-  const sortedGames = [...games].sort((a, b) => {
-    if (a[sortConfig.key]! < b[sortConfig.key]!) return sortConfig.direction === 'asc' ? -1 : 1;
-    if (a[sortConfig.key]! > b[sortConfig.key]!) return sortConfig.direction === 'asc' ? 1 : -1;
-    return 0;
-  });
+  const sortGames = (games: Game[], key: keyof Game, direction: 'asc' | 'desc') => {
+    return [...games].sort((a, b) => {
+      if (a[key]! < b[key]!) return direction === 'asc' ? -1 : 1;
+      if (a[key]! > b[key]!) return direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
+  const sortedGames = sortGames(games, sortConfig.key, sortConfig.direction);
 
   const filteredGames = sortedGames.filter(game => {
     return (
@@ -151,19 +163,17 @@ const GamesList: React.FC = () => {
   // Updated handleNewGameSubmit function
   const handleNewGameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsModalLoading(true);
     try {
       await axiosInstance.post('/api/games', newGame);
       setShowModal(false);
       fetchGames();
-      toast.success('Game created successfully', {
-        icon: '🎮',
-        autoClose: 2000,
-      });
+      toast.success('Game created successfully', { autoClose: 2000 });
     } catch (error) {
-      console.error('Error creating game:', error);
-      toast.error(`Game creation failed: ${error.response?.data?.message || error.message}`, {
-        toastId: 'create-game-error',
-      });
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      toast.error(`Game creation failed: ${errorMessage}`, { toastId: 'create-game-error' });
+    } finally {
+      setIsModalLoading(false);
     }
   };
 
@@ -222,33 +232,15 @@ const GamesList: React.FC = () => {
   };
 
   const handleViewGame = (game: Game) => {
-    try {
-      console.log('Opening View Modal for:', game);
-  
-      // Ensure no other modals are open before opening the game detail modal
-      setShowModal(false);
-      setShowEditModal(false);
-      setShowDeleteModal(false);
-  
-      // Check if the modal is already open
-      if (showGameModal) {
-        throw new Error('Modal instance already open. Error Code: MODAL_ALREADY_OPEN');
-      }
-  
-      // Set the selected game and open the game detail modal
-      setSelectedGame(game);
-      setShowGameModal(true);
-    } catch (error) {
-      console.error('Error in handleViewGame:', error);
-  
-      // Display error message using react-toastify
-      toast.error(
-        `Failed to open game details. ${error.message || 'Unknown error occurred.'}`,
-        {
-          toastId: 'view-game-error', // Unique ID to prevent duplicate toasts
-        }
-      );
+    if (showGameModal) {
+      toast.error('A modal is already open. Please close it before opening another.', {
+        toastId: 'modal-already-open',
+      });
+      return;
     }
+  
+    setSelectedGame(game);
+    setShowGameModal(true);
   };
 
   const handleEditGame = async (game: Game) => {
@@ -281,13 +273,13 @@ const GamesList: React.FC = () => {
   };
 
   const handleDeleteGame = async (game: Game) => {
+    setGames(prevGames => prevGames.filter(g => g.id !== game.id));
     try {
-      console.log('Opening Delete Modal for:', game);
-      setGameToDelete(game);
-      setShowDeleteModal(true);
+      await axiosInstance.delete(`/api/games/${game.id}`);
+      toast.success(`"${game.title}" deleted successfully`, { autoClose: 2000 });
     } catch (error) {
-      console.error('Error opening delete modal:', error);
-      toast.error('Failed to open delete modal. Error Code: DELETE_MODAL_ERROR');
+      toast.error('Failed to delete game. Reverting changes.');
+      setGames(prevGames => [...prevGames, game]); // Revert changes
     }
   };
 
@@ -663,8 +655,7 @@ const GamesList: React.FC = () => {
                   <option value="RPG">RPG</option>
                   <option value="Adventure">Adventure</option>
                   <option value="Puzzle">Puzzle</option>
-                  <option value="Action">Action</option>
-                </select>
+                  <option value="Action">Action</                </select>
               </div>
   
               <div>
@@ -942,24 +933,21 @@ const GamesList: React.FC = () => {
       )}
       {/* ToastContainer configuration */}
       <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-        toastStyle={{
-          backgroundColor: '#3D2E22',
-          border: '1px solid #6A4E32',
-        }}
-        progressStyle={{
-          background: '#C0A080',
-        }}
-      />
+  position="bottom-right"
+  autoClose={5000}
+  hideProgressBar={false}
+  newestOnTop={true}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  theme="dark"
+  toastStyle={{
+    backgroundColor: '#3D2E22',
+    border: '1px solid #6A4E32',
+  }}
+/>
     </div>
   );
 };
