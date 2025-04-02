@@ -226,7 +226,7 @@ const GameScreen: React.FC = () => {
             content: msg.content,
             isUser: msg.role === "user",
             timestamp: new Date(msg.createdAt).toLocaleTimeString(),
-            image_url: msg.image_url || undefined,
+            image_url: msg.model || undefined,
           }));
 
           console.log("Fetched chat messages:", formattedMessages);
@@ -715,10 +715,10 @@ const GameScreen: React.FC = () => {
                     >
                       {msg.content}
                     </p>
-                    {msg.model && (
+                    {msg.image_url && (
                       <div className={`mt-2 ${msg.isUser ? "text-right" : "text-left"}`}>
                         <img
-                          src={getImageUrl(msg.model)}
+                          src={getImageUrl(msg.image_url)}
                           alt="Generated"
                           className="max-w-full md:max-w-md lg:max-w-lg h-auto rounded-lg inline-block"
                           loading="lazy"
