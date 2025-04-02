@@ -226,7 +226,7 @@ const GameScreen: React.FC = () => {
             content: msg.content,
             isUser: msg.role === "user",
             timestamp: new Date(msg.createdAt).toLocaleTimeString(),
-            image_url: msg.model || undefined,
+            image_url: msg.image_url || undefined,
           }));
 
           console.log("Fetched chat messages:", formattedMessages);
