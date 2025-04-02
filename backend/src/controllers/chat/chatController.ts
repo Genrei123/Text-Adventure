@@ -177,6 +177,7 @@ export const storeImageMessage = async (req: Request, res: Response): Promise<an
             userId,
             gameId,
             role,
+            "",
             'Image received',
             image_url
         );
