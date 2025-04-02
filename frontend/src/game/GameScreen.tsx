@@ -21,6 +21,7 @@ interface ChatMessage {
   isUser: boolean;
   timestamp: string;
   image_url?: string;
+  model?: string;
 }
 
 const GameScreen: React.FC = () => {
@@ -714,10 +715,10 @@ const GameScreen: React.FC = () => {
                     >
                       {msg.content}
                     </p>
-                    {msg.image_url && (
+                    {msg.model && (
                       <div className={`mt-2 ${msg.isUser ? "text-right" : "text-left"}`}>
                         <img
-                          src={getImageUrl(msg.image_url)}
+                          src={getImageUrl(msg.model)}
                           alt="Generated"
                           className="max-w-full md:max-w-md lg:max-w-lg h-auto rounded-lg inline-block"
                           loading="lazy"
