@@ -24,6 +24,11 @@ interface ChatMessage {
   model?: string;
 }
 
+const MAX_INPUT_TOKENS = 50; // Maximum input tokens per message (approx. 50-75 words)
+const MAX_OUTPUT_TOKENS = 150; // Maximum output tokens per AI response
+const TOKENS_PER_INTERACTION = 200; // Total tokens per Weavel interaction
+const WEAVEL_COST = 1; // Cost in coins per interaction
+
 const GameScreen: React.FC = () => {
   const { id: gameId } = useParams<{ id: string }>();
   const [userId, setUserId] = useState<number | null>(null);
@@ -54,6 +59,8 @@ const GameScreen: React.FC = () => {
   const [selectedBaseModel, setSelectedBaseModel] = useState("DALL-E 3");
   const [selectedTrainedModel, setSelectedTrainedModel] = useState("");
   const [activeTab, setActiveTab] = useState("base");
+  const [inputTokenCount, setInputTokenCount] = useState<number>(0);
+  const [hasTokenWarning, setHasTokenWarning] = useState<boolean>(false);
 
   interface GameSummaryResponse {
     summary: string;
@@ -67,6 +74,29 @@ const GameScreen: React.FC = () => {
       fetchCoins();
     }
   }, [userId]);
+
+  // Estimate token count from text (approximate calculation)
+  const estimateTokenCount = (text: string): number => {
+    if (!text) return 0;
+
+    // A simple approximation: ~4 chars per token on average
+    // This is a rough estimate - actual tokenization varies by model
+    const words = text.trim().split(/\s+/).length;
+    const chars = text.trim().length;
+
+    // Tokens are roughly ~3/4 of word count or ~1/4 of char count, whichever is greater
+    return Math.max(Math.ceil(words * 0.75), Math.ceil(chars / 4));
+  };
+
+  // Handle message changes and update token count
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    const tokenCount = estimateTokenCount(newText);
+
+    setMessage(newText);
+    setInputTokenCount(tokenCount);
+    setHasTokenWarning(tokenCount > MAX_INPUT_TOKENS);
+  };
 
   // Function to trigger coin refresh
   const triggerCoinRefresh = async (force = false, manualBalance?: number) => {
@@ -284,19 +314,27 @@ const GameScreen: React.FC = () => {
       return;
     }
 
+    // Check token limits
+    if (inputTokenCount > MAX_INPUT_TOKENS) {
+      setError(`Message too long! Please keep your input under ${MAX_INPUT_TOKENS} tokens (approximately 50-75 words).`);
+      return;
+    }
+
     if (!userId || !gameId) {
       setError("User ID or Game ID not found. Please log in again.");
       return;
     }
 
-    if (coins <= 0) {
-      setError("You don't have enough coins to continue. Please purchase more.");
+    if (coins < WEAVEL_COST) {
+      setError("You don't have enough Weavels to continue. Please purchase more.");
       return;
     }
 
     const payload = { userId, gameId: Number.parseInt(gameId, 10), message, action: selectedAction };
     const savedMessage = message;
     setMessage("");
+    setInputTokenCount(0); // Reset token count
+    setHasTokenWarning(false);
     setIsWaitingForAI(true);
 
     try {
@@ -332,19 +370,17 @@ const GameScreen: React.FC = () => {
         const deductResponse = await axiosInstance.post("/shop/deduct-coins", {
           email: email,
           userId: userId,
-          messages: [
-            { role: "System", content: response.data.ai_response.content },
-            { role: "User", content: savedMessage },
-          ],
+          fixedCost: WEAVEL_COST, // Use fixed cost of 1 Weavel per interaction
+          weavel: true, // Flag to indicate this is a Weavel interaction
         });
 
-        console.log("Coin deduction details:", deductResponse.data);
+        console.log("Weavel deduction details:", deductResponse.data);
 
-        const coinsDeducted = deductResponse.data.coinsDeducted || 1;
-        setCoins((prevCoins) => Math.max(0, prevCoins - coinsDeducted));
+        // Always deduct exactly 1 Weavel per interaction
+        setCoins((prevCoins) => Math.max(0, prevCoins - WEAVEL_COST));
         await triggerCoinRefresh();
       } catch (deductError) {
-        console.error("Error deducting coins (but message was sent):", deductError);
+        console.error("Error deducting Weavels (but message was sent):", deductError);
       }
 
       const aiResponse: ChatMessage = {
@@ -477,7 +513,7 @@ const GameScreen: React.FC = () => {
       }*/
 
       // New API endpoint for image generation
-      const apiEndpoint = "/generate-image"; 
+      const apiEndpoint = "/generate-image";
       const modelParam = selectedTrainedModel ? `${selectedBaseModel}-${selectedTrainedModel}` : selectedBaseModel;
 
       const imagePrompt = contextMessage.substring(0, 997) + (contextMessage.length > 1000 ? "..." : "");
@@ -739,7 +775,7 @@ const GameScreen: React.FC = () => {
         </div>
 
         {/* Input area */}
-        <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
+        <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0 pb-6">
           <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
             <ActionButton action="Do" isSelected={selectedAction === "Do"} onClick={() => setSelectedAction("Do")} />
             <ActionButton action="Say" isSelected={selectedAction === "Say"} onClick={() => setSelectedAction("Say")} />
@@ -747,37 +783,36 @@ const GameScreen: React.FC = () => {
             {/* Visualize Scene button with settings */}
             <div className="flex rounded-full overflow-hidden">
               <button
-                onClick={handleGenerateImage}
-                className={`px-2 py-1 md:px-4md:py-2 font-playfair text-xs md:text-base ${
-                  isGeneratingImage
-                    ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed"
-                    : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
-                }`}
-                disabled={isGeneratingImage}
+          onClick={handleGenerateImage}
+          className={`px-2 py-1 md:px-4md:py-2 font-playfair text-xs md:text-base ${isGeneratingImage
+            ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed"
+            : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
+            }`}
+          disabled={isGeneratingImage}
               >
-                Visualize Scene
+          Visualize Scene
               </button>
               <button
-                onClick={openModelSelectionModal}
-                className={`px-2 py-1 md:px-2 ${isGeneratingImage? "bg-[#634630]/50 text-gray-400 cursor-not-allowed" : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"} border-l border-[#311F17]/30`}
-                aria-label="Select model"
-                disabled={isGeneratingImage}
+          onClick={openModelSelectionModal}
+          className={`px-2 py-1 md:px-2 ${isGeneratingImage ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed" : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"} border-l border-[#311F17]/30`}
+          aria-label="Select model"
+          disabled={isGeneratingImage}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-settings"
-                >
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-settings"
+          >
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
               </button>
             </div>
 
@@ -807,19 +842,25 @@ const GameScreen: React.FC = () => {
           <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
             <textarea
               ref={textareaRef}
-              className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${showScroll ? "overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent" : "overflow-y-hidden"}`}
-              placeholder={`Type what you want to ${selectedAction.toLowerCase()}...`}
+              className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${showScroll ? "overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent" : "overflow-y-hidden"
+                } ${hasTokenWarning ? "border-red-500 border-opacity-50" : ""}`}
+              placeholder={`Type what you want to ${selectedAction.toLowerCase()}`}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={handleMessageChange}
               onKeyDown={handleKeyDown}
+              maxLength={MAX_INPUT_TOKENS * 4} // Rough approximation: 4 chars per token
               rows={1}
-              style={{ minHeight: "56px", height: `${Math.min(message.split("\n").length * 24 + 32, 192)}px` }}
+              style={{
+                minHeight: "56px",
+                height: `${Math.min(message.split("\n").length * 24 + 32, 192)}px`
+              }}
               disabled={isWaitingForAI}
             />
             <button
-              className={`p-4 bg-transparent rounded-r-2xl relative group self-start ${isWaitingForAI ? "cursor-not-allowed opacity-50" : ""}`}
+              className={`p-4 bg-transparent rounded-r-2xl relative group self-start ${isWaitingForAI || hasTokenWarning ? "cursor-not-allowed opacity-50" : ""
+                }`}
               onClick={handleSubmit}
-              disabled={isWaitingForAI}
+              disabled={isWaitingForAI || hasTokenWarning}
             >
               <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
               <img
@@ -828,6 +869,27 @@ const GameScreen: React.FC = () => {
                 className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100"
               />
             </button>
+          </div>
+
+          {/* Token counter with progressbar */}
+          <div className="w-full px-2 pb-1">
+            <div className="flex justify-between text-xs mb-1">
+              <div>
+                {coins > 0 && (
+                  <span className="text-[#E5D4B3]">
+                    Text Character Limit
+                  </span>
+                )}
+              </div>
+              <div className={`${hasTokenWarning ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
+                <span>{message.length}/{MAX_INPUT_TOKENS * 4}</span>
+                {hasTokenWarning &&
+                  <span className="ml-1">
+                    (Exceeds limit)
+                  </span>
+                }
+              </div>
+            </div>
           </div>
 
           {error && <p className="text-red-500 mt-2">{error}</p>}

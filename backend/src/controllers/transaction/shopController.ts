@@ -110,9 +110,10 @@ export const addCoinsToUser = async (userId: string | number, tokens: number): P
 };
 
 // Deduct coins based on text input
+// Deduct coins based on fixed Weavel cost (1 coin per interaction)
 export const deductCoins = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email, userId, messages } = req.body;
+    const { email, userId, weavel = true, type = "interaction" } = req.body;
     
     if (!email) {
       res.status(400).json({ error: 'Email is required' });
@@ -122,23 +123,16 @@ export const deductCoins = async (req: Request, res: Response): Promise<void> =>
     // Fetch user details
     const user = await getUserDetailsByEmail(email);
     
-    // Get the user's AI model from their profile
-    const userModel = user.model || 'gpt-4'; // Default to gpt-4 if not specified
+    // SAGE Weavel system: always deducts exactly 1 coin per interaction
+    const WEAVEL_COST = 1;
+    const coinsToDeduct = WEAVEL_COST;
     
-    console.log(`Deducting coins for user ${user.id} using model: ${userModel}`);
-    
-    // Calculate tokens using the dynamic tokenizer based on user's model
-    const tokens = await getChatTokenDetails(messages, user.id);
-    
-    console.log(`Token count for ${userModel}: ${tokens} tokens`);
-    
-    // Each token costs 1 coin (or whatever your business logic is)
-    const coinsToDeduct = tokens;
+    console.log(`Deducting fixed Weavel cost for user ${user.id}: ${coinsToDeduct} coins for ${type}`);
     
     // Check if user has enough coins
     if (user.totalCoins < coinsToDeduct) {
       res.status(402).json({ 
-        error: 'Not enough coins', 
+        error: 'Not enough Weavels', 
         required: coinsToDeduct, 
         available: user.totalCoins 
       });
@@ -150,15 +144,14 @@ export const deductCoins = async (req: Request, res: Response): Promise<void> =>
     await user.save();
     
     res.json({
-      message: 'Coins deducted successfully',
+      message: 'Weavel deducted successfully',
       coinsDeducted: coinsToDeduct,
-      deductionDetails: `Deducted ${coinsToDeduct} coins for ${tokens} tokens (1 coin per token)`,
-      tokens: messages,
-      model: userModel // Include the model used in the response
+      remainingCoins: user.totalCoins,
+      type: type
     });
   } catch (error: any) {
     console.error('Error in deductCoins:', error);
-    res.status(500).json({ error: error.message || 'An error occurred while deducting coins' });
+    res.status(500).json({ error: error.message || 'An error occurred while deducting Weavels' });
   }
 };
 
@@ -398,8 +391,6 @@ Error: ${error.message}`);
   }
 };
 
-
-
 // New endpoint to get order history for a user
 export const getUserOrderHistory = async (req: Request, res: Response): Promise<any> => {
   const { email } = req.query;
@@ -418,5 +409,17 @@ export const getUserOrderHistory = async (req: Request, res: Response): Promise<
   } catch (error: any) {
     console.error('Error fetching order history:', error.message);
     res.status(500).json({ error: error.message });
+  }
+};
+
+// Get token limits
+export const getTokenLimits = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { getTokenLimits } = require('../../utils/tokenValidator');
+    
+    res.json(getTokenLimits());
+  } catch (error: any) {
+    console.error('Error getting token limits:', error);
+    res.status(500).json({ error: error.message || 'An error occurred while getting token limits' });
   }
 };
