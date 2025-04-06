@@ -21,6 +21,18 @@ interface Game {
   UserId: number
   creator?: string
   private?: boolean
+  image_data?: string
+  slug?: string
+  subgenre?: string
+  updatedAt?: string
+  primary_color?: string
+  prompt_name?: string
+  prompt_model?: string
+  prompt_text?: string
+  image_prompt_name?: string
+  image_prompt_model?: string
+  image_prompt_text?: string
+  music_prompt_text?: string
 }
 
 interface User {
@@ -54,6 +66,12 @@ const GamesList: React.FC = () => {
   const [descriptionFilter, setDescriptionFilter] = useState("")
   const [creatorFilter, setCreatorFilter] = useState("")
   const [privateFilter, setPrivateFilter] = useState("all")
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [gameToDelete, setGameToDelete] = useState<Game | null>(null)
+  const [showBulkDeleteConfirmation, setShowBulkDeleteConfirmation] = useState(false)
+  // Add a new state for the view modal and selected game details
+  const [showViewModal, setShowViewModal] = useState(false)
+  const [selectedGameDetails, setSelectedGameDetails] = useState<any>(null)
 
   const allSelected = selectedGames.length === games.length
 
@@ -189,13 +207,21 @@ const GamesList: React.FC = () => {
     setSelectedGames((prev) => (prev.includes(id) ? prev.filter((gameId) => gameId !== id) : [...prev, id]))
   }
 
+  const confirmBulkDelete = () => {
+    setShowBulkDeleteConfirmation(true)
+  }
+
   const handleBulkDelete = async () => {
     try {
       await axiosInstance.delete("/api/games/bulk-delete", { data: { ids: selectedGames } })
       setSelectedGames([])
       fetchGames()
+      toast.success(`${selectedGames.length} games deleted successfully`)
     } catch (error) {
       console.error("Error deleting games:", error)
+      toast.error("Failed to delete games")
+    } finally {
+      setShowBulkDeleteConfirmation(false)
     }
   }
 
@@ -204,17 +230,31 @@ const GamesList: React.FC = () => {
       const updatedStatus = game.status === "active" ? "inactive" : "active"
       await axiosInstance.put(`/api/games/${game.id}`, { ...game, status: updatedStatus })
       fetchGames()
+      toast.success(`Game "${game.title}" is now ${updatedStatus}`)
     } catch (error) {
       console.error("Error toggling status:", error)
+      toast.error("Failed to update game status")
     }
   }
 
-  const handleDelete = async (id: number) => {
+  const confirmDelete = (game: Game) => {
+    setGameToDelete(game)
+    setShowDeleteConfirmation(true)
+  }
+
+  const handleDelete = async () => {
+    if (!gameToDelete) return
+
     try {
-      await axiosInstance.delete(`/api/games/${id}`)
+      await axiosInstance.delete(`/api/games/${gameToDelete.id}`)
       fetchGames()
+      toast.success(`Game "${gameToDelete.title}" deleted successfully`)
     } catch (error) {
       console.error("Error deleting game:", error)
+      toast.error("Failed to delete game")
+    } finally {
+      setShowDeleteConfirmation(false)
+      setGameToDelete(null)
     }
   }
 
@@ -457,6 +497,278 @@ const GamesList: React.FC = () => {
     </Modal>
   )
 
+  const DeleteConfirmationModal = () => (
+    <Modal
+      isOpen={showDeleteConfirmation}
+      onRequestClose={() => setShowDeleteConfirmation(false)}
+      className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+      overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+    >
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 text-red-400">
+          <Trash className="w-6 h-6" />
+          <h2 className="text-xl font-cinzel">Confirm Deletion</h2>
+        </div>
+
+        <p className="text-[#F0E6DB]">
+          Are you sure you want to delete the game <span className="font-semibold">{gameToDelete?.title}</span>? This
+          action cannot be undone.
+        </p>
+
+        <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+          <button
+            onClick={() => setShowDeleteConfirmation(false)}
+            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleDelete}
+            className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </Modal>
+  )
+
+  const BulkDeleteConfirmationModal = () => (
+    <Modal
+      isOpen={showBulkDeleteConfirmation}
+      onRequestClose={() => setShowBulkDeleteConfirmation(false)}
+      className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+      overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+    >
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 text-red-400">
+          <Trash className="w-6 h-6" />
+          <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
+        </div>
+
+        <p className="text-[#F0E6DB]">
+          Are you sure you want to delete <span className="font-semibold">{selectedGames.length} games</span>? This
+          action cannot be undone.
+        </p>
+
+        <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+          <button
+            onClick={() => setShowBulkDeleteConfirmation(false)}
+            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleBulkDelete}
+            className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors"
+          >
+            Delete {selectedGames.length} Games
+          </button>
+        </div>
+      </div>
+    </Modal>
+  )
+
+  // Add a function to fetch and display game details
+  const viewGameDetails = async (gameId: number) => {
+    setIsLoading(true)
+    try {
+      const response = await axiosInstance.get(`/api/games/${gameId}`)
+      setSelectedGameDetails(response.data)
+      setShowViewModal(true)
+    } catch (error) {
+      console.error("Error fetching game details:", error)
+      toast.error("Failed to load game details")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const GameViewModal = () => {
+    if (!selectedGameDetails) return null
+
+    return (
+      <Modal
+        isOpen={showViewModal}
+        onRequestClose={() => setShowViewModal(false)}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-4xl mx-4 max-h-[90vh] overflow-y-auto"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+      >
+        <div className="space-y-6">
+          <div className="flex justify-between items-center border-b border-[#6A4E32]/50 pb-4">
+            <h2 className="text-2xl font-cinzel text-[#F0E6DB]">{selectedGameDetails.title}</h2>
+            <button
+              onClick={() => setShowViewModal(false)}
+              className="text-[#8B7355] hover:text-[#C0A080] transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Left column - Basic info and image */}
+            <div className="space-y-4">
+              {selectedGameDetails.image_data && (
+                <div className="mb-4">
+                  <img
+                    src={`${import.meta.env.VITE_BACKEND_URL}${selectedGameDetails.image_data}`}
+                    alt={selectedGameDetails.title}
+                    className="w-full h-auto rounded-lg object-cover border-2 border-[#6A4E32]"
+                  />
+                </div>
+              )}
+
+              <div className="bg-[#1E1512] p-4 rounded-lg">
+                <h3 className="font-cinzel text-[#C0A080] mb-2">Basic Information</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <p className="text-xs text-[#8B7355]">ID</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.id}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Slug</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.slug}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Genre</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.genre}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Subgenre</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.subgenre || "None"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Status</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.status || "Active"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Visibility</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.private ? "Private" : "Public"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Created</p>
+                    <p className="text-[#F0E6DB]">{new Date(selectedGameDetails.createdAt).toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Updated</p>
+                    <p className="text-[#F0E6DB]">{new Date(selectedGameDetails.updatedAt).toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Creator ID</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.UserId}</p>
+                  </div>
+                  {selectedGameDetails.primary_color && (
+                    <div>
+                      <p className="text-xs text-[#8B7355]">Primary Color</p>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-4 h-4 rounded-full border border-white"
+                          style={{ backgroundColor: selectedGameDetails.primary_color }}
+                        ></div>
+                        <p className="text-[#F0E6DB]">{selectedGameDetails.primary_color}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-[#1E1512] p-4 rounded-lg">
+                <h3 className="font-cinzel text-[#C0A080] mb-2">Description</h3>
+                <p className="text-[#F0E6DB] whitespace-pre-wrap">
+                  {selectedGameDetails.description || "No description available"}
+                </p>
+              </div>
+
+              {selectedGameDetails.tagline && (
+                <div className="bg-[#1E1512] p-4 rounded-lg">
+                  <h3 className="font-cinzel text-[#C0A080] mb-2">Tagline</h3>
+                  <p className="text-[#F0E6DB] italic">"{selectedGameDetails.tagline}"</p>
+                </div>
+              )}
+            </div>
+
+            {/* Right column - Prompt information */}
+            <div className="space-y-4">
+              <div className="bg-[#1E1512] p-4 rounded-lg">
+                <h3 className="font-cinzel text-[#C0A080] mb-2">Prompt Information</h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Prompt Name</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.prompt_name || "Default"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Prompt Model</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.prompt_model || "Not specified"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Prompt Text</p>
+                    <div className="bg-[#3D2E22] p-3 rounded-md mt-1 max-h-40 overflow-y-auto">
+                      <p className="text-[#F0E6DB] text-sm whitespace-pre-wrap">
+                        {selectedGameDetails.prompt_text || "No prompt text available"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[#1E1512] p-4 rounded-lg">
+                <h3 className="font-cinzel text-[#C0A080] mb-2">Image Prompt Information</h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Image Prompt Name</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.image_prompt_name || "Not specified"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Image Prompt Model</p>
+                    <p className="text-[#F0E6DB]">{selectedGameDetails.image_prompt_model || "Not specified"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Image Prompt Text</p>
+                    <div className="bg-[#3D2E22] p-3 rounded-md mt-1">
+                      <p className="text-[#F0E6DB] text-sm">
+                        {selectedGameDetails.image_prompt_text || "No image prompt available"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[#1E1512] p-4 rounded-lg">
+                <h3 className="font-cinzel text-[#C0A080] mb-2">Music Information</h3>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Music Prompt Text</p>
+                    <div className="bg-[#3D2E22] p-3 rounded-md mt-1">
+                      <p className="text-[#F0E6DB] text-sm">
+                        {selectedGameDetails.music_prompt_text || "No music prompt available"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+            <button
+              onClick={() => navigate(`/admin/games/${selectedGameDetails.id}/edit`)}
+              className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              Edit Game
+            </button>
+            <button
+              onClick={() => setShowViewModal(false)}
+              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </Modal>
+    )
+  }
+
   return (
     <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -542,9 +854,9 @@ const GamesList: React.FC = () => {
                         <StatusBadge status={game.status} />
                       </td>
                       <td className="p-4">
-                        <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-center gap-2">
                           <button
-                            onClick={() => navigate(`/admin/games/${game.id}`)}
+                            onClick={() => viewGameDetails(game.id)}
                             className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                             title="View"
                             aria-label={`View ${game.title}`}
@@ -568,7 +880,7 @@ const GamesList: React.FC = () => {
                             <Power className="w-5 h-5" />
                           </button>
                           <button
-                            onClick={() => handleDelete(game.id)}
+                            onClick={() => confirmDelete(game)}
                             className="p-2 hover:bg-red-900/20 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none"
                             title="Delete"
                             aria-label={`Delete ${game.title}`}
@@ -591,6 +903,9 @@ const GamesList: React.FC = () => {
       )}
 
       <NewGameModal />
+      <DeleteConfirmationModal />
+      <BulkDeleteConfirmationModal />
+      <GameViewModal />
 
       {/* Add sticky bulk action bar */}
       {selectedGames.length > 0 && (
@@ -601,7 +916,7 @@ const GamesList: React.FC = () => {
         >
           <span className="text-sm text-[#C0A080]">{selectedGames.length} selected</span>
           <button
-            onClick={handleBulkDelete}
+            onClick={confirmBulkDelete}
             className="px-3 py-1 bg-red-700/20 hover:bg-red-800/30 text-red-400 rounded flex items-center gap-1"
           >
             <Trash className="w-4 h-4" />
