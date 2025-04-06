@@ -1877,17 +1877,17 @@ const AdminPage: React.FC = () => {
               </div>
 
               {/* Quick Duration Presets */}
-              {banType === 'temporary' && (
+              {banType === "temporary" && (
                 <div className="mt-4">
                   <label className="block text-sm font-cinzel text-white mb-2 uppercase">Quick Duration Presets</label>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { days: 1, label: '1 Day', color: 'bg-blue-600 hover:bg-blue-700' },
-                      { days: 3, label: '3 Days', color: 'bg-green-600 hover:bg-green-700' },
-                      { days: 7, label: '7 Days', color: 'bg-yellow-600 hover:bg-yellow-700' },
-                      { days: 14, label: '2 Weeks', color: 'bg-orange-600 hover:bg-orange-700' },
-                      { days: 30, label: '1 Month', color: 'bg-red-600 hover:bg-red-700' },
-                      { days: 180, label: '6 Months', color: 'bg-purple-600 hover:bg-purple-700' }, // New 6 Months button
+                      { days: 1, label: "1 Day", color: "bg-[#6A4E32] hover:bg-[#7A5E42]" },
+                      { days: 3, label: "3 Days", color: "bg-[#8B6E52] hover:bg-[#9B7E62]" },
+                      { days: 7, label: "7 Days", color: "bg-[#A68E72] hover:bg-[#B69E82]" },
+                      { days: 14, label: "2 Weeks", color: "bg-[#C0A080] hover:bg-[#D0B090]" },
+                      { days: 30, label: "1 Month", color: "bg-[#D5B591] hover:bg-[#E5C5A1]" },
+                      { days: 180, label: "6 Months", color: "bg-[#3D2E22] hover:bg-[#4D3E32]" },
                     ].map((preset) => (
                       <button
                         key={preset.days}
