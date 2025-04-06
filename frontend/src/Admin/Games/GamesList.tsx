@@ -1,229 +1,370 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders } from 'lucide-react';
-import axiosInstance from '../../../config/axiosConfig';
-import { useNavigate } from 'react-router-dom';
-import Modal from 'react-modal';
-import StatusBadge from './StatusBadge';
-import Loader from './Loader';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Tooltip } from 'react-tooltip';
-import { ToastContainer, toast } from 'react-toastify';
-import LoadingBook from '../../components/LoadingBook';
+"use client"
+
+import type React from "react"
+import { useState, useEffect } from "react"
+import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders } from "lucide-react"
+import axiosInstance from "../../../config/axiosConfig"
+import { useNavigate } from "react-router-dom"
+import Modal from "react-modal"
+import StatusBadge from "./StatusBadge"
+import Loader from "./Loader"
+import { motion, AnimatePresence } from "framer-motion"
+import { ToastContainer, toast } from "react-toastify"
 
 interface Game {
-  id: number;
-  title: string;
-  genre: string;
-  createdAt: string;
-  status: string;
-  UserId: number;
-  creator?: string; // Add creator field
+  id: number
+  title: string
+  genre: string
+  description?: string
+  createdAt: string
+  status: string
+  UserId: number
+  creator?: string
+  private?: boolean
 }
 
 interface User {
-  id: number;
-  username: string;
+  id: number
+  username: string
 }
 
 const GamesList: React.FC = () => {
-  const navigate = useNavigate();
-  const [games, setGames] = useState<Game[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [genreFilter, setGenreFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({
-    key: 'title',
-    direction: 'asc'
-  });
-  const [showModal, setShowModal] = useState(false);
-  const [selectedGames, setSelectedGames] = useState<number[]>([]);
+  const navigate = useNavigate()
+  const [games, setGames] = useState<Game[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [genreFilter, setGenreFilter] = useState("all")
+  const [isLoading, setIsLoading] = useState(true)
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" }>({
+    key: "title",
+    direction: "asc",
+  })
+  const [showModal, setShowModal] = useState(false)
+  const [selectedGames, setSelectedGames] = useState<number[]>([])
   const [newGame, setNewGame] = useState({
-    title: '',
-    genre: 'RPG',
-    description: '',
-    status: 'active',
-    prompt: ''
-  });
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [dateRange, setDateRange] = useState({ start: '', end: '' });
+    title: "",
+    genre: "RPG",
+    description: "",
+    status: "active",
+    prompt: "",
+  })
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [dateRange, setDateRange] = useState({ start: "", end: "" })
+  const [titleFilter, setTitleFilter] = useState("")
+  const [descriptionFilter, setDescriptionFilter] = useState("")
+  const [creatorFilter, setCreatorFilter] = useState("")
+  const [privateFilter, setPrivateFilter] = useState("all")
 
-  const allSelected = selectedGames.length === games.length;
+  const allSelected = selectedGames.length === games.length
 
   const toggleSelectAll = () => {
-    setSelectedGames(allSelected ? [] : games.map(game => game.id));
-  };
+    setSelectedGames(allSelected ? [] : games.map((game) => game.id))
+  }
 
   useEffect(() => {
-    fetchGames();
-  }, []);
+    fetchGames()
+  }, [])
 
   const fetchGames = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       const [gamesResponse, usersResponse] = await Promise.all([
-        axiosInstance.get('/api/games/all'),
-        axiosInstance.get('/admin/users'),
-      ]);
+        axiosInstance.get("/api/games/all"),
+        axiosInstance.get("/admin/users"),
+      ])
 
-      const userMap = new Map<number, string>();
-      (usersResponse.data || []).forEach((user: User) => {
-        userMap.set(user.id, user.username);
-      });
+      const userMap = new Map<number, string>()
+      ;(usersResponse.data || []).forEach((user: User) => {
+        userMap.set(user.id, user.username)
+      })
 
       const enrichedGames = gamesResponse.data.map((game: Game) => ({
         ...game,
-        creator: userMap.get(game.UserId) || 'Unknown',
-      }));
+        creator: userMap.get(game.UserId) || "Unknown",
+      }))
 
-      setGames(enrichedGames);
+      setGames(enrichedGames)
     } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error('Failed to load game data');
+      console.error("Error fetching data:", error)
+      toast.error("Failed to load game data")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+    setSearchTerm(e.target.value)
+  }
 
   const handleGenreFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setGenreFilter(e.target.value);
-  };
+    setGenreFilter(e.target.value)
+  }
 
   const handleSort = (key: string) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction = "asc"
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc"
     }
-    setSortConfig({ key, direction });
-  };
+    setSortConfig({ key, direction })
+  }
 
   const sortedGames = [...games].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
-    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
-    return 0;
-  });
+    if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === "asc" ? -1 : 1
+    if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === "asc" ? 1 : -1
+    return 0
+  })
 
-  const filteredGames = sortedGames.filter(game => {
+  const filteredGames = sortedGames.filter((game) => {
+    // Basic search filter (kept for backward compatibility)
+    const matchesSearch = game.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+    // Genre filter
+    const matchesGenre = genreFilter === "all" || game.genre === genreFilter
+
+    // Status filter
+    const matchesStatus = statusFilter === "all" || game.status === statusFilter
+
+    // Date range filter
+    const createdDate = new Date(game.createdAt)
+    const matchesStartDate = !dateRange.start || createdDate >= new Date(dateRange.start)
+    const matchesEndDate = !dateRange.end || createdDate <= new Date(dateRange.end)
+
+    // Title specific filter (more precise than general search)
+    const matchesTitle = !titleFilter || game.title.toLowerCase().includes(titleFilter.toLowerCase())
+
+    // Description filter
+    const matchesDescription =
+      !descriptionFilter ||
+      (game.description && game.description.toLowerCase().includes(descriptionFilter.toLowerCase()))
+
+    // Creator filter
+    const matchesCreator =
+      !creatorFilter || (game.creator && game.creator.toLowerCase().includes(creatorFilter.toLowerCase()))
+
+    // Private filter
+    const matchesPrivate =
+      privateFilter === "all" ||
+      (privateFilter === "private" && game.private === true) ||
+      (privateFilter === "public" && game.private === false)
+
     return (
-      game.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (genreFilter === 'all' || game.genre === genreFilter)
-    );
-  });
+      matchesSearch &&
+      matchesGenre &&
+      matchesStatus &&
+      matchesStartDate &&
+      matchesEndDate &&
+      matchesTitle &&
+      matchesDescription &&
+      matchesCreator &&
+      matchesPrivate
+    )
+  })
 
   const handleNewGameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setNewGame({ ...newGame, [name]: value });
-  };
+    const { name, value } = e.target
+    setNewGame({ ...newGame, [name]: value })
+  }
 
   const handleNewGameSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      await axiosInstance.post('/api/games', newGame);
-      setShowModal(false);
-      fetchGames();
+      await axiosInstance.post("/api/games", newGame)
+      setShowModal(false)
+      fetchGames()
     } catch (error) {
-      console.error('Error creating game:', error);
+      console.error("Error creating game:", error)
     }
-  };
+  }
 
   const getSortIndicator = (key: string) => {
-    if (sortConfig.key !== key) return null;
-    return sortConfig.direction === 'asc' ? <ChevronUp className="inline w-4 h-4" /> : <ChevronDown className="inline w-4 h-4" />;
-  };
+    if (sortConfig.key !== key) return null
+    return sortConfig.direction === "asc" ? (
+      <ChevronUp className="inline w-4 h-4" />
+    ) : (
+      <ChevronDown className="inline w-4 h-4" />
+    )
+  }
 
   const handleSelectGame = (id: number) => {
-    setSelectedGames(prev => prev.includes(id) ? prev.filter(gameId => gameId !== id) : [...prev, id]);
-  };
+    setSelectedGames((prev) => (prev.includes(id) ? prev.filter((gameId) => gameId !== id) : [...prev, id]))
+  }
 
   const handleBulkDelete = async () => {
     try {
-      await axiosInstance.delete('/api/games/bulk-delete', { data: { ids: selectedGames } });
-      setSelectedGames([]);
-      fetchGames();
+      await axiosInstance.delete("/api/games/bulk-delete", { data: { ids: selectedGames } })
+      setSelectedGames([])
+      fetchGames()
     } catch (error) {
-      console.error('Error deleting games:', error);
+      console.error("Error deleting games:", error)
     }
-  };
+  }
 
   const handleToggleStatus = async (game: any) => {
     try {
-      const updatedStatus = game.status === 'active' ? 'inactive' : 'active';
-      await axiosInstance.put(`/api/games/${game.id}`, { ...game, status: updatedStatus });
-      fetchGames();
+      const updatedStatus = game.status === "active" ? "inactive" : "active"
+      await axiosInstance.put(`/api/games/${game.id}`, { ...game, status: updatedStatus })
+      fetchGames()
     } catch (error) {
-      console.error('Error toggling status:', error);
+      console.error("Error toggling status:", error)
     }
-  };
+  }
 
   const handleDelete = async (id: number) => {
     try {
-      await axiosInstance.delete(`/api/games/${id}`);
-      fetchGames();
+      await axiosInstance.delete(`/api/games/${id}`)
+      fetchGames()
     } catch (error) {
-      console.error('Error deleting game:', error);
+      console.error("Error deleting game:", error)
     }
-  };
+  }
 
   // Enhanced Table Header Component
   const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
     <th
       className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center cursor-pointer hover:bg-[#534231] transition-colors group"
       onClick={() => handleSort(sortKey)}
-      aria-sort={sortConfig.key === sortKey ? (sortConfig.direction === 'asc' ? 'ascending' : 'descending') : 'none'}
+      aria-sort={sortConfig.key === sortKey ? (sortConfig.direction === "asc" ? "ascending" : "descending") : "none"}
     >
       <div className="flex items-center justify-center gap-2">
         <span className="text-[#F0E6DB]">{label}</span>
-        <span className={`text-[#C0A080] transition-opacity ${
-          sortConfig.key === sortKey ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
-        }`}>
+        <span
+          className={`text-[#C0A080] transition-opacity ${
+            sortConfig.key === sortKey ? "opacity-100" : "opacity-0 group-hover:opacity-50"
+          }`}
+        >
           {sortConfig.key === sortKey ? (
-            sortConfig.direction === 'asc' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />
+            sortConfig.direction === "asc" ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )
           ) : (
             <ChevronUp className="w-4 h-4 opacity-0" />
           )}
         </span>
       </div>
     </th>
-  );
+  )
 
   const AdvancedFilters = () => (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-[#2F2118] rounded-lg border border-[#6A4E32]/50 mb-6">
-      <div>
-        <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
-        <select
-          className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
+    <div className="bg-[#2F2118] rounded-lg border border-[#6A4E32]/50 mb-6 p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title</label>
+          <input
+            type="text"
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            placeholder="Filter by title..."
+            value={titleFilter}
+            onChange={(e) => setTitleFilter(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
+          <input
+            type="text"
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            placeholder="Filter by description..."
+            value={descriptionFilter}
+            onChange={(e) => setDescriptionFilter(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre</label>
+          <select
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            value={genreFilter}
+            onChange={handleGenreFilterChange}
+          >
+            <option value="all">All Genres</option>
+            <option value="RPG">RPG</option>
+            <option value="Adventure">Adventure</option>
+            <option value="Horror">Horror</option>
+            <option value="Sci-Fi">Sci-Fi</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Romance">Romance</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Creator</label>
+          <input
+            type="text"
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            placeholder="Filter by creator..."
+            value={creatorFilter}
+            onChange={(e) => setCreatorFilter(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
+          <select
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
+          <select
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            value={privateFilter}
+            onChange={(e) => setPrivateFilter(e.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Start Date</label>
+          <input
+            type="date"
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            value={dateRange.start}
+            onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">End Date</label>
+          <input
+            type="date"
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            value={dateRange.end}
+            onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end mt-4">
+        <button
+          onClick={() => {
+            setTitleFilter("")
+            setDescriptionFilter("")
+            setGenreFilter("all")
+            setStatusFilter("all")
+            setDateRange({ start: "", end: "" })
+            setCreatorFilter("")
+            setPrivateFilter("all")
+          }}
+          className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
         >
-          <option value="all">All Statuses</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-      </div>
-      <div>
-        <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Start Date</label>
-        <input
-          type="date"
-          className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50"
-          value={dateRange.start}
-          onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-cinzel text-[#C0A080] mb-2">End Date</label>
-        <input
-          type="date"
-          className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50"
-          value={dateRange.end}
-          onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-        />
+          Reset Filters
+        </button>
       </div>
     </div>
-  );
+  )
 
   const NewGameModal = () => (
     <Modal
@@ -235,10 +376,7 @@ const GamesList: React.FC = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center border-b border-[#6A4E32]/50 pb-4">
           <h2 className="text-2xl font-cinzel text-[#F0E6DB]">Create New Game</h2>
-          <button
-            onClick={() => setShowModal(false)}
-            className="text-[#8B7355] hover:text-[#C0A080] transition-colors"
-          >
+          <button onClick={() => setShowModal(false)} className="text-[#8B7355] hover:text-[#C0A080] transition-colors">
             ✕
           </button>
         </div>
@@ -317,7 +455,7 @@ const GamesList: React.FC = () => {
         </form>
       </div>
     </Modal>
-  );
+  )
 
   return (
     <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen">
@@ -372,7 +510,7 @@ const GamesList: React.FC = () => {
               </thead>
               <tbody>
                 <AnimatePresence>
-                  {filteredGames.map(game => (
+                  {filteredGames.map((game) => (
                     <motion.tr
                       key={game.id}
                       initial={{ opacity: 0, y: -10 }}
@@ -394,10 +532,10 @@ const GamesList: React.FC = () => {
                       <td className="p-4 font-playfair">{game.genre}</td>
                       <td className="p-4 font-playfair text-center">{game.creator}</td>
                       <td className="p-4 font-playfair">
-                        {new Date(game.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
+                        {new Date(game.createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
                         })}
                       </td>
                       <td className="p-4">
@@ -447,9 +585,7 @@ const GamesList: React.FC = () => {
           </div>
 
           {filteredGames.length === 0 && (
-            <div className="p-8 text-center text-[#8B7355]">
-              No games found matching your criteria
-            </div>
+            <div className="p-8 text-center text-[#8B7355]">No games found matching your criteria</div>
           )}
         </div>
       )}
@@ -463,9 +599,7 @@ const GamesList: React.FC = () => {
           animate={{ y: 0, opacity: 1 }}
           className="fixed bottom-4 right-4 bg-[#3D2E22] p-4 rounded-lg shadow-xl flex gap-2 items-center"
         >
-          <span className="text-sm text-[#C0A080]">
-            {selectedGames.length} selected
-          </span>
+          <span className="text-sm text-[#C0A080]">{selectedGames.length} selected</span>
           <button
             onClick={handleBulkDelete}
             className="px-3 py-1 bg-red-700/20 hover:bg-red-800/30 text-red-400 rounded flex items-center gap-1"
@@ -477,7 +611,8 @@ const GamesList: React.FC = () => {
       )}
       <ToastContainer />
     </div>
-  );
-};
+  )
+}
 
-export default GamesList;
+export default GamesList
+
