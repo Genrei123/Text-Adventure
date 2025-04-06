@@ -17,6 +17,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [hoveredOffer, setHoveredOffer] = useState<string | null>(null);
+    const [showTooltip, setShowTooltip] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchOffers = async () => {
@@ -65,8 +66,35 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className="bg-[#634630] p-6 rounded-lg shadow-lg max-w-4xl">
-                <h2 className="text-xl font-bold mb-4 text-white font-cinzel">Buy Weavels</h2>
+            <div className="bg-[#634630] p-6 rounded-lg shadow-lg max-w-4xl relative">
+                {/* Header with title and info icon */}
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold text-white font-cinzel">Buy Weavels</h2>
+                    
+                    {/* Info icon with tooltip */}
+                    <div 
+                        className="cursor-help"
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                    >
+                        <div className="bg-yellow-500 rounded-full w-6 h-6 flex items-center justify-center text-[#2F2118] font-bold">
+                            !
+                        </div>
+                        
+                        {/* Tooltip */}
+                        {showTooltip && (
+                            <div className="absolute right-6 mt-2 bg-[#2F2118] border border-yellow-500 p-4 rounded-lg shadow-lg w-64 z-10 text-left">
+                                <h3 className="text-yellow-400 font-bold text-center mb-2">✨ Weavel: The Sage's Currency ✨</h3>
+                                <p className="text-white text-sm">
+                                    A Weavel is your key to crafting tales with the AI Sage! Each Weavel (200 tokens) lets you weave one story interaction: 50 tokens for your prompt, 150 for the Sage's reply.
+                                </p>
+                                <p className="text-white text-sm mt-2">
+                                    Gather Weavels to unlock endless medieval adventures!
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -75,8 +103,9 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 )}
 
                 {loading ? (
-                    <div className="flex justify-center items-center h-32">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                    <div className="flex flex-col justify-center items-center h-64">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400 mb-4"></div>
+                        <p className="text-white">Loading available packages...</p>
                     </div>
                 ) : offers.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
@@ -129,7 +158,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-white text-center py-8">
+                    <div className="text-white text-center py-16">
                         No token packages available at the moment.
                     </div>
                 )}
