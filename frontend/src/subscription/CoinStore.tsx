@@ -10,6 +10,7 @@ interface TokenPackage {
     tokens: number;
     currency?: string;
     isPopular?: boolean;
+    isBestValue?: boolean;
 }
 
 const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
@@ -86,7 +87,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             <div className="absolute right-6 mt-2 bg-[#2F2118] border border-yellow-500 p-4 rounded-lg shadow-lg w-64 z-10 text-left">
                                 <h3 className="text-yellow-400 font-bold text-center mb-2">✨ Weavel: The Sage's Currency ✨</h3>
                                 <p className="text-white text-sm">
-                                    A Weavel is your key to crafting tales with the AI Sage! Each Weavel (200 tokens) lets you weave one story interaction: 50 tokens for your prompt, 150 for the Sage's reply.
+                                    A Weavel is your key to crafting tales with the AI Sage! Each Weavel lets you weave one story per interaction.
                                 </p>
                                 <p className="text-white text-sm mt-2">
                                     Gather Weavels to unlock endless medieval adventures!
@@ -112,34 +113,55 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         {offers.map((offer) => (
                             <motion.button
                                 key={offer.id}
-                                className={`relative ${offer.isPopular
-                                        ? 'bg-gradient-to-b from-[#3a1e0b] to-[#2F2118] border-2 border-yellow-500 shadow-lg'
-                                        : 'bg-[#2F2118]'
-                                    } text-white py-4 px-6 rounded-lg flex flex-col items-center transition-all duration-300`}
+                                className={`relative ${
+                                    offer.isPopular 
+                                        ? 'bg-gradient-to-b from-[#3a1e0b] to-[#2F2118] border-2 border-yellow-500 shadow-lg' 
+                                        : offer.isBestValue 
+                                          ? 'bg-gradient-to-b from-[#0b3a1e] to-[#2F2118] border-2 border-green-500 shadow-lg'
+                                          : 'bg-[#2F2118]'
+                                } text-white py-4 px-6 rounded-lg flex flex-col items-center transition-all duration-300`}
                                 onClick={() => handleBuyCoins(offer.id)}
                                 onMouseEnter={() => setHoveredOffer(offer.id)}
                                 onMouseLeave={() => setHoveredOffer(null)}
                                 whileHover={{
                                     scale: 1.05,
-                                    boxShadow: "0px 0px 12px rgba(255, 215, 0, 0.5)"
+                                    boxShadow: `0px 0px 12px ${offer.isBestValue ? 'rgba(34, 197, 94, 0.5)' : 'rgba(255, 215, 0, 0.5)'}`
                                 }}
                                 transition={{ type: "tween", duration: 0.1 }}
                             >
+                                {/* Popular Badge */}
                                 {offer.isPopular && (
                                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-[#2F2118] text-xs font-bold px-3 py-1 rounded-full">
                                         POPULAR
                                     </div>
                                 )}
 
-                                <div className={`relative ${offer.isPopular ? 'animate-pulse-glow' : ''}`}>
+                                {/* Best Value Badge */}
+                                {offer.isBestValue && !offer.isPopular && (
+                                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-500 text-[#2F2118] text-xs font-bold px-3 py-1 rounded-full">
+                                        BEST VALUE
+                                    </div>
+                                )}
+
+                                <div className={`relative ${
+                                    offer.isPopular ? 'animate-pulse-glow' : 
+                                    offer.isBestValue ? 'animate-pulse-glow-green' : ''
+                                }`}>
                                     <img src="/Coin.svg" alt="Token Icon" className="w-12 h-12 mb-2" />
                                     {offer.isPopular && (
                                         <div className="absolute inset-0 bg-yellow-400 rounded-full opacity-20 blur-md -z-10"></div>
                                     )}
+                                    {offer.isBestValue && !offer.isPopular && (
+                                        <div className="absolute inset-0 bg-green-400 rounded-full opacity-20 blur-md -z-10"></div>
+                                    )}
                                 </div>
 
                                 <span className="text-lg font-bold">{offer.name}</span>
-                                <span className={`text-xl ${offer.isPopular ? 'text-yellow-300' : 'text-yellow-400'}`}>
+                                <span className={`text-xl ${
+                                    offer.isPopular ? 'text-yellow-300' : 
+                                    offer.isBestValue ? 'text-green-300' : 
+                                    'text-yellow-400'
+                                }`}>
                                     {offer.tokens} Weavels
                                 </span>
 
@@ -148,10 +170,11 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                                 </span>
 
                                 {/* Buy Now button - always visible but highlights on hover */}
-                                <span className={`mt-1 px-3 py-1 rounded-full text-sm font-bold transition-all duration-300 ${hoveredOffer === offer.id
-                                        ? 'bg-yellow-500 text-[#2F2118]'
+                                <span className={`mt-1 px-3 py-1 rounded-full text-sm font-bold transition-all duration-300 ${
+                                    hoveredOffer === offer.id
+                                        ? offer.isBestValue ? 'bg-green-500 text-[#2F2118]' : 'bg-yellow-500 text-[#2F2118]'
                                         : 'bg-[#634630] text-white bg-opacity-70'
-                                    }`}>
+                                }`}>
                                     Buy Now
                                 </span>
                             </motion.button>

@@ -10,6 +10,7 @@ export interface ITokenPackage {
   bonus: number;
   currency: string;
   isPopular: boolean;
+  isBestValue?: boolean; 
 }
 
 // Database model for token packages
@@ -21,6 +22,7 @@ class TokenPackage extends Model implements ITokenPackage {
   public bonus!: number;
   public currency!: string;
   public isPopular!: boolean;
+  public isBestValue!: boolean;
 }
 
 TokenPackage.init({
@@ -53,6 +55,11 @@ TokenPackage.init({
   isPopular: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
+  },
+  isBestValue: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
     defaultValue: false,
   }
 }, {
