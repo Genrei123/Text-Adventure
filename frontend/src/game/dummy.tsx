@@ -49,7 +49,6 @@ const GameScreen: React.FC = () => {
                 setChatMessages(prevMessages => [...prevMessages, aiResponse]);
             }, 1000);
 
-            setSuccess('Message sent successfully!');
             setMessage('');
         } catch (err) {
             console.error('Error sending message:', err);

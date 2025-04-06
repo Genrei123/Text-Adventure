@@ -160,7 +160,6 @@ const GameScreen: React.FC = () => {
     }
 
     setError("");
-    setSuccess("");
     setIsGeneratingImage(true);
 
     try {
@@ -172,7 +171,6 @@ const GameScreen: React.FC = () => {
       });
 
       setGameSummary(response.data);
-      setSuccess("Summary generated successfully!");
     } catch (err) {
       console.error("Error generating summary:", err);
       setError("Summary generation failed. Please try again.");
@@ -410,7 +408,6 @@ const GameScreen: React.FC = () => {
         setChatMessages((prev) => [...prev.slice(0, -1), tempUserMessage, aiResponse]);
       }
 
-      setSuccess("Message sent successfully!");
     } catch (error) {
       console.error("Error in handleSubmit:", error);
 
