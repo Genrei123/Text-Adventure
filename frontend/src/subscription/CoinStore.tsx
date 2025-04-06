@@ -6,7 +6,10 @@ interface TokenPackage {
   id: string;
   name: string;
   price: number;
-  coins: number;
+  tokens: number;
+  bonus?: number;
+  currency?: string;
+  isPopular?: boolean;
 }
 
 const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
@@ -59,7 +62,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
             <div className="bg-[#634630] p-6 rounded-lg shadow-lg max-w-4xl">
-                <h2 className="text-xl font-bold mb-4 text-white font-cinzel">Buy Tokens</h2>
+                <h2 className="text-xl font-bold mb-4 text-white font-cinzel">Buy Weavels</h2>
                 
                 {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -81,7 +84,7 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             >
                                 <img src="/Coin.svg" alt="Token Icon" className="w-12 h-12 mb-2" />
                                 <span className="text-lg font-bold">{offer.name}</span>
-                                <span className="text-yellow-400 text-xl">{offer.coins} Tokens</span>
+                                <span className="text-yellow-400 text-xl">{offer.tokens} Weavels</span>
                                 <span className="mt-2">{offer.price} PHP</span>
                             </button>
                         ))}
