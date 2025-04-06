@@ -147,16 +147,4 @@ const CoinStore: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     );
 };
 
-// Add this CSS to your global styles or add it inline here
-const styles = `
-@keyframes pulse-glow {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.3); }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s infinite;
-}
-`;
-
 export default CoinStore;
