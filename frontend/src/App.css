@@ -34,6 +34,15 @@
   }
 }
 
+@keyframes pulse-glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
@@ -48,3 +57,11 @@
   color: #888;
 }
 
+@keyframes pulse-glow-green {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+}
+
+.animate-pulse-glow-green {
+  animation: pulse-glow-green 2s infinite;
+}

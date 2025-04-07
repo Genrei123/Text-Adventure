@@ -16,7 +16,8 @@ export async function getCoinBalance(userId: number): Promise<number> {
 }
 
 // Deduct coins based on token count
-export async function deductCoinsByTokens(userId: number, text: string): Promise<void> {
+// Deduct exactly one Weavel (coin) per interaction
+export async function deductCoinsByTokens(userId: number, type: string = "interaction"): Promise<number> {
   // Fetch the user
   const user = await User.findByPk(userId);
 
@@ -24,26 +25,20 @@ export async function deductCoinsByTokens(userId: number, text: string): Promise
     throw new Error('User not found');
   }
 
-  // Calculate the token count and get tokens
-  let tokenCount;
-  try {
-    // Assuming the text is a single message
-    const messages = [{ role: "user", content: text }];
-    tokenCount = getChatTokenDetails(messages);
-  } catch (error) {
-    console.error('Error getting token details:', error);
-    throw new Error('Failed to get token details');
+  // SAGE Weavel system: Fixed cost of 1 Weavel per interaction
+  const WEAVEL_COST = 1;
+  
+  if (user.totalCoins < WEAVEL_COST) {
+    throw new Error('Insufficient Weavels');
   }
 
-  const coinsToDeduct = tokenCount; // Assuming 1 coin per token
-
-  if (user.totalCoins < coinsToDeduct) {
-    throw new Error('Insufficient coins');
-  }
-
-  // Deduct coins
-  user.totalCoins -= coinsToDeduct;
+  // Deduct exactly 1 Weavel
+  user.totalCoins -= WEAVEL_COST;
   await user.save();
+  
+  console.log(`Deducted 1 Weavel from user ${userId} for ${type}. Remaining: ${user.totalCoins}`);
+  
+  return WEAVEL_COST; // Return how many coins were deducted
 }
 
 export async function checkOrderIdExists(order_id: string): Promise<boolean> {

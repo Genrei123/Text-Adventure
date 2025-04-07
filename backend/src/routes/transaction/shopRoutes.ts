@@ -9,7 +9,8 @@ import {
   getAllItems,
   buyTokenPackage,
   getAllTokenPackages,
-  getUserOrderHistory
+  getUserOrderHistory,
+  getTokenLimits
 } from '../../controllers/transaction/shopController';
 import { handlePaymentWebhook, handlePaymentCallback } from '../../controllers/transaction/shopWebhookController'; // Correct import path
 import { 
@@ -50,9 +51,9 @@ router.get('/subscription/offers', getSubscriptionOffers);
 router.get('/subscription/user/:email', getUserSubscriptions);
 
 // Subscription webhook callback
-router.post('/subscription/callback', 
-  
-  
-);
+router.post('/subscription/callback', handleSubscriptionCallback);
+
+// Route for fetching token limits
+router.get('/token-limits', getTokenLimits);
 
 export default router;
