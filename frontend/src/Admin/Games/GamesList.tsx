@@ -2,9 +2,8 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders } from "lucide-react"
+import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders, Save } from "lucide-react"
 import axiosInstance from "../../../config/axiosConfig"
-import { useNavigate } from "react-router-dom"
 import Modal from "react-modal"
 import StatusBadge from "./StatusBadge"
 import Loader from "./Loader"
@@ -33,15 +32,16 @@ interface Game {
   image_prompt_model?: string
   image_prompt_text?: string
   music_prompt_text?: string
+  tagline?: string
+  [key: string]: any // Add index signature to allow string indexing
 }
 
 interface User {
   id: number
   username: string
 }
-  
+
 const GamesList: React.FC = () => {
-  const navigate = useNavigate()
   const [games, setGames] = useState<Game[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [genreFilter, setGenreFilter] = useState("all")
@@ -71,7 +71,7 @@ const GamesList: React.FC = () => {
   const [showBulkDeleteConfirmation, setShowBulkDeleteConfirmation] = useState(false)
   // Add a new state for the view modal and selected game details
   const [showViewModal, setShowViewModal] = useState(false)
-  const [selectedGameDetails, setSelectedGameDetails] = useState<any>(null)
+  const [selectedGameDetails, setSelectedGameDetails] = useState<Game | null>(null)
   // Add new state for edit and status toggle modals
   const [showEditModal, setShowEditModal] = useState(false)
   const [editGameData, setEditGameData] = useState<Game | null>(null)
@@ -81,10 +81,77 @@ const GamesList: React.FC = () => {
   // Safeguard against state updates after unmount
   const isMounted = useRef(true)
 
+  // Replace the safelySetModalState function with this simpler version
+  const safelySetModalState = (
+    modalToOpen: "view" | "edit" | "delete" | "bulkDelete" | "status" | "new" | null,
+    data: any = null,
+  ) => {
+    console.log(`Attempting to open modal: ${modalToOpen}`, data)
+
+    // Close all modals first
+    setShowViewModal(false)
+    setShowEditModal(false)
+    setShowDeleteConfirmation(false)
+    setShowBulkDeleteConfirmation(false)
+    setShowStatusModal(false)
+    setShowModal(false)
+
+    console.log("All modals closed")
+
+    // Set the appropriate data immediately
+    if (modalToOpen === "view" && data) {
+      setSelectedGameDetails(data)
+    } else if (modalToOpen === "edit" && data) {
+      setEditGameData(data)
+    } else if (modalToOpen === "delete" && data) {
+      setGameToDelete(data)
+    } else if (modalToOpen === "status" && data) {
+      setGameToToggleStatus(data)
+    }
+
+    // Open the requested modal immediately without timeout
+    switch (modalToOpen) {
+      case "view":
+        setShowViewModal(true)
+        console.log("View modal opened")
+        break
+      case "edit":
+        setShowEditModal(true)
+        console.log("Edit modal opened")
+        break
+      case "delete":
+        setShowDeleteConfirmation(true)
+        console.log("Delete confirmation modal opened")
+        break
+      case "bulkDelete":
+        setShowBulkDeleteConfirmation(true)
+        console.log("Bulk delete confirmation modal opened")
+        break
+      case "status":
+        setShowStatusModal(true)
+        console.log("Status toggle modal opened")
+        break
+      case "new":
+        setShowModal(true)
+        console.log("New game modal opened")
+        break
+    }
+  }
+
+  // Fix the Modal setup to prevent "already open" errors
+  // Add this at the top of the component, right after the state declarations
   useEffect(() => {
-    Modal.setAppElement("#root") // Fix React Modal warning
+    // Only set the app element once when the component mounts
+    if (typeof window !== "undefined") {
+      // Set ariaHideApp to false to avoid the app element warning
+      Modal.setAppElement("#root")
+      console.log("Modal app element set to #root")
+    }
+
     return () => {
+      // Clean up by setting isMounted to false when component unmounts
       isMounted.current = false
+      console.log("Component unmounting, isMounted set to false")
     }
   }, [])
 
@@ -99,12 +166,17 @@ const GamesList: React.FC = () => {
   }, [])
 
   const fetchGames = async () => {
+    console.log("Fetching games data")
     setIsLoading(true)
+
     try {
       const [gamesResponse, usersResponse] = await Promise.all([
         axiosInstance.get("/api/games/all"),
         axiosInstance.get("/admin/users"),
       ])
+
+      console.log("Games data fetched:", gamesResponse.data)
+      console.log("Users data fetched:", usersResponse.data)
 
       const userMap = new Map<number, string>()
       ;(usersResponse.data || []).forEach((user: User) => {
@@ -116,25 +188,24 @@ const GamesList: React.FC = () => {
         creator: userMap.get(game.UserId) || "Unknown",
       }))
 
+      console.log("Enriched games data:", enrichedGames)
       setGames(enrichedGames)
     } catch (error) {
       console.error("Error fetching data:", error)
       toast.error("Failed to load game data")
     } finally {
       setIsLoading(false)
+      console.log("Games fetch operation completed")
     }
   }
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-  }
-
+  // This function is used in the component
   const handleGenreFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setGenreFilter(e.target.value)
   }
 
   const handleSort = (key: string) => {
-    let direction = "asc"
+    let direction: "asc" | "desc" = "asc" // Fixed type
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc"
     }
@@ -200,22 +271,19 @@ const GamesList: React.FC = () => {
 
   const handleNewGameSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log("Submitting new game:", newGame)
+
     try {
-      await axiosInstance.post("/api/games", newGame)
+      const response = await axiosInstance.post("/api/games", newGame)
+      console.log("New game API response:", response)
+
       setShowModal(false)
       fetchGames()
+      toast.success(`Game "${newGame.title}" created successfully`)
     } catch (error) {
       console.error("Error creating game:", error)
+      toast.error("Failed to create game")
     }
-  }
-
-  const getSortIndicator = (key: string) => {
-    if (sortConfig.key !== key) return null
-    return sortConfig.direction === "asc" ? (
-      <ChevronUp className="inline w-4 h-4" />
-    ) : (
-      <ChevronDown className="inline w-4 h-4" />
-    )
   }
 
   const handleSelectGame = (id: number) => {
@@ -223,12 +291,17 @@ const GamesList: React.FC = () => {
   }
 
   const confirmBulkDelete = () => {
-    setShowBulkDeleteConfirmation(true)
+    console.log(`Confirming bulk deletion for ${selectedGames.length} games`)
+    safelySetModalState("bulkDelete")
   }
 
   const handleBulkDelete = async () => {
+    console.log(`Bulk deleting ${selectedGames.length} games with IDs:`, selectedGames)
+
     try {
-      await axiosInstance.delete("/api/games/bulk-delete", { data: { ids: selectedGames } })
+      const response = await axiosInstance.delete("/api/games/bulk-delete", { data: { ids: selectedGames } })
+      console.log("Bulk delete API response:", response)
+
       setSelectedGames([])
       fetchGames()
       toast.success(`${selectedGames.length} games deleted successfully`)
@@ -237,31 +310,30 @@ const GamesList: React.FC = () => {
       toast.error("Failed to delete games")
     } finally {
       setShowBulkDeleteConfirmation(false)
+      console.log("Bulk delete operation completed, modal closed")
     }
   }
 
-  const handleToggleStatus = async (game: any) => {
-    try {
-      const updatedStatus = game.status === "active" ? "inactive" : "active"
-      await axiosInstance.put(`/api/games/${game.id}`, { ...game, status: updatedStatus })
-      fetchGames()
-      toast.success(`Game "${game.title}" is now ${updatedStatus}`)
-    } catch (error) {
-      console.error("Error toggling status:", error)
-      toast.error("Failed to update game status")
-    }
-  }
-
+  // Replace the confirmDelete function with this direct version
   const confirmDelete = (game: Game) => {
+    console.log(`Confirming deletion for game: ${game.title} (ID: ${game.id})`)
+    // Set data first
     setGameToDelete(game)
+    // Then open modal directly
     setShowDeleteConfirmation(true)
   }
 
   const handleDelete = async () => {
-    if (!gameToDelete) return
+    if (!gameToDelete) {
+      console.log("No game to delete, aborting")
+      return
+    }
 
+    console.log(`Deleting game: ${gameToDelete.title} (ID: ${gameToDelete.id})`)
     try {
-      await axiosInstance.delete(`/api/games/${gameToDelete.id}`)
+      const response = await axiosInstance.delete(`/api/games/${gameToDelete.id}`)
+      console.log("Delete API response:", response)
+
       fetchGames()
       toast.success(`Game "${gameToDelete.title}" deleted successfully`)
     } catch (error) {
@@ -270,6 +342,7 @@ const GamesList: React.FC = () => {
     } finally {
       setShowDeleteConfirmation(false)
       setGameToDelete(null)
+      console.log("Delete operation completed, modal closed")
     }
   }
 
@@ -427,6 +500,7 @@ const GamesList: React.FC = () => {
       onRequestClose={() => setShowModal(false)}
       className="modal-content bg-[#2F2118] p-8 rounded-xl max-w-2xl mx-4"
       overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+      ariaHideApp={false}
     >
       <div className="space-y-6">
         <div className="flex justify-between items-center border-b border-[#6A4E32]/50 pb-4">
@@ -512,90 +586,208 @@ const GamesList: React.FC = () => {
     </Modal>
   )
 
-  const DeleteConfirmationModal = () => (
-    <Modal
-      isOpen={showDeleteConfirmation}
-      onRequestClose={() => setShowDeleteConfirmation(false)}
-      className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
-      overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
-    >
-      <div className="space-y-6">
-        <div className="flex items-center gap-3 text-red-400">
-          <Trash className="w-6 h-6" />
-          <h2 className="text-xl font-cinzel">Confirm Deletion</h2>
+  // Replace the DeleteConfirmationModal component with this simplified version
+  const DeleteConfirmationModal = () => {
+    const [confirmText, setConfirmText] = useState("")
+    const [deleteEnabled, setDeleteEnabled] = useState(false)
+
+    useEffect(() => {
+      if (gameToDelete && confirmText === gameToDelete.title) {
+        setDeleteEnabled(true)
+      } else {
+        setDeleteEnabled(false)
+      }
+    }, [confirmText, gameToDelete])
+
+    if (!gameToDelete) return null
+
+    return (
+      <Modal
+        isOpen={showDeleteConfirmation}
+        onRequestClose={() => {
+          console.log("Delete confirmation modal closed by user")
+          setShowDeleteConfirmation(false)
+          setConfirmText("")
+        }}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false} // Set to false to avoid the app element warning
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 text-red-400">
+            <Trash className="w-6 h-6" />
+            <h2 className="text-xl font-cinzel">Confirm Deletion</h2>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-[#F0E6DB]">
+              Are you sure you want to delete the game <span className="font-semibold">{gameToDelete.title}</span>?
+            </p>
+
+            <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
+              <p className="text-red-300 text-sm">
+                <strong>Warning:</strong> This action cannot be undone. All game data, including prompts, images, and
+                user progress will be permanently deleted.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">
+                Type <span className="font-semibold">{gameToDelete.title}</span> to confirm:
+              </label>
+              <input
+                type="text"
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                placeholder="Type game title here"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+            <button
+              onClick={() => {
+                console.log("Delete confirmation modal cancelled by user")
+                setShowDeleteConfirmation(false)
+                setConfirmText("")
+              }}
+              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                console.log("Delete confirmed by user")
+                handleDelete()
+                setConfirmText("")
+              }}
+              disabled={!deleteEnabled}
+              className={`px-4 py-2 ${
+                deleteEnabled
+                  ? "bg-red-700 hover:bg-red-800 text-white"
+                  : "bg-gray-700 text-gray-400 cursor-not-allowed"
+              } rounded-lg transition-colors`}
+            >
+              Delete
+            </button>
+          </div>
         </div>
+      </Modal>
+    )
+  }
 
-        <p className="text-[#F0E6DB]">
-          Are you sure you want to delete the game <span className="font-semibold">{gameToDelete?.title}</span>? This
-          action cannot be undone.
-        </p>
+  const BulkDeleteConfirmationModal = () => {
+    const [confirmText, setConfirmText] = useState("")
+    const [deleteEnabled, setDeleteEnabled] = useState(false)
 
-        <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
-          <button
-            onClick={() => setShowDeleteConfirmation(false)}
-            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleDelete}
-            className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors"
-          >
-            Delete
-          </button>
+    useEffect(() => {
+      if (confirmText === "DELETE") {
+        setDeleteEnabled(true)
+      } else {
+        setDeleteEnabled(false)
+      }
+    }, [confirmText])
+
+    return (
+      <Modal
+        isOpen={showBulkDeleteConfirmation}
+        onRequestClose={() => {
+          console.log("Bulk delete confirmation modal closed by user")
+          setShowBulkDeleteConfirmation(false)
+          setConfirmText("")
+        }}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false}
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 text-red-400">
+            <Trash className="w-6 h-6" />
+            <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-[#F0E6DB]">
+              Are you sure you want to delete <span className="font-semibold">{selectedGames.length} games</span>?
+            </p>
+
+            <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
+              <p className="text-red-300 text-sm">
+                <strong>Warning:</strong> This action cannot be undone. All game data, including prompts, images, and
+                user progress will be permanently deleted for all selected games.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">
+                Type <span className="font-semibold">DELETE</span> to confirm:
+              </label>
+              <input
+                type="text"
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                placeholder="Type DELETE here"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+            <button
+              onClick={() => {
+                console.log("Bulk delete confirmation modal cancelled by user")
+                setShowBulkDeleteConfirmation(false)
+                setConfirmText("")
+              }}
+              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                console.log("Bulk delete confirmed by user")
+                handleBulkDelete()
+                setConfirmText("")
+              }}
+              disabled={!deleteEnabled}
+              className={`px-4 py-2 ${
+                deleteEnabled
+                  ? "bg-red-700 hover:bg-red-800 text-white"
+                  : "bg-gray-700 text-gray-400 cursor-not-allowed"
+              } rounded-lg transition-colors`}
+            >
+              Delete {selectedGames.length} Games
+            </button>
+          </div>
         </div>
-      </div>
-    </Modal>
-  )
-
-  const BulkDeleteConfirmationModal = () => (
-    <Modal
-      isOpen={showBulkDeleteConfirmation}
-      onRequestClose={() => setShowBulkDeleteConfirmation(false)}
-      className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
-      overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
-    >
-      <div className="space-y-6">
-        <div className="flex items-center gap-3 text-red-400">
-          <Trash className="w-6 h-6" />
-          <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
-        </div>
-
-        <p className="text-[#F0E6DB]">
-          Are you sure you want to delete <span className="font-semibold">{selectedGames.length} games</span>? This
-          action cannot be undone.
-        </p>
-
-        <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
-          <button
-            onClick={() => setShowBulkDeleteConfirmation(false)}
-            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleBulkDelete}
-            className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors"
-          >
-            Delete {selectedGames.length} Games
-          </button>
-        </div>
-      </div>
-    </Modal>
-  )
+      </Modal>
+    )
+  }
 
   // Add a function to fetch and display game details
   const viewGameDetails = async (gameId: number) => {
+    if (!isMounted.current) return
+
+    console.log(`Fetching game details for ID: ${gameId}`)
     setIsLoading(true)
+
     try {
       const response = await axiosInstance.get(`/api/games/${gameId}`)
-      setSelectedGameDetails(response.data)
-      setShowViewModal(true)
+      console.log("Game details fetched successfully:", response.data)
+
+      if (isMounted.current) {
+        safelySetModalState("view", response.data)
+      }
     } catch (error) {
       console.error("Error fetching game details:", error)
-      toast.error("Failed to load game details")
+      if (isMounted.current) {
+        toast.error("Failed to load game details")
+      }
     } finally {
-      setIsLoading(false)
+      if (isMounted.current) {
+        setIsLoading(false)
+      }
     }
   }
 
@@ -608,6 +800,7 @@ const GamesList: React.FC = () => {
         onRequestClose={() => setShowViewModal(false)}
         className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-4xl mx-4 max-h-[90vh] overflow-y-auto"
         overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false}
       >
         <div className="space-y-6">
           <div className="flex justify-between items-center border-b border-[#6A4E32]/50 pb-4">
@@ -626,9 +819,14 @@ const GamesList: React.FC = () => {
               {selectedGameDetails.image_data && (
                 <div className="mb-4">
                   <img
-                    src={`${import.meta.env.VITE_BACKEND_URL}${selectedGameDetails.image_data}`}
+                    src={`${import.meta.env.VITE_BACKEND_URL || ""}${selectedGameDetails.image_data}`}
                     alt={selectedGameDetails.title}
                     className="w-full h-auto rounded-lg object-cover border-2 border-[#6A4E32]"
+                    onError={(e) => {
+                      console.error("Error loading image:", e)
+                      // Use type assertion to access src property
+                      ;(e.target as HTMLImageElement).src = "/placeholder.svg?height=300&width=500"
+                    }}
                   />
                 </div>
               )}
@@ -666,7 +864,9 @@ const GamesList: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs text-[#8B7355]">Updated</p>
-                    <p className="text-[#F0E6DB]">{new Date(selectedGameDetails.updatedAt).toLocaleString()}</p>
+                    <p className="text-[#F0E6DB]">
+                      {selectedGameDetails.updatedAt ? new Date(selectedGameDetails.updatedAt).toLocaleString() : "N/A"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-[#8B7355]">Creator ID</p>
@@ -766,7 +966,12 @@ const GamesList: React.FC = () => {
 
           <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
             <button
-              onClick={() => navigate(`/admin/games/${selectedGameDetails.id}/edit`)}
+              onClick={() => {
+                console.log("Edit button clicked from view modal")
+                if (selectedGameDetails) {
+                  safelySetModalState("edit", selectedGameDetails)
+                }
+              }}
               className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
             >
               <Edit className="w-4 h-4" />
@@ -786,17 +991,24 @@ const GamesList: React.FC = () => {
 
   // Function to open the edit modal
   const openEditModal = (game: Game) => {
-    setEditGameData(game)
-    setShowEditModal(true)
+    console.log(`Opening edit modal for game: ${game.title} (ID: ${game.id})`)
+    safelySetModalState("edit", game)
   }
 
   // Function to handle edit form submission
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!editGameData) return
+    if (!editGameData) {
+      console.log("No edit data available, aborting submission")
+      return
+    }
+
+    console.log(`Submitting edit for game: ${editGameData.title} (ID: ${editGameData.id})`, editGameData)
 
     try {
-      await axiosInstance.put(`/api/games/${editGameData.id}`, editGameData)
+      const response = await axiosInstance.put(`/api/games/${editGameData.id}`, editGameData)
+      console.log("Edit API response:", response)
+
       fetchGames()
       toast.success(`Game "${editGameData.title}" updated successfully`)
       setShowEditModal(false)
@@ -808,28 +1020,38 @@ const GamesList: React.FC = () => {
 
   // Function to open the status toggle modal
   const confirmToggleStatus = (game: Game) => {
-    setGameToToggleStatus(game)
-    setShowStatusModal(true)
+    console.log(`Opening status toggle modal for game: ${game.title} (ID: ${game.id})`)
+    safelySetModalState("status", game)
   }
 
   // Function to handle status toggle
   const handleToggleStatusConfirm = async () => {
-    if (!gameToToggleStatus) return
+    if (!gameToToggleStatus) {
+      console.log("No game selected for status toggle, aborting")
+      return
+    }
+
+    const newStatus = gameToToggleStatus.status === "active" ? "inactive" : "active"
+    console.log(
+      `Toggling status for game: ${gameToToggleStatus.title} (ID: ${gameToToggleStatus.id}) from ${gameToToggleStatus.status} to ${newStatus}`,
+    )
 
     try {
-      const updatedStatus = gameToToggleStatus.status === "active" ? "inactive" : "active"
-      await axiosInstance.put(`/api/games/${gameToToggleStatus.id}`, {
+      const response = await axiosInstance.put(`/api/games/${gameToToggleStatus.id}`, {
         ...gameToToggleStatus,
-        status: updatedStatus,
+        status: newStatus,
       })
+      console.log("Status toggle API response:", response)
+
       fetchGames()
-      toast.success(`Game "${gameToToggleStatus.title}" is now ${updatedStatus}`)
+      toast.success(`Game "${gameToToggleStatus.title}" is now ${newStatus}`)
     } catch (error) {
       console.error("Error toggling status:", error)
       toast.error("Failed to update game status")
     } finally {
       setShowStatusModal(false)
       setGameToToggleStatus(null)
+      console.log("Status toggle operation completed, modal closed")
     }
   }
 
@@ -843,38 +1065,133 @@ const GamesList: React.FC = () => {
         onRequestClose={() => setShowEditModal(false)}
         className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-2xl mx-4"
         overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false}
       >
-        <form onSubmit={handleEditSubmit}>
-          <h2 className="text-2xl font-cinzel text-[#F0E6DB] mb-4">Edit Game</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title</label>
-              <input
-                type="text"
-                name="title"
-                value={editGameData.title}
-                onChange={(e) => setEditGameData({ ...editGameData, title: e.target.value })}
-                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50"
-              />
-            </div>
-            {/* Add other fields as needed */}
-          </div>
-          <div className="flex justify-end space-x-4 mt-4">
+        <div className="space-y-6">
+          <div className="flex justify-between items-center border-b border-[#6A4E32]/50 pb-4">
+            <h2 className="text-2xl font-cinzel text-[#F0E6DB]">Edit Game: {editGameData.title}</h2>
             <button
-              type="button"
               onClick={() => setShowEditModal(false)}
-              className="px-4 py-2 bg-[#3D2E22] text-[#F0E6DB] rounded-lg"
+              className="text-[#8B7355] hover:text-[#C0A080] transition-colors"
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-[#C0A080] text-[#2F2118] rounded-lg"
-            >
-              Save Changes
+              ✕
             </button>
           </div>
-        </form>
+
+          <form onSubmit={handleEditSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Left column - Basic info */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title *</label>
+                  <input
+                    type="text"
+                    name="title"
+                    required
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                    value={editGameData.title}
+                    onChange={(e) => setEditGameData({ ...editGameData, title: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Slug</label>
+                  <input
+                    type="text"
+                    name="slug"
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                    value={editGameData.slug || ""}
+                    onChange={(e) => setEditGameData({ ...editGameData, slug: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre *</label>
+                  <select
+                    name="genre"
+                    required
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                    value={editGameData.genre}
+                    onChange={(e) => setEditGameData({ ...editGameData, genre: e.target.value })}
+                  >
+                    <option value="RPG">RPG</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Horror">Horror</option>
+                    <option value="Sci-Fi">Sci-Fi</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Romance">Romance</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
+                  <select
+                    name="status"
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                    value={editGameData.status || "active"}
+                    onChange={(e) => setEditGameData({ ...editGameData, status: e.target.value })}
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Right column - Content */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
+                  <textarea
+                    name="description"
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none h-24"
+                    value={editGameData.description || ""}
+                    onChange={(e) => setEditGameData({ ...editGameData, description: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
+                  <select
+                    name="private"
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                    value={editGameData.private ? "true" : "false"}
+                    onChange={(e) => setEditGameData({ ...editGameData, private: e.target.value === "true" })}
+                  >
+                    <option value="false">Public</option>
+                    <option value="true">Private</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Prompt Text</label>
+                  <textarea
+                    name="prompt_text"
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none h-24"
+                    value={editGameData.prompt_text || ""}
+                    onChange={(e) => setEditGameData({ ...editGameData, prompt_text: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+              <button
+                type="button"
+                onClick={() => setShowEditModal(false)}
+                className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
       </Modal>
     )
   }
@@ -889,36 +1206,42 @@ const GamesList: React.FC = () => {
         onRequestClose={() => setShowStatusModal(false)}
         className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
         overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false}
       >
-        <h2 className="text-xl font-cinzel text-[#F0E6DB] mb-4">Confirm Status Change</h2>
-        <p className="text-[#F0E6DB]">
-          Are you sure you want to change the status of{" "}
-          <span className="font-semibold">{gameToToggleStatus.title}</span> to{" "}
-          <span className="font-semibold">
-            {gameToToggleStatus.status === "active" ? "inactive" : "active"}
-          </span>
-          ?
-        </p>
-        <div className="flex justify-end space-x-4 mt-4">
-          <button
-            onClick={() => setShowStatusModal(false)}
-            className="px-4 py-2 bg-[#3D2E22] text-[#F0E6DB] rounded-lg"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleToggleStatusConfirm}
-            className="px-4 py-2 bg-[#C0A080] text-[#2F2118] rounded-lg"
-          >
-            Confirm
-          </button>
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 text-[#C0A080]">
+            <Power className="w-6 h-6" />
+            <h2 className="text-xl font-cinzel">Confirm Status Change</h2>
+          </div>
+
+          <p className="text-[#F0E6DB]">
+            Are you sure you want to change the status of{" "}
+            <span className="font-semibold">{gameToToggleStatus.title}</span> from{" "}
+            <span className="font-semibold">{gameToToggleStatus.status}</span> to{" "}
+            <span className="font-semibold">{gameToToggleStatus.status === "active" ? "inactive" : "active"}</span>?
+          </p>
+
+          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+            <button
+              onClick={() => setShowStatusModal(false)}
+              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleToggleStatusConfirm}
+              className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors"
+            >
+              {gameToToggleStatus.status === "active" ? "Deactivate" : "Activate"} Game
+            </button>
+          </div>
         </div>
       </Modal>
     )
   }
 
   return (
-    <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen">
+    <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen" id="root">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-cinzel font-bold mb-2">Game Management</h1>
@@ -926,7 +1249,7 @@ const GamesList: React.FC = () => {
         </div>
         <div className="flex flex-wrap gap-2 w-full md:w-auto">
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => safelySetModalState("new")}
             className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
           >
             <Plus className="w-5 h-5" />
