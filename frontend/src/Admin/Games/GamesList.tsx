@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders } from "lucide-react"
 import axiosInstance from "../../../config/axiosConfig"
 import { useNavigate } from "react-router-dom"
@@ -39,7 +39,7 @@ interface User {
   id: number
   username: string
 }
-
+  
 const GamesList: React.FC = () => {
   const navigate = useNavigate()
   const [games, setGames] = useState<Game[]>([])
@@ -72,6 +72,21 @@ const GamesList: React.FC = () => {
   // Add a new state for the view modal and selected game details
   const [showViewModal, setShowViewModal] = useState(false)
   const [selectedGameDetails, setSelectedGameDetails] = useState<any>(null)
+  // Add new state for edit and status toggle modals
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editGameData, setEditGameData] = useState<Game | null>(null)
+  const [showStatusModal, setShowStatusModal] = useState(false)
+  const [gameToToggleStatus, setGameToToggleStatus] = useState<Game | null>(null)
+
+  // Safeguard against state updates after unmount
+  const isMounted = useRef(true)
+
+  useEffect(() => {
+    Modal.setAppElement("#root") // Fix React Modal warning
+    return () => {
+      isMounted.current = false
+    }
+  }, [])
 
   const allSelected = selectedGames.length === games.length
 
@@ -769,6 +784,139 @@ const GamesList: React.FC = () => {
     )
   }
 
+  // Function to open the edit modal
+  const openEditModal = (game: Game) => {
+    setEditGameData(game)
+    setShowEditModal(true)
+  }
+
+  // Function to handle edit form submission
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editGameData) return
+
+    try {
+      await axiosInstance.put(`/api/games/${editGameData.id}`, editGameData)
+      fetchGames()
+      toast.success(`Game "${editGameData.title}" updated successfully`)
+      setShowEditModal(false)
+    } catch (error) {
+      console.error("Error updating game:", error)
+      toast.error("Failed to update game")
+    }
+  }
+
+  // Function to open the status toggle modal
+  const confirmToggleStatus = (game: Game) => {
+    setGameToToggleStatus(game)
+    setShowStatusModal(true)
+  }
+
+  // Function to handle status toggle
+  const handleToggleStatusConfirm = async () => {
+    if (!gameToToggleStatus) return
+
+    try {
+      const updatedStatus = gameToToggleStatus.status === "active" ? "inactive" : "active"
+      await axiosInstance.put(`/api/games/${gameToToggleStatus.id}`, {
+        ...gameToToggleStatus,
+        status: updatedStatus,
+      })
+      fetchGames()
+      toast.success(`Game "${gameToToggleStatus.title}" is now ${updatedStatus}`)
+    } catch (error) {
+      console.error("Error toggling status:", error)
+      toast.error("Failed to update game status")
+    } finally {
+      setShowStatusModal(false)
+      setGameToToggleStatus(null)
+    }
+  }
+
+  // Edit Modal Component
+  const EditGameModal = () => {
+    if (!editGameData) return null
+
+    return (
+      <Modal
+        isOpen={showEditModal}
+        onRequestClose={() => setShowEditModal(false)}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-2xl mx-4"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+      >
+        <form onSubmit={handleEditSubmit}>
+          <h2 className="text-2xl font-cinzel text-[#F0E6DB] mb-4">Edit Game</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title</label>
+              <input
+                type="text"
+                name="title"
+                value={editGameData.title}
+                onChange={(e) => setEditGameData({ ...editGameData, title: e.target.value })}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50"
+              />
+            </div>
+            {/* Add other fields as needed */}
+          </div>
+          <div className="flex justify-end space-x-4 mt-4">
+            <button
+              type="button"
+              onClick={() => setShowEditModal(false)}
+              className="px-4 py-2 bg-[#3D2E22] text-[#F0E6DB] rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-[#C0A080] text-[#2F2118] rounded-lg"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </Modal>
+    )
+  }
+
+  // Status Toggle Modal Component
+  const StatusToggleModal = () => {
+    if (!gameToToggleStatus) return null
+
+    return (
+      <Modal
+        isOpen={showStatusModal}
+        onRequestClose={() => setShowStatusModal(false)}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+      >
+        <h2 className="text-xl font-cinzel text-[#F0E6DB] mb-4">Confirm Status Change</h2>
+        <p className="text-[#F0E6DB]">
+          Are you sure you want to change the status of{" "}
+          <span className="font-semibold">{gameToToggleStatus.title}</span> to{" "}
+          <span className="font-semibold">
+            {gameToToggleStatus.status === "active" ? "inactive" : "active"}
+          </span>
+          ?
+        </p>
+        <div className="flex justify-end space-x-4 mt-4">
+          <button
+            onClick={() => setShowStatusModal(false)}
+            className="px-4 py-2 bg-[#3D2E22] text-[#F0E6DB] rounded-lg"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleToggleStatusConfirm}
+            className="px-4 py-2 bg-[#C0A080] text-[#2F2118] rounded-lg"
+          >
+            Confirm
+          </button>
+        </div>
+      </Modal>
+    )
+  }
+
   return (
     <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -864,7 +1012,7 @@ const GamesList: React.FC = () => {
                             <Eye className="w-5 h-5" />
                           </button>
                           <button
-                            onClick={() => navigate(`/admin/games/${game.id}/edit`)}
+                            onClick={() => openEditModal(game)}
                             className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                             title="Edit"
                             aria-label={`Edit ${game.title}`}
@@ -872,7 +1020,7 @@ const GamesList: React.FC = () => {
                             <Edit className="w-5 h-5" />
                           </button>
                           <button
-                            onClick={() => handleToggleStatus(game)}
+                            onClick={() => confirmToggleStatus(game)}
                             className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                             title="Toggle Status"
                             aria-label={`Toggle status of ${game.title}`}
@@ -906,6 +1054,8 @@ const GamesList: React.FC = () => {
       <DeleteConfirmationModal />
       <BulkDeleteConfirmationModal />
       <GameViewModal />
+      <EditGameModal />
+      <StatusToggleModal />
 
       {/* Add sticky bulk action bar */}
       {selectedGames.length > 0 && (
