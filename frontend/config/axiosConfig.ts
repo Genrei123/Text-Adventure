@@ -83,10 +83,10 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       console.log("Authentication expired. Redirecting to login...");
-      // Optional: Clear localStorage and redirect to login
-      // localStorage.removeItem('token');
-      // localStorage.removeItem('userData');
-      // window.location.href = '/login';
+      //Optional: Clear localStorage and redirect to login
+      localStorage.removeItem('token');
+      localStorage.removeItem('userData');
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }

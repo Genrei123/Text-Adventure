@@ -44,20 +44,21 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Add response interceptor to handle 401 errors for admin routes
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // Clear admin data and redirect to login
-      localStorage.removeItem('adminToken');
-      localStorage.removeItem('adminUser');
-      toast.error('Your session has expired. Please log in again.');
-      window.location.href = '/Admin/Login';
-    }
-    return Promise.reject(error);
-  }
-);
+// This line of code is causing the redirects to /Admin/Login
+// // Add response interceptor to handle 401 errors for admin routes
+// axiosInstance.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response && error.response.status === 401) {
+//       // Clear admin data and redirect to login
+//       localStorage.removeItem('adminToken');
+//       localStorage.removeItem('adminUser');
+//       toast.error('Your session has expired. Please log in again.');
+//       window.location.href = '/Admin/Login';
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 // Define interfaces for our data types
 interface BannedPlayer {

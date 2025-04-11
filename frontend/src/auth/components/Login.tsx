@@ -151,6 +151,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           error.response?.data?.message || "Login failed. Please try again.";
         setErrors({ general: message });
         toast.error(message);
+        
       } else {
         setErrors({ general: "An unexpected error occurred" });
         toast.error("An unexpected error occurred");
