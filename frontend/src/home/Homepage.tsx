@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from '../../config/axiosConfig';
+import axiosInstance from "../../config/axiosConfig";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Carousel from "./components/Carousel";
@@ -39,7 +39,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
     const initializeHomepage = async () => {
       try {
         // Fetch carousel games
-        const response = await axios.get<CarouselGame[]>('/game', {
+        const response = await axiosInstance.get<CarouselGame[]>('/game', {
           params: {
             order: 'createdAt',
             direction: 'DESC',
@@ -50,7 +50,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         if (isMounted) {
           const formattedCarousel = response.data.map(game => ({
             id: game.id,
-            image_data: game.image_data || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=1200',
+            image_data: import.meta.env.VITE_BACKEND_URL + game.image_data || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=1200',
             title: game.title,
             description: game.tagline || game.description || 'Explore a new adventure',
             genre: game.genre
