@@ -52,7 +52,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
             id: game.id,
             image_data: import.meta.env.VITE_BACKEND_URL + game.image_data || 'https://images.unsplash.com/photo-1601987077677-5346c0c57d3f?q=80&w=1200',
             title: game.title,
-            description: game.tagline || game.description || 'Explore a new adventure',
+            description: game.description || 'Explore a new adventure',
             genre: game.genre
           }));
   
