@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import CoinStore from "../subscription/CoinStore";
+import { useNavigate } from "react-router-dom";
 
 interface GameHeaderProps {
   title?: string; // Optional title prop from Game model
@@ -10,6 +11,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
   const [showModal, setShowModal] = useState(false);
   const [coins, setCoins] = useState<number>(0);
   const lastFetchTimeRef = useRef<number>(0);
+  const navigate = useNavigate();
   
   // Improved fetchCoins function with cache control - but no automatic polling
   const fetchCoins = async (forceRefresh = false) => {
@@ -81,7 +83,8 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
   return (
     <nav className="bg-[#1E1E1E] py-[1.06rem] px-0 shadow-[0_7px_3px_0_rgba(0,0,0,0.75)] z-50">
       <div className="flex justify-between items-center">
-        <div className="text-xl font-cinzel text-[#C8A97E] font-bold hidden sm:block ml-[5%]">SAGE.AI</div>
+        <div className="text-xl font-cinzel text-[#C8A97E] font-bold hidden sm:block ml-[5%]" onClick={() => navigate("/home")}>SAGE.AI </div>
+
         <div className="flex items-center">
           <div className="absolute left-[40%] transform -translate-x-1/2 text-s font-cinzel text-[#ffffff] font-bold sm:text-base truncate max-w-[20ch]">
             {title || "Untitled Game"}

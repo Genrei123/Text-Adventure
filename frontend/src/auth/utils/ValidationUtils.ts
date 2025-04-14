@@ -45,8 +45,8 @@ export const ValidationUtils = {
     if (!/(?=.*\d)/.test(value)) {
       return { isValid: false, message: 'Password must contain at least one number' };
     }
-    if (!/(?=.*[!@#$%^&*])/.test(value)) {
-      return { isValid: false, message: 'Password must contain at least one special character (!@#$%^&*)' };
+    if (!/(?=.*[!@#$%^&*\-_])/.test(value)) {
+      return { isValid: false, message: 'Password must contain at least one special character (!@#$%^&*\-_])' };
     }
     return { isValid: true, message: '' };
   },

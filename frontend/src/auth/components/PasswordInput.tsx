@@ -40,7 +40,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
     uppercase: /[A-Z]/.test(value),
     lowercase: /[a-z]/.test(value),
     number: /\d/.test(value),
-    special: /[!@#$%^&*]/.test(value),
+    special: /[!@#$%^&*-_]/.test(value),
     length: value.length >= 8
   };
 

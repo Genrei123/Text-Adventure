@@ -78,12 +78,12 @@ const RegisterCarousel: React.FC<RegisterCarouselProps> = ({ onSubmit }) => {
           errors.password = true;
         } else {
           if (password.length < 8 ||
-              !/(?=.*[a-z])/.test(password) ||
-              !/(?=.*[A-Z])/.test(password) ||
-              !/(?=.*\d)/.test(password) ||
-              !/(?=.*[!@#$%^&*])/.test(password)) {
-            errors.password = true;
-          }
+            !/(?=.*[a-z])/.test(password) ||
+            !/(?=.*[A-Z])/.test(password) ||
+            !/(?=.*\d)/.test(password) ||
+            !/(?=.*[!@#$%^&*_\-_])/.test(password)) {
+          errors.password = true;
+        }
         }
 
         // Check confirm password
