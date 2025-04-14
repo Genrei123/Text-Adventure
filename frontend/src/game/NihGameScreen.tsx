@@ -215,7 +215,7 @@ const NihGameScreen: React.FC = () => {
             onClick={() => setSelectedAction(selectedAction === 'Use' ? null : 'Use')}
           />
           <ActionButton
-            action="Look"
+            action="Check"
             isSelected={selectedAction === 'Look'}
             onClick={() => handleAction('Look')}
           />
