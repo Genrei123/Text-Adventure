@@ -783,10 +783,30 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setIsLoading(true)
 
     try {
+      // Fetch the game details
       const response = await axiosInstance.get(`/api/games/${gameId}`)
       console.log("Game details fetched:", response.data)
-      setViewedGameDetails(response.data)
-      setIsViewingGameDetails(true)
+      
+      // Fetch the creator's username if not already included
+      let gameData = response.data;
+      
+      // If UserId exists but creator name is missing or "Unknown", fetch it
+      if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
+        try {
+          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`);
+          if (userResponse.data && userResponse.data.username) {
+            gameData = {
+              ...gameData,
+              creator: userResponse.data.username
+            };
+          }
+        } catch (error) {
+          console.log("Could not fetch creator information:", error);
+        }
+      }
+      
+      setViewedGameDetails(gameData);
+      setIsViewingGameDetails(true);
     } catch (error) {
       console.error("Error fetching game details:", error)
       toast.error("Failed to load game details")
@@ -825,8 +845,12 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   alt={viewedGameDetails.title}
                   className="w-full h-auto rounded-lg object-cover border-2 border-[#6A4E32]"
                   onError={(e) => {
-                    console.error("Error loading image:", e)
-                    ;(e.target as HTMLImageElement).src = "/placeholder.svg?height=300&width=500"
+                    console.error("Error loading image, using placeholder");
+                    (e.target as HTMLImageElement).src = "/placeholder.svg?height=300&width=500";
+                    // Alternative placeholder if the above doesn't exist
+                    if (!(e.target as HTMLImageElement).src.includes("placeholder")) {
+                      (e.target as HTMLImageElement).src = "https://via.placeholder.com/technical-difficulties.jpg";
+                    }
                   }}
                 />
               </div>
@@ -874,7 +898,9 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 <div>
                   <p className="text-xs text-[#8B7355]">Creator</p>
                   <p className="text-[#F0E6DB]">
-                    {viewedGameDetails.creator || "Unknown"} (ID: {viewedGameDetails.UserId})
+                    {viewedGameDetails.creator || "Unknown"} 
+                    {(!viewedGameDetails.creator || viewedGameDetails.creator === "Unknown") && 
+                      `(ID: ${viewedGameDetails.UserId})`}
                   </p>
                 </div>
                 {viewedGameDetails.primary_color && (
