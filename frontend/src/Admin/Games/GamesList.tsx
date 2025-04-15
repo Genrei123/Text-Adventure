@@ -611,8 +611,13 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
 
   const DeleteGameConfirmationView = () => {
     const [isDeleting, setIsDeleting] = useState(false)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+
       setDeleteConfirmText("")
       setDeleteEnabled(false)
     }, [])
@@ -640,15 +645,20 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         setIsViewingGameDetails(false)
         setViewedGameDetails(null)
         setIsDeletingDetails(false)
-        setDeleteConfirmText("")
 
         toast.success(`Game "${viewedGameDetails.title}" deleted successfully`)
       } catch (error: any) {
         console.error("Error deleting game:", error)
         const errorMessage = error.response?.data?.message || "Failed to delete game"
         toast.error(errorMessage)
-      } finally {
+
         setIsDeleting(false)
+      }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && deleteEnabled) {
+        handleDelete()
       }
     }
 
@@ -660,7 +670,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             onClick={() => {
               console.log("Canceling deletion, returning to game detail view")
               setIsDeletingDetails(false)
-              setDeleteConfirmText("")
             }}
             className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
           >
@@ -678,7 +687,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
 
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 bg-[#1E1512] rounded-lg overflow-hidden border border-[#6A4E32]">
+              <div className="w-24 h-24 bg-[#1E1512] rounded-lg overflow-hidden border border-[#6A4E32]">
                 {viewedGameDetails?.image_data ? (
                   <img
                     src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
@@ -691,57 +700,57 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-[#2F2118]">
-                    <Trash className="w-10 h-10 text-red-500/50" />
+                    <Trash className="w-14 h-14 text-red-500/50" />
                   </div>
                 )}
               </div>
               <div>
-                <h3 className="font-cinzel font-bold text-xl">{viewedGameDetails?.title}</h3>
-                <p className="text-[#8B7355]">
+                <h3 className="font-cinzel font-bold text-2xl">{viewedGameDetails?.title}</h3>
+                <p className="text-[#8B7355] text-lg">
                   {viewedGameDetails?.genre} • Created by {viewedGameDetails?.creator || "Unknown"}
                 </p>
               </div>
             </div>
 
-            <div className="mt-4">
-              <p className="text-[#F0E6DB] text-lg">Are you sure you want to permanently delete this game?</p>
-              <p className="text-red-300 mt-2">This action cannot be undone.</p>
+            <div className="mt-6">
+              <p className="text-[#F0E6DB] text-xl mb-2">Are you sure you want to permanently delete this game?</p>
+              <p className="text-red-300 text-lg font-semibold">This action cannot be undone.</p>
             </div>
 
-            <div className="bg-red-900/30 p-4 rounded-lg border border-red-800/40">
-              <p className="text-red-300 text-sm flex items-start gap-2">
+            <div className="bg-red-900/30 p-5 rounded-lg border border-red-800/40">
+              <p className="text-red-300 text-base flex items-start gap-2">
                 <span className="text-red-400 mt-1">⚠️</span>
                 <span>
-                  <strong>Warning:</strong> All game data, including prompts, images, and user progress will be
-                  permanently deleted. Users who have played this game will lose their progress and history.
+                  <strong className="text-red-200">Warning:</strong> All game data, including prompts, images, and user
+                  progress will be permanently deleted. Users who have played this game will lose their progress and
+                  history.
                 </span>
               </p>
             </div>
 
-            <div>
-              <label className="block text-sm font-cinzel text-white mb-2">
-                Type <span className="font-semibold">{viewedGameDetails?.title}</span> to confirm:
+            <div className="mt-4">
+              <label className="block text-base font-cinzel text-white mb-3">
+                Type <span className="font-semibold text-red-300">{viewedGameDetails?.title}</span> to confirm:
               </label>
               <input
+                ref={inputRef}
                 type="text"
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
-                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-red-800/30 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                onKeyDown={handleKeyDown}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-4 py-3 rounded-lg border-2 border-red-800/50 focus:ring-2 focus:ring-red-500 focus:outline-none text-lg"
                 placeholder={`Type "${viewedGameDetails?.title}" here`}
                 disabled={isDeleting}
-                autoFocus
+                autoComplete="off"
               />
             </div>
           </div>
 
-          <div className="flex justify-end space-x-4 pt-4 border-t border-red-800/30">
+          <div className="flex justify-end space-x-4 pt-6 border-t border-red-800/40">
             <button
               type="button"
-              onClick={() => {
-                setIsDeletingDetails(false)
-                setDeleteConfirmText("")
-              }}
-              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+              onClick={() => setIsDeletingDetails(false)}
+              className="px-5 py-3 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors text-lg font-medium"
               disabled={isDeleting}
             >
               Cancel
@@ -749,16 +758,16 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             <button
               onClick={handleDelete}
               disabled={!deleteEnabled || isDeleting}
-              className={`px-4 py-2 ${
+              className={`px-5 py-3 rounded-lg transition-colors text-lg font-medium flex items-center gap-2 ${
                 deleteEnabled && !isDeleting
                   ? "bg-red-700 hover:bg-red-800 text-white"
                   : "bg-gray-700 text-gray-400 cursor-not-allowed"
-              } rounded-lg transition-colors flex items-center gap-2`}
+              }`}
             >
               {isDeleting ? (
                 <>
                   <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -774,7 +783,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 </>
               ) : (
                 <>
-                  <Trash className="w-4 h-4" />
+                  <Trash className="w-5 h-5" />
                   Permanently Delete
                 </>
               )}
@@ -787,6 +796,13 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
 
   const GameDetailView = () => {
     if (!viewedGameDetails) return <Loader message="Loading game details..." />
+
+    const handleDeleteClick = () => {
+      console.log("Opening delete confirmation view for:", viewedGameDetails.title)
+      setDeleteConfirmText("")
+      setDeleteEnabled(false)
+      setIsDeletingDetails(true)
+    }
 
     return (
       <div className="space-y-6">
@@ -1001,12 +1017,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             {viewedGameDetails.status === "active" ? "Deactivate" : "Activate"} Game
           </button>
           <button
-            onClick={() => {
-              console.log("Opening delete confirmation view for:", viewedGameDetails.title)
-              setDeleteConfirmText("")
-              setDeleteEnabled(false)
-              setIsDeletingDetails(true)
-            }}
+            onClick={handleDeleteClick}
             className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors flex items-center gap-2"
           >
             <Trash className="w-4 h-4" />
