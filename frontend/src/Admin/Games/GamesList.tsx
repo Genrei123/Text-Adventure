@@ -840,19 +840,17 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           <div className="space-y-4">
             {viewedGameDetails.image_data && (
               <div className="mb-4">
-                <img
-                  src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
-                  alt={viewedGameDetails.title}
-                  className="w-full h-auto rounded-lg object-cover border-2 border-[#6A4E32]"
-                  onError={(e) => {
-                    console.error("Error loading image, using placeholder");
-                    (e.target as HTMLImageElement).src = "/placeholder.svg?height=300&width=500";
-                    // Alternative placeholder if the above doesn't exist
-                    if (!(e.target as HTMLImageElement).src.includes("placeholder")) {
-                      (e.target as HTMLImageElement).src = "https://via.placeholder.com/technical-difficulties.jpg";
-                    }
-                  }}
-                />
+                <div className="w-full aspect-video bg-[#1E1512] rounded-lg overflow-hidden border-2 border-[#6A4E32]">
+                  <img
+                    src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
+                    alt={viewedGameDetails.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.error("Error loading image, using custom fallback");
+                      (e.target as HTMLImageElement).src = "/technical-difficulties.jpg";
+                    }}
+                  />
+                </div>
               </div>
             )}
 
