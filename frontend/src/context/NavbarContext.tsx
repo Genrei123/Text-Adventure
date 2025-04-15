@@ -28,11 +28,16 @@ interface NavbarProviderProps {
 }
 
 export const NavbarProvider: React.FC<NavbarProviderProps> = ({ children, onLogout }) => {
+  // State for logout modal visibility = checks if the modal is open or closed
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  // State for username = checks kung sino yung naka login
   const [username, setUsername] = useState<string | null>(localStorage.getItem('email'));
+  // State for loading screen visibility = checks if the loading screen is open or closed
+  // State for loading screen fade in and fade out animations
   const [showLoading, setShowLoading] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+  // State for logout transition = checks if the logout transition is in progress
   const [logoutTransition, setLogoutTransition] = useState(false);
   const navigate = useNavigate();
 
