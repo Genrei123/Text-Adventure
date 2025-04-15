@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders, Save } from "lucide-react"
+import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders, Save, ChevronLeft } from "lucide-react"
 import axiosInstance from "../../../config/axiosConfig"
 import Modal from "react-modal"
 import StatusBadge from "./StatusBadge"
@@ -74,26 +74,23 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [gameToDelete, setGameToDelete] = useState<Game | null>(null)
   const [showBulkDeleteConfirmation, setShowBulkDeleteConfirmation] = useState(false)
-  // Add a new state for the view modal and selected game details
   const [showViewModal, setShowViewModal] = useState(false)
   const [selectedGameDetails, setSelectedGameDetails] = useState<Game | null>(null)
-  // Add new state for edit and status toggle modals
   const [showEditModal, setShowEditModal] = useState(false)
   const [editGameData, setEditGameData] = useState<Game | null>(null)
   const [showStatusModal, setShowStatusModal] = useState(false)
   const [gameToToggleStatus, setGameToToggleStatus] = useState<Game | null>(null)
+  const [isViewingGameDetails, setIsViewingGameDetails] = useState(false)
+  const [viewedGameDetails, setViewedGameDetails] = useState<Game | null>(null)
 
-  // Safeguard against state updates after unmount
   const isMounted = useRef(true)
 
-  // Replace the safelySetModalState function with this simpler version
   const safelySetModalState = (
     modalToOpen: "view" | "edit" | "delete" | "bulkDelete" | "status" | "new" | null,
     data: any = null,
   ) => {
     console.log(`Attempting to open modal: ${modalToOpen}`, data)
 
-    // Close all modals first
     setShowViewModal(false)
     setShowEditModal(false)
     setShowDeleteConfirmation(false)
@@ -103,7 +100,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
 
     console.log("All modals closed")
 
-    // Set the appropriate data immediately
     if (modalToOpen === "view" && data) {
       setSelectedGameDetails(data)
     } else if (modalToOpen === "edit" && data) {
@@ -114,7 +110,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       setGameToToggleStatus(data)
     }
 
-    // Open the requested modal immediately without timeout
     switch (modalToOpen) {
       case "view":
         setShowViewModal(true)
@@ -143,18 +138,13 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  // Fix the Modal setup to prevent "already open" errors
-  // Add this at the top of the component, right after the state declarations
   useEffect(() => {
-    // Only set the app element once when the component mounts
     if (typeof window !== "undefined") {
-      // Find a stable parent element
       Modal.setAppElement("#root")
       console.log("Modal app element set to #root")
     }
 
     return () => {
-      // Clean up by setting isMounted to false when component unmounts
       isMounted.current = false
       console.log("Component unmounting, isMounted set to false")
     }
@@ -166,7 +156,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setSelectedGames(allSelected ? [] : games.map((game) => game.id))
   }
 
-  // Refresh games when refreshTrigger changes
   useEffect(() => {
     if (refreshTrigger > 0) {
       fetchGames()
@@ -211,13 +200,12 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  // This function is used in the component
   const handleGenreFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setGenreFilter(e.target.value)
   }
 
   const handleSort = (key: string) => {
-    let direction: "asc" | "desc" = "asc" // Fixed type
+    let direction: "asc" | "desc" = "asc"
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc"
     }
@@ -231,33 +219,18 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   })
 
   const filteredGames = sortedGames.filter((game) => {
-    // Basic search filter (kept for backward compatibility)
     const matchesSearch = game.title.toLowerCase().includes(searchTerm.toLowerCase())
-
-    // Genre filter
     const matchesGenre = genreFilter === "all" || game.genre === genreFilter
-
-    // Status filter
     const matchesStatus = statusFilter === "all" || game.status === statusFilter
-
-    // Date range filter
     const createdDate = new Date(game.createdAt)
     const matchesStartDate = !dateRange.start || createdDate >= new Date(dateRange.start)
     const matchesEndDate = !dateRange.end || createdDate <= new Date(dateRange.end)
-
-    // Title specific filter (more precise than general search)
     const matchesTitle = !titleFilter || game.title.toLowerCase().includes(titleFilter.toLowerCase())
-
-    // Description filter
     const matchesDescription =
       !descriptionFilter ||
       (game.description && game.description.toLowerCase().includes(descriptionFilter.toLowerCase()))
-
-    // Creator filter
     const matchesCreator =
       !creatorFilter || (game.creator && game.creator.toLowerCase().includes(creatorFilter.toLowerCase()))
-
-    // Private filter
     const matchesPrivate =
       privateFilter === "all" ||
       (privateFilter === "private" && game.private === true) ||
@@ -305,7 +278,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const confirmBulkDelete = () => {
     console.log(`Confirming bulk deletion for ${selectedGames.length} games`)
 
-    // First close any open modals
     setShowViewModal(false)
     setShowEditModal(false)
     setShowDeleteConfirmation(false)
@@ -313,7 +285,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setShowStatusModal(false)
     setShowModal(false)
 
-    // Use a small timeout to ensure React has processed the closing of other modals
     setTimeout(() => {
       if (isMounted.current) {
         setShowBulkDeleteConfirmation(true)
@@ -341,11 +312,9 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  // Replace the confirmDelete function with this direct version
   const confirmDelete = (game: Game) => {
     console.log(`Confirming deletion for game: ${game.title} (ID: ${game.id})`)
 
-    // First close any open modals
     setShowViewModal(false)
     setShowEditModal(false)
     setShowDeleteConfirmation(false)
@@ -353,10 +322,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setShowStatusModal(false)
     setShowModal(false)
 
-    // Then set the game to delete
     setGameToDelete(game)
 
-    // Use a small timeout to ensure React has processed the closing of other modals
     setTimeout(() => {
       if (isMounted.current) {
         setShowDeleteConfirmation(true)
@@ -388,7 +355,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  // Enhanced Table Header Component
   const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
     <th
       className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center cursor-pointer hover:bg-[#534231] transition-colors group"
@@ -628,18 +594,15 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     </Modal>
   )
 
-  // Replace the DeleteConfirmationModal component with this simplified version
   const DeleteConfirmationModal = () => {
     const [confirmText, setConfirmText] = useState("")
     const [deleteEnabled, setDeleteEnabled] = useState(false)
 
-    // Reset confirm text when modal opens or game changes
     useEffect(() => {
       setConfirmText("")
       setDeleteEnabled(false)
     }, [showDeleteConfirmation, gameToDelete])
 
-    // Check if text matches game title
     useEffect(() => {
       if (gameToDelete && confirmText === gameToDelete.title) {
         setDeleteEnabled(true)
@@ -648,7 +611,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       }
     }, [confirmText, gameToDelete])
 
-    // Don't render anything if no game is selected
     if (!gameToDelete) return null
 
     const closeModal = () => {
@@ -816,246 +778,228 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     )
   }
 
-  // Add a function to fetch and display game details
   const viewGameDetails = async (gameId: number) => {
-    if (!isMounted.current) return
-
-    console.log(`Handling view game details for ID: ${gameId}`)
-
-    // If we have an external view handler, use it
-    if (onViewGame) {
-      console.log("Using external view handler")
-      onViewGame(gameId)
-      return
-    }
-
-    // Otherwise, use the modal approach
-    console.log("Using modal approach as fallback")
+    console.log(`Fetching details for game ID: ${gameId}`)
     setIsLoading(true)
+
     try {
       const response = await axiosInstance.get(`/api/games/${gameId}`)
-      console.log("Game details fetched successfully:", response.data)
-
-      if (isMounted.current) {
-        safelySetModalState("view", response.data)
-      }
+      console.log("Game details fetched:", response.data)
+      setViewedGameDetails(response.data)
+      setIsViewingGameDetails(true)
     } catch (error) {
       console.error("Error fetching game details:", error)
-      if (isMounted.current) {
-        toast.error("Failed to load game details")
-      }
+      toast.error("Failed to load game details")
     } finally {
-      if (isMounted.current) {
-        setIsLoading(false)
-      }
+      setIsLoading(false)
     }
   }
 
-  const GameViewModal = () => {
-    if (!selectedGameDetails) return null
+  const backToGamesList = () => {
+    setIsViewingGameDetails(false)
+    setViewedGameDetails(null)
+  }
+
+  const GameDetailView = () => {
+    if (!viewedGameDetails) return <Loader message="Loading game details..." />
 
     return (
-      <Modal
-        isOpen={showViewModal}
-        onRequestClose={() => setShowViewModal(false)}
-        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-4xl mx-4 max-h-[90vh] overflow-y-auto"
-        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
-        ariaHideApp={false}
-      >
-        <div className="space-y-6">
-          <div className="flex justify-between items-center border-b border-[#6A4E32]/50 pb-4">
-            <h2 className="text-2xl font-cinzel text-[#F0E6DB]">{selectedGameDetails.title}</h2>
-            <button
-              onClick={() => setShowViewModal(false)}
-              className="text-[#8B7355] hover:text-[#C0A080] transition-colors"
-            >
-              ✕
-            </button>
+      <div className="space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={backToGamesList}
+            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Back to Game List
+          </button>
+          <h1 className="text-3xl font-cinzel font-bold">Game Details: {viewedGameDetails.title}</h1>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            {viewedGameDetails.image_data && (
+              <div className="mb-4">
+                <img
+                  src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
+                  alt={viewedGameDetails.title}
+                  className="w-full h-auto rounded-lg object-cover border-2 border-[#6A4E32]"
+                  onError={(e) => {
+                    console.error("Error loading image:", e)
+                    ;(e.target as HTMLImageElement).src = "/placeholder.svg?height=300&width=500"
+                  }}
+                />
+              </div>
+            )}
+
+            <div className="bg-[#1E1512] p-4 rounded-lg">
+              <h3 className="font-cinzel text-[#C0A080] mb-2">Basic Information</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-[#8B7355]">ID</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.id}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Slug</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.slug || "N/A"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Genre</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.genre}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Subgenre</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.subgenre || "None"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Status</p>
+                  <p className="text-[#F0E6DB]">
+                    <StatusBadge status={viewedGameDetails.status || "active"} />
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Visibility</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.private ? "Private" : "Public"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Created</p>
+                  <p className="text-[#F0E6DB]">{new Date(viewedGameDetails.createdAt).toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Updated</p>
+                  <p className="text-[#F0E6DB]">
+                    {viewedGameDetails.updatedAt ? new Date(viewedGameDetails.updatedAt).toLocaleString() : "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Creator</p>
+                  <p className="text-[#F0E6DB]">
+                    {viewedGameDetails.creator || "Unknown"} (ID: {viewedGameDetails.UserId})
+                  </p>
+                </div>
+                {viewedGameDetails.primary_color && (
+                  <div>
+                    <p className="text-xs text-[#8B7355]">Primary Color</p>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-4 h-4 rounded-full border border-white"
+                        style={{ backgroundColor: viewedGameDetails.primary_color }}
+                      ></div>
+                      <p className="text-[#F0E6DB]">{viewedGameDetails.primary_color}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-[#1E1512] p-4 rounded-lg">
+              <h3 className="font-cinzel text-[#C0A080] mb-2">Description</h3>
+              <p className="text-[#F0E6DB] whitespace-pre-wrap">
+                {viewedGameDetails.description || "No description available"}
+              </p>
+            </div>
+
+            {viewedGameDetails.tagline && (
+              <div className="bg-[#1E1512] p-4 rounded-lg">
+                <h3 className="font-cinzel text-[#C0A080] mb-2">Tagline</h3>
+                <p className="text-[#F0E6DB] italic">"{viewedGameDetails.tagline}"</p>
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left column - Basic info and image */}
-            <div className="space-y-4">
-              {selectedGameDetails.image_data && (
-                <div className="mb-4">
-                  <img
-                    src={`${import.meta.env.VITE_BACKEND_URL || ""}${selectedGameDetails.image_data}`}
-                    alt={selectedGameDetails.title}
-                    className="w-full h-auto rounded-lg object-cover border-2 border-[#6A4E32]"
-                    onError={(e) => {
-                      console.error("Error loading image:", e)
-                      // Use type assertion to access src property
-                      ;(e.target as HTMLImageElement).src = "/placeholder.svg?height=300&width=500"
-                    }}
-                  />
+          <div className="space-y-4">
+            <div className="bg-[#1E1512] p-4 rounded-lg">
+              <h3 className="font-cinzel text-[#C0A080] mb-2">Prompt Information</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-[#8B7355]">Prompt Name</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.prompt_name || "Default"}</p>
                 </div>
-              )}
-
-              <div className="bg-[#1E1512] p-4 rounded-lg">
-                <h3 className="font-cinzel text-[#C0A080] mb-2">Basic Information</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="text-xs text-[#8B7355]">ID</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.id}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Slug</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.slug}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Genre</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.genre}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Subgenre</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.subgenre || "None"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Status</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.status || "Active"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Visibility</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.private ? "Private" : "Public"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Created</p>
-                    <p className="text-[#F0E6DB]">{new Date(selectedGameDetails.createdAt).toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Updated</p>
-                    <p className="text-[#F0E6DB]">
-                      {selectedGameDetails.updatedAt ? new Date(selectedGameDetails.updatedAt).toLocaleString() : "N/A"}
+                <div>
+                  <p className="text-xs text-[#8B7355]">Prompt Model</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.prompt_model || "Not specified"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Prompt Text</p>
+                  <div className="bg-[#3D2E22] p-3 rounded-md mt-1 max-h-40 overflow-y-auto">
+                    <p className="text-[#F0E6DB] text-sm whitespace-pre-wrap">
+                      {viewedGameDetails.prompt_text || "No prompt text available"}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Creator ID</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.UserId}</p>
-                  </div>
-                  {selectedGameDetails.primary_color && (
-                    <div>
-                      <p className="text-xs text-[#8B7355]">Primary Color</p>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-4 h-4 rounded-full border border-white"
-                          style={{ backgroundColor: selectedGameDetails.primary_color }}
-                        ></div>
-                        <p className="text-[#F0E6DB]">{selectedGameDetails.primary_color}</p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
-
-              <div className="bg-[#1E1512] p-4 rounded-lg">
-                <h3 className="font-cinzel text-[#C0A080] mb-2">Description</h3>
-                <p className="text-[#F0E6DB] whitespace-pre-wrap">
-                  {selectedGameDetails.description || "No description available"}
-                </p>
-              </div>
-
-              {selectedGameDetails.tagline && (
-                <div className="bg-[#1E1512] p-4 rounded-lg">
-                  <h3 className="font-cinzel text-[#C0A080] mb-2">Tagline</h3>
-                  <p className="text-[#F0E6DB] italic">"{selectedGameDetails.tagline}"</p>
-                </div>
-              )}
             </div>
 
-            {/* Right column - Prompt information */}
-            <div className="space-y-4">
-              <div className="bg-[#1E1512] p-4 rounded-lg">
-                <h3 className="font-cinzel text-[#C0A080] mb-2">Prompt Information</h3>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Prompt Name</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.prompt_name || "Default"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Prompt Model</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.prompt_model || "Not specified"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Prompt Text</p>
-                    <div className="bg-[#3D2E22] p-3 rounded-md mt-1 max-h-40 overflow-y-auto">
-                      <p className="text-[#F0E6DB] text-sm whitespace-pre-wrap">
-                        {selectedGameDetails.prompt_text || "No prompt text available"}
-                      </p>
-                    </div>
-                  </div>
+            <div className="bg-[#1E1512] p-4 rounded-lg">
+              <h3 className="font-cinzel text-[#C0A080] mb-2">Image Prompt Information</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-[#8B7355]">Image Prompt Name</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.image_prompt_name || "Not specified"}</p>
                 </div>
-              </div>
-
-              <div className="bg-[#1E1512] p-4 rounded-lg">
-                <h3 className="font-cinzel text-[#C0A080] mb-2">Image Prompt Information</h3>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Image Prompt Name</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.image_prompt_name || "Not specified"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Image Prompt Model</p>
-                    <p className="text-[#F0E6DB]">{selectedGameDetails.image_prompt_model || "Not specified"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Image Prompt Text</p>
-                    <div className="bg-[#3D2E22] p-3 rounded-md mt-1">
-                      <p className="text-[#F0E6DB] text-sm">
-                        {selectedGameDetails.image_prompt_text || "No image prompt available"}
-                      </p>
-                    </div>
-                  </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Image Prompt Model</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.image_prompt_model || "Not specified"}</p>
                 </div>
-              </div>
-
-              <div className="bg-[#1E1512] p-4 rounded-lg">
-                <h3 className="font-cinzel text-[#C0A080] mb-2">Music Information</h3>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs text-[#8B7355]">Music Prompt Text</p>
-                    <div className="bg-[#3D2E22] p-3 rounded-md mt-1">
-                      <p className="text-[#F0E6DB] text-sm">
-                        {selectedGameDetails.music_prompt_text || "No music prompt available"}
-                      </p>
-                    </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Image Prompt Text</p>
+                  <div className="bg-[#3D2E22] p-3 rounded-md mt-1">
+                    <p className="text-[#F0E6DB] text-sm">
+                      {viewedGameDetails.image_prompt_text || "No image prompt available"}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
-            <button
-              onClick={() => {
-                console.log("Edit button clicked from view modal")
-                if (selectedGameDetails) {
-                  safelySetModalState("edit", selectedGameDetails)
-                }
-              }}
-              className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Edit className="w-4 h-4" />
-              Edit Game
-            </button>
-            <button
-              onClick={() => setShowViewModal(false)}
-              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
-            >
-              Close
-            </button>
+            <div className="bg-[#1E1512] p-4 rounded-lg">
+              <h3 className="font-cinzel text-[#C0A080] mb-2">Music Information</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-[#8B7355]">Music Prompt Text</p>
+                  <div className="bg-[#3D2E22] p-3 rounded-md mt-1">
+                    <p className="text-[#F0E6DB] text-sm">
+                      {viewedGameDetails.music_prompt_text || "No music prompt available"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </Modal>
+
+        <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
+          <button
+            onClick={() => openEditModal(viewedGameDetails)}
+            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Edit className="w-4 h-4" />
+            Edit Game
+          </button>
+          <button
+            onClick={() => confirmToggleStatus(viewedGameDetails)}
+            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Power className="w-4 h-4" />
+            {viewedGameDetails.status === "active" ? "Deactivate" : "Activate"} Game
+          </button>
+          <button
+            onClick={() => confirmDelete(viewedGameDetails)}
+            className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Trash className="w-4 h-4" />
+            Delete Game
+          </button>
+        </div>
+      </div>
     )
   }
 
-  // Function to open the edit modal
   const openEditModal = (game: Game) => {
     console.log(`Opening edit modal for game: ${game.title} (ID: ${game.id})`)
     safelySetModalState("edit", game)
   }
 
-  // Function to handle edit form submission
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editGameData) {
@@ -1078,13 +1022,11 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  // Function to open the status toggle modal
   const confirmToggleStatus = (game: Game) => {
     console.log(`Opening status toggle modal for game: ${game.title} (ID: ${game.id})`)
     safelySetModalState("status", game)
   }
 
-  // Function to handle status toggle
   const handleToggleStatusConfirm = async () => {
     if (!gameToToggleStatus) {
       console.log("No game selected for status toggle, aborting")
@@ -1115,7 +1057,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  // Edit Modal Component
   const EditGameModal = () => {
     if (!editGameData) return null
 
@@ -1140,7 +1081,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
 
           <form onSubmit={handleEditSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left column - Basic info */}
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title *</label>
@@ -1197,7 +1137,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 </div>
               </div>
 
-              {/* Right column - Content */}
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
@@ -1256,7 +1195,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     )
   }
 
-  // Status Toggle Modal Component
   const StatusToggleModal = () => {
     if (!gameToToggleStatus) return null
 
@@ -1302,160 +1240,163 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
 
   return (
     <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen" id="root">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <div>
-          <h1 className="text-3xl font-cinzel font-bold mb-2">Game Management</h1>
-          <p className="text-[#8B7355]">Manage all game content and configurations</p>
-        </div>
-        <div className="flex flex-wrap gap-2 w-full md:w-auto">
-          <button
-            onClick={() => safelySetModalState("new")}
-            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
-          >
-            <Plus className="w-5 h-5" />
-            New Game
-          </button>
-          <button
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg flex items-center gap-2"
-          >
-            <Sliders className="w-5 h-5" />
-            Filters
-          </button>
-        </div>
-      </div>
-
-      {showAdvancedFilters && <AdvancedFilters />}
-
-      {isLoading ? (
-        <Loader message="Loading games..." />
+      {isViewingGameDetails ? (
+        <GameDetailView />
       ) : (
-        <div className="rounded-xl overflow-hidden border border-[#6A4E32]/50 shadow-lg">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[#3D2E22]">
-                <tr>
-                  <th className="p-4 w-12">
-                    <input
-                      type="checkbox"
-                      className="w-5 h-5 cursor-pointer accent-[#C0A080]"
-                      onChange={toggleSelectAll}
-                      checked={allSelected}
-                    />
-                  </th>
-                  <TableHeader label="Title" sortKey="title" />
-                  <TableHeader label="Genre" sortKey="genre" />
-                  <TableHeader label="Players" sortKey="creator" />
-                  <TableHeader label="Created" sortKey="createdAt" />
-                  <TableHeader label="Status" sortKey="status" />
-                  <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <AnimatePresence>
-                  {filteredGames.map((game) => (
-                    <motion.tr
-                      key={game.id}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="group even:bg-[#2F2118] odd:bg-[#3D2E22]/80 hover:bg-[#534231] transition-colors"
-                    >
-                      <td className="p-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedGames.includes(game.id)}
-                          onChange={() => handleSelectGame(game.id)}
-                          className="w-5 h-5 cursor-pointer accent-[#C0A080]"
-                        />
-                      </td>
-                      <td className="p-4 font-playfair max-w-xs truncate group-hover:text-[#C0A080] transition-colors">
-                        {game.title}
-                      </td>
-                      <td className="p-4 font-playfair">{game.genre}</td>
-                      <td className="p-4 font-playfair text-center">{game.creator}</td>
-                      <td className="p-4 font-playfair">
-                        {new Date(game.createdAt).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                        })}
-                      </td>
-                      <td className="p-4">
-                        <StatusBadge status={game.status} />
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={() => viewGameDetails(game.id)}
-                            className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                            title="View"
-                            aria-label={`View ${game.title}`}
-                          >
-                            <Eye className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => openEditModal(game)}
-                            className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                            title="Edit"
-                            aria-label={`Edit ${game.title}`}
-                          >
-                            <Edit className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => confirmToggleStatus(game)}
-                            className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                            title="Toggle Status"
-                            aria-label={`Toggle status of ${game.title}`}
-                          >
-                            <Power className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => confirmDelete(game)}
-                            className="p-2 hover:bg-red-900/20 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none"
-                            title="Delete"
-                            aria-label={`Delete ${game.title}`}
-                          >
-                            <Trash className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-              </tbody>
-            </table>
+        <>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div>
+              <h1 className="text-3xl font-cinzel font-bold mb-2">Game Management</h1>
+              <p className="text-[#8B7355]">Manage all game content and configurations</p>
+            </div>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <button
+                onClick={() => safelySetModalState("new")}
+                className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
+              >
+                <Plus className="w-5 h-5" />
+                New Game
+              </button>
+              <button
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg flex items-center gap-2"
+              >
+                <Sliders className="w-5 h-5" />
+                Filters
+              </button>
+            </div>
           </div>
 
-          {filteredGames.length === 0 && (
-            <div className="p-8 text-center text-[#8B7355]">No games found matching your criteria</div>
+          {showAdvancedFilters && <AdvancedFilters />}
+
+          {isLoading ? (
+            <Loader message="Loading games..." />
+          ) : (
+            <div className="rounded-xl overflow-hidden border border-[#6A4E32]/50 shadow-lg">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-[#3D2E22]">
+                    <tr>
+                      <th className="p-4 w-12">
+                        <input
+                          type="checkbox"
+                          className="w-5 h-5 cursor-pointer accent-[#C0A080]"
+                          onChange={toggleSelectAll}
+                          checked={allSelected}
+                        />
+                      </th>
+                      <TableHeader label="Title" sortKey="title" />
+                      <TableHeader label="Genre" sortKey="genre" />
+                      <TableHeader label="Players" sortKey="creator" />
+                      <TableHeader label="Created" sortKey="createdAt" />
+                      <TableHeader label="Status" sortKey="status" />
+                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <AnimatePresence>
+                      {filteredGames.map((game) => (
+                        <motion.tr
+                          key={game.id}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          className="group even:bg-[#2F2118] odd:bg-[#3D2E22]/80 hover:bg-[#534231] transition-colors"
+                        >
+                          <td className="p-4">
+                            <input
+                              type="checkbox"
+                              checked={selectedGames.includes(game.id)}
+                              onChange={() => handleSelectGame(game.id)}
+                              className="w-5 h-5 cursor-pointer accent-[#C0A080]"
+                            />
+                          </td>
+                          <td className="p-4 font-playfair max-w-xs truncate group-hover:text-[#C0A080] transition-colors">
+                            {game.title}
+                          </td>
+                          <td className="p-4 font-playfair">{game.genre}</td>
+                          <td className="p-4 font-playfair text-center">{game.creator}</td>
+                          <td className="p-4 font-playfair">
+                            {new Date(game.createdAt).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </td>
+                          <td className="p-4">
+                            <StatusBadge status={game.status} />
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => viewGameDetails(game.id)}
+                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                                title="View"
+                                aria-label={`View ${game.title}`}
+                              >
+                                <Eye className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => openEditModal(game)}
+                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                                title="Edit"
+                                aria-label={`Edit ${game.title}`}
+                              >
+                                <Edit className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => confirmToggleStatus(game)}
+                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                                title="Toggle Status"
+                                aria-label={`Toggle status of ${game.title}`}
+                              >
+                                <Power className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => confirmDelete(game)}
+                                className="p-2 hover:bg-red-900/20 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none"
+                                title="Delete"
+                                aria-label={`Delete ${game.title}`}
+                              >
+                                <Trash className="w-5 h-5" />
+                              </button>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </tbody>
+                </table>
+              </div>
+
+              {filteredGames.length === 0 && (
+                <div className="p-8 text-center text-[#8B7355]">No games found matching your criteria</div>
+              )}
+            </div>
           )}
-        </div>
-      )}
 
-      <NewGameModal />
-      <DeleteConfirmationModal />
-      <BulkDeleteConfirmationModal />
-      <GameViewModal />
-      <EditGameModal />
-      <StatusToggleModal />
+          <NewGameModal />
+          <DeleteConfirmationModal />
+          <BulkDeleteConfirmationModal />
+          <StatusToggleModal />
 
-      {/* Add sticky bulk action bar */}
-      {selectedGames.length > 0 && (
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="fixed bottom-4 right-4 bg-[#3D2E22] p-4 rounded-lg shadow-xl flex gap-2 items-center"
-        >
-          <span className="text-sm text-[#C0A080]">{selectedGames.length} selected</span>
-          <button
-            onClick={confirmBulkDelete}
-            className="px-3 py-1 bg-red-700/20 hover:bg-red-800/30 text-red-400 rounded flex items-center gap-1"
-          >
-            <Trash className="w-4 h-4" />
-            Delete
-          </button>
-        </motion.div>
+          {selectedGames.length > 0 && (
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="fixed bottom-4 right-4 bg-[#3D2E22] p-4 rounded-lg shadow-xl flex gap-2 items-center"
+            >
+              <span className="text-sm text-[#C0A080]">{selectedGames.length} selected</span>
+              <button
+                onClick={confirmBulkDelete}
+                className="px-3 py-1 bg-red-700/20 hover:bg-red-800/30 text-red-400 rounded flex items-center gap-1"
+              >
+                <Trash className="w-4 h-4" />
+                Delete
+              </button>
+            </motion.div>
+          )}
+        </>
       )}
       <ToastContainer />
     </div>
