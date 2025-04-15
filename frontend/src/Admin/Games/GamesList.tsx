@@ -1432,9 +1432,47 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     );
   };
 
-  const openEditModal = (game: Game) => {
-    console.log(`Opening edit modal for game: ${game.title} (ID: ${game.id})`)
-    safelySetModalState("edit", game)
+  const openEditModal = async (game: Game) => {
+    console.log(`Opening edit page for game: ${game.title} (ID: ${game.id})`)
+    
+    // Start loading state
+    setIsLoading(true)
+    
+    try {
+      // Fetch the latest game data to ensure we're editing the most recent version
+      const response = await axiosInstance.get(`/api/games/${game.id}`)
+      console.log("Game details fetched for editing:", response.data)
+      
+      // Fetch the creator's username if not already included
+      let gameData = response.data
+      
+      // If UserId exists but creator name is missing or "Unknown", fetch it
+      if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
+        try {
+          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`)
+          if (userResponse.data && userResponse.data.username) {
+            gameData = {
+              ...gameData,
+              creator: userResponse.data.username,
+            }
+          }
+        } catch (error) {
+          console.log("Could not fetch creator information:", error)
+        }
+      }
+      
+      // Set the viewed game details
+      setViewedGameDetails(gameData)
+      
+      // Enable both viewing details and editing mode
+      setIsViewingGameDetails(true)
+      setIsEditingDetails(true)
+    } catch (error) {
+      console.error("Error fetching game details for editing:", error)
+      toast.error("Failed to load game for editing")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleEditSubmit = async (e: React.FormEvent) => {
