@@ -613,12 +613,17 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     const [isDeleting, setIsDeleting] = useState(false)
 
     useEffect(() => {
+      setDeleteConfirmText("")
+      setDeleteEnabled(false)
+    }, [])
+
+    useEffect(() => {
       if (viewedGameDetails && deleteConfirmText === viewedGameDetails.title) {
         setDeleteEnabled(true)
       } else {
         setDeleteEnabled(false)
       }
-    }, [deleteConfirmText])
+    }, [deleteConfirmText, viewedGameDetails])
 
     const handleDelete = async () => {
       if (!viewedGameDetails || !deleteEnabled) return
@@ -630,10 +635,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         const response = await axiosInstance.delete(`/api/games/${viewedGameDetails.id}`)
         console.log("Delete API response:", response)
 
-        // Remove the game from the games list
         setGames(games.filter((game) => game.id !== viewedGameDetails.id))
 
-        // Go back to the games list
         setIsViewingGameDetails(false)
         setViewedGameDetails(null)
         setIsDeletingDetails(false)
@@ -655,7 +658,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           <button
             type="button"
             onClick={() => {
-              setIsDeletingDetails(false) // Return to game detail view
+              console.log("Canceling deletion, returning to game detail view")
+              setIsDeletingDetails(false)
               setDeleteConfirmText("")
             }}
             className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
@@ -673,8 +677,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-16 h-16 bg-[#1E1512] rounded-lg overflow-hidden border border-[#6A4E32]">
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 bg-[#1E1512] rounded-lg overflow-hidden border border-[#6A4E32]">
                 {viewedGameDetails?.image_data ? (
                   <img
                     src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
@@ -687,7 +691,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-[#2F2118]">
-                    <Trash className="w-8 h-8 text-red-500/50" />
+                    <Trash className="w-10 h-10 text-red-500/50" />
                   </div>
                 )}
               </div>
@@ -699,15 +703,17 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
               </div>
             </div>
 
-            <p className="text-[#F0E6DB]">Are you sure you want to permanently delete this game?</p>
+            <div className="mt-4">
+              <p className="text-[#F0E6DB] text-lg">Are you sure you want to permanently delete this game?</p>
+              <p className="text-red-300 mt-2">This action cannot be undone.</p>
+            </div>
 
             <div className="bg-red-900/30 p-4 rounded-lg border border-red-800/40">
               <p className="text-red-300 text-sm flex items-start gap-2">
                 <span className="text-red-400 mt-1">⚠️</span>
                 <span>
-                  <strong>Warning:</strong> This action cannot be undone. All game data, including prompts, images, and
-                  user progress will be permanently deleted. Users who have played this game will lose their progress
-                  and history.
+                  <strong>Warning:</strong> All game data, including prompts, images, and user progress will be
+                  permanently deleted. Users who have played this game will lose their progress and history.
                 </span>
               </p>
             </div>
@@ -979,8 +985,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
           <button
             onClick={() => {
-              console.log("Activating edit mode for game:", viewedGameDetails.title);
-              setIsEditingDetails(true);
+              console.log("Activating edit mode for game:", viewedGameDetails.title)
+              setIsEditingDetails(true)
             }}
             className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
           >
@@ -995,7 +1001,12 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             {viewedGameDetails.status === "active" ? "Deactivate" : "Activate"} Game
           </button>
           <button
-            onClick={() => setIsDeletingDetails(true)}
+            onClick={() => {
+              console.log("Opening delete confirmation view for:", viewedGameDetails.title)
+              setDeleteConfirmText("")
+              setDeleteEnabled(false)
+              setIsDeletingDetails(true)
+            }}
             className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors flex items-center gap-2"
           >
             <Trash className="w-4 h-4" />
@@ -1007,76 +1018,72 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   }
 
   const EditGameDetailView = () => {
-    const [editForm, setEditForm] = useState<Game>(viewedGameDetails!);
-    const [isSaving, setIsSaving] = useState(false);
-    
-    // Ensure form is properly initialized
+    const [editForm, setEditForm] = useState<Game>(viewedGameDetails!)
+    const [isSaving, setIsSaving] = useState(false)
+
     useEffect(() => {
       if (viewedGameDetails) {
-        console.log("Initializing edit form with data:", viewedGameDetails);
-        setEditForm({ ...viewedGameDetails });
+        console.log("Initializing edit form with data:", viewedGameDetails)
+        setEditForm({ ...viewedGameDetails })
       }
-    }, []);
-    
+    }, [])
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      console.log(`Field changed: ${name} = ${value}`);
-      setEditForm(prev => ({
+      const { name, value } = e.target
+      console.log(`Field changed: ${name} = ${value}`)
+      setEditForm((prev) => ({
         ...prev,
-        [name]: value
-      }));
-    };
-    
+        [name]: value,
+      }))
+    }
+
     const handleBooleanChange = (name: string, value: boolean) => {
-      console.log(`Boolean field changed: ${name} = ${value}`);
-      setEditForm(prev => ({
+      console.log(`Boolean field changed: ${name} = ${value}`)
+      setEditForm((prev) => ({
         ...prev,
-        [name]: value
-      }));
-    };
-    
+        [name]: value,
+      }))
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
+      e.preventDefault()
       if (!editForm) {
-        console.error("No edit form data available");
-        return;
+        console.error("No edit form data available")
+        return
       }
-      
-      setIsSaving(true);
-      console.log("Submitting edited game data:", editForm);
-      
+
+      setIsSaving(true)
+      console.log("Submitting edited game data:", editForm)
+
       try {
-        const response = await axiosInstance.put(`/api/games/${editForm.id}`, editForm);
-        console.log("Edit API response:", response);
-        
-        // Update the viewed game details with the edited data
-        setViewedGameDetails(editForm);
-        
-        // Exit edit mode
-        setIsEditingDetails(false);
-        
-        // Refresh the games list in the background
-        fetchGames();
-        
-        toast.success(`Game "${editForm.title}" updated successfully`);
+        const response = await axiosInstance.put(`/api/games/${editForm.id}`, editForm)
+        console.log("Edit API response:", response)
+
+        setViewedGameDetails(editForm)
+
+        setIsEditingDetails(false)
+
+        fetchGames()
+
+        toast.success(`Game "${editForm.title}" updated successfully`)
       } catch (error) {
-        console.error("Error updating game:", error);
-        toast.error("Failed to update game");
+        console.error("Error updating game:", error)
+        toast.error("Failed to update game")
       } finally {
-        setIsSaving(false);
+        setIsSaving(false)
       }
-    };
-    
+    }
+
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4 mb-6">
           <button
             type="button"
             onClick={() => {
-              console.log("Canceling edit mode, returning to game list");
-              setIsEditingDetails(false);
-              setIsViewingGameDetails(false); // This is the key change - go back to list view
-              setViewedGameDetails(null); // Clean up the selected game
+              console.log("Canceling edit mode, returning to game list")
+              setIsEditingDetails(false)
+              setIsViewingGameDetails(false)
+              setViewedGameDetails(null)
             }}
             className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
           >
@@ -1088,7 +1095,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Left column - Basic info and image */}
             <div className="space-y-4">
               {editForm.image_data && (
                 <div className="mb-4">
@@ -1098,8 +1104,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                       alt={editForm.title}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        console.error("Error loading image, using custom fallback");
-                        (e.target as HTMLImageElement).src = "/technical-difficulties.jpg";
+                        console.error("Error loading image, using custom fallback")
+                        ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
                       }}
                     />
                   </div>
@@ -1186,7 +1192,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
               </div>
             </div>
 
-            {/* Right column - Content and prompts */}
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
@@ -1253,15 +1258,15 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
             <button
               type="button"
               onClick={() => {
-                console.log("Canceling edit mode, returning to game list");
-                setIsEditingDetails(false);
-                setIsViewingGameDetails(false); // This is the key change - go back to list view
-                setViewedGameDetails(null); // Clean up the selected game
+                console.log("Canceling edit mode, returning to game list")
+                setIsEditingDetails(false)
+                setIsViewingGameDetails(false)
+                setViewedGameDetails(null)
               }}
               className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
             >
@@ -1299,59 +1304,69 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </div>
         </form>
       </div>
-    );
-  };
+    )
+  }
 
   const backToGamesList = () => {
-    setIsViewingGameDetails(false);
-    setViewedGameDetails(null);
-  };
+    setIsViewingGameDetails(false)
+    setViewedGameDetails(null)
+  }
 
   const viewGameDetails = async (gameId: number) => {
-    console.log(`Fetching details for game ID: ${gameId}`);
-    setIsLoading(true);
+    console.log(`Fetching details for game ID: ${gameId}`)
+    setIsLoading(true)
 
     try {
-      const response = await axiosInstance.get(`/api/games/${gameId}`);
-      console.log("Game details fetched:", response.data);
-      
-      let gameData = response.data;
-      
+      const response = await axiosInstance.get(`/api/games/${gameId}`)
+      console.log("Game details fetched:", response.data)
+
+      let gameData = response.data
+
       if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
         try {
-          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`);
+          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`)
           if (userResponse.data && userResponse.data.username) {
-            gameData = { ...gameData, creator: userResponse.data.username };
+            gameData = { ...gameData, creator: userResponse.data.username }
           }
         } catch (error) {
-          console.log("Could not fetch creator information:", error);
+          console.log("Could not fetch creator information:", error)
         }
       }
-      
-      setViewedGameDetails(gameData);
-      setIsViewingGameDetails(true);
+
+      setViewedGameDetails(gameData)
+      setIsViewingGameDetails(true)
     } catch (error) {
-      console.error("Error fetching game details:", error);
-      toast.error("Failed to load game details");
+      console.error("Error fetching game details:", error)
+      toast.error("Failed to load game details")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const EnlargedImageModal = () => {
-    if (!viewedGameDetails?.image_data || !showEnlargedImage) return null;
-    
+    if (!viewedGameDetails?.image_data || !showEnlargedImage) return null
+
     return (
-      <div 
+      <div
         className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
         onClick={() => setShowEnlargedImage(false)}
       >
         <div className="relative max-w-7xl max-h-[95vh] w-full">
-          <button 
+          <button
             onClick={() => setShowEnlargedImage(false)}
             className="absolute top-4 right-4 text-white bg-black/60 hover:bg-black/80 rounded-full p-3"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -1361,18 +1376,18 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             alt={viewedGameDetails.title}
             className="max-w-full max-h-[90vh] object-contain mx-auto shadow-2xl"
             onError={(e) => {
-              console.error("Error loading enlarged image");
-              (e.target as HTMLImageElement).src = "/technical-difficulties.jpg";
+              console.error("Error loading enlarged image")
+              ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
             }}
           />
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const DeleteConfirmationModal = () => {
-    if (!gameToDelete) return null;
-    
+    if (!gameToDelete) return null
+
     return (
       <Modal
         isOpen={showDeleteConfirmation}
@@ -1386,17 +1401,17 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             <Trash className="w-6 h-6" />
             <h2 className="text-xl font-cinzel">Confirm Deletion</h2>
           </div>
-          
+
           <p className="text-[#F0E6DB]">
             Are you sure you want to delete <span className="font-semibold">{gameToDelete.title}</span>?
           </p>
-          
+
           <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
             <p className="text-red-300 text-sm">
               <strong>Warning:</strong> This action cannot be undone. All data will be permanently deleted.
             </p>
           </div>
-          
+
           <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
             <button
               onClick={() => setShowDeleteConfirmation(false)}
@@ -1414,8 +1429,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </div>
         </div>
       </Modal>
-    );
-  };
+    )
+  }
 
   const BulkDeleteConfirmationModal = () => {
     return (
@@ -1431,17 +1446,17 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             <Trash className="w-6 h-6" />
             <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
           </div>
-          
+
           <p className="text-[#F0E6DB]">
             Are you sure you want to delete {selectedGames.length} selected games?
           </p>
-          
+
           <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
             <p className="text-red-300 text-sm">
               <strong>Warning:</strong> This action cannot be undone.
             </p>
           </div>
-          
+
           <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
             <button
               onClick={() => setShowBulkDeleteConfirmation(false)}
@@ -1459,24 +1474,20 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </div>
         </div>
       </Modal>
-    );
-  };
+    )
+  }
 
   const openEditModal = async (game: Game) => {
     console.log(`Opening edit page for game: ${game.title} (ID: ${game.id})`)
-    
-    // Start loading state
+
     setIsLoading(true)
-    
+
     try {
-      // Fetch the latest game data to ensure we're editing the most recent version
       const response = await axiosInstance.get(`/api/games/${game.id}`)
       console.log("Game details fetched for editing:", response.data)
-      
-      // Fetch the creator's username if not already included
+
       let gameData = response.data
-      
-      // If UserId exists but creator name is missing or "Unknown", fetch it
+
       if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
         try {
           const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`)
@@ -1490,11 +1501,9 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           console.log("Could not fetch creator information:", error)
         }
       }
-      
-      // Set the viewed game details
+
       setViewedGameDetails(gameData)
-      
-      // Enable both viewing details and editing mode
+
       setIsViewingGameDetails(true)
       setIsEditingDetails(true)
     } catch (error) {
