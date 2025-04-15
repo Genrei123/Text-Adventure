@@ -54,10 +54,17 @@ import GamesList from './Admin/Games/GamesList';
 import GameDetail from './Admin/Games/GameDetail';
 import GameForm from './Admin/Games/GameForm';
 
+//Modal
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
+
 function App() {
   const [username, setUsername] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [visitedPages, setVisitedPages] = useState<string[]>([]);
+
+  
 
   // Auth handlers
   const handleLogin = (user: string): void => setUsername(user);

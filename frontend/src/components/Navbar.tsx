@@ -5,6 +5,9 @@ import socketIOClient from 'socket.io-client';
 import axiosInstance from "../../config/axiosConfig";
 import { debounce } from "lodash";
 import { useNavbar } from "../context/NavbarContext";
+import LogoutModal from "./LogoutModal";
+import Button from "./Button";
+
 
 const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
@@ -29,7 +32,7 @@ interface Player {
 interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = () => {
-  const { showLogoutModal, openLogoutModal, closeLogoutModal, handleLogout, username, setUsername } = useNavbar();
+  const {handleLogout, username, setUsername } = useNavbar();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<(Game | Player)[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -50,6 +53,17 @@ const Navbar: React.FC<NavbarProps> = () => {
   const location = useLocation();
 
   const isHomePage = location.pathname === "/home";
+
+  //Logout modal shets
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const openLogoutModal = () => setShowLogoutModal(true);
+  const closeLogoutModal = () => setShowLogoutModal(false);
+
+  // const handleLogout = () => {
+  //   // your logout logic
+  //   closeLogoutModal();
+  // };
 
   // Extract unique genres and subgenres from actual data
   const genres = [...new Set(games.map(game => game.genre))].filter(Boolean);
@@ -476,7 +490,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                             </Link>
                           </li>
                           <li>
-                            <a onClick={openLogoutModal}>Logout</a>
+                          <button onClick={openLogoutModal}>Logout</button>
                           </li>
                         </ul>
                       </div>
@@ -500,7 +514,11 @@ const Navbar: React.FC<NavbarProps> = () => {
               </div>
             )}
           </div>
-
+          <LogoutModal    
+            isOpen={showLogoutModal}
+            onClose={closeLogoutModal}
+            onLogout={handleLogout}
+          />
           {/* Filters Section */}
           {showFilters && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#2A1F17] p-4 rounded border border-[#C8A97E]">
@@ -580,32 +598,6 @@ const Navbar: React.FC<NavbarProps> = () => {
           )}
         </div>
       </nav>
-
-      {/* Logout Confirmation Modal */}
-      {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-          <div className="bg-[#2A1F17] border-2 border-[#C8A97E] rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
-            <h2 className="font-cinzel text-xl text-[#E5D4B3] mb-4 text-center">Leave the Realm?</h2>
-            <p className="text-[#C8A97E] mb-6 text-center">
-              Are you sure you wish to depart from these mystical lands? Your journey will be paused until your return.
-            </p>
-            <div className="flex justify-center space-x-4">
-              <button
-                onClick={closeLogoutModal}
-                className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#E5D4B3] rounded border border-[#C8A97E]"
-              >
-                Stay
-              </button>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-[#8B4513] hover:bg-[#723A10] text-[#E5D4B3] rounded border border-[#C8A97E]"
-              >
-                Leave
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

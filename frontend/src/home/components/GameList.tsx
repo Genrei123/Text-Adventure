@@ -102,14 +102,14 @@ const GameList: React.FC = () => {
           </div>
 
           {/* Sort Dropdown */}
-          <select
+          {/* <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'title' | 'genre')}
             className="px-4 py-3 bg-[#2A2A2A] border border-[#C8A97E] rounded-lg text-[#E5D4B3] focus:outline-none focus:ring-2 focus:ring-[#C8A97E] font-cinzel cursor-pointer"
           >
-            <option value="title">Sort by Title</option>
+            <option value="title">Sort from A-Z</option>
             <option value="genre">Sort by Genre</option>
-          </select>
+          </select> */}
         </div>
 
         {/* Genre Filters */}
