@@ -83,6 +83,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const [isViewingGameDetails, setIsViewingGameDetails] = useState(false)
   const [viewedGameDetails, setViewedGameDetails] = useState<Game | null>(null)
   const [showEnlargedImage, setShowEnlargedImage] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const isMounted = useRef(true)
 
@@ -330,7 +331,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         setShowDeleteConfirmation(true)
         console.log("Delete confirmation modal opened")
       }
-    }, 50)
+    }, 100)
   }
 
   const handleDelete = async () => {
@@ -339,17 +340,26 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       return
     }
 
+    setIsDeleting(true)
     console.log(`Deleting game: ${gameToDelete.title} (ID: ${gameToDelete.id})`)
+
     try {
       const response = await axiosInstance.delete(`/api/games/${gameToDelete.id}`)
       console.log("Delete API response:", response)
 
+      if (isViewingGameDetails && viewedGameDetails?.id === gameToDelete.id) {
+        setIsViewingGameDetails(false)
+        setViewedGameDetails(null)
+      }
+
       fetchGames()
       toast.success(`Game "${gameToDelete.title}" deleted successfully`)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting game:", error)
-      toast.error("Failed to delete game")
+      const errorMessage = error.response?.data?.message || "Failed to delete game"
+      toast.error(errorMessage)
     } finally {
+      setIsDeleting(false)
       setShowDeleteConfirmation(false)
       setGameToDelete(null)
       console.log("Delete operation completed, modal closed")
@@ -598,11 +608,20 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const DeleteConfirmationModal = () => {
     const [confirmText, setConfirmText] = useState("")
     const [deleteEnabled, setDeleteEnabled] = useState(false)
+    const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
       setConfirmText("")
       setDeleteEnabled(false)
     }, [showDeleteConfirmation, gameToDelete])
+
+    useEffect(() => {
+      if (showDeleteConfirmation && inputRef.current) {
+        setTimeout(() => {
+          inputRef.current?.focus()
+        }, 100)
+      }
+    }, [showDeleteConfirmation])
 
     useEffect(() => {
       if (gameToDelete && confirmText === gameToDelete.title) {
@@ -620,6 +639,12 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       setConfirmText("")
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && deleteEnabled) {
+        handleDelete()
+      }
+    }
+
     return (
       <Modal
         isOpen={showDeleteConfirmation}
@@ -627,8 +652,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
         overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
         ariaHideApp={false}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEsc={true}
+        shouldCloseOnOverlayClick={!isDeleting}
+        shouldCloseOnEsc={!isDeleting}
         shouldReturnFocusAfterClose={true}
         preventScroll={true}
       >
@@ -655,11 +680,14 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 Type <span className="font-semibold">{gameToDelete.title}</span> to confirm:
               </label>
               <input
+                ref={inputRef}
                 type="text"
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
+                onKeyDown={handleKeyDown}
                 className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                 placeholder="Type game title here"
+                disabled={isDeleting}
               />
             </div>
           </div>
@@ -668,22 +696,42 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             <button
               onClick={closeModal}
               className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+              disabled={isDeleting}
             >
               Cancel
             </button>
             <button
-              onClick={() => {
-                console.log("Delete confirmed by user")
-                handleDelete()
-              }}
-              disabled={!deleteEnabled}
+              onClick={handleDelete}
+              disabled={!deleteEnabled || isDeleting}
               className={`px-4 py-2 ${
-                deleteEnabled
+                deleteEnabled && !isDeleting
                   ? "bg-red-700 hover:bg-red-800 text-white"
                   : "bg-gray-700 text-gray-400 cursor-not-allowed"
-              } rounded-lg transition-colors`}
+              } rounded-lg transition-colors flex items-center gap-2`}
             >
-              Delete
+              {isDeleting ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash className="w-4 h-4" />
+                  Delete
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -787,27 +835,27 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       // Fetch the game details
       const response = await axiosInstance.get(`/api/games/${gameId}`)
       console.log("Game details fetched:", response.data)
-      
+
       // Fetch the creator's username if not already included
-      let gameData = response.data;
-      
+      let gameData = response.data
+
       // If UserId exists but creator name is missing or "Unknown", fetch it
       if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
         try {
-          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`);
+          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`)
           if (userResponse.data && userResponse.data.username) {
             gameData = {
               ...gameData,
-              creator: userResponse.data.username
-            };
+              creator: userResponse.data.username,
+            }
           }
         } catch (error) {
-          console.log("Could not fetch creator information:", error);
+          console.log("Could not fetch creator information:", error)
         }
       }
-      
-      setViewedGameDetails(gameData);
-      setIsViewingGameDetails(true);
+
+      setViewedGameDetails(gameData)
+      setIsViewingGameDetails(true)
     } catch (error) {
       console.error("Error fetching game details:", error)
       toast.error("Failed to load game details")
@@ -822,22 +870,32 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   }
 
   const EnlargedImageModal = () => {
-    if (!viewedGameDetails?.image_data || !showEnlargedImage) return null;
-    
+    if (!viewedGameDetails?.image_data || !showEnlargedImage) return null
+
     return (
-      <div 
+      <div
         className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
         onClick={() => setShowEnlargedImage(false)}
       >
-        <div 
+        <div
           className="relative max-w-7xl max-h-[95vh] w-full"
           onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on the container
         >
-          <button 
+          <button
             onClick={() => setShowEnlargedImage(false)}
             className="absolute top-4 right-4 text-white bg-black/60 hover:bg-black/80 rounded-full p-3 transition-colors"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -847,17 +905,15 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             alt={viewedGameDetails.title}
             className="max-w-full max-h-[90vh] object-contain mx-auto shadow-2xl"
             onError={(e) => {
-              console.error("Error loading enlarged image, using custom fallback");
-              (e.target as HTMLImageElement).src = "/technical-difficulties.jpg";
+              console.error("Error loading enlarged image, using custom fallback")
+              ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
             }}
           />
-          <p className="text-center text-white/80 mt-4 text-lg font-cinzel">
-            {viewedGameDetails.title}
-          </p>
+          <p className="text-center text-white/80 mt-4 text-lg font-cinzel">{viewedGameDetails.title}</p>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   const GameDetailView = () => {
     if (!viewedGameDetails) return <Loader message="Loading game details..." />
@@ -879,11 +935,11 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           <div className="space-y-4">
             {viewedGameDetails.image_data && (
               <div className="mb-4">
-                <div 
+                <div
                   className="w-full aspect-[16/9] bg-[#1E1512] rounded-lg overflow-hidden border-2 border-[#6A4E32] cursor-zoom-in relative hover:opacity-95 hover:shadow-lg transition-all duration-200"
                   onClick={() => {
-                    console.log("Image clicked, opening enlarged view");
-                    setShowEnlargedImage(true);
+                    console.log("Image clicked, opening enlarged view")
+                    setShowEnlargedImage(true)
                   }}
                 >
                   <img
@@ -891,12 +947,23 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                     alt={viewedGameDetails.title}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      console.error("Error loading image, using custom fallback");
-                      (e.target as HTMLImageElement).src = "/technical-difficulties.jpg";
+                      console.error("Error loading image, using custom fallback")
+                      ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
                     }}
                   />
                   <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-100">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="48"
+                      height="48"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="opacity-100"
+                    >
                       <circle cx="11" cy="11" r="8"></circle>
                       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                       <line x1="11" y1="8" x2="11" y2="14"></line>
@@ -949,8 +1016,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 <div>
                   <p className="text-xs text-[#8B7355]">Creator</p>
                   <p className="text-[#F0E6DB]">
-                    {viewedGameDetails.creator || "Unknown"} 
-                    {(!viewedGameDetails.creator || viewedGameDetails.creator === "Unknown") && 
+                    {viewedGameDetails.creator || "Unknown"}
+                    {(!viewedGameDetails.creator || viewedGameDetails.creator === "Unknown") &&
                       `(ID: ${viewedGameDetails.UserId})`}
                   </p>
                 </div>
