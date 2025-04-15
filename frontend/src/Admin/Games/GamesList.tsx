@@ -41,7 +41,12 @@ interface User {
   username: string
 }
 
-const GamesList: React.FC = () => {
+interface GamesListProps {
+  onViewGame?: (gameId: number) => void
+  refreshTrigger?: number
+}
+
+const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 }) => {
   const [games, setGames] = useState<Game[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [genreFilter, setGenreFilter] = useState("all")
@@ -143,7 +148,7 @@ const GamesList: React.FC = () => {
   useEffect(() => {
     // Only set the app element once when the component mounts
     if (typeof window !== "undefined") {
-      // Set ariaHideApp to false to avoid the app element warning
+      // Find a stable parent element
       Modal.setAppElement("#root")
       console.log("Modal app element set to #root")
     }
@@ -160,6 +165,13 @@ const GamesList: React.FC = () => {
   const toggleSelectAll = () => {
     setSelectedGames(allSelected ? [] : games.map((game) => game.id))
   }
+
+  // Refresh games when refreshTrigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      fetchGames()
+    }
+  }, [refreshTrigger])
 
   useEffect(() => {
     fetchGames()
@@ -292,7 +304,22 @@ const GamesList: React.FC = () => {
 
   const confirmBulkDelete = () => {
     console.log(`Confirming bulk deletion for ${selectedGames.length} games`)
-    safelySetModalState("bulkDelete")
+
+    // First close any open modals
+    setShowViewModal(false)
+    setShowEditModal(false)
+    setShowDeleteConfirmation(false)
+    setShowBulkDeleteConfirmation(false)
+    setShowStatusModal(false)
+    setShowModal(false)
+
+    // Use a small timeout to ensure React has processed the closing of other modals
+    setTimeout(() => {
+      if (isMounted.current) {
+        setShowBulkDeleteConfirmation(true)
+        console.log("Bulk delete confirmation modal opened")
+      }
+    }, 50)
   }
 
   const handleBulkDelete = async () => {
@@ -317,10 +344,25 @@ const GamesList: React.FC = () => {
   // Replace the confirmDelete function with this direct version
   const confirmDelete = (game: Game) => {
     console.log(`Confirming deletion for game: ${game.title} (ID: ${game.id})`)
-    // Set data first
+
+    // First close any open modals
+    setShowViewModal(false)
+    setShowEditModal(false)
+    setShowDeleteConfirmation(false)
+    setShowBulkDeleteConfirmation(false)
+    setShowStatusModal(false)
+    setShowModal(false)
+
+    // Then set the game to delete
     setGameToDelete(game)
-    // Then open modal directly
-    setShowDeleteConfirmation(true)
+
+    // Use a small timeout to ensure React has processed the closing of other modals
+    setTimeout(() => {
+      if (isMounted.current) {
+        setShowDeleteConfirmation(true)
+        console.log("Delete confirmation modal opened")
+      }
+    }, 50)
   }
 
   const handleDelete = async () => {
@@ -591,6 +633,13 @@ const GamesList: React.FC = () => {
     const [confirmText, setConfirmText] = useState("")
     const [deleteEnabled, setDeleteEnabled] = useState(false)
 
+    // Reset confirm text when modal opens or game changes
+    useEffect(() => {
+      setConfirmText("")
+      setDeleteEnabled(false)
+    }, [showDeleteConfirmation, gameToDelete])
+
+    // Check if text matches game title
     useEffect(() => {
       if (gameToDelete && confirmText === gameToDelete.title) {
         setDeleteEnabled(true)
@@ -599,19 +648,26 @@ const GamesList: React.FC = () => {
       }
     }, [confirmText, gameToDelete])
 
+    // Don't render anything if no game is selected
     if (!gameToDelete) return null
+
+    const closeModal = () => {
+      console.log("Delete confirmation modal closed")
+      setShowDeleteConfirmation(false)
+      setConfirmText("")
+    }
 
     return (
       <Modal
         isOpen={showDeleteConfirmation}
-        onRequestClose={() => {
-          console.log("Delete confirmation modal closed by user")
-          setShowDeleteConfirmation(false)
-          setConfirmText("")
-        }}
+        onRequestClose={closeModal}
         className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
         overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
-        ariaHideApp={false} // Set to false to avoid the app element warning
+        ariaHideApp={false}
+        shouldCloseOnOverlayClick={true}
+        shouldCloseOnEsc={true}
+        shouldReturnFocusAfterClose={true}
+        preventScroll={true}
       >
         <div className="space-y-6">
           <div className="flex items-center gap-3 text-red-400">
@@ -647,11 +703,7 @@ const GamesList: React.FC = () => {
 
           <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
             <button
-              onClick={() => {
-                console.log("Delete confirmation modal cancelled by user")
-                setShowDeleteConfirmation(false)
-                setConfirmText("")
-              }}
+              onClick={closeModal}
               className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
             >
               Cancel
@@ -660,7 +712,6 @@ const GamesList: React.FC = () => {
               onClick={() => {
                 console.log("Delete confirmed by user")
                 handleDelete()
-                setConfirmText("")
               }}
               disabled={!deleteEnabled}
               className={`px-4 py-2 ${
@@ -769,9 +820,18 @@ const GamesList: React.FC = () => {
   const viewGameDetails = async (gameId: number) => {
     if (!isMounted.current) return
 
-    console.log(`Fetching game details for ID: ${gameId}`)
-    setIsLoading(true)
+    console.log(`Handling view game details for ID: ${gameId}`)
 
+    // If we have an external view handler, use it
+    if (onViewGame) {
+      console.log("Using external view handler")
+      onViewGame(gameId)
+      return
+    }
+
+    // Otherwise, use the modal approach
+    console.log("Using modal approach as fallback")
+    setIsLoading(true)
     try {
       const response = await axiosInstance.get(`/api/games/${gameId}`)
       console.log("Game details fetched successfully:", response.data)
@@ -1403,4 +1463,3 @@ const GamesList: React.FC = () => {
 }
 
 export default GamesList
-
