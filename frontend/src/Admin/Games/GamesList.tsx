@@ -85,6 +85,9 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const [showEnlargedImage, setShowEnlargedImage] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isEditingDetails, setIsEditingDetails] = useState(false)
+  const [isDeletingDetails, setIsDeletingDetails] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState("")
+  const [deleteEnabled, setDeleteEnabled] = useState(false)
 
   const isMounted = useRef(true)
 
@@ -606,96 +609,132 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     </Modal>
   )
 
-  const DeleteConfirmationModal = () => {
-    const [confirmText, setConfirmText] = useState("")
-    const [deleteEnabled, setDeleteEnabled] = useState(false)
-    const inputRef = useRef<HTMLInputElement>(null)
+  const DeleteGameConfirmationView = () => {
+    const [isDeleting, setIsDeleting] = useState(false)
 
     useEffect(() => {
-      setConfirmText("")
-      setDeleteEnabled(false)
-    }, [showDeleteConfirmation, gameToDelete])
-
-    useEffect(() => {
-      if (showDeleteConfirmation && inputRef.current) {
-        setTimeout(() => {
-          inputRef.current?.focus()
-        }, 100)
-      }
-    }, [showDeleteConfirmation])
-
-    useEffect(() => {
-      if (gameToDelete && confirmText === gameToDelete.title) {
+      if (viewedGameDetails && deleteConfirmText === viewedGameDetails.title) {
         setDeleteEnabled(true)
       } else {
         setDeleteEnabled(false)
       }
-    }, [confirmText, gameToDelete])
+    }, [deleteConfirmText])
 
-    if (!gameToDelete) return null
+    const handleDelete = async () => {
+      if (!viewedGameDetails || !deleteEnabled) return
 
-    const closeModal = () => {
-      console.log("Delete confirmation modal closed")
-      setShowDeleteConfirmation(false)
-      setConfirmText("")
-    }
+      setIsDeleting(true)
+      console.log(`Deleting game: ${viewedGameDetails.title} (ID: ${viewedGameDetails.id})`)
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" && deleteEnabled) {
-        handleDelete()
+      try {
+        const response = await axiosInstance.delete(`/api/games/${viewedGameDetails.id}`)
+        console.log("Delete API response:", response)
+
+        // Remove the game from the games list
+        setGames(games.filter((game) => game.id !== viewedGameDetails.id))
+
+        // Go back to the games list
+        setIsViewingGameDetails(false)
+        setViewedGameDetails(null)
+        setIsDeletingDetails(false)
+        setDeleteConfirmText("")
+
+        toast.success(`Game "${viewedGameDetails.title}" deleted successfully`)
+      } catch (error: any) {
+        console.error("Error deleting game:", error)
+        const errorMessage = error.response?.data?.message || "Failed to delete game"
+        toast.error(errorMessage)
+      } finally {
+        setIsDeleting(false)
       }
     }
 
     return (
-      <Modal
-        isOpen={showDeleteConfirmation}
-        onRequestClose={closeModal}
-        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
-        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
-        ariaHideApp={false}
-        shouldCloseOnOverlayClick={!isDeleting}
-        shouldCloseOnEsc={!isDeleting}
-        shouldReturnFocusAfterClose={true}
-        preventScroll={true}
-      >
-        <div className="space-y-6">
+      <div className="space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            type="button"
+            onClick={() => {
+              setIsDeletingDetails(false) // Return to game detail view
+              setDeleteConfirmText("")
+            }}
+            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Back to Game Details
+          </button>
+          <h1 className="text-3xl font-cinzel font-bold text-red-500">Delete Game</h1>
+        </div>
+
+        <div className="bg-red-900/20 p-6 rounded-xl border border-red-800/30 space-y-6">
           <div className="flex items-center gap-3 text-red-400">
             <Trash className="w-6 h-6" />
             <h2 className="text-xl font-cinzel">Confirm Deletion</h2>
           </div>
 
           <div className="space-y-4">
-            <p className="text-[#F0E6DB]">
-              Are you sure you want to delete the game <span className="font-semibold">{gameToDelete.title}</span>?
-            </p>
+            <div className="flex items-center gap-2">
+              <div className="w-16 h-16 bg-[#1E1512] rounded-lg overflow-hidden border border-[#6A4E32]">
+                {viewedGameDetails?.image_data ? (
+                  <img
+                    src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
+                    alt={viewedGameDetails?.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.error("Error loading image thumbnail")
+                      ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-[#2F2118]">
+                    <Trash className="w-8 h-8 text-red-500/50" />
+                  </div>
+                )}
+              </div>
+              <div>
+                <h3 className="font-cinzel font-bold text-xl">{viewedGameDetails?.title}</h3>
+                <p className="text-[#8B7355]">
+                  {viewedGameDetails?.genre} • Created by {viewedGameDetails?.creator || "Unknown"}
+                </p>
+              </div>
+            </div>
 
-            <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
-              <p className="text-red-300 text-sm">
-                <strong>Warning:</strong> This action cannot be undone. All game data, including prompts, images, and
-                user progress will be permanently deleted.
+            <p className="text-[#F0E6DB]">Are you sure you want to permanently delete this game?</p>
+
+            <div className="bg-red-900/30 p-4 rounded-lg border border-red-800/40">
+              <p className="text-red-300 text-sm flex items-start gap-2">
+                <span className="text-red-400 mt-1">⚠️</span>
+                <span>
+                  <strong>Warning:</strong> This action cannot be undone. All game data, including prompts, images, and
+                  user progress will be permanently deleted. Users who have played this game will lose their progress
+                  and history.
+                </span>
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">
-                Type <span className="font-semibold">{gameToDelete.title}</span> to confirm:
+              <label className="block text-sm font-cinzel text-white mb-2">
+                Type <span className="font-semibold">{viewedGameDetails?.title}</span> to confirm:
               </label>
               <input
-                ref={inputRef}
                 type="text"
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                placeholder="Type game title here"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-red-800/30 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                placeholder={`Type "${viewedGameDetails?.title}" here`}
                 disabled={isDeleting}
+                autoFocus
               />
             </div>
           </div>
 
-          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+          <div className="flex justify-end space-x-4 pt-4 border-t border-red-800/30">
             <button
-              onClick={closeModal}
+              type="button"
+              onClick={() => {
+                setIsDeletingDetails(false)
+                setDeleteConfirmText("")
+              }}
               className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
               disabled={isDeleting}
             >
@@ -730,187 +769,11 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
               ) : (
                 <>
                   <Trash className="w-4 h-4" />
-                  Delete
+                  Permanently Delete
                 </>
               )}
             </button>
           </div>
-        </div>
-      </Modal>
-    )
-  }
-
-  const BulkDeleteConfirmationModal = () => {
-    const [confirmText, setConfirmText] = useState("")
-    const [deleteEnabled, setDeleteEnabled] = useState(false)
-
-    useEffect(() => {
-      if (confirmText === "DELETE") {
-        setDeleteEnabled(true)
-      } else {
-        setDeleteEnabled(false)
-      }
-    }, [confirmText])
-
-    return (
-      <Modal
-        isOpen={showBulkDeleteConfirmation}
-        onRequestClose={() => {
-          console.log("Bulk delete confirmation modal closed by user")
-          setShowBulkDeleteConfirmation(false)
-          setConfirmText("")
-        }}
-        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
-        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
-        ariaHideApp={false}
-      >
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 text-red-400">
-            <Trash className="w-6 h-6" />
-            <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
-          </div>
-
-          <div className="space-y-4">
-            <p className="text-[#F0E6DB]">
-              Are you sure you want to delete <span className="font-semibold">{selectedGames.length} games</span>?
-            </p>
-
-            <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
-              <p className="text-red-300 text-sm">
-                <strong>Warning:</strong> This action cannot be undone. All game data, including prompts, images, and
-                user progress will be permanently deleted for all selected games.
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">
-                Type <span className="font-semibold">DELETE</span> to confirm:
-              </label>
-              <input
-                type="text"
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                placeholder="Type DELETE here"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
-            <button
-              onClick={() => {
-                console.log("Bulk delete confirmation modal cancelled by user")
-                setShowBulkDeleteConfirmation(false)
-                setConfirmText("")
-              }}
-              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                console.log("Bulk delete confirmed by user")
-                handleBulkDelete()
-                setConfirmText("")
-              }}
-              disabled={!deleteEnabled}
-              className={`px-4 py-2 ${
-                deleteEnabled
-                  ? "bg-red-700 hover:bg-red-800 text-white"
-                  : "bg-gray-700 text-gray-400 cursor-not-allowed"
-              } rounded-lg transition-colors`}
-            >
-              Delete {selectedGames.length} Games
-            </button>
-          </div>
-        </div>
-      </Modal>
-    )
-  }
-
-  const viewGameDetails = async (gameId: number) => {
-    console.log(`Fetching details for game ID: ${gameId}`)
-    setIsLoading(true)
-
-    try {
-      // Fetch the game details
-      const response = await axiosInstance.get(`/api/games/${gameId}`)
-      console.log("Game details fetched:", response.data)
-
-      // Fetch the creator's username if not already included
-      let gameData = response.data
-
-      // If UserId exists but creator name is missing or "Unknown", fetch it
-      if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
-        try {
-          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`)
-          if (userResponse.data && userResponse.data.username) {
-            gameData = {
-              ...gameData,
-              creator: userResponse.data.username,
-            }
-          }
-        } catch (error) {
-          console.log("Could not fetch creator information:", error)
-        }
-      }
-
-      setViewedGameDetails(gameData)
-      setIsViewingGameDetails(true)
-    } catch (error) {
-      console.error("Error fetching game details:", error)
-      toast.error("Failed to load game details")
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const backToGamesList = () => {
-    setIsViewingGameDetails(false)
-    setViewedGameDetails(null)
-  }
-
-  const EnlargedImageModal = () => {
-    if (!viewedGameDetails?.image_data || !showEnlargedImage) return null
-
-    return (
-      <div
-        className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
-        onClick={() => setShowEnlargedImage(false)}
-      >
-        <div
-          className="relative max-w-7xl max-h-[95vh] w-full"
-          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on the container
-        >
-          <button
-            onClick={() => setShowEnlargedImage(false)}
-            className="absolute top-4 right-4 text-white bg-black/60 hover:bg-black/80 rounded-full p-3 transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-          <img
-            src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
-            alt={viewedGameDetails.title}
-            className="max-w-full max-h-[90vh] object-contain mx-auto shadow-2xl"
-            onError={(e) => {
-              console.error("Error loading enlarged image, using custom fallback")
-              ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
-            }}
-          />
-          <p className="text-center text-white/80 mt-4 text-lg font-cinzel">{viewedGameDetails.title}</p>
         </div>
       </div>
     )
@@ -1132,7 +995,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             {viewedGameDetails.status === "active" ? "Deactivate" : "Activate"} Game
           </button>
           <button
-            onClick={() => confirmDelete(viewedGameDetails)}
+            onClick={() => setIsDeletingDetails(true)}
             className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors flex items-center gap-2"
           >
             <Trash className="w-4 h-4" />
@@ -1725,6 +1588,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       {isViewingGameDetails ? (
         isEditingDetails ? (
           <EditGameDetailView />
+        ) : isDeletingDetails ? (
+          <DeleteGameConfirmationView />
         ) : (
           <>
             <GameDetailView />
