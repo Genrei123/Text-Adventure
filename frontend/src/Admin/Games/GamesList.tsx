@@ -1210,13 +1210,15 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           <button
             type="button"
             onClick={() => {
-              console.log("Canceling edit mode");
+              console.log("Canceling edit mode, returning to game list");
               setIsEditingDetails(false);
+              setIsViewingGameDetails(false); // This is the key change - go back to list view
+              setViewedGameDetails(null); // Clean up the selected game
             }}
             className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
           >
             <ChevronLeft className="w-5 h-5" />
-            Cancel Editing
+            Back to Game List
           </button>
           <h1 className="text-3xl font-cinzel font-bold">Edit Game: {editForm.title}</h1>
         </div>
@@ -1392,7 +1394,12 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
             <button
               type="button"
-              onClick={() => setIsEditingDetails(false)}
+              onClick={() => {
+                console.log("Canceling edit mode, returning to game list");
+                setIsEditingDetails(false);
+                setIsViewingGameDetails(false); // This is the key change - go back to list view
+                setViewedGameDetails(null); // Clean up the selected game
+              }}
               className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
             >
               Cancel
