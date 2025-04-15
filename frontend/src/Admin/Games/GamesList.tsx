@@ -82,6 +82,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const [gameToToggleStatus, setGameToToggleStatus] = useState<Game | null>(null)
   const [isViewingGameDetails, setIsViewingGameDetails] = useState(false)
   const [viewedGameDetails, setViewedGameDetails] = useState<Game | null>(null)
+  const [showEnlargedImage, setShowEnlargedImage] = useState(false)
 
   const isMounted = useRef(true)
 
@@ -820,6 +821,44 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setViewedGameDetails(null)
   }
 
+  const EnlargedImageModal = () => {
+    if (!viewedGameDetails?.image_data || !showEnlargedImage) return null;
+    
+    return (
+      <div 
+        className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
+        onClick={() => setShowEnlargedImage(false)}
+      >
+        <div 
+          className="relative max-w-7xl max-h-[95vh] w-full"
+          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on the container
+        >
+          <button 
+            onClick={() => setShowEnlargedImage(false)}
+            className="absolute top-4 right-4 text-white bg-black/60 hover:bg-black/80 rounded-full p-3 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <img
+            src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
+            alt={viewedGameDetails.title}
+            className="max-w-full max-h-[90vh] object-contain mx-auto shadow-2xl"
+            onError={(e) => {
+              console.error("Error loading enlarged image, using custom fallback");
+              (e.target as HTMLImageElement).src = "/technical-difficulties.jpg";
+            }}
+          />
+          <p className="text-center text-white/80 mt-4 text-lg font-cinzel">
+            {viewedGameDetails.title}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   const GameDetailView = () => {
     if (!viewedGameDetails) return <Loader message="Loading game details..." />
 
@@ -840,7 +879,13 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           <div className="space-y-4">
             {viewedGameDetails.image_data && (
               <div className="mb-4">
-                <div className="w-full aspect-video bg-[#1E1512] rounded-lg overflow-hidden border-2 border-[#6A4E32]">
+                <div 
+                  className="w-full aspect-[16/9] bg-[#1E1512] rounded-lg overflow-hidden border-2 border-[#6A4E32] cursor-zoom-in relative hover:opacity-95 hover:shadow-lg transition-all duration-200"
+                  onClick={() => {
+                    console.log("Image clicked, opening enlarged view");
+                    setShowEnlargedImage(true);
+                  }}
+                >
                   <img
                     src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
                     alt={viewedGameDetails.title}
@@ -850,6 +895,14 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                       (e.target as HTMLImageElement).src = "/technical-difficulties.jpg";
                     }}
                   />
+                  <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-100">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      <line x1="11" y1="8" x2="11" y2="14"></line>
+                      <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                  </div>
                 </div>
               </div>
             )}
@@ -1265,7 +1318,10 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   return (
     <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen" id="root">
       {isViewingGameDetails ? (
-        <GameDetailView />
+        <>
+          <GameDetailView />
+          <EnlargedImageModal />
+        </>
       ) : (
         <>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
