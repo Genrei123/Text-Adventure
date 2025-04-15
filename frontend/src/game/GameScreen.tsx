@@ -772,7 +772,7 @@ const GameScreen: React.FC = () => {
         </div>
 
         {/* Input area */}
-        <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0 pb-6">
+        <div className="w-full md:w-1/2 mx-auto mt-[-10%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0 pb-6">
           <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
             <ActionButton action="Do" isSelected={selectedAction === "Do"} onClick={() => setSelectedAction("Do")} />
             <ActionButton action="Say" isSelected={selectedAction === "Say"} onClick={() => setSelectedAction("Say")} />
@@ -780,36 +780,36 @@ const GameScreen: React.FC = () => {
             {/* Visualize Scene button with settings */}
             <div className="flex rounded-full overflow-hidden">
               <button
-          onClick={handleGenerateImage}
-          className={`px-2 py-1 md:px-4md:py-2 font-playfair text-xs md:text-base ${isGeneratingImage
-            ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed"
-            : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
-            }`}
-          disabled={isGeneratingImage}
+                onClick={handleGenerateImage}
+                className={`px-2 py-1 md:px-4 md:py-2 font-playfair text-xs md:text-base ${isGeneratingImage
+                  ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed"
+                  : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"
+                  }`}
+                disabled={isGeneratingImage}
               >
-          Visualize Scene
+                Visualize Scene
               </button>
               <button
-          onClick={openModelSelectionModal}
-          className={`px-2 py-1 md:px-2 ${isGeneratingImage ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed" : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"} border-l border-[#311F17]/30`}
-          aria-label="Select model"
-          disabled={isGeneratingImage}
+                onClick={openModelSelectionModal}
+                className={`px-2 py-1 md:px-2 ${isGeneratingImage ? "bg-[#634630]/50 text-gray-400 cursor-not-allowed" : "bg-[#634630] text-white hover:bg-[#311F17] transition-colors"} border-l border-[#311F17]/30`}
+                aria-label="Select model"
+                disabled={isGeneratingImage}
               >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-settings"
-          >
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-settings"
+                >
+                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l-.43-.25a2 2 0 0 1-2 0l-.15.08a2 2 0 0 0-2.73-.73l-.22-.39a2 2 0 0 0 .73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
               </button>
             </div>
 
@@ -837,36 +837,36 @@ const GameScreen: React.FC = () => {
 
           {/* Text input and submit button */}
           <div className="w-full flex items-start bg-[#311F17] rounded-2xl focus-within:outline-none">
-            <textarea
-              ref={textareaRef}
-              className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${showScroll ? "overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent" : "overflow-y-hidden"
-                } ${hasTokenWarning ? "border-red-500 border-opacity-50" : ""}`}
-              placeholder={`Type what you want to ${selectedAction.toLowerCase()}`}
-              value={message}
-              onChange={handleMessageChange}
-              onKeyDown={handleKeyDown}
-              maxLength={MAX_INPUT_TOKENS * 4} // Rough approximation: 4 chars per token
-              rows={1}
-              style={{
-                minHeight: "56px",
-                height: `${Math.min(message.split("\n").length * 24 + 32, 192)}px`
-              }}
-              disabled={isWaitingForAI}
-            />
-            <button
-              className={`p-4 bg-transparent rounded-r-2xl relative group self-start ${isWaitingForAI || hasTokenWarning ? "cursor-not-allowed opacity-50" : ""
-                }`}
-              onClick={handleSubmit}
-              disabled={isWaitingForAI || hasTokenWarning}
-            >
-              <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
-              <img
-                src="/Enter-after.svg"
-                alt="Enter Hover"
-                className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100"
+              <textarea
+                ref={textareaRef}
+                className={`w-full p-4 rounded-l-2xl bg-transparent text-white font-playfair text-xl focus:outline-none resize-none min-h-[56px] max-h-48 ${showScroll ? "overflow-y-auto scrollbar-thin scrollbar-thumb-[#634630] scrollbar-track-transparent" : "overflow-y-hidden"
+                  } ${hasTokenWarning ? "border-red-500 border-opacity-50" : ""}`}
+                placeholder={`Type what you want to ${selectedAction.toLowerCase()}`}
+                value={message}
+                onChange={handleMessageChange}
+                onKeyDown={handleKeyDown}
+                maxLength={MAX_INPUT_TOKENS * 4} // Rough approximation: 4 chars per token
+                rows={1}
+                style={{
+                  minHeight: "56px",
+                  height: `${Math.min(message.split("\n").length * 24 + 32, 192)}px`
+                }}
+                disabled={isWaitingForAI}
               />
-            </button>
-          </div>
+              <button
+                className={`p-4 bg-transparent rounded-r-2xl relative group self-start ${isWaitingForAI || hasTokenWarning ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                onClick={handleSubmit}
+                disabled={isWaitingForAI || hasTokenWarning}
+              >
+                <img src="/Enter.svg" alt="Enter" className="h-6 group-hover:opacity-0" />
+                <img
+                  src="/Enter-after.svg"
+                  alt="Enter Hover"
+                  className="h-6 absolute top-4 left-4 opacity-0 group-hover:opacity-100"
+                />
+              </button>
+            </div>
 
           {/* Token counter with progressbar */}
           <div className="w-full px-2 pb-1">
