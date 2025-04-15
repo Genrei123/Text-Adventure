@@ -1302,6 +1302,166 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     );
   };
 
+  const backToGamesList = () => {
+    setIsViewingGameDetails(false);
+    setViewedGameDetails(null);
+  };
+
+  const viewGameDetails = async (gameId: number) => {
+    console.log(`Fetching details for game ID: ${gameId}`);
+    setIsLoading(true);
+
+    try {
+      const response = await axiosInstance.get(`/api/games/${gameId}`);
+      console.log("Game details fetched:", response.data);
+      
+      let gameData = response.data;
+      
+      if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
+        try {
+          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`);
+          if (userResponse.data && userResponse.data.username) {
+            gameData = { ...gameData, creator: userResponse.data.username };
+          }
+        } catch (error) {
+          console.log("Could not fetch creator information:", error);
+        }
+      }
+      
+      setViewedGameDetails(gameData);
+      setIsViewingGameDetails(true);
+    } catch (error) {
+      console.error("Error fetching game details:", error);
+      toast.error("Failed to load game details");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const EnlargedImageModal = () => {
+    if (!viewedGameDetails?.image_data || !showEnlargedImage) return null;
+    
+    return (
+      <div 
+        className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
+        onClick={() => setShowEnlargedImage(false)}
+      >
+        <div className="relative max-w-7xl max-h-[95vh] w-full">
+          <button 
+            onClick={() => setShowEnlargedImage(false)}
+            className="absolute top-4 right-4 text-white bg-black/60 hover:bg-black/80 rounded-full p-3"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <img
+            src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
+            alt={viewedGameDetails.title}
+            className="max-w-full max-h-[90vh] object-contain mx-auto shadow-2xl"
+            onError={(e) => {
+              console.error("Error loading enlarged image");
+              (e.target as HTMLImageElement).src = "/technical-difficulties.jpg";
+            }}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const DeleteConfirmationModal = () => {
+    if (!gameToDelete) return null;
+    
+    return (
+      <Modal
+        isOpen={showDeleteConfirmation}
+        onRequestClose={() => setShowDeleteConfirmation(false)}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false}
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 text-red-400">
+            <Trash className="w-6 h-6" />
+            <h2 className="text-xl font-cinzel">Confirm Deletion</h2>
+          </div>
+          
+          <p className="text-[#F0E6DB]">
+            Are you sure you want to delete <span className="font-semibold">{gameToDelete.title}</span>?
+          </p>
+          
+          <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
+            <p className="text-red-300 text-sm">
+              <strong>Warning:</strong> This action cannot be undone. All data will be permanently deleted.
+            </p>
+          </div>
+          
+          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+            <button
+              onClick={() => setShowDeleteConfirmation(false)}
+              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg flex items-center gap-2"
+            >
+              <Trash className="w-4 h-4" />
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
+    );
+  };
+
+  const BulkDeleteConfirmationModal = () => {
+    return (
+      <Modal
+        isOpen={showBulkDeleteConfirmation}
+        onRequestClose={() => setShowBulkDeleteConfirmation(false)}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false}
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 text-red-400">
+            <Trash className="w-6 h-6" />
+            <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
+          </div>
+          
+          <p className="text-[#F0E6DB]">
+            Are you sure you want to delete {selectedGames.length} selected games?
+          </p>
+          
+          <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
+            <p className="text-red-300 text-sm">
+              <strong>Warning:</strong> This action cannot be undone.
+            </p>
+          </div>
+          
+          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+            <button
+              onClick={() => setShowBulkDeleteConfirmation(false)}
+              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg flex items-center gap-2"
+            >
+              <Trash className="w-4 h-4" />
+              Delete {selectedGames.length} Games
+            </button>
+          </div>
+        </div>
+      </Modal>
+    );
+  };
+
   const openEditModal = async (game: Game) => {
     console.log(`Opening edit page for game: ${game.title} (ID: ${game.id})`)
     
