@@ -225,7 +225,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               style={{ transition: "opacity 1s ease-in-out" }}
             >
               <div>
-                <label className="block text-sm font-cinzel text-white mb-2">
+                <label className="block text-sm font-cinzel text-white mb-2 text-left">
                   Email
                 </label>
                 <ValidatedInput
@@ -241,7 +241,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-cinzel text-white mb-2">
+                <label className="block text-sm font-cinzel text-white mb-2 text-left">
                   Password
                 </label>
                 <ValidatedInput

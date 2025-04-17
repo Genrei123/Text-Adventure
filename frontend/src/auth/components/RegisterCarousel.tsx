@@ -207,7 +207,7 @@ const RegisterCarousel: React.FC<RegisterCarouselProps> = ({ onSubmit }) => {
       {step === 2 && (
         <div className="space-y-6 fade-in">
           <div>
-            <label className="block text-sm font-cinzel text-white mb-2">Password</label>
+            <label className="block text-sm font-cinzel text-white mb-2 text-left">Password</label>
             <ValidatedInput
               type="password"
               value={password}
@@ -218,7 +218,7 @@ const RegisterCarousel: React.FC<RegisterCarouselProps> = ({ onSubmit }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-cinzel text-white mb-2">Confirm Password</label>
+            <label className="block text-sm font-cinzel text-white mb-2 text-left">Confirm Password</label>
             <ValidatedInput
               type="verifyPassword"
               value={confirmPassword}
