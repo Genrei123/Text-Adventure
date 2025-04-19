@@ -18,7 +18,9 @@ import {
   getSubscriptionOffers, 
   getUserSubscriptions,
   unsubscribeUser,
-  handleSubscriptionCallback
+  handleSubscriptionCallback,
+  checkForExpiredSubscriptions,
+  expireSubscription
 } from '../../controllers/transaction/subscriptionController';
 
 const router = express.Router();
@@ -52,6 +54,10 @@ router.get('/subscription/user/:email', getUserSubscriptions);
 
 // Subscription webhook callback
 router.post('/subscription/callback', handleSubscriptionCallback);
+
+// Route for expiring a subscription
+router.post('/subscription/expire', expireSubscription);
+router.post('/subscription/check-expired', checkForExpiredSubscriptions);
 
 // Route for fetching token limits
 router.get('/token-limits', getTokenLimits);
