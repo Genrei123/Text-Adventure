@@ -23,6 +23,7 @@ interface PlanDisplay {
     img: string;
     btnText: string;
     btnColor: string;
+    duration?: number;
 }
 
 interface UserSubscription {
@@ -39,7 +40,7 @@ interface UserSubscription {
 const Subscription: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<any>(null);
-    const [subscriptionOffers, setSubscriptionOffers] = useState<SubscriptionPlan[]>([]);
+    const [subscriptionOffers, setSubscriptionOffers] = useState<PlanDisplay[]>([]);
     const [userSubscription, setUserSubscription] = useState<UserSubscription | null>(null);
     const [loading, setLoading] = useState(true);
     const [fadeIn, setFadeIn] = useState(false);
@@ -53,7 +54,39 @@ const Subscription: React.FC = () => {
         try {
             const offersResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/offers`);
             console.log('Fetched subscription offers:', offersResponse.data);
-            setSubscriptionOffers(offersResponse.data);
+
+            // Map the fetched subscription offers to include the `img` property
+            const mappedOffers = offersResponse.data.map((offer: SubscriptionPlan) => {
+                let img = '';
+                switch (offer.offerName) {
+                    case "Freedom Sword":
+                        img = "/Freemium.png";
+                        break;
+                    case "Adventurer's Entry":
+                        img = "/Adventurer.png";
+                        break;
+                    case "Hero's Journey":
+                        img = "/Hero.png";
+                        break;
+                    case "Legend's Legacy":
+                        img = "/Legend.png";
+                        break;
+                    default:
+                        img = "/default.png"; // Fallback image
+                }
+
+                return {
+                    id: offer.offerId,
+                    title: offer.offerName,
+                    desc: offer.description,
+                    price: offer.price,
+                    img: img,
+                    btnText: "EMBARK ON YOUR PATH", // Default button text
+                    btnColor: "bg-black" // Default button color
+                };
+            });
+
+            setSubscriptionOffers(mappedOffers);
 
             const email = localStorage.getItem('email');
 
@@ -113,13 +146,13 @@ const Subscription: React.FC = () => {
 
         console.log('Clicked plan:', plan);
 
-        const backendPlan = subscriptionOffers.find(offer => offer.offerName === plan.title);
+        const backendPlan = subscriptionOffers.find(offer => offer.title === plan.title);
 
         if (backendPlan) {
             console.log('Found matching backend plan:', backendPlan);
             setSelectedPlan({
                 ...plan,
-                offerId: backendPlan.offerId,
+                offerId: backendPlan.id,
                 backendPrice: backendPlan.price,
                 backendDuration: backendPlan.duration
             });
@@ -224,50 +257,14 @@ const Subscription: React.FC = () => {
         }
     };
 
-    const displayPlans: PlanDisplay[] = [
-        {
-            id: "FREE",
-            title: "Freedom Sword",
-            desc: "Begin your journey with 2000 tokens worth of free prompts and basic world access.",
-            price: "FREE",
-            img: "/Freemium.png",
-            btnText: "CURRENT PATH",
-            btnColor: "bg-green-600"
-        },
-        {
-            id: "SUB001",
-            title: "Adventurer's Entry",
-            desc: "Gain extra tokens, extended prompt limits, and access to enhanced character options.",
-            price: "₱100/mo",
-            img: "/Adventurer.png",
-            btnText: "EMBARK ON YOUR PATH",
-            btnColor: "bg-black"
-        },
-        {
-            id: "SUB002",
-            title: "Hero's Journey",
-            desc: "Enjoy unlimited prompts, customizable characters, ad-free storytelling, and access to exclusive worlds.",
-            price: "₱250/mo",
-            img: "/Hero.png",
-            btnText: "BECOME A HERO",
-            btnColor: "bg-black"
-        },
-        {
-            id: "SUB003",
-            title: "Legend's Legacy",
-            desc: "Unlock ultimate features including early access to new worlds, personalized storylines, and priority support.",
-            price: "₱500/mo",
-            img: "/Legend.png",
-            btnText: "FORGE YOUR LEGACY",
-            btnColor: "bg-black"
-        }
-    ];
-
-    const updatedDisplayPlans = displayPlans.map((plan) => {
+    const updatedDisplayPlans = subscriptionOffers.map((plan) => {
+        const formattedPrice = plan.price === "0" || plan.price === "0" || parseFloat(plan.price) === 0 ? "FREE" : plan.price;
+    
         if (!userSubscription || userSubscription.status === "inactive") {
             if (plan.title === "Freedom Sword") {
                 return {
                     ...plan,
+                    price: formattedPrice,
                     btnText: "CURRENT PATH",
                     btnColor: "bg-green-600",
                     isDisabled: true,
@@ -275,15 +272,17 @@ const Subscription: React.FC = () => {
             }
             return {
                 ...plan,
+                price: formattedPrice,
                 btnText: "EMBARK ON YOUR PATH",
                 btnColor: "bg-black",
                 isDisabled: false,
             };
         }
-
+    
         if (userSubscription.subscriptionType === plan.title) {
             return {
                 ...plan,
+                price: formattedPrice,
                 btnText: userSubscription.status === "active" ? "CURRENT PATH" :
                     userSubscription.status === "pending" ? "PENDING ACTIVATION" :
                         userSubscription.status === "cancelled" ? "CANCELLED" :
@@ -295,9 +294,10 @@ const Subscription: React.FC = () => {
                 isDisabled: true,
             };
         }
-
+    
         return {
             ...plan,
+            price: formattedPrice,
             btnText: "EMBARK ON YOUR PATH",
             btnColor: "bg-black",
             isDisabled: false,
@@ -340,7 +340,7 @@ const Subscription: React.FC = () => {
                                     <button
                                         className="px-4 py-2 bg-red-600 text-white rounded-md"
                                         onClick={() => {
-                                            const plan = displayPlans.find(p => p.title === userSubscription.subscriptionType);
+                                            const plan = subscriptionOffers.find(p => p.title === userSubscription.subscriptionType);
                                             if (plan) {
                                                 setSelectedPlan(plan);
                                                 setConfirmUnsubscribe(true);
@@ -374,26 +374,28 @@ const Subscription: React.FC = () => {
                         <div className="flex flex-wrap justify-center gap-8 mt-6">
                             {updatedDisplayPlans.map((plan, index) => (
                                 <div
-                                    key={index}
-                                    className={`bg-white w-72 p-6 rounded-lg shadow-lg border-4 border-[#563C2D] transform transition-transform ${plan.isDisabled ? "" : "hover:scale-110"
-                                        }`}
-                                    onClick={() => {
-                                        if (!plan.isDisabled) {
-                                            handlePlanClick(plan);
-                                        }
-                                    }}
+                                key={index}
+                                className={`bg-white w-72 p-6 rounded-lg shadow-lg border-4 border-[#563C2D] transform transition-transform ${plan.isDisabled ? "" : "hover:scale-110"
+                                    }`}
+                                onClick={() => {
+                                    if (!plan.isDisabled) {
+                                        handlePlanClick(plan);
+                                    }
+                                }}
+                            >
+                                <img src={plan.img} alt={plan.title} className="w-full" />
+                                <h1 className="text-[#B28F4C] text-center text-xl font-bold font-cinzel mt-4">{plan.title}</h1>
+                                <p className="text-black text-center p-2">{plan.desc}</p>
+                                <h2 className="text-black text-center text-2xl font-bold font-playfair">
+                                    {plan.price === "FREE" ? plan.price : `${plan.price} /month`}
+                                </h2>
+                                <button
+                                    className={`w-full text-white p-2 rounded-md mt-4 ${plan.btnColor}`}
+                                    disabled={plan.isDisabled}
                                 >
-                                    <img src={plan.img} alt={plan.title} className="w-full" />
-                                    <h1 className="text-[#B28F4C] text-center text-xl font-bold font-cinzel mt-4">{plan.title}</h1>
-                                    <p className="text-black text-center p-2">{plan.desc}</p>
-                                    <h2 className="text-black text-center text-2xl font-bold font-playfair">{plan.price}</h2>
-                                    <button
-                                        className={`w-full text-white p-2 rounded-md mt-4 ${plan.btnColor}`}
-                                        disabled={plan.isDisabled}
-                                    >
-                                        {plan.btnText}
-                                    </button>
-                                </div>
+                                    {plan.btnText}
+                                </button>
+                            </div>
                             ))}
                         </div>
                     )}
