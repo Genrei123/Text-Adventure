@@ -167,10 +167,21 @@ const Subscription: React.FC = () => {
     const handlePlanClick = (plan: PlanDisplay) => {
         if (plan.title === "Freedom Sword") return;
 
-        if (userSubscription && userSubscription.subscriptionType === plan.title) {
+        // Check if the user is currently subscribed to this plan and it's active or cancelled
+        if (userSubscription &&
+            userSubscription.subscriptionType === plan.title &&
+            (userSubscription.status === "active" || userSubscription.status === "cancelled")) {
             setSelectedPlan(plan);
             setConfirmUnsubscribe(true);
             return;
+        }
+
+        // Check if the subscription is expired but UI hasn't updated yet
+        if (userSubscription &&
+            userSubscription.subscriptionType === plan.title &&
+            userSubscription.status === "inactive") {
+            // If expired, allow resubscription
+            console.log('Resubscribing to previously expired plan:', plan);
         }
 
         console.log('Clicked plan:', plan);
