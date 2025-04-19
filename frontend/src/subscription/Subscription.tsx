@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import LoadingScreen from '../components/LoadingScreen';
 import axios from 'axios';
 import { OfferModal } from './OfferModal';
+import './subscription-cards.css';
 
 interface SubscriptionPlan {
     offerId: string;
@@ -259,14 +260,14 @@ const Subscription: React.FC = () => {
 
     const updatedDisplayPlans = subscriptionOffers.map((plan) => {
         const formattedPrice = plan.price === "0" || plan.price === "0" || parseFloat(plan.price) === 0 ? "FREE" : plan.price;
-    
+
         if (!userSubscription || userSubscription.status === "inactive") {
             if (plan.title === "Freedom Sword") {
                 return {
                     ...plan,
                     price: formattedPrice,
                     btnText: "CURRENT PATH",
-                    btnColor: "bg-green-600",
+                    btnColor: "tier-button-subscribed", // Use this class for current path
                     isDisabled: true,
                 };
             }
@@ -274,11 +275,12 @@ const Subscription: React.FC = () => {
                 ...plan,
                 price: formattedPrice,
                 btnText: "EMBARK ON YOUR PATH",
-                btnColor: "bg-black",
+                btnColor: "tier-button-unsubscribed", // Use this class for available paths
                 isDisabled: false,
             };
         }
-    
+
+        // For subscribed plans, always use the subscribed class
         if (userSubscription.subscriptionType === plan.title) {
             return {
                 ...plan,
@@ -287,19 +289,17 @@ const Subscription: React.FC = () => {
                     userSubscription.status === "pending" ? "PENDING ACTIVATION" :
                         userSubscription.status === "cancelled" ? "CANCELLED" :
                             "MANAGE SUBSCRIPTION",
-                btnColor: userSubscription.status === "active" ? "bg-green-600" :
-                    userSubscription.status === "pending" ? "bg-yellow-600" :
-                        userSubscription.status === "cancelled" ? "bg-orange-600" :
-                            "bg-blue-600",
+                btnColor: "tier-button-subscribed", // Always use this class for any active subscription
                 isDisabled: true,
             };
         }
-    
+
+        // For all other cases, use the unsubscribed class
         return {
             ...plan,
             price: formattedPrice,
             btnText: "EMBARK ON YOUR PATH",
-            btnColor: "bg-black",
+            btnColor: "tier-button-unsubscribed", // Use this for all other available plans
             isDisabled: false,
         };
     });
@@ -372,31 +372,109 @@ const Subscription: React.FC = () => {
                         </div>
                     ) : (
                         <div className="flex flex-wrap justify-center gap-8 mt-6">
-                            {updatedDisplayPlans.map((plan, index) => (
-                                <div
-                                key={index}
-                                className={`bg-white w-72 p-6 rounded-lg shadow-lg border-4 border-[#563C2D] transform transition-transform ${plan.isDisabled ? "" : "hover:scale-110"
-                                    }`}
-                                onClick={() => {
-                                    if (!plan.isDisabled) {
-                                        handlePlanClick(plan);
-                                    }
-                                }}
-                            >
-                                <img src={plan.img} alt={plan.title} className="w-full" />
-                                <h1 className="text-[#B28F4C] text-center text-xl font-bold font-cinzel mt-4">{plan.title}</h1>
-                                <p className="text-black text-center p-2">{plan.desc}</p>
-                                <h2 className="text-black text-center text-2xl font-bold font-playfair">
-                                    {plan.price === "FREE" ? plan.price : `${plan.price} /month`}
-                                </h2>
-                                <button
-                                    className={`w-full text-white p-2 rounded-md mt-4 ${plan.btnColor}`}
-                                    disabled={plan.isDisabled}
-                                >
-                                    {plan.btnText}
-                                </button>
-                            </div>
-                            ))}
+                            {updatedDisplayPlans.map((plan, index) => {
+                                // Determine the tier class based on the plan title
+                                let tierClass = '';
+                                let titleClass = '';
+                                let buttonClass = '';
+                                let ribbonClass = '';
+                                let ribbonText = '';
+                                let animation = '';
+
+                                switch (plan.title) {
+                                    // From your existing code:
+                                    case 'Freedom Sword':
+                                        tierClass = 'tier-bronze';
+                                        titleClass = 'tier-title-bronze';
+                                        buttonClass = plan.isDisabled ? plan.btnColor : 'tier-button-bronze';
+                                        ribbonClass = 'ribbon-bronze';
+                                        break;
+                                    case 'Adventurer\'s Entry':
+                                        tierClass = 'tier-silver';
+                                        titleClass = 'tier-title-silver';
+                                        buttonClass = plan.isDisabled ? plan.btnColor : 'tier-button-silver';
+                                        ribbonClass = 'ribbon-silver';
+                                        break;
+                                    case 'Hero\'s Journey':
+                                        tierClass = 'tier-gold';
+                                        titleClass = 'tier-title-gold';
+                                        buttonClass = plan.isDisabled ? plan.btnColor : 'tier-button-gold';
+                                        ribbonClass = 'ribbon-gold';
+                                        break;
+                                    case 'Legend\'s Legacy':
+                                        tierClass = 'tier-platinum';
+                                        titleClass = 'tier-title-platinum';
+                                        buttonClass = plan.isDisabled ? plan.btnColor : 'tier-button-platinum';
+                                        ribbonClass = 'ribbon-platinum';
+                                        break;
+
+                                    // Should be changed to:
+                                    case 'Freedom Sword':
+                                        tierClass = 'tier-bronze';
+                                        titleClass = 'tier-title-bronze';
+                                        buttonClass = plan.isDisabled ?
+                                            (userSubscription?.subscriptionType === plan.title ? 'tier-button-subscribed' : plan.btnColor) :
+                                            'tier-button-unsubscribed';
+                                        ribbonClass = 'ribbon-bronze';
+                                        break;
+                                    case 'Adventurer\'s Entry':
+                                        tierClass = 'tier-silver';
+                                        titleClass = 'tier-title-silver';
+                                        buttonClass = plan.isDisabled ?
+                                            (userSubscription?.subscriptionType === plan.title ? 'tier-button-subscribed' : plan.btnColor) :
+                                            'tier-button-unsubscribed';
+                                        ribbonClass = 'ribbon-silver';
+                                        break;
+                                    case 'Hero\'s Journey':
+                                        tierClass = 'tier-gold';
+                                        titleClass = 'tier-title-gold';
+                                        buttonClass = plan.isDisabled ?
+                                            (userSubscription?.subscriptionType === plan.title ? 'tier-button-subscribed' : plan.btnColor) :
+                                            'tier-button-unsubscribed';
+                                        ribbonClass = 'ribbon-gold';
+                                        break;
+                                    case 'Legend\'s Legacy':
+                                        tierClass = 'tier-platinum';
+                                        titleClass = 'tier-title-platinum';
+                                        buttonClass = plan.isDisabled ?
+                                            (userSubscription?.subscriptionType === plan.title ? 'tier-button-subscribed' : plan.btnColor) :
+                                            'tier-button-unsubscribed';
+                                        ribbonClass = 'ribbon-platinum';
+                                        break;
+                                }
+
+                                return (
+                                    <div
+                                        key={index}
+                                        className={`relative bg-white w-72 p-6 rounded-lg shadow-lg border-4 ${tierClass} ${animation} transform transition-all duration-300 ${plan.isDisabled ? "" : "hover:scale-110"}`}
+                                        onClick={() => {
+                                            if (!plan.isDisabled) {
+                                                handlePlanClick(plan);
+                                            }
+                                        }}
+                                    >
+                                        {/* Ribbon for tier indication */}
+                                        {ribbonText !== 'Bronze' && (
+                                            <div className="ribbon-container">
+                                                <span className={`ribbon-text ${ribbonClass}`}>{ribbonText}</span>
+                                            </div>
+                                        )}
+
+                                        <img src={plan.img} alt={plan.title} className="w-full rounded-md" />
+                                        <h1 className={`${titleClass} text-center text-xl font-bold font-cinzel mt-4`}>{plan.title}</h1>
+                                        <p className="text-black text-center p-2">{plan.desc}</p>
+                                        <h2 className="text-black text-center text-2xl font-bold font-playfair">
+                                            {plan.price === "FREE" ? plan.price : `${plan.price} /month`}
+                                        </h2>
+                                        <button
+                                            className={`w-full text-white p-2 rounded-md mt-4 ${buttonClass}`}
+                                            disabled={plan.isDisabled}
+                                        >
+                                            {plan.btnText}
+                                        </button>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
