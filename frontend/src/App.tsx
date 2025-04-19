@@ -26,6 +26,7 @@ import GameDetails from './game-details/GameDetails';
 
 import AdminPage from './Admin/AdminPage';
 import Subscription from './shop/Subscription';
+import Shop from './shop/Shop';
 
 // Work in Progress Components [EXPERIMENTAL - Do not include in main app!]
 import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
@@ -196,6 +197,7 @@ function App() {
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/active-players" element={<ActivePlayerCount />} />
             <Route path="/ban-test" element={<BanTestPage />} />
+            <Route path="/shop" element={<Shop />} />
             
             {/* Error Routes */}
 

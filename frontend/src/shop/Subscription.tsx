@@ -3,7 +3,6 @@ import Navbar from '../components/Navbar';
 import LoadingScreen from '../components/LoadingScreen';
 import axios from 'axios';
 import { OfferModal } from './OfferModal';
-import SubscriptionBG2 from '../../public/SubscriptionBG2.png'; // Adjust the path based on your project structure
 import './subscription-cards.css';
 import { useSpring, animated } from 'react-spring';
 import { motion } from 'framer-motion';
@@ -432,9 +431,8 @@ const Subscription: React.FC = () => {
         <>
             <Navbar />
             <div
-                className="bg-cover min-h-screen p-4 background-overlay"
+                className="bg-cover min-h-screen p-4 background-overlay bg-[url('/SubscriptionBG2.png')]"
                 style={{
-                    backgroundImage: `url(${SubscriptionBG2})`,
                     backgroundPosition: `center ${backgroundPosition}px`,
                     backgroundSize: 'cover'
                 }}
