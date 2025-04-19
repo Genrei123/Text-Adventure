@@ -25,7 +25,7 @@ import GameScreen from './game/GameScreen';
 import GameDetails from './game-details/GameDetails';
 
 import AdminPage from './Admin/AdminPage';
-import Subscription from './subscription/Subscription';
+import Subscription from './shop/Subscription';
 
 // Work in Progress Components [EXPERIMENTAL - Do not include in main app!]
 import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
