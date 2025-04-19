@@ -485,55 +485,66 @@ export const checkForExpiredSubscriptions = async (): Promise<void> => {
   try {
     console.log('Running scheduled check for expired subscriptions...');
     const currentDate = new Date();
-    
-    // Find all active AND CANCELLED subscriptions with end dates in the past
+
+    // Find all expired subscriptions with status 'active' or 'cancelled'
     const expiredSubscriptions = await Subscriber.findAll({
       where: {
         status: {
-          [Op.in]: ['active', 'cancelled'] // Include both active and cancelled
+          [Op.in]: ['active', 'cancelled']
         },
         endDate: {
           [Op.lt]: currentDate
         }
       }
     });
-    
+
     console.log(`Found ${expiredSubscriptions.length} expired subscriptions`);
-    
-    // Update each expired subscription
-    for (const subscription of expiredSubscriptions) {
-      await subscription.update({ status: 'inactive' });
-      console.log(`Updated subscription ${subscription.id} for ${subscription.email} to inactive`);
-      
-      // Check if this was the user's most recent active subscription
-      const newerActiveSubscription = await Subscriber.findOne({
+
+    if (expiredSubscriptions.length === 0) {
+      console.log('No expired subscriptions found.');
+      return;
+    }
+
+    // Group subscriptions by email
+    const subscriptionsByEmail: Record<string, Subscriber[]> = expiredSubscriptions.reduce((acc, subscription) => {
+      if (!acc[subscription.email]) {
+        acc[subscription.email] = [];
+      }
+      acc[subscription.email].push(subscription);
+      return acc;
+    }, {});
+
+    // Update all expired subscriptions to 'inactive' in bulk
+    const subscriptionIds = expiredSubscriptions.map(sub => sub.id);
+    await Subscriber.update(
+      { status: 'inactive' },
+      { where: { id: subscriptionIds } }
+    );
+    console.log(`Updated ${subscriptionIds.length} subscriptions to 'inactive'`);
+
+    // Revert user models if they have no other active or cancelled subscriptions
+    for (const email of Object.keys(subscriptionsByEmail)) {
+      const activeOrCancelledSubscriptions = await Subscriber.findOne({
         where: {
-          email: subscription.email,
+          email,
           status: {
-            [Op.in]: ['active', 'cancelled'] // Check for any active or cancelled subscription
-          },
-          subscribedAt: {
-            [Op.gt]: subscription.subscribedAt
+            [Op.in]: ['active', 'cancelled']
           }
         }
       });
-      
-      // If no newer active subscription exists, revert the user's model
-      if (!newerActiveSubscription) {
-        const user = await User.findOne({ where: { email: subscription.email } });
+
+      if (!activeOrCancelledSubscriptions) {
+        const user = await User.findOne({ where: { email } });
         if (user) {
           const aiModel = getAIModelForSubscription('Freedom Sword');
           await user.update({ model: aiModel });
-          
-          console.log(`-------------- User Model Reverted --------------`);
-          console.log(`User: ${user.email}
-New Model: ${aiModel}
-Reason: Subscription expired with no other active subscriptions
-Updated at: ${new Date().toLocaleString()}`);
-          console.log(`-----------------------------------------------------`);
+
+          console.log(`Reverted user model for ${email} to ${aiModel}`);
         }
       }
     }
+
+    console.log('Scheduled check for expired subscriptions completed successfully.');
   } catch (error) {
     console.error('Error in scheduled expired subscription check:', error);
   }

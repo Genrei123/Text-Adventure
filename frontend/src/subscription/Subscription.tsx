@@ -5,7 +5,6 @@ import LoadingScreen from '../components/LoadingScreen';
 import axios from 'axios';
 import { OfferModal } from './OfferModal';
 
-// Update interface to match the actual API response
 interface SubscriptionPlan {
     offerId: string;
     offerName: string;
@@ -26,7 +25,6 @@ interface PlanDisplay {
     btnColor: string;
 }
 
-// Updated to match the actual API response format
 interface UserSubscription {
     id: string;
     email: string;
@@ -37,39 +35,6 @@ interface UserSubscription {
     status: string;
     duration: number;
 }
-
-// Add this function to check if a subscription has expired
-const isSubscriptionExpired = (endDateString: string | null): boolean => {
-    if (!endDateString) return false;
-
-    const endDate = new Date(endDateString);
-    const currentDate = new Date();
-
-    // Check if date is valid
-    if (isNaN(endDate.getTime())) return false;
-
-    // Compare with current date
-    return endDate < currentDate;
-};
-
-// Use this function to display additional expiration information
-const getSubscriptionStatus = (subscription: UserSubscription): string => {
-    if (!subscription || !subscription.status) return "Unknown";
-
-    if (subscription.status === "cancelled" &&
-        subscription.endDate &&
-        isSubscriptionExpired(subscription.endDate)) {
-        return "Expired";
-    }
-
-    if (subscription.status === "active" &&
-        subscription.endDate &&
-        isSubscriptionExpired(subscription.endDate)) {
-        return "Expired"; // Should be updated to "inactive" in the backend
-    }
-
-    return subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1);
-};
 
 const Subscription: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -84,102 +49,62 @@ const Subscription: React.FC = () => {
     const [unsubscribeLoading, setUnsubscribeLoading] = useState(false);
     const [message, setMessage] = useState('');
 
-    // Define fetchData function outside of useEffect for reuse
     const fetchData = async () => {
         try {
-            // Check for expired subscriptions first
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/check-expired`);
-            console.log('Checked for expired subscriptions');
-    
-            // Load subscription offers
             const offersResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/offers`);
             console.log('Fetched subscription offers:', offersResponse.data);
             setSubscriptionOffers(offersResponse.data);
-    
-            // Get user's email from localStorage
+
             const email = localStorage.getItem('email');
-    
+
             if (email) {
-                // Load user's current subscription using the correct endpoint
                 const subscriptionResponse = await axios.get(
                     `${import.meta.env.VITE_BACKEND_URL}/shop/subscription/user/${email}`
                 );
                 console.log('User subscription data:', subscriptionResponse.data);
-    
-                // Check if there are any subscriptions in the array
+
                 if (subscriptionResponse.data && subscriptionResponse.data.length > 0) {
                     const subscriptions = subscriptionResponse.data;
-    
-                    // Find the most recent active or cancelled subscription
                     const activeSubscription = subscriptions.find((sub: UserSubscription) =>
-                        (sub.status === 'active' || sub.status === 'cancelled') &&
-                        !isSubscriptionExpired(sub.endDate)
+                        sub.status === 'active' || sub.status === 'cancelled'
                     );
-    
-                    if (activeSubscription) {
-                        setUserSubscription(activeSubscription);
-                    } else {
-                        setUserSubscription(null); // No active subscription found
-                    }
+                    setUserSubscription(activeSubscription || null);
                 } else {
-                    setUserSubscription(null); // No subscription found
+                    setUserSubscription(null);
                 }
             }
-    
+
             setIsInitialLoading(false);
-            setLoading(false); // <-- Add this line to fix the issue
+            setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
             setIsInitialLoading(false);
-            setLoading(false); // This is already here
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        // Check initially
         fetchData();
-        
-        // Set up interval for periodic checks (every 30 minutes)
-        const interval = setInterval(() => {
-            axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/check-expired`)
-                .then(() => console.log('Periodic check for expired subscriptions'))
-                .catch(err => console.error('Error in periodic check:', err));
-        }, 30 * 60 * 1000); // 30 minutes
-        
-        return () => clearInterval(interval);
+
+        // Automatically check for expired subscriptions when the page loads
+        checkExpiredSubscriptions();
     }, []);
 
-    useEffect(() => {
-        const handleRouteChange = () => {
-            // Check subscriptions when navigating to this page
-            axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/check-expired`)
-                .then(() => console.log('Checked expired subscriptions on navigation'))
-                .catch(err => console.error('Error checking expirations on navigation:', err));
-        };
-    
-        // Add event listener for route changes (if using React Router)
-        window.addEventListener('popstate', handleRouteChange);
-        
-        return () => {
-            window.removeEventListener('popstate', handleRouteChange);
-        };
-    }, []);  
-
-    // Simulate initial loading screen
-    useEffect(() => {
-        // Simulate loading time
-        setTimeout(() => {
-            setFadeOut(true);
-            setTimeout(() => {
-                setIsInitialLoading(false);
-            }, 500);
-        }, 2000);
-    }, []);
+    const checkExpiredSubscriptions = async () => {
+        setLoading(true);
+        setMessage('');
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/check-expired`);
+        } catch (error: any) {
+            console.error('Error checking expired subscriptions:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handlePlanClick = (plan: PlanDisplay) => {
-        if (plan.title === "Freedom Sword") return; // Don't show modal for free tier
+        if (plan.title === "Freedom Sword") return;
 
-        // If user is already subscribed to this plan, show confirmation to unsubscribe
         if (userSubscription && userSubscription.subscriptionType === plan.title) {
             setSelectedPlan(plan);
             setConfirmUnsubscribe(true);
@@ -188,15 +113,12 @@ const Subscription: React.FC = () => {
 
         console.log('Clicked plan:', plan);
 
-        // Find matching backend data - note the use of offerId and offerName
         const backendPlan = subscriptionOffers.find(offer => offer.offerName === plan.title);
 
         if (backendPlan) {
             console.log('Found matching backend plan:', backendPlan);
-            // Merge frontend display data with backend data
             setSelectedPlan({
                 ...plan,
-                // Use backend offerId as id for the API call
                 offerId: backendPlan.offerId,
                 backendPrice: backendPlan.price,
                 backendDuration: backendPlan.duration
@@ -215,7 +137,6 @@ const Subscription: React.FC = () => {
         setConfirmUnsubscribe(false);
     };
 
-    // Handle subscription purchase
     const handleSubscription = async (selectedDuration: string) => {
         const email = localStorage.getItem('email');
 
@@ -229,7 +150,6 @@ const Subscription: React.FC = () => {
             return;
         }
 
-        // Use offerId from the backend data
         const offerId = selectedPlan.offerId || selectedPlan.id;
 
         if (!offerId) {
@@ -245,7 +165,6 @@ const Subscription: React.FC = () => {
                 duration: selectedDuration.split(" ")[0]
             });
 
-            // Use the full path to the subscription creation endpoint
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscribe`, {
                 email,
                 offerId: offerId
@@ -269,7 +188,6 @@ const Subscription: React.FC = () => {
         }
     };
 
-    // Handle unsubscribe
     const handleUnsubscribe = async () => {
         const email = localStorage.getItem('email');
 
@@ -283,12 +201,11 @@ const Subscription: React.FC = () => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/unsubscribe`, {
                 email,
-                subscriptionId: userSubscription.id // Using the correct id field from the API response
+                subscriptionId: userSubscription.id
             });
 
             console.log('Unsubscribe response:', response.data);
 
-            // Update local subscription state to show cancelled status
             if (userSubscription) {
                 setUserSubscription({
                     ...userSubscription,
@@ -307,17 +224,6 @@ const Subscription: React.FC = () => {
         }
     };
 
-    // Helper function to check if a subscription is expired
-    const isSubscriptionExpired = (dateString: string | null): boolean => {
-        if (!dateString) return false;
-
-        const endDate = new Date(dateString);
-        const currentDate = new Date();
-
-        return endDate < currentDate;
-    };
-
-    // Keep your static plan data for the frontend display
     const displayPlans: PlanDisplay[] = [
         {
             id: "FREE",
@@ -357,27 +263,24 @@ const Subscription: React.FC = () => {
         }
     ];
 
-    // Update button text and color based on user's subscription
     const updatedDisplayPlans = displayPlans.map((plan) => {
         if (!userSubscription || userSubscription.status === "inactive") {
-            // If no subscription exists or the subscription is inactive, "Freedom Sword" is the default
             if (plan.title === "Freedom Sword") {
                 return {
                     ...plan,
                     btnText: "CURRENT PATH",
                     btnColor: "bg-green-600",
-                    isDisabled: true, // Disable clicking
+                    isDisabled: true,
                 };
             }
             return {
                 ...plan,
                 btnText: "EMBARK ON YOUR PATH",
                 btnColor: "bg-black",
-                isDisabled: false, // Allow clicking
+                isDisabled: false,
             };
         }
 
-        // If the user has an active subscription
         if (userSubscription.subscriptionType === plan.title) {
             return {
                 ...plan,
@@ -389,16 +292,15 @@ const Subscription: React.FC = () => {
                     userSubscription.status === "pending" ? "bg-yellow-600" :
                         userSubscription.status === "cancelled" ? "bg-orange-600" :
                             "bg-blue-600",
-                isDisabled: true, // Disable clicking for the current subscription
+                isDisabled: true,
             };
         }
 
-        // For other plans, adjust based on subscription status
         return {
             ...plan,
             btnText: "EMBARK ON YOUR PATH",
             btnColor: "bg-black",
-            isDisabled: false, // Allow clicking
+            isDisabled: false,
         };
     });
 
@@ -406,85 +308,10 @@ const Subscription: React.FC = () => {
         return <LoadingScreen fadeIn={fadeIn} fadeOut={fadeOut} />;
     }
 
-    // Format date for display with more specific information
-    const formatDate = (dateString: string | null) => {
-        if (!dateString) return "N/A";
-
-        const date = new Date(dateString);
-
-        // Check if date is valid
-        if (isNaN(date.getTime())) return "Invalid Date";
-
-        // Format with month name, day, and year
-        return date.toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-    };
-
-    // Add function to display subscription duration information
-    const getSubscriptionDurationInfo = () => {
-        if (!userSubscription || !userSubscription.startDate || !userSubscription.endDate) {
-            return null;
-        }
-
-        const start = new Date(userSubscription.startDate);
-        const end = new Date(userSubscription.endDate);
-
-        // Check if dates are valid
-        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-            return null;
-        }
-
-        // Calculate months difference
-        const monthsDiff =
-            (end.getFullYear() - start.getFullYear()) * 12 +
-            (end.getMonth() - start.getMonth());
-
-        // Adjust for day differences
-        const dayAdjustment = end.getDate() >= start.getDate() ? 0 : -1;
-        const adjustedMonthsDiff = monthsDiff + dayAdjustment;
-
-        // Calculate remaining days
-        let remainingDays = 0;
-        if (end.getDate() >= start.getDate()) {
-            remainingDays = end.getDate() - start.getDate();
-        } else {
-            // Get days in the previous month of the end date
-            const tempDate = new Date(end);
-            tempDate.setDate(0); // Last day of previous month
-            remainingDays = (tempDate.getDate() - start.getDate()) + end.getDate();
-        }
-
-        // Format the duration message
-        let durationText = '';
-        if (adjustedMonthsDiff === 1) {
-            durationText = '1 Month';
-        } else if (adjustedMonthsDiff > 1) {
-            durationText = `${adjustedMonthsDiff} Months`;
-        }
-
-        if (remainingDays > 0) {
-            durationText += durationText ? ` and ${remainingDays} Days` : `${remainingDays} Days`;
-        }
-
-        // Compare with expected duration from subscription
-        const matchesExpected = adjustedMonthsDiff === userSubscription.duration;
-
-        return {
-            durationText,
-            monthsDiff: adjustedMonthsDiff,
-            daysDiff: remainingDays,
-            matchesExpected
-        };
-    };
-
     return (
         <>
             <Navbar />
             <div className="bg-cover min-h-screen p-4" style={{ backgroundImage: 'url(Billings.png)' }}>
-                {/* <Sidebar /> */}
                 <div className="max-w-7xl mx-auto text-center text-white">
                     <h2 className="text-3xl md:text-5xl font-cinzel my-10">Find Your Path</h2>
                     <h4 className="text-lg md:text-xl font-cinzel mb-6">Unlock Your Full Potential</h4>
@@ -496,20 +323,17 @@ const Subscription: React.FC = () => {
                                 <div className="text-left">
                                     <p className="font-bold">{userSubscription.subscriptionType}</p>
                                     <p className="text-sm">Status: <span className={
-                                        isSubscriptionExpired(userSubscription.endDate) ? "text-red-400" :
-                                            userSubscription.status === "active" ? "text-green-400" :
-                                                userSubscription.status === "pending" ? "text-yellow-300" :
-                                                    userSubscription.status === "cancelled" ? "text-orange-300" :
-                                                        userSubscription.status === "inactive" ? "text-gray-400" :
-                                                            "text-gray-300"
+                                        userSubscription.status === "active" ? "text-green-400" :
+                                            userSubscription.status === "pending" ? "text-yellow-300" :
+                                                userSubscription.status === "cancelled" ? "text-orange-300" :
+                                                    "text-gray-300"
                                     }>
-                                        {isSubscriptionExpired(userSubscription.endDate) ? "Expired" :
-                                            userSubscription.status === "cancelled" ? "Cancelled (Access until expiry)" :
-                                                getSubscriptionStatus(userSubscription)}
+                                        {userSubscription.status === "cancelled" ? "Cancelled (Access until expiry)" :
+                                            userSubscription.status}
                                     </span></p>
-                                    <p className="text-sm">Start Date: {formatDate(userSubscription.startDate)}</p>
+                                    <p className="text-sm">Start Date: {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(userSubscription.startDate))}</p>
                                     {userSubscription.endDate && (
-                                        <p className="text-sm">Expiry Date: {formatDate(userSubscription.endDate)}</p>
+                                        <p className="text-sm">Expiry Date: {new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(userSubscription.endDate))}</p>
                                     )}
                                 </div>
                                 {userSubscription.status === "active" && (
@@ -565,7 +389,7 @@ const Subscription: React.FC = () => {
                                     <h2 className="text-black text-center text-2xl font-bold font-playfair">{plan.price}</h2>
                                     <button
                                         className={`w-full text-white p-2 rounded-md mt-4 ${plan.btnColor}`}
-                                        disabled={plan.isDisabled} // Disable the button if the plan is not clickable
+                                        disabled={plan.isDisabled}
                                     >
                                         {plan.btnText}
                                     </button>
@@ -590,7 +414,7 @@ const Subscription: React.FC = () => {
                     ]}
                     plans={[
                         {
-                            id: selectedPlan.offerId || selectedPlan.id, // Use offerId from backend if available
+                            id: selectedPlan.offerId || selectedPlan.id,
                             duration: "1 Month",
                             credit: "Premium Access",
                             cost: selectedPlan.price
@@ -608,17 +432,7 @@ const Subscription: React.FC = () => {
                             You are currently subscribed to {selectedPlan?.title}.
                             {userSubscription?.endDate ? (
                                 <>
-                                    {` Your subscription is active until ${formatDate(userSubscription.endDate)}.`}
-                                    {getSubscriptionDurationInfo() && (
-                                        <span className="block mt-1 text-sm">
-                                            Duration: {getSubscriptionDurationInfo()?.durationText}
-                                            {!getSubscriptionDurationInfo()?.matchesExpected && (
-                                                <span className="text-yellow-500">
-                                                    {` (Expected: ${userSubscription.duration} month${userSubscription.duration !== 1 ? 's' : ''})`}
-                                                </span>
-                                            )}
-                                        </span>
-                                    )}
+                                    {` Your subscription is active until ${userSubscription.endDate}.`}
                                 </>
                             ) : (
                                 ' Your subscription is currently active.'
