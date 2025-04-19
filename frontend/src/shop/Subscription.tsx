@@ -102,10 +102,18 @@ const Subscription: React.FC = () => {
 
                 if (subscriptionResponse.data && subscriptionResponse.data.length > 0) {
                     const subscriptions = subscriptionResponse.data;
+                    // Find active subscriptions but don't consider pending as active
                     const activeSubscription = subscriptions.find((sub: UserSubscription) =>
                         sub.status === 'active' || sub.status === 'cancelled'
                     );
-                    setUserSubscription(activeSubscription || subscriptions[0]); // Use the latest subscription if no active/cancelled found
+
+                    // If no active or cancelled subscription found, try to find the last one that isn't pending
+                    const lastNonPendingSubscription = subscriptions.find((sub: UserSubscription) =>
+                        sub.status !== 'pending'
+                    );
+
+                    // Set the active subscription to be displayed, prioritizing active and cancelled
+                    setUserSubscription(activeSubscription || lastNonPendingSubscription || subscriptions[0]);
 
                     // Check if subscription is expired and how long since expiry
                     const latestSubscription = activeSubscription || subscriptions[0];
@@ -168,6 +176,7 @@ const Subscription: React.FC = () => {
         if (plan.title === "Freedom Sword") return;
 
         // Check if the user is currently subscribed to this plan and it's active or cancelled
+        // Don't consider "pending" as a reason to show unsubscribe modal
         if (userSubscription &&
             userSubscription.subscriptionType === plan.title &&
             (userSubscription.status === "active" || userSubscription.status === "cancelled")) {
@@ -176,12 +185,11 @@ const Subscription: React.FC = () => {
             return;
         }
 
-        // Check if the subscription is expired but UI hasn't updated yet
+        // Allow subscribing to plans with pending status (abandoned checkout)
         if (userSubscription &&
             userSubscription.subscriptionType === plan.title &&
-            userSubscription.status === "inactive") {
-            // If expired, allow resubscription
-            console.log('Resubscribing to previously expired plan:', plan);
+            userSubscription.status === "pending") {
+            console.log('Retrying subscription for pending plan:', plan);
         }
 
         console.log('Clicked plan:', plan);
@@ -238,9 +246,11 @@ const Subscription: React.FC = () => {
                 duration: selectedDuration.split(" ")[0]
             });
 
+            // Add flag to clean up any pending subscriptions
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/shop/subscribe`, {
                 email,
-                offerId: offerId
+                offerId: offerId,
+                cleanupPending: true  // Add this flag for backend to handle cleanup
             });
 
             console.log('Subscription API response:', response.data);
@@ -297,10 +307,41 @@ const Subscription: React.FC = () => {
         }
     };
 
+    const cleanupPendingSubscriptions = async () => {
+        const email = localStorage.getItem('email');
+        if (!email) return;
+
+        try {
+            await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/shop/subscription/pending/${email}`);
+            console.log('Cleaned up pending subscriptions');
+        } catch (error) {
+            console.error('Error cleaning up pending subscriptions:', error);
+        }
+    };
+
+    // Update the useEffect hook to call this function
+    useEffect(() => {
+        cleanupPendingSubscriptions(); // Add this line
+        fetchData();
+        checkExpiredSubscriptions();
+
+        // Add scroll event listener for parallax effect
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY;
+            setBackgroundPosition(scrollPosition * 0.5); // Adjust the 0.5 factor to control the parallax speed
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     const updatedDisplayPlans = subscriptionOffers.map((plan) => {
         const formattedPrice = plan.price === "0" || plan.price === "0" || parseFloat(plan.price) === 0 ? "FREE" : plan.price;
 
-        if (!userSubscription || userSubscription.status === "inactive") {
+        // Consider pending as a failed subscription, so user can resubscribe
+        if (!userSubscription ||
+            userSubscription.status === "inactive" ||
+            userSubscription.status === "pending") {
             if (plan.title === "Freedom Sword") {
                 return {
                     ...plan,
@@ -324,8 +365,7 @@ const Subscription: React.FC = () => {
                 ...plan,
                 price: formattedPrice,
                 btnText: userSubscription.status === "active" ? "CURRENT PATH" :
-                    (userSubscription.status === "pending" ? "PENDING ACTIVATION" :
-                        (userSubscription.status === "cancelled" ? "CANCELLED" : "MANAGE SUBSCRIPTION")),
+                    userSubscription.status === "cancelled" ? "CANCELLED" : "MANAGE SUBSCRIPTION",
                 btnColor: "tier-button-subscribed",
                 isDisabled: true,
             };

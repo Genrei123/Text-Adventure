@@ -40,7 +40,7 @@ const getAIModelForSubscription = (subscriptionType: string): string => {
 };
 
 export const createSubscription = async (req: Request, res: Response) => {
-  const { email, offerId } = req.body;
+  const { email, offerId, cleanupPending } = req.body;
 
   if (!email || !offerId) {
     res.status(400).json({ error: 'email and offerId are required' });
@@ -57,20 +57,31 @@ export const createSubscription = async (req: Request, res: Response) => {
       return;
     }
 
+    // If cleanupPending flag is set, remove any pending subscriptions for this user
+    if (cleanupPending) {
+      console.log(`Cleaning up pending subscriptions for email: ${email}`);
+      await Subscriber.destroy({
+        where: {
+          email,
+          status: 'pending'
+        }
+      });
+    }
+
     // Check if the subscriber already has an ACTIVE subscription
-    // Only block new subscription if user has a non-inactive subscription
-    const existingActiveSubscriber = await Subscriber.findOne({ 
-      where: { 
+    // Only block new subscription if user has an active or cancelled subscription
+    const existingActiveSubscriber = await Subscriber.findOne({
+      where: {
         email,
         status: {
-          [Op.notIn]: ['inactive'] // Only block if there's an active/pending/cancelled subscription
+          [Op.in]: ['active', 'cancelled'] // Only block if there's an active/cancelled subscription
         }
-      } 
+      }
     });
 
     if (existingActiveSubscriber) {
-      res.status(400).json({ 
-        error: 'User already has an active subscription. Please cancel current subscription before starting a new one.' 
+      res.status(400).json({
+        error: 'User already has an active subscription. Please cancel current subscription before starting a new one.'
       });
       return;
     }
@@ -180,8 +191,8 @@ export const handleSubscriptionCallback = async (req: Request, res: Response): P
     }
 
     // Extract subscription ID from external_id (removing 'subscription-' prefix)
-    const subscriptionId = external_id.startsWith('subscription-') 
-      ? external_id.substring('subscription-'.length) 
+    const subscriptionId = external_id.startsWith('subscription-')
+      ? external_id.substring('subscription-'.length)
       : external_id;
 
     // Find the subscription
@@ -247,7 +258,7 @@ Updated at: ${new Date().toLocaleString()}`);
         console.log(`Warning: User with email ${subscription.email} not found. Model update skipped.`);
       }
 
-      res.status(200).json({ 
+      res.status(200).json({
         message: 'Subscription activated successfully',
         subscription
       });
@@ -283,34 +294,37 @@ Updated at: ${new Date().toLocaleString()}`);
 
 export const getSubscriptionOffers = async (req: Request, res: Response): Promise<void> => {
   try {
-      // Find all available subscription offers
-      const offers = await SubscriptionOffers.findAll();
-      res.status(200).json(offers);
+    // Find all available subscription offers
+    const offers = await SubscriptionOffers.findAll();
+    res.status(200).json(offers);
   } catch (error) {
-      console.error('Error fetching subscription offers:', error);
-      res.status(500).json({ error: 'Failed to fetch subscription offers' });
+    console.error('Error fetching subscription offers:', error);
+    res.status(500).json({ error: 'Failed to fetch subscription offers' });
   }
 };
 
 export const getUserSubscriptions = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email } = req.params;
-    
+
     if (!email) {
       res.status(400).json({ error: 'Email parameter is required' });
       return;
     }
-    
+
+    // First, automatically clean up stale pending subscriptions
+    await cleanupStalePendingSubscriptions(email);
+
     // Find all subscriptions for this user, ordered by most recent first
     const subscriptions = await Subscriber.findAll({
-      where: { 
-        email: { [Op.iLike]: email } // Case insensitive email matching
+      where: {
+        email: { [Op.iLike]: email }
       },
       order: [
         ['subscribedAt', 'DESC'] // Most recent subscriptions first
       ]
     });
-    
+
     res.status(200).json(subscriptions);
   } catch (error) {
     console.error('Error fetching user subscriptions:', error);
@@ -331,7 +345,7 @@ export const getActiveSubscription = async (email: string): Promise<Subscriber |
       ['subscribedAt', 'DESC'] // Most recent first
     ]
   });
-  
+
   return subscription;
 };
 
@@ -346,7 +360,7 @@ export const unsubscribeUser = async (req: Request, res: Response): Promise<void
 
     // Find the subscription
     const subscription = await Subscriber.findOne({
-      where: { 
+      where: {
         id: subscriptionId,
         email: { [Op.iLike]: email }
       }
@@ -365,7 +379,7 @@ export const unsubscribeUser = async (req: Request, res: Response): Promise<void
 
     // Update the subscription status to 'cancelled' but keep the record
     // This allows the user to keep access until the end date
-    await subscription.update({ 
+    await subscription.update({
       status: 'cancelled',
       // Keep endDate as is - user will have access until this date
     });
@@ -381,7 +395,7 @@ Access Valid Until: ${subscription.endDate?.toLocaleString() || 'N/A'}`);
     console.log(`-----------------------------------------------------`);
     console.log(` `);
 
-    res.status(200).json({ 
+    res.status(200).json({
       message: 'Subscription successfully cancelled. You will have access until your subscription period ends.',
       subscription
     });
@@ -403,8 +417,8 @@ export const expireSubscription = async (req: Request, res: Response): Promise<v
     console.log('Request Body:', req.body);
 
     // Normalize subscriptionId if it has a prefix
-    const normalizedSubscriptionId = subscriptionId.startsWith('subscription-') 
-      ? subscriptionId.substring('subscription-'.length) 
+    const normalizedSubscriptionId = subscriptionId.startsWith('subscription-')
+      ? subscriptionId.substring('subscription-'.length)
       : subscriptionId;
 
     console.log(`Normalized Subscription ID: ${normalizedSubscriptionId}`);
@@ -412,7 +426,7 @@ export const expireSubscription = async (req: Request, res: Response): Promise<v
 
     // Find the subscription
     const subscription = await Subscriber.findOne({
-      where: { 
+      where: {
         id: normalizedSubscriptionId,
         email: { [Op.iLike]: email },
         status: 'active' // Ensure status is active
@@ -436,7 +450,7 @@ export const expireSubscription = async (req: Request, res: Response): Promise<v
       await subscription.update({ status: 'inactive' });
 
       console.log(`Subscription ${subscriptionId} marked as inactive`);
-      
+
       // Check if this was the user's most recent active subscription
       const newerActiveSubscription = await Subscriber.findOne({
         where: {
@@ -447,14 +461,14 @@ export const expireSubscription = async (req: Request, res: Response): Promise<v
           }
         }
       });
-      
+
       // If no newer active subscription exists, revert the user's model
       if (!newerActiveSubscription) {
         const user = await User.findOne({ where: { email: subscription.email } });
         if (user) {
           const aiModel = getAIModelForSubscription('Freedom Sword');
           await user.update({ model: aiModel });
-          
+
           console.log(`-------------- User Model Reverted --------------`);
           console.log(`User: ${user.email}
 New Model: ${aiModel}
@@ -464,12 +478,12 @@ Updated at: ${new Date().toLocaleString()}`);
         }
       }
 
-      res.status(200).json({ 
+      res.status(200).json({
         message: 'Subscription marked as inactive due to expiration',
         subscription
       });
     } else {
-      res.status(200).json({ 
+      res.status(200).json({
         message: 'Subscription is still active or already marked as inactive',
         subscription
       });
@@ -547,5 +561,82 @@ export const checkForExpiredSubscriptions = async (): Promise<void> => {
     console.log('Scheduled check for expired subscriptions completed successfully.');
   } catch (error) {
     console.error('Error in scheduled expired subscription check:', error);
+  }
+};
+
+// Add this new function to clean up stale pending subscriptions
+const cleanupStalePendingSubscriptions = async (email: string) => {
+  try {
+    // Find pending subscriptions older than 24 hours
+    const oneDayAgo = new Date();
+    oneDayAgo.setHours(oneDayAgo.getHours() - 24);
+
+    const stalePendingSubscriptions = await Subscriber.findAll({
+      where: {
+        email,
+        status: 'pending',
+        subscribedAt: {
+          [Op.lt]: oneDayAgo
+        }
+      }
+    });
+
+    if (stalePendingSubscriptions.length > 0) {
+      console.log(`Found ${stalePendingSubscriptions.length} stale pending subscriptions for email: ${email}`);
+
+      // Get IDs of stale pending subscriptions
+      const stalePendingIds = stalePendingSubscriptions.map(sub => sub.id);
+
+      // Delete them
+      await Subscriber.destroy({
+        where: {
+          id: stalePendingIds
+        }
+      });
+
+      console.log(`Deleted ${stalePendingIds.length} stale pending subscriptions for email: ${email}`);
+    }
+  } catch (error) {
+    console.error('Error cleaning up stale pending subscriptions:', error);
+  }
+};
+
+// Add this new endpoint to clean up pending subscriptions
+export const cleanupPendingSubscriptions = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.params;
+
+    if (!email) {
+      res.status(400).json({ error: 'Email parameter is required' });
+      return;
+    }
+
+    // Find all pending subscriptions for this user
+    const pendingSubscriptions = await Subscriber.findAll({
+      where: {
+        email: { [Op.iLike]: email },
+        status: 'pending'
+      }
+    });
+
+    if (pendingSubscriptions.length === 0) {
+      res.status(200).json({ message: 'No pending subscriptions found for this user' });
+      return;
+    }
+
+    // Delete all pending subscriptions
+    await Subscriber.destroy({
+      where: {
+        email: { [Op.iLike]: email },
+        status: 'pending'
+      }
+    });
+
+    res.status(200).json({
+      message: `Successfully cleaned up ${pendingSubscriptions.length} pending subscriptions for user ${email}`
+    });
+  } catch (error) {
+    console.error('Error cleaning up pending subscriptions:', error);
+    res.status(500).json({ error: 'Failed to clean up pending subscriptions' });
   }
 };

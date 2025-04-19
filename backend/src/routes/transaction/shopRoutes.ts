@@ -20,7 +20,8 @@ import {
   unsubscribeUser,
   handleSubscriptionCallback,
   checkForExpiredSubscriptions,
-  expireSubscription
+  expireSubscription,
+  cleanupPendingSubscriptions  // Add this import
 } from '../../controllers/transaction/subscriptionController';
 
 const router = express.Router();
@@ -66,6 +67,9 @@ router.post('/subscription/check-expired', async (req, res) => {
     res.status(500).json({ error: 'Failed to check expired subscriptions.' });
   }
 });
+
+// Route for cleaning up pending subscriptions
+router.delete('/subscription/pending/:email', cleanupPendingSubscriptions);
 
 // Route for fetching token limits
 router.get('/token-limits', getTokenLimits);
