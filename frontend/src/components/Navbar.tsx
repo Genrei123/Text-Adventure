@@ -29,10 +29,10 @@ interface Player {
   profile_image?: string;
 }
 
-interface NavbarProps {}
+interface NavbarProps { }
 
 const Navbar: React.FC<NavbarProps> = () => {
-  const {handleLogout, username, setUsername } = useNavbar();
+  const { handleLogout, username, setUsername } = useNavbar();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<(Game | Player)[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -105,7 +105,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         if (response.data) {
           setUsername(response.data.username);
 
-          if (response.data.image_url != null) { 
+          if (response.data.image_url != null) {
             setProfilePicture(import.meta.env.VITE_SITE_URL + response.data.image_url);
           }
         }
@@ -490,7 +490,12 @@ const Navbar: React.FC<NavbarProps> = () => {
                             </Link>
                           </li>
                           <li>
-                          <button onClick={openLogoutModal}>Logout</button>
+                            <Link to="/shop">
+                              <a>Buy Weavels</a>
+                            </Link>
+                          </li>
+                          <li>
+                            <button onClick={openLogoutModal}>Logout</button>
                           </li>
                         </ul>
                       </div>
@@ -514,7 +519,7 @@ const Navbar: React.FC<NavbarProps> = () => {
               </div>
             )}
           </div>
-          <LogoutModal    
+          <LogoutModal
             isOpen={showLogoutModal}
             onClose={closeLogoutModal}
             onLogout={handleLogout}

@@ -18,7 +18,10 @@ import {
   getSubscriptionOffers, 
   getUserSubscriptions,
   unsubscribeUser,
-  handleSubscriptionCallback
+  handleSubscriptionCallback,
+  checkForExpiredSubscriptions,
+  expireSubscription,
+  cleanupPendingSubscriptions  // Add this import
 } from '../../controllers/transaction/subscriptionController';
 
 const router = express.Router();
@@ -52,6 +55,21 @@ router.get('/subscription/user/:email', getUserSubscriptions);
 
 // Subscription webhook callback
 router.post('/subscription/callback', handleSubscriptionCallback);
+
+// Route for expiring a subscription
+router.post('/subscription/expire', expireSubscription);
+router.post('/subscription/check-expired', async (req, res) => {
+  try {
+    await checkForExpiredSubscriptions();
+    res.status(200).json({ message: 'Expired subscriptions checked successfully.' });
+  } catch (error) {
+    console.error('Error checking expired subscriptions:', error);
+    res.status(500).json({ error: 'Failed to check expired subscriptions.' });
+  }
+});
+
+// Route for cleaning up pending subscriptions
+router.delete('/subscription/pending/:email', cleanupPendingSubscriptions);
 
 // Route for fetching token limits
 router.get('/token-limits', getTokenLimits);

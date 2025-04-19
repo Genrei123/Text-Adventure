@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import CoinStore from "../subscription/CoinStore";
+import CoinStore from "../shop/CoinStore";
 import { useNavigate } from "react-router-dom";
 
 interface GameHeaderProps {

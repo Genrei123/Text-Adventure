@@ -13,8 +13,8 @@ dotenv.config();
 
 // Constants for return URLs
 const FRONTEND_URL = process.env.FRONTEND_URL;
-const SUCCESS_RETURN_URL = `${FRONTEND_URL}/game`;
-const FAILURE_RETURN_URL = `${FRONTEND_URL}/game`;
+const SUCCESS_RETURN_URL = `${FRONTEND_URL}/shop?status=success`;
+const FAILURE_RETURN_URL = `${FRONTEND_URL}/shop?status=failure`;
 
 // Function to generate a random 6-character alphanumeric string
 const generateRandomId = () => {
@@ -97,11 +97,11 @@ export const addCoinsToUser = async (userId: string | number, tokens: number): P
     if (!user) {
       throw new Error('User not found');
     }
-    
+
     // Add tokens to the user's account
     user.totalCoins = (user.totalCoins || 0) + tokens;
     await user.save();
-    
+
     console.log(`Added ${tokens} tokens to user ${userId}. New balance: ${user.totalCoins}`);
   } catch (error: any) {
     console.error(`Failed to add tokens to user: ${error.message}`);
@@ -114,35 +114,35 @@ export const addCoinsToUser = async (userId: string | number, tokens: number): P
 export const deductCoins = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, userId, weavel = true, type = "interaction" } = req.body;
-    
+
     if (!email) {
       res.status(400).json({ error: 'Email is required' });
       return;
     }
-    
+
     // Fetch user details
     const user = await getUserDetailsByEmail(email);
-    
+
     // SAGE Weavel system: always deducts exactly 1 coin per interaction
     const WEAVEL_COST = 1;
     const coinsToDeduct = WEAVEL_COST;
-    
+
     console.log(`Deducting fixed Weavel cost for user ${user.id}: ${coinsToDeduct} coins for ${type}`);
-    
+
     // Check if user has enough coins
     if (user.totalCoins < coinsToDeduct) {
-      res.status(402).json({ 
-        error: 'Not enough Weavels', 
-        required: coinsToDeduct, 
-        available: user.totalCoins 
+      res.status(402).json({
+        error: 'Not enough Weavels',
+        required: coinsToDeduct,
+        available: user.totalCoins
       });
       return;
     }
-    
+
     // Deduct coins
     user.totalCoins -= coinsToDeduct;
     await user.save();
-    
+
     res.json({
       message: 'Weavel deducted successfully',
       coinsDeducted: coinsToDeduct,
@@ -200,8 +200,8 @@ export const buyItem = async (req: Request, res: Response) => {
       order_id: orderId,
       email: email,
       client_reference_id: invoice.id || 'N/A',
-      order_details: { 
-        itemId, 
+      order_details: {
+        itemId,
         itemName: item.name,
         paymentLink
       },
@@ -255,7 +255,7 @@ Error: ${error.message}`);
 
 // New function to purchase token packages
 export const buyTokenPackage = async (req: Request, res: Response) => {
-  const { packageId, email } = req.body;
+  const { packageId, email, gameId } = req.body;  // Accept gameId from the request
 
   let tokenPackage;
   let user;
@@ -291,14 +291,23 @@ export const buyTokenPackage = async (req: Request, res: Response) => {
       orderId = `token-${packageId}-${tokenPackage.name}-${user.username}-${date}-${randomId}`;
     }
 
+    // Create dynamic return URLs that include the gameId if provided
+    const successUrl = gameId
+      ? `${FRONTEND_URL}/shop?status=success&gameId=${gameId}&cleared=true&tokens=${tokenPackage.tokens}`
+      : `${FRONTEND_URL}/shop?status=success&cleared=true&tokens=${tokenPackage.tokens}`;
+
+    const failureUrl = gameId
+      ? `${FRONTEND_URL}/shop?status=failure&gameId=${gameId}`
+      : `${FRONTEND_URL}/shop?status=failure`;
+
     // Create an invoice using Xendit Invoice API
     const invoiceData = {
       externalId: orderId,
-      amount: price, // Use integer price
+      amount: price,
       payerEmail: email,
-      description: `Purchase of ${tokenPackage.name} (${tokenPackage.tokens + tokenPackage.bonus} tokens)`,
-      successRedirectUrl: SUCCESS_RETURN_URL,
-      failureRedirectUrl: FAILURE_RETURN_URL,
+      description: `Purchase of ${tokenPackage.name} (${tokenPackage.tokens} tokens)`,
+      successRedirectUrl: successUrl,  // Use dynamic URL
+      failureRedirectUrl: failureUrl,  // Use dynamic URL
       currency: tokenPackage.currency,
     };
 
@@ -394,17 +403,17 @@ Error: ${error.message}`);
 // New endpoint to get order history for a user
 export const getUserOrderHistory = async (req: Request, res: Response): Promise<any> => {
   const { email } = req.query;
-  
+
   if (!email) {
     return res.status(400).json({ error: 'Email is required' });
   }
-  
+
   try {
     const orders = await Order.findAll({
       where: { email: email as string },
       order: [['createdAt', 'DESC']]
     });
-    
+
     res.status(200).json(orders);
   } catch (error: any) {
     console.error('Error fetching order history:', error.message);
@@ -416,7 +425,7 @@ export const getUserOrderHistory = async (req: Request, res: Response): Promise<
 export const getTokenLimits = async (req: Request, res: Response): Promise<void> => {
   try {
     const { getTokenLimits } = require('../../utils/tokenValidator');
-    
+
     res.json(getTokenLimits());
   } catch (error: any) {
     console.error('Error getting token limits:', error);
