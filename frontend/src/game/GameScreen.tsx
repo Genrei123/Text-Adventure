@@ -813,12 +813,12 @@ const GameScreen: React.FC = () => {
               </button>
             </div>
 
-            <button
+            {/* <button
               onClick={() => setShowDescription(!showDescription)}
               className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || "#634630"}] text-white hover:bg-[#311F17] transition-colors`}
             >
               {showDescription ? "Hide Description" : "Show Description"}
-            </button>
+            </button> */}
 
             <button
               onClick={() => setShowEndStoryModal(true)}
