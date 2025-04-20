@@ -899,7 +899,7 @@ const GameScreen: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-[#1E1E1E] p-6 rounded-lg max-w-md w-full">
             <img
-              src={gameDetails?.image_data || "/warhammer.jpg"}
+              src={import.meta.env.VITE_SDXL_ENV + gameDetails?.image_data || import.meta.env.VITE_SITE_URL + gameDetails?.image_data}
               alt="Game Description"
               className="w-full h-48 object-cover rounded-lg"
             />
@@ -1147,7 +1147,7 @@ const GameScreen: React.FC = () => {
               >
                 {gameSummary && gameSummary.imageUrl ? (
                   <img
-                    src={getImageUrl(gameSummary.imageUrl)}
+                    src={import.meta.env.VITE_SITE_URL + gameSummary.imageUrl}
                     alt="Game Summary"
                     className="w-full h-full object-cover rounded-lg"
                     onError={(e) => {
