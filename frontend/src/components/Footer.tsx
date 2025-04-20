@@ -20,13 +20,6 @@ const Footer = () => {
           <p className="text-lg md:text-xl text-white font-cinzel">Bred Series @2024</p>
         </div>
 
-        {/* Owl Image */}
-        <img 
-          src="/owl.png" 
-          alt="Owl" 
-          className="w-[250px] md:w-[400px] lg:w-[550px] h-auto object-contain md:absolute md:right-10 lg:right-40 md:top-[-50px] lg:top-[-80px] z-0"
-        />
-
         {/* Right-side links */}
         <div className="flex flex-col items-center md:items-start md:absolute md:right-10 lg:right-40 md:top-24 text-lg md:text-xl font-playfair mt-4 md:mt-0">
           <Link to="/about" className="mb-2 cursor-pointer hover:underline hover:text-white">About Us</Link>
@@ -48,6 +41,7 @@ const Footer = () => {
         </div>
       </div>
       
+      {/* Removed the owl from here and moved it to FooterLine */}
       <FooterLine className="z-10" />
     </footer>
   );
