@@ -26,7 +26,7 @@ interface Player {
   id: number;
   username: string;
   display_name?: string;
-  profile_image?: string;
+  image_url?: string;
 }
 
 interface NavbarProps { }
@@ -226,7 +226,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       // Game suggestion
       return item.image_data ? (
         <img
-          src={item.image_data}
+          src={import.meta.env.VITE_SITE_URL + item.image_data}
           alt={`${item.title} icon`}
           className="w-full h-full object-cover"
         />
@@ -239,7 +239,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       // Player suggestion
       return item.profile_image ? (
         <img
-          src={item.profile_image}
+          src={import.meta.env.VITE_SITE_URL + item.profile_image}
           alt={`${item.username} avatar`}
           className="w-full h-full object-cover"
         />
