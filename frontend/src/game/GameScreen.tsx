@@ -751,7 +751,7 @@ const GameScreen: React.FC = () => {
                     {msg.image_url && (
                       <div className={`mt-2 ${msg.isUser ? "text-right" : "text-left"}`}>
                         <img
-                          src={getImageUrl(msg.image_url)}
+                          src={import.meta.env.VITE_SDXL_ENV + "/" + msg.image_url}
                           alt="Generated"
                           className="max-w-full md:max-w-md lg:max-w-lg h-auto rounded-lg inline-block"
                           loading="lazy"
