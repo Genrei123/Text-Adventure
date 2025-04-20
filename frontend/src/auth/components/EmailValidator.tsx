@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
 import axiosInstance from '../../../config/axiosConfig';
 import ValidationMessage from './ValidationMessage';
 import debounce from 'lodash/debounce';
 import { ValidationUtils } from '../utils/ValidationUtils';
-import { FaChevronDown } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 interface EmailValidatorProps {
   email: string;
@@ -16,6 +15,7 @@ interface EmailValidatorProps {
 
 // Common email providers
 const EMAIL_PROVIDERS = [
+  // Major global providers
   'gmail.com',
   'yahoo.com',
   'outlook.com',
@@ -25,7 +25,37 @@ const EMAIL_PROVIDERS = [
   'protonmail.com',
   'mail.com',
   'zoho.com',
-  'yandex.com'
+  'yandex.com',
+  'gmx.com',
+  'me.com',
+  'msn.com',
+  'live.com',
+  'comcast.net',
+  'att.net',
+  'verizon.net',
+  'ymail.com',
+  'fastmail.com',
+  'hushmail.com',
+  'tutanota.com',
+  'pm.me',
+  'mail.ru',
+  'qq.com',
+  'naver.com',
+  'daum.net',
+  '163.com',
+  '126.com',
+  'sina.com',
+  'rediffmail.com',
+  'inbox.com',
+  'rocketmail.com',
+  'zoho.in',
+  'proton.me',
+  // Popular education and work domains (for flexibility, but not exhaustive)
+  'edu.com',
+  'edu.au',
+  'ac.uk',
+  'student.edu',
+  // Add more as needed for your user base
 ];
 
 const EmailValidator: React.FC<EmailValidatorProps> = ({
@@ -39,41 +69,33 @@ const EmailValidator: React.FC<EmailValidatorProps> = ({
   const [validationMessage, setValidationMessage] = useState<string>('');
   const [isValid, setIsValid] = useState(true);
   const [touched, setTouched] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
-  
-  // Split email into username and domain parts
-  const [username, setUsername] = useState('');
-  const [domain, setDomain] = useState(EMAIL_PROVIDERS[0]);
-  
-  // Update email when username or domain changes
-  useEffect(() => {
-    if (username) {
-      const newEmail = `${username}@${domain}`;
-      onChange(newEmail);
-    }
-  }, [username, domain, onChange]);
-  
-  // Parse email into username and domain when email prop changes from outside
-  useEffect(() => {
-    if (email && email.includes('@') && !touched) {
-      const [localPart, domainPart] = email.split('@');
-      setUsername(localPart);
-      
-      // If domain is in our list, select it, otherwise keep current selection
-      if (domainPart && EMAIL_PROVIDERS.includes(domainPart)) {
-        setDomain(domainPart);
-      }
-    }
-  }, [email]);
 
-  // Update the debouncedCheck function
+  // Remove username/domain split and dropdown logic
+
+  // Debounced async check for email availability
   const debouncedCheck = useCallback(
     debounce(async (email: string) => {
+      if (!email) {
+        setValidationMessage('Email is required');
+        setIsValid(false);
+        onAvailabilityChange(false);
+        return;
+      }
       const validation = ValidationUtils.email(email);
       if (!validation.isValid) {
         setValidationMessage(validation.message);
         setIsValid(false);
         onAvailabilityChange(false);
+        return;
+      }
+
+      // Check provider
+      const domain = email.split('@')[1];
+      if (!domain || !EMAIL_PROVIDERS.includes(domain)) {
+        setValidationMessage('Email provider not available');
+        setIsValid(false);
+        onAvailabilityChange(false);
+        toast.error('Email provider not available');
         return;
       }
 
@@ -112,86 +134,46 @@ const EmailValidator: React.FC<EmailValidatorProps> = ({
     };
   }, [email, touched, debouncedCheck]);
 
-  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(e.target.value);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    onChange(value);
     setTouched(true);
+    if (!value) {
+      setValidationMessage('Email is required');
+      setIsValid(false);
+      onAvailabilityChange(false);
+    }
   };
-  
-  const handleDomainChange = (selectedDomain: string) => {
-    setDomain(selectedDomain);
-    setShowDropdown(false);
-    setTouched(true);
-  };
-  
+
   const handleInputBlur = () => {
     onBlur();
-    // Close dropdown when input loses focus, but with a small delay
-    // to allow clicking on dropdown items
-    setTimeout(() => {
-      setShowDropdown(false);
-    }, 200);
   };
 
   return (
     <div className="relative">
       <div className="relative flex">
-        {/* Username part of email */}
-        <div className="flex-grow relative">
-          <input
-            type="text"
-            value={username}
-            onChange={handleUsernameChange}
-            onBlur={handleInputBlur}
-            className={`${className} rounded-r-none border-r-0`}
-            placeholder="Username"
-          />
-          {/* Loading spinner - moved to username field */}
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            {isChecking ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-[#8B7355] border-t-transparent" />
-            ) : touched && (
-              <ValidationMessage
-                message=""
-                isValid={isValid}
-                show={false}
-                inline={true}
-              />
-            )}
-          </div>
-        </div>
-        
-        {/* @ symbol */}
-        <div className="flex items-center justify-center bg-[#3D2E22] px-2 text-[#8B7355]">
-          @
-        </div>
-        
-        {/* Domain part with dropdown */}
-        <div className="relative">
-          <div 
-            className={`${className} rounded-l-none flex items-center justify-between cursor-pointer min-w-[140px]`}
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            <span className="mr-2">{domain}</span>
-            <FaChevronDown size={12} className="text-[#8B7355]" />
-          </div>
-          
-          {/* Dropdown menu */}
-          {showDropdown && (
-            <div className="absolute z-10 w-full mt-1 bg-[#2A2A2A] border border-[#3D2E22] rounded max-h-60 overflow-y-auto">
-              {EMAIL_PROVIDERS.map((provider) => (
-                <div
-                  key={provider}
-                  className="px-3 py-2 hover:bg-[#3D2E22] cursor-pointer text-white text-sm"
-                  onClick={() => handleDomainChange(provider)}
-                >
-                  {provider}
-                </div>
-              ))}
-            </div>
+        <input
+          type="email"
+          value={email}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          className={`${className} w-full`}
+          placeholder="username@email.com"
+        />
+        {/* Loading spinner */}
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+          {isChecking ? (
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-[#8B7355] border-t-transparent" />
+          ) : touched && (
+            <ValidationMessage
+              message=""
+              isValid={isValid}
+              show={false}
+              inline={true}
+            />
           )}
         </div>
       </div>
-      
       <div className="min-h-[1.5rem]">
         {touched && !isChecking && validationMessage && (
           <ValidationMessage
