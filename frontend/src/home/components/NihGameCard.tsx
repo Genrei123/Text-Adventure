@@ -69,12 +69,13 @@ const NihGameCard: React.FC<NihGameCardProps> = ({ userId: propUserId }) => {
       <div className="px-2">
         <div className="relative w-[80%] h-[400px] rounded-lg overflow-hidden mb-8 mx-auto group">
           {/* Default Background Image */}
-          <div
-            className="absolute inset-0 w-full h-full bg-cover bg-center transition-all duration-300"
+            <div
+            className="absolute inset-0 w-full h-full bg-cover transition-all duration-300"
             style={{
-              backgroundImage: `url('/images/default-bg.jpg')`,
+              backgroundImage: `url('nih.png')`,
+              backgroundPosition: window.innerWidth < 768 ? 'left' : 'center',
             }}
-          ></div>
+            ></div>
 
           {/* Hover Background Image */}
           <div
@@ -90,10 +91,10 @@ const NihGameCard: React.FC<NihGameCardProps> = ({ userId: propUserId }) => {
           {/* Content */}
           <div className="absolute bottom-16 right-12 max-w-md text-right z-10 text-white drop-shadow-lg">
             <h3 className="text-3xl md:text-5xl font-cinzel font-extrabold text-[#F1E3C6] mb-4">
-              Your NIH Adventure Awaits
+            Uncover the Secrets of Nih
             </h3>
             <p className="text-lg md:text-2xl font-playfair font-bold text-[#FFFBEA] mb-4">
-              Explore this unique adventure and uncover its secrets.
+            Mystery surrounds you. Will you be the one to unveil the truth?
             </p>
 
             {/* Button */}
