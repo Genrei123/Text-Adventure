@@ -1,0 +1,198 @@
+/* Add this to your CSS or in a style tag */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    /* Image container with tier-specific background colors */
+    .tier-image-bronze {
+        @apply bg-[#cd7f32];
+    }
+
+    .tier-image-silver {
+        @apply bg-[#c0c0c0];
+    }
+
+    .tier-image-gold {
+        @apply bg-[#ffd700];
+    }
+
+    .tier-image-platinum {
+        @apply bg-[#e5e4e2];
+    }
+
+    /* Main card container with border and hover effects */
+    .tier-card {
+        @apply border-4 rounded-lg transition-all duration-300;
+    }
+
+    .tier-card-bronze {
+        @apply border-[#cd7f32] hover:shadow-[0_0_15px_5px_rgba(205,127,50,0.5)];
+    }
+
+    .tier-card-silver {
+        @apply border-[#c0c0c0] hover:shadow-[0_0_20px_8px_rgba(192,192,192,0.6)];
+    }
+
+    .tier-card-gold {
+        @apply border-[#ffd700] hover:shadow-[0_0_25px_10px_rgba(255,215,0,0.5)];
+    }
+
+    .tier-card-platinum {
+        @apply border-[#6276ac] hover:shadow-[0_0_25px_10px_rgba(160,180,220,0.6)];
+    }
+
+    .tier-title-bronze {
+        @apply text-[#cd7f32];
+    }
+
+    .tier-title-silver {
+        @apply text-[#757575];
+    }
+
+    .tier-title-gold {
+        @apply text-[#ffd700];
+    }
+
+    .tier-title-platinum {
+        @apply text-[#6276ac] drop-shadow-md;
+    }
+
+    /* Text container styling to ensure it reaches the bottom corners */
+    .tier-text-container {
+        @apply bg-white w-full flex-1;
+    }
+
+    /* Button state styles for subscription status */
+    .tier-button-unsubscribed {
+        @apply bg-[#B39C7D] hover:bg-[#9A8569] text-white transition-colors;
+    }
+
+    .tier-button-subscribed {
+        @apply bg-[#3D2E22] hover:bg-[#2A1F17] text-white transition-colors;
+    }
+
+    /* Overlay for better text readability on the background */
+    .background-overlay {
+        @apply relative;
+    }
+
+    .background-overlay::before {
+        content: '';
+        @apply absolute inset-0 bg-black bg-opacity-40 z-0;
+    }
+
+    .background-overlay > * {
+        @apply relative z-10;
+    }
+
+    /* Subscription status box with enhanced border */
+    .subscription-status-gold {
+        @apply relative overflow-hidden;
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    /* Gold gleam effect that moves across the container */
+    .gold-gleam {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+        animation: gleam-sweep 5s infinite ease-in-out;
+    }
+
+    @keyframes gleam-sweep {
+        0% { left: -100%; }
+        50% { left: 100%; }
+        100% { left: 100%; }
+    }
+
+    /* Golden corner decorations */
+    .corner-decoration {
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        z-index: 10;
+    }
+
+    .corner-decoration-tl {
+        top: 0;
+        left: 0;
+        border-top: 2px solid #ffd700;
+        border-left: 2px solid #ffd700;
+    }
+
+    .corner-decoration-tr {
+        top: 0;
+        right: 0;
+        border-top: 2px solid #ffd700;
+        border-right: 2px solid #ffd700;
+    }
+
+    .corner-decoration-bl {
+        bottom: 0;
+        left: 0;
+        border-bottom: 2px solid #ffd700;
+        border-left: 2px solid #ffd700;
+    }
+
+    .corner-decoration-br {
+        bottom: 0;
+        right: 0;
+        border-bottom: 2px solid #ffd700;
+        border-right: 2px solid #ffd700;
+    }
+
+    /* Glowing title for subscription status */
+    .subscription-title {
+        @apply font-cinzel mb-2 text-xl;
+        color: #ffd700;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+    }
+
+    /* Fancy badge for active subscription */
+    .active-badge {
+        @apply absolute -top-4 -right-4 px-2 py-1 text-xs font-bold rounded-full border-2 z-20;
+        background: linear-gradient(135deg, #B8860B, #FFD700, #B8860B);
+        border-color: #FFD700;
+        color: white;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+        transform: scale(1.2);
+    }
+
+    /* Animated button for subscription management */
+    .manage-subscription-btn {
+        @apply relative px-4 py-2 bg-red-600 text-white rounded-md overflow-hidden;
+        transition: all 0.3s ease;
+    }
+
+    .manage-subscription-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    }
+
+    .btn-shine {
+        @apply absolute inset-0 opacity-30;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.8),
+            transparent
+        );
+        left: -100%;
+        animation: btn-shine 2s infinite;
+    }
+
+    @keyframes btn-shine {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+}
