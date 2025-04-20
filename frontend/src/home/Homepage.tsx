@@ -9,6 +9,7 @@ import StartAdventure from "./components/StartAdventure";
 import GameList from "./components/GameList";
 import { useLoading } from '../context/LoadingContext';
 import LoadingScreen from "../components/LoadingScreen";
+import NihGameCard from "./components/NihGameCard";
 
 interface HomepageProps {
   onLogout: () => void;
@@ -127,7 +128,8 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
             onCreateStory={() => navigateWithLoading("/game-creation")}
             onBrowse={() => navigateWithLoading("/browse-stories")}
           />
-
+          
+          <NihGameCard />
           <GameList />
 
           {/* <div>

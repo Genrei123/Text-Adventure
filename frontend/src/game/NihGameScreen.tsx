@@ -1,9 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import axiosInstance from '../../config/axiosConfig'; // Adjust path as needed
+import axiosInstance from '../../config/axiosConfig';
 import Sidebar from '../components/Sidebar';
 import GameHeader from '../components/GameHeader';
-import ActionButton from './components/ActionButton'; // Adjust path as needed
+import ActionButton from './components/ActionButton';
+
+// Define interfaces
+interface Item {
+  id: string;
+  name: string;
+  description: string;
+  usableOn: string[];
+}
+
+interface Location {
+  id: string;
+  name: string;
+  description: string;
+  exits: Record<string, string>;
+}
+
+interface GameState {
+  locationId: string;
+  locationDetails: Location;
+  inventory: Item[];
+  moveCount?: number;
+  movesLeft?: number;
+  gameCompleted?: boolean;
+}
+
+interface GameMessage {
+  content: string;
+  isUser: boolean;
+  timestamp: string;
+}
 
 const NihGameScreen: React.FC = () => {
   const { id: gameId } = useParams();
@@ -17,6 +47,10 @@ const NihGameScreen: React.FC = () => {
   const [chatInput, setChatInput] = useState('');
   const [hasTypedInput, setHasTypedInput] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const [gameSummary, setGameSummary] = useState('');
+  const [moveCount, setMoveCount] = useState(0);
+  const [movesLeft, setMovesLeft] = useState(30);
 
   useEffect(() => {
     const userData = localStorage.getItem('userData');
@@ -35,26 +69,11 @@ const NihGameScreen: React.FC = () => {
   useEffect(() => {
     if (!playerId || !gameId) return;
 
-    const fetchGameState = async () => {
-      try {
-        const response = await axiosInstance.get(`/nih/game/${gameId}/player/${playerId}/state`);
-        const { locationId, locationDetails, inventory } = response.data.state;
-        setGameState({ locationId, locationDetails, inventory });
-        setGameMessages((prev) => [
-          ...prev,
-          {
-            content: `You are in ${locationDetails.name}: ${locationDetails.description}. Inventory: ${inventory.map((i: Item) => i.name).join(', ') || 'empty'}`,
-            isUser: false,
-            timestamp: new Date().toLocaleTimeString(),
-          },
-        ]);
-      } catch (error) {
-        console.error('Error fetching game state:', error);
-        setError('Failed to load game state.');
-      }
-    };
-
-    fetchGameState();
+    // Start a new game when component mounts
+    startNewGame();
+    
+    // Fetch inventory to ensure it's properly initialized
+    fetchInventory();
   }, [playerId, gameId]);
 
   useEffect(() => {
@@ -63,12 +82,123 @@ const NihGameScreen: React.FC = () => {
     }
   }, [gameMessages]);
 
+  // Add function to fetch inventory
+  const fetchInventory = async () => {
+    try {
+      if (!playerId || !gameId) return;
+      
+      const response = await axiosInstance.get(`/nih/game/${gameId}/player/${playerId}/inventory`);
+      const { inventory } = response.data;
+      
+      if (gameState) {
+        setGameState({
+          ...gameState,
+          inventory: inventory || []
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching inventory:', error);
+    }
+  };
+
+  // New function to start a new game
+  const startNewGame = async () => {
+    try {
+      if (!playerId || !gameId) return;
+      
+      const response = await axiosInstance.post(`/nih/game/${gameId}/player/${playerId}/start-new-game`);
+      const { location, narration, moveCount: newMoveCount } = response.data;
+      
+      setGameState({ 
+        locationId: location.id, 
+        locationDetails: location, 
+        inventory: [], // Will be updated by fetchInventory
+        moveCount: newMoveCount || 0,
+        movesLeft: 30 - (newMoveCount || 0),
+        gameCompleted: false
+      });
+      
+      setMoveCount(newMoveCount || 0);
+      setMovesLeft(30 - (newMoveCount || 0));
+      setGameMessages([{
+        content: narration.content,
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString(),
+      }]);
+      
+      // Reset other state variables
+      setShowSummaryModal(false);
+      setGameSummary('');
+      setError('');
+      setSuccess('');
+      
+      // Fetch inventory immediately after starting new game
+      fetchInventory();
+    } catch (error) {
+      console.error('Error starting new game:', error);
+      setError('Failed to start new game.');
+    }
+  };
+
+  // New function to end game early
+  const endGameEarly = async () => {
+    try {
+      if (!playerId || !gameId) {
+        setError('Player ID or Game ID not found. Please log in again.');
+        return;
+      }
+
+      const userMessage = {
+        content: `[End Game] Ending game early`,
+        isUser: true,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+      setGameMessages((prev) => [...prev, userMessage]);
+
+      const response = await axiosInstance.post(`/nih/game/${gameId}/player/${playerId}/end-game-early`);
+      const { summary, moveCount: finalMoveCount } = response.data;
+      
+      setMoveCount(finalMoveCount);
+      setMovesLeft(0);
+      setGameSummary(summary);
+      setShowSummaryModal(true);
+      
+      if (gameState) {
+        setGameState({
+          ...gameState,
+          moveCount: finalMoveCount,
+          movesLeft: 0,
+          gameCompleted: true
+        });
+      }
+      
+      setGameMessages((prev) => [
+        ...prev,
+        { 
+          content: `Game ended after ${finalMoveCount} moves.`, 
+          isUser: false, 
+          timestamp: new Date().toLocaleTimeString() 
+        }
+      ]);
+      
+    } catch (err: any) {
+      console.error(`Error ending game:`, err);
+      setError(err.response?.data?.message || `Failed to end game.`);
+    }
+  };
+
   const handleAction = async (action: string, option?: string) => {
     setError('');
     setSuccess('');
 
     if (!playerId || !gameId) {
       setError('Player ID or Game ID not found. Please log in again.');
+      return;
+    }
+
+    // If game is completed, prevent actions
+    if (gameState?.gameCompleted) {
+      setError('Game is over. Start a new game to continue playing.');
       return;
     }
 
@@ -84,12 +214,33 @@ const NihGameScreen: React.FC = () => {
         const response = await axiosInstance.post(`/nih/game/${gameId}/player/${playerId}/change-location`, {
           direction: option.toLowerCase(),
         });
-        const { location, narration } = response.data;
-        setGameState((prev) => prev ? { ...prev, locationId: location.id, locationDetails: location } : null);
+        const { location, narration, moveCount: newMoveCount, movesLeft: newMovesLeft, gameCompleted, gameSummary } = response.data;
+        
+        setMoveCount(newMoveCount);
+        setMovesLeft(newMovesLeft);
+        
+        setGameState((prev) => prev ? { 
+          ...prev, 
+          locationId: location.id, 
+          locationDetails: location,
+          moveCount: newMoveCount,
+          movesLeft: newMovesLeft,
+          gameCompleted: gameCompleted || false
+        } : null);
+        
         setGameMessages((prev) => [
           ...prev,
-          { content: narration, isUser: false, timestamp: new Date().toLocaleTimeString() },
+          { content: narration.content, isUser: false, timestamp: new Date().toLocaleTimeString() },
         ]);
+        
+        // Check if game is completed and show summary modal
+        if (gameCompleted && gameSummary) {
+          setGameSummary(gameSummary);
+          setShowSummaryModal(true);
+        }
+        
+        // Fetch inventory after move to ensure it's up to date
+        fetchInventory();
       } else if (action === 'Use' && option) {
         const item = gameState?.inventory.find((i) => i.name === option);
         if (!item) {
@@ -99,25 +250,61 @@ const NihGameScreen: React.FC = () => {
           itemId: item.id,
           target: item.usableOn[0] || 'default',
         });
-        const { inventory, narration } = response.data;
-        setGameState((prev) => prev ? { ...prev, inventory } : null);
+        const { inventory, narration, moveCount: newMoveCount, movesLeft: newMovesLeft, gameCompleted, gameSummary } = response.data;
+        
+        setMoveCount(newMoveCount);
+        setMovesLeft(newMovesLeft);
+        
+        setGameState((prev) => prev ? { 
+          ...prev, 
+          inventory,
+          moveCount: newMoveCount,
+          movesLeft: newMovesLeft,
+          gameCompleted: gameCompleted || false
+        } : null);
+        
         setGameMessages((prev) => [
           ...prev,
-          { content: narration, isUser: false, timestamp: new Date().toLocaleTimeString() },
+          { content: narration.content, isUser: false, timestamp: new Date().toLocaleTimeString() },
         ]);
+        
+        // Check if game is completed and show summary modal
+        if (gameCompleted && gameSummary) {
+          setGameSummary(gameSummary);
+          setShowSummaryModal(true);
+        }
       } else if (action === 'Look') {
         const response = await axiosInstance.get(`/nih/game/${gameId}/player/${playerId}/state`);
-        const { locationDetails, inventory } = response.data.state;
-        const content = `You look around ${locationDetails.name}: ${locationDetails.description}. Exits: ${Object.keys(locationDetails.exits).join(', ')}. Inventory: ${inventory.map((i: Item) => i.name).join(', ') || 'empty'}.`;
+        const { locationDetails, inventory, moveCount: newMoveCount, movesLeft: newMovesLeft } = response.data.state;
+        
+        setMoveCount(newMoveCount || moveCount);
+        setMovesLeft(newMovesLeft || movesLeft);
+        
+        // Update inventory in state
+        if (gameState) {
+          setGameState({
+            ...gameState,
+            inventory: inventory || gameState.inventory
+          });
+        }
+        
+        const content = `You look around ${locationDetails.name}: ${locationDetails.description}. Exits: ${Object.keys(locationDetails.exits).join(', ')}. Inventory: ${inventory.map((i: Item) => i.name).join(', ') || 'empty'}. Moves made: ${newMoveCount}, Moves left: ${newMovesLeft}.`;
+        
         setGameMessages((prev) => [
           ...prev,
           { content, isUser: false, timestamp: new Date().toLocaleTimeString() },
         ]);
+      } else if (action === 'StartNew') {
+        await startNewGame();
+        setSuccess('New game started!');
+      } else if (action === 'EndGame') {
+        await endGameEarly();
       } else if (action === 'Exit') {
+        // Keep the original Exit logic
         if (gameState?.locationId === 'real_world') {
           setGameMessages((prev) => [
             ...prev,
-            { content: 'You’ve escaped to the real world. Game Over!', isUser: false, timestamp: new Date().toLocaleTimeString() },
+            { content: "You've escaped to the real world. Game Over!", isUser: false, timestamp: new Date().toLocaleTimeString() },
           ]);
         } else {
           throw new Error('You can only exit from the Real World!');
@@ -133,8 +320,9 @@ const NihGameScreen: React.FC = () => {
     setSelectedAction(null);
   };
 
-  const handleChatSubmit = () => {
-    if (chatInput.trim() === '') return;
+  // Updated to use the chat API endpoint
+  const handleChatSubmit = async () => {
+    if (chatInput.trim() === '' || !playerId || !gameId) return;
 
     if (!hasTypedInput) {
       setHasTypedInput(true);
@@ -144,20 +332,88 @@ const NihGameScreen: React.FC = () => {
       }, 2500);
     }
 
+    const messageText = chatInput.trim();
+    
+    // Add user message to chat display immediately
     const userMessage = {
-      content: chatInput.trim(),
+      content: messageText,
       isUser: true,
       timestamp: new Date().toLocaleTimeString(),
     };
-
     setGameMessages((prev) => [...prev, userMessage]);
-    setChatInput('');
+    setChatInput(''); // Clear input field
+
+    try {
+      // Call the chat API endpoint
+      const response = await axiosInstance.post('/ai/chat', {
+        userId: playerId,
+        gameId: gameId,
+        message: messageText
+      });
+
+      // Add AI response to chat display
+      const aiMessage = {
+        content: response.data.ai_response.content,
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+      setGameMessages((prev) => [...prev, aiMessage]);
+      
+      // Fetch inventory after chat to ensure it's up to date
+      // (in case AI response affects the game state)
+      fetchInventory();
+      
+    } catch (err: any) {
+      console.error('Error sending chat message:', err);
+      setError(err.response?.data?.message || 'Failed to send message.');
+    }
   };
+
+  // JSX for Summary Modal
+  const SummaryModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-[#311F17] text-[#E5D4B3] p-6 rounded-lg w-11/12 md:w-2/3 lg:w-1/2 max-h-[80vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-4">Adventure Summary</h2>
+        <div className="mb-4">
+          <p className="mb-2 z-999">Moves made: {moveCount} / 30</p>
+          <p className="mb-4">Game completed!</p>
+          <div className="border-t border-[#634630] pt-4">
+            <h3 className="text-xl mb-2">Your Story:</h3>
+            <p className="whitespace-pre-line">{gameSummary}</p>
+          </div>
+        </div>
+        <div className="flex justify-end mt-4">
+          <button 
+            onClick={() => {
+              setShowSummaryModal(false);
+              startNewGame();
+            }}
+            className="px-4 py-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17] mr-2"
+          >
+            Start New Game
+          </button>
+          <button 
+            onClick={() => setShowSummaryModal(false)}
+            className="px-4 py-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17]"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#1E1E1E] text-[#E5D4B3] flex flex-col">
       <GameHeader />
       <br /><br /><br />
+
+      {/* Move Counter */}
+      <div className="w-full md:w-1/2 mx-auto text-center my-2 z-50">
+        <div className="bg-[#311F17] text-[#E5D4B3] p-2 rounded-lg inline-block">
+          <span className="font-bold">Moves: {moveCount}/30</span> - <span>{movesLeft} moves remaining</span>
+        </div>
+      </div>
 
       <div className="flex-grow flex justify-center items-center mt-[-5%]">
         <div
@@ -208,21 +464,30 @@ const NihGameScreen: React.FC = () => {
             action="Navigate"
             isSelected={selectedAction === 'Move'}
             onClick={() => setSelectedAction(selectedAction === 'Move' ? null : 'Move')}
+            disabled={gameState?.gameCompleted}
           />
           <ActionButton
             action="Use"
             isSelected={selectedAction === 'Use'}
             onClick={() => setSelectedAction(selectedAction === 'Use' ? null : 'Use')}
+            disabled={gameState?.gameCompleted}
           />
           <ActionButton
             action="Check"
             isSelected={selectedAction === 'Look'}
             onClick={() => handleAction('Look')}
+            disabled={gameState?.gameCompleted}
           />
           <ActionButton
-            action="Exit"
-            isSelected={selectedAction === 'Exit'}
-            onClick={() => handleAction('Exit')}
+            action="End Game"
+            isSelected={selectedAction === 'EndGame'}
+            onClick={() => handleAction('EndGame')}
+            disabled={gameState?.gameCompleted}
+          />
+          <ActionButton
+            action="New Game"
+            isSelected={selectedAction === 'StartNew'}
+            onClick={() => handleAction('StartNew')}
           />
         </div>
 
@@ -236,12 +501,12 @@ const NihGameScreen: React.FC = () => {
         )}
 
         {/* Dynamic Action Options */}
-        {selectedAction === 'Move' && gameState?.locationDetails.exits && (
+        {selectedAction === 'Move' && gameState?.locationDetails.exits && !gameState?.gameCompleted && (
           <div className="flex space-x-4 w-full justify-center md:justify-start flex-wrap">
             {Object.keys(gameState.locationDetails.exits).map((direction) => (
               <button
                 key={direction}
-                className="p-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17]"
+                className="p-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17] m-1"
                 onClick={() => handleAction('Move', direction)}
               >
                 Go {direction}
@@ -250,12 +515,12 @@ const NihGameScreen: React.FC = () => {
           </div>
         )}
 
-        {selectedAction === 'Use' && gameState?.inventory && gameState.inventory.length > 0 && (
+        {selectedAction === 'Use' && gameState?.inventory && gameState.inventory.length > 0 && !gameState?.gameCompleted && (
           <div className="flex space-x-4 w-full justify-center md:justify-start flex-wrap">
             {gameState.inventory.map((item) => (
               <button
                 key={item.id}
-                className="p-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17]"
+                className="p-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17] m-1"
                 onClick={() => handleAction('Use', item.name)}
               >
                 Use {item.name}
@@ -276,16 +541,21 @@ const NihGameScreen: React.FC = () => {
               }}
               className="flex-grow p-2 rounded bg-[#2A2A2A] text-white border border-[#634630] focus:outline-none"
               placeholder="Type your message..."
+              disabled={gameState?.gameCompleted}
             />
             <button
               onClick={handleChatSubmit}
-              className="px-4 py-2 bg-[#634630] text-[#E5D4B3] rounded hover:bg-[#311F17]"
+              className={`px-4 py-2 bg-[#634630] text-[#E5D4B3] rounded hover:bg-[#311F17] ${gameState?.gameCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={gameState?.gameCompleted}
             >
               Send
             </button>
           </div>
         </div>
       </div>
+
+      {/* Summary Modal */}
+      {showSummaryModal && <SummaryModal />}
     </div>
   );
 };
