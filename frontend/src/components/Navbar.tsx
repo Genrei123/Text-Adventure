@@ -237,9 +237,9 @@ const Navbar: React.FC<NavbarProps> = () => {
       );
     } else {
       // Player suggestion
-      return item.profile_image ? (
+      return item.image_url ? (
         <img
-          src={import.meta.env.VITE_SITE_URL + item.profile_image}
+          src={import.meta.env.VITE_SITE_URL + item.image_url}
           alt={`${item.username} avatar`}
           className="w-full h-full object-cover"
         />
