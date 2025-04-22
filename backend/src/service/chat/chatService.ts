@@ -285,8 +285,55 @@ export const getConversationHistory = async (session_id: string, userId: number,
         }));
 };
 
-export const resetConversationHistory = async (session_id: string, userId: number, gameId: number) => {
-    await Chat.destroy({
-        where: { session_id, UserId: userId, GameId: gameId }
-    });
-};
+// Add this function to your chatService.ts file
+
+export const resetConversationHistory = async (
+    sessionId: string,
+    playerId: number,
+    gameId: number
+  ): Promise<void> => {
+    try {
+      // This implementation will depend on how you're storing your chat history
+      // For a database implementation, you might want to:
+      // 1. Delete all existing messages for this session
+      // 2. Or mark them as archived
+      // 3. Or create a new session entirely
+      
+      // Example using a database (assuming you have a ChatMessage model)
+      // await ChatMessage.destroy({
+      //   where: {
+      //     sessionId,
+      //     playerId,
+      //     gameId
+      //   }
+      // });
+      
+      // For a simpler implementation, you could also just create a new session ID
+      // and update your session reference
+      
+      console.log(`Reset conversation history for session ${sessionId}, player ${playerId}, game ${gameId}`);
+      
+      // Create an initial system message for the new game
+      const initialSystemMessage = {
+        role: "system",
+        content: "A new game session has started. The player begins in the Small Village."
+      };
+      
+      // Store the initial system message (use your existing storage method)
+      await storeChatMessage(
+        sessionId, 
+        playerId, 
+        gameId, 
+        "system", 
+        initialSystemMessage.content,
+        "gpt-3.5-turbo", // default model, replace with actual user's model
+        undefined,
+        undefined
+      );
+      
+    } catch (error) {
+      console.error("Error resetting conversation history:", error);
+      throw error;
+    }
+  };
+

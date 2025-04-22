@@ -751,7 +751,7 @@ const GameScreen: React.FC = () => {
                     {msg.image_url && (
                       <div className={`mt-2 ${msg.isUser ? "text-right" : "text-left"}`}>
                         <img
-                          src={getImageUrl(msg.image_url)}
+                          src={import.meta.env.VITE_SDXL_ENV + msg.image_url}
                           alt="Generated"
                           className="max-w-full md:max-w-md lg:max-w-lg h-auto rounded-lg inline-block"
                           loading="lazy"
@@ -813,12 +813,12 @@ const GameScreen: React.FC = () => {
               </button>
             </div>
 
-            <button
+            {/* <button
               onClick={() => setShowDescription(!showDescription)}
               className={`px-2 py-1 md:px-4 md:py-2 rounded-full font-playfair text-xs md:text-base bg-[${gameDetails?.primary_color || "#634630"}] text-white hover:bg-[#311F17] transition-colors`}
             >
               {showDescription ? "Hide Description" : "Show Description"}
-            </button>
+            </button> */}
 
             <button
               onClick={() => setShowEndStoryModal(true)}
@@ -899,7 +899,7 @@ const GameScreen: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-[#1E1E1E] p-6 rounded-lg max-w-md w-full">
             <img
-              src={gameDetails?.image_data || "/warhammer.jpg"}
+              src={import.meta.env.VITE_SDXL_ENV + gameDetails?.image_data || import.meta.env.VITE_SITE_URL + gameDetails?.image_data}
               alt="Game Description"
               className="w-full h-48 object-cover rounded-lg"
             />
@@ -1147,7 +1147,7 @@ const GameScreen: React.FC = () => {
               >
                 {gameSummary && gameSummary.imageUrl ? (
                   <img
-                    src={getImageUrl(gameSummary.imageUrl)}
+                    src={import.meta.env.VITE_SITE_URL + gameSummary.imageUrl}
                     alt="Game Summary"
                     className="w-full h-full object-cover rounded-lg"
                     onError={(e) => {

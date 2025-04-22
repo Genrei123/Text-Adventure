@@ -26,13 +26,13 @@ interface Player {
   id: number;
   username: string;
   display_name?: string;
-  profile_image?: string;
+  image_url?: string;
 }
 
-interface NavbarProps {}
+interface NavbarProps { }
 
 const Navbar: React.FC<NavbarProps> = () => {
-  const {handleLogout, username, setUsername } = useNavbar();
+  const { handleLogout, username, setUsername } = useNavbar();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<(Game | Player)[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -105,7 +105,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         if (response.data) {
           setUsername(response.data.username);
 
-          if (response.data.image_url != null) { 
+          if (response.data.image_url != null) {
             setProfilePicture(import.meta.env.VITE_SITE_URL + response.data.image_url);
           }
         }
@@ -226,7 +226,7 @@ const Navbar: React.FC<NavbarProps> = () => {
       // Game suggestion
       return item.image_data ? (
         <img
-          src={item.image_data}
+          src={import.meta.env.VITE_SITE_URL + item.image_data}
           alt={`${item.title} icon`}
           className="w-full h-full object-cover"
         />
@@ -237,9 +237,9 @@ const Navbar: React.FC<NavbarProps> = () => {
       );
     } else {
       // Player suggestion
-      return item.profile_image ? (
+      return item.image_url ? (
         <img
-          src={item.profile_image}
+          src={import.meta.env.VITE_SITE_URL + item.image_url}
           alt={`${item.username} avatar`}
           className="w-full h-full object-cover"
         />
@@ -490,7 +490,12 @@ const Navbar: React.FC<NavbarProps> = () => {
                             </Link>
                           </li>
                           <li>
-                          <button onClick={openLogoutModal}>Logout</button>
+                            <Link to="/shop">
+                              <a>Buy Weavels</a>
+                            </Link>
+                          </li>
+                          <li>
+                            <button onClick={openLogoutModal}>Logout</button>
                           </li>
                         </ul>
                       </div>
@@ -514,7 +519,7 @@ const Navbar: React.FC<NavbarProps> = () => {
               </div>
             )}
           </div>
-          <LogoutModal    
+          <LogoutModal
             isOpen={showLogoutModal}
             onClose={closeLogoutModal}
             onLogout={handleLogout}

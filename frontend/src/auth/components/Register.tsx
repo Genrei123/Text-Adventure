@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 import axiosInstance from '../../../config/axiosConfig';
@@ -41,6 +41,13 @@ const Register: React.FC<RegisterProps> = ({ }) => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const { navigateWithLoading } = useLoading();
+
+  useEffect(() => {
+    document.body.classList.add('overflow-hidden');
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, []);
 
   const handleRegister = async (formData: {
     username: string;

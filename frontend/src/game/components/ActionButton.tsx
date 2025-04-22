@@ -3,6 +3,7 @@ import React from 'react';
 interface ActionButtonProps {
     action: string;
     isSelected: boolean;
+    disabled?: boolean;
     onClick: () => void;
 }
 
