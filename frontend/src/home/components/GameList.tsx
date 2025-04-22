@@ -78,10 +78,12 @@ const GameList: React.FC = () => {
       {/* Section Header with Line */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center w-full">
-          <h2 className="text-3xl font-cinzel text-[#C8A97E] whitespace-nowrap mr-6">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#C8A97E] to-[#C8A97E]" />
+
+          <h2 className="text-3xl font-cinzel text-[#C8A97E] whitespace-nowrap mr-6 ml-6">
             Available Games
           </h2>
-          <div className="h-1 bg-[#C8A97E] flex-grow"></div>
+          <div className="flex-1 h-px bg-gradient-to-r from-[#C8A97E] via-[#C8A97E] to-transparent" />
         </div>
       </div>
 
@@ -102,14 +104,14 @@ const GameList: React.FC = () => {
           </div>
 
           {/* Sort Dropdown */}
-          {/* <select
+          <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'title' | 'genre')}
             className="px-4 py-3 bg-[#2A2A2A] border border-[#C8A97E] rounded-lg text-[#E5D4B3] focus:outline-none focus:ring-2 focus:ring-[#C8A97E] font-cinzel cursor-pointer"
           >
             <option value="title">Sort from A-Z</option>
             <option value="genre">Sort by Genre</option>
-          </select> */}
+          </select>
         </div>
 
         {/* Genre Filters */}

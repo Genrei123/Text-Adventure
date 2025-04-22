@@ -414,7 +414,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                 )}
 
                 {/* Filters Toggle for Desktop */}
-                {!isMobile && (
+                {/* {!isMobile && (
                   <button
                     onClick={() => setShowFilters(!showFilters)}
                     className="flex items-center text-[#C8A97E] hover:text-[#E5D4B3]"
@@ -425,7 +425,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                       size={20}
                     />
                   </button>
-                )}
+                )} */}
               </div>
             )}
 
