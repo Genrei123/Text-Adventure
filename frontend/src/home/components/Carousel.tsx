@@ -54,6 +54,7 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
 
   return (
     <div className="w-[90%] max-w-8xl mx-auto px-4 md:px-8 my-17 relative">
+      
       <Slider {...carouselSettings}>
         {slides.map((slide, index) => (
           <div key={index} className="px-2 relative">
@@ -63,19 +64,14 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
               }`}
               style={{ transitionDelay: index === currentSlide ? '150ms' : '0ms' }}
             >
-              {/* Blurred Background Image */}
-              <img
-                src={slide.image_data}
-                alt={`${slide.title} background`}
-                className="absolute inset-0 w-full h-full object-cover filter blur-md brightness-50"
-              />
-
               {/* Main Image (Visible) */}
               <img
                 src={slide.image_data}
-                alt={slide.title}
-                className="relative w-full h-full object-cover z-10"
+                
+                alt ={slide.title}
+                className="relative w-full h-full object-cover z-10 brightness-75 opacity-50"
               />
+
 
               {/* Radial Dark Overlay Behind Text */}
               <div className="absolute inset-0 z-30 pointer-events-none">
@@ -88,12 +84,12 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
                 />
               </div>
 
-              {/* Text Content */}
-              <div
-                className={`absolute bottom-4 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-40 text-white drop-shadow-lg px-2 sm:px-0 transition-transform duration-700 ease-in-out ${
+                {/* Text Content */}
+                <div
+                className={`absolute bottom-10 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-40 text-white drop-shadow-lg px-2 sm:px-0 transition-transform duration-700 ease-in-out ${
                   index === currentSlide ? 'translate-x-0' : '-translate-x-10'
                 }`}
-              >
+                >
                 <h3 className="text-2xl sm:text-5xl font-cinzel font-extrabold text-[#F1E3C6] mb-2 sm:mb-4 line-clamp-2">
                   {slide.title}
                 </h3>
@@ -103,7 +99,7 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
 
                 <button
                   onClick={() => handlePlayGame(slide.id)}
-                  className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-base sm:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-transform duration-300 hover:scale-105"
+                  className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-base sm:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-transform duration-300 hover:scale-105 border-2 border-black shadow-[2px_2px_0px_#000,-2px_-2px_0px_#000]"
                 >
                   Play Game
                 </button>
