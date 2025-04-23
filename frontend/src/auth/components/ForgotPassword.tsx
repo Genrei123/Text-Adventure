@@ -16,7 +16,10 @@ const ForgotPassword: React.FC = () => {
     toast.info('Sending reset link...');
 
     try {
-      await axios.post('/auth/forgot-password', { email });
+      // Convert email to lowercase before sending to the API
+      const normalizedEmail = email.toLowerCase().trim();
+      
+      await axios.post('/auth/forgot-password', { email: normalizedEmail });
       toast.success('Reset link sent! Please check your email.');
       setTimeout(() => {
         navigate('/email-confirmation');
@@ -26,6 +29,11 @@ const ForgotPassword: React.FC = () => {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Store the email as is for display, but will be normalized on submit
+    setEmail(e.target.value);
   };
 
   return (
@@ -53,7 +61,7 @@ const ForgotPassword: React.FC = () => {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   className="w-full px-3 py-2 bg-[#2A1F17] border border-[#8B7355] rounded text-sm text-white placeholder-[#8B7355] focus:border-[#C8A97E] focus:outline-none"
                   placeholder="Your email"
                   required
