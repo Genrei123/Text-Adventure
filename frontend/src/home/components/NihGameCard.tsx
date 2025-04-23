@@ -55,15 +55,8 @@ const NihGameCard: React.FC<NihGameCardProps> = ({ userId: propUserId }) => {
   }
 
   return (
-    <div className="w-full max-w-8xl mx-auto px-4 md:px-8 my-17 relative">
-      {/* Top Divider */}
-      <div className="mb-8 w-[80%] mx-auto">
-        <div className="flex items-center gap-4">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#C8A97E] to-[#C8A97E]" />
-          <div className="w-2 h-2 rotate-45 bg-[#C8A97E]" />
-          <div className="flex-1 h-px bg-gradient-to-r from-[#C8A97E] via-[#C8A97E] to-transparent" />
-        </div>
-      </div>
+    <div className="w-full max-w-8xl mx-auto px-4 md:px-8 my-17 relative mb-0">
+      
 
       {/* Main Content */}
       <div className="px-2">
@@ -111,13 +104,13 @@ const NihGameCard: React.FC<NihGameCardProps> = ({ userId: propUserId }) => {
       </div>
 
       {/* Bottom Divider */}
-      {/* <div className="mb-8 w-[80%] mx-auto">
+      <div className="mt-4 w-[80%] mx-auto relative top-[.85rem]">
         <div className="flex items-center gap-4">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#C8A97E] to-[#C8A97E]" />
           <div className="w-2 h-2 rotate-45 bg-[#C8A97E]" />
           <div className="flex-1 h-px bg-gradient-to-r from-[#C8A97E] via-[#C8A97E] to-transparent" />
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

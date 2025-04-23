@@ -117,8 +117,13 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
         {/* <Sidebar /> */}
 
         <div className="w-full">
+          
+          <div className="flex flex-col items-center justify-center mt-10 mb-5">  
+           <NihGameCard />
+          </div>
+
           {/* Carousel Section */}
-            <div className="w-[95%] max-w-full mx-auto px-6 md:px-12 my-10">
+            <div className="w-[95%] max-w-full mx-auto px-6 md:px-12 mb-10 mt-0">
               <Carousel slides={carouselData} />
             </div>
 
@@ -129,7 +134,7 @@ const Homepage: React.FC<HomepageProps> = ({ onLogout }) => {
             onBrowse={() => navigateWithLoading("/browse-stories")}
           />
           
-          <NihGameCard />
+          
           <GameList />
 
           {/* <div>

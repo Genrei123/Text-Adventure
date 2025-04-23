@@ -483,7 +483,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                           <span>Home</span>
                         </Link>
                       </li>
-                      <div className="divider my-1"></div>
+                      
                       <li className="py-2">
                         <Link to={`/${username}`} className="flex items-center text-lg">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" viewBox="0 0 20 20" fill="currentColor">
@@ -492,7 +492,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                           <span>Profile</span>
                         </Link>
                       </li>
-                      <div className="divider my-1"></div>
+                      
                       <li className="py-2">
                         <Link to="/subscription" className="flex items-center text-lg">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" viewBox="0 0 20 20" fill="currentColor">
@@ -502,7 +502,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                           <span>Subscription</span>
                         </Link>
                       </li>
-                      <div className="divider my-1"></div>
+                      
                       <li className="py-2">
                         <Link to="/shop" className="flex items-center text-lg">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" viewBox="0 0 20 20" fill="currentColor">
@@ -512,7 +512,7 @@ const Navbar: React.FC<NavbarProps> = () => {
                           <span>Buy Weavels</span>
                         </Link>
                       </li>
-                      <div className="divider my-1"></div>
+                      
                       <li className="py-2">
                         <button onClick={openLogoutModal} className="flex items-center text-lg w-full">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3" viewBox="0 0 20 20" fill="currentColor">
