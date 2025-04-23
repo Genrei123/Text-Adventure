@@ -54,60 +54,113 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
 
   return (
     <div className="w-[90%] max-w-8xl mx-auto px-4 md:px-8 my-17 relative">
-      
-      <Slider {...carouselSettings}>
-        {slides.map((slide, index) => (
-          <div key={index} className="px-2 relative">
-            <div
-              className={`relative h-[444px] sm:h-[702px] rounded-lg overflow-hidden shadow-2xl translate-y-[5%] transition-opacity duration-300 ease-in-out ${
-                index === currentSlide ? 'opacity-100' : 'opacity-0'
-              }`}
-              style={{ transitionDelay: index === currentSlide ? '150ms' : '0ms' }}
-            >
-              {/* Main Image (Visible) */}
-              <img
-                src={slide.image_data}
-                
-                alt ={slide.title}
-                className="relative w-full h-full object-cover z-10 brightness-75 opacity-50"
-              />
+      {/* Custom styles for next/prev buttons and mobile width */}
+      <style>{`
+        .slick-prev,
+        .slick-next {
+          height: 5rem;
+          width: 3rem;
+          background-color: #C9B57B;
+          border-radius: 1rem;
+          z-index: 20;
+          top: 50%;
+          transform: translateY(-50%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s;
+        }
+        .slick-prev:hover,
+        .slick-next:hover {
+          background-color: #B28F4C;
+        }
+        .slick-prev {
+          left: 1rem;
+        }
+        .slick-next {
+          right: 1rem;
+        }
+        .slick-prev::before,
+        .slick-next::before {
+          content: '';
+        }
+        .slick-prev::after,
+        .slick-next::after {
+          color: white;
+          font-size: 2rem;
+          font-weight: bold;
+        }
+        .slick-prev::after {
+          content: '←';
+        }
+        .slick-next::after {
+          content: '→';
+        }
+        @media (max-width: 640px) {
+          .slick-prev,
+          .slick-next {
+            display: none !important;
+          }
+          .carousel-container {
+            width: 115% !important;
+            margin-left: -7.5%;
+          }
+        }
+      `}</style>
 
-
-              {/* Radial Dark Overlay Behind Text */}
-              <div className="absolute inset-0 z-30 pointer-events-none">
-                <div
-                  className="absolute bottom-[-10rem] right-[-10rem] w-[80rem] h-[80rem]"
-                  style={{
-                    background: 'radial-gradient(circle at bottom right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.0) 70%)',
-                    borderRadius: '50%',
-                  }}
+      <div className="carousel-container">
+        <Slider {...carouselSettings}>
+          {slides.map((slide, index) => (
+            <div key={index} className="px-2 relative">
+              <div
+                className={`relative h-[444px] sm:h-[702px] rounded-lg overflow-hidden shadow-2xl translate-y-[5%] transition-opacity duration-300 ease-in-out ${
+                  index === currentSlide ? 'opacity-100' : 'opacity-0'
+                }`}
+                style={{ transitionDelay: index === currentSlide ? '150ms' : '0ms' }}
+              >
+                {/* Main Image (Visible) */}
+                <img
+                  src={slide.image_data}
+                  alt={slide.title}
+                  className="relative w-full h-full object-cover z-10 brightness-75 opacity-50"
                 />
-              </div>
+
+                {/* Radial Dark Overlay Behind Text */}
+                <div className="absolute inset-0 z-30 pointer-events-none">
+                  <div
+                    className="absolute bottom-[-10rem] right-[-10rem] w-[80rem] h-[80rem]"
+                    style={{
+                      background: 'radial-gradient(circle at bottom right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.0) 70%)',
+                      borderRadius: '50%',
+                    }}
+                  />
+                </div>
 
                 {/* Text Content */}
                 <div
-                className={`absolute bottom-10 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-40 text-white drop-shadow-lg px-2 sm:px-0 transition-transform duration-700 ease-in-out ${
-                  index === currentSlide ? 'translate-x-0' : '-translate-x-10'
-                }`}
+                  className={`absolute bottom-10 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-40 text-white drop-shadow-lg px-2 sm:px-0 transition-transform duration-700 ease-in-out ${
+                    index === currentSlide ? 'translate-x-0' : '-translate-x-10'
+                  }`}
                 >
-                <h3 className="text-2xl sm:text-5xl font-cinzel font-extrabold text-[#F1E3C6] mb-2 sm:mb-4 line-clamp-2">
-                  {slide.title}
-                </h3>
-                <p className="text-lg sm:text-2xl font-playfair font-bold text-[#FFFBEA] line-clamp-3">
-                  {slide.description}
-                </p>
+                  <h3 className="text-2xl sm:text-5xl font-cinzel font-extrabold text-[#F1E3C6] mb-2 sm:mb-4 line-clamp-2">
+                    {slide.title}
+                  </h3>
+                  <p className="text-lg sm:text-2xl font-playfair font-bold text-[#FFFBEA] line-clamp-3">
+                    {slide.description}
+                  </p>
 
-                <button
-                  onClick={() => handlePlayGame(slide.id)}
-                  className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-base sm:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-transform duration-300 hover:scale-105 border-2 border-black shadow-[2px_2px_0px_#000,-2px_-2px_0px_#000]"
-                >
-                  Play Game
-                </button>
+                  <button
+                    onClick={() => handlePlayGame(slide.id)}
+                    className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-base sm:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-transform duration-300 hover:scale-105 border-2 border-black shadow-[2px_2px_0px_#000,-2px_-2px_0px_#000]"
+                  >
+                    Play Game
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </Slider>
+          ))}
+        </Slider>
+      </div>
     </div>
   );
 };
