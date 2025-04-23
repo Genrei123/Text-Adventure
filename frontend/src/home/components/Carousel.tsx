@@ -64,31 +64,33 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
               style={{ transitionDelay: index === currentSlide ? '150ms' : '0ms' }}
             >
               {/* Blurred Background Image */}
-                <img
-                  src={slide.image_data}
-                  alt={`${slide.title} background`}
-                  className="absolute inset-0 w-full h-full object-cover filter blur-md brightness-50"
-                />
+              <img
+                src={slide.image_data}
+                alt={`${slide.title} background`}
+                className="absolute inset-0 w-full h-full object-cover filter blur-md brightness-50"
+              />
 
-              {/* Radial Dark Overlay in Bottom Right */}
-              <div className="absolute bottom-0 right-0 w-full h-full z-30 pointer-events-none">
-                    <div
-                      className="absolute bottom-0 right-0 w-[50rem] h-full rounded-lg"
-                      style={{
-                        background: 'radial-gradient(circle at bottom right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.0) 80%)'
-                      }}
-                    />
-                  </div>
-                {/* Main Image (Visible) */}
-                <img
-                      src={slide.image_data}
-                      alt={slide.title}
-                      className="relative w-full h-full object-cover z-10"
-                    />
+              {/* Main Image (Visible) */}
+              <img
+                src={slide.image_data}
+                alt={slide.title}
+                className="relative w-full h-full object-cover z-10"
+              />
+
+              {/* Radial Dark Overlay Behind Text */}
+              <div className="absolute inset-0 z-30 pointer-events-none">
+                <div
+                  className="absolute bottom-[-10rem] right-[-10rem] w-[80rem] h-[80rem]"
+                  style={{
+                    background: 'radial-gradient(circle at bottom right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.0) 70%)',
+                    borderRadius: '50%',
+                  }}
+                />
+              </div>
 
               {/* Text Content */}
               <div
-                className={`absolute bottom-4 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-30 text-white drop-shadow-lg px-2 sm:px-0 transition-transform duration-700 ease-in-out ${
+                className={`absolute bottom-4 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-40 text-white drop-shadow-lg px-2 sm:px-0 transition-transform duration-700 ease-in-out ${
                   index === currentSlide ? 'translate-x-0' : '-translate-x-10'
                 }`}
               >
