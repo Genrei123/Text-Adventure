@@ -11,36 +11,18 @@ const ResetPassword: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [tokenValidated, setTokenValidated] = useState(false);
+  // Skip token validation and just show the form
+  const [showForm, setShowForm] = useState(true);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
 
-  // Validate token on component mount
+  // Simple check if token exists
   useEffect(() => {
-    // Simple presence check first
     if (!token) {
       toast.error('Invalid reset token');
-      return;
+      setShowForm(false);
     }
-
-    // Check if token is valid before showing the form
-    const validateTokenStatus = async () => {
-      try {
-        console.log("Validating token:", token);
-        const response = await axiosInstance.post('/auth/validate-reset-token', { token });
-        if (response.data && response.data.message === 'Valid reset token') {
-          setTokenValidated(true);
-        } else {
-          toast.error('This password reset link is invalid or has expired');
-        }
-      } catch (error) {
-        console.error("Token validation error:", error);
-        toast.error('This password reset link is invalid or has expired');
-      }
-    };
-
-    validateTokenStatus();
   }, [token]);
 
   const validatePasswordStrength = (password: string): boolean => {
@@ -89,11 +71,8 @@ const ResetPassword: React.FC = () => {
     toast.info('Resetting password...');
 
     try {
-      // Make sure we're sending the token exactly as received from URL
-      const decodedToken = decodeURIComponent(token);
-      
       const response = await axiosInstance.post('/auth/reset-password', { 
-        token: decodedToken, 
+        token, 
         newPassword 
       });
 
@@ -129,22 +108,6 @@ const ResetPassword: React.FC = () => {
               </div>
               <p className="text-lg text-[#C8A97E] mb-4">Invalid Reset Link</p>
               <p className="mb-6 text-[#8B7355]">This password reset link is missing a token. Please request a new one.</p>
-              <Link
-                to="/forgot-password"
-                className="inline-block px-6 py-3 font-cinzel bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded transition duration-300"
-              >
-                Request New Link
-              </Link>
-            </div>
-          ) : !tokenValidated ? (
-            <div className="py-6">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#3D2E22] flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-              <p className="text-lg text-[#C8A97E] mb-4">Invalid Reset Link</p>
-              <p className="mb-6 text-[#8B7355]">This password reset link is invalid or has expired. Please request a new one.</p>
               <Link
                 to="/forgot-password"
                 className="inline-block px-6 py-3 font-cinzel bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded transition duration-300"
