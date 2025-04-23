@@ -183,11 +183,17 @@ const generateVerificationEmailHtml = (toName: string, verificationLink: string)
 <body>
     <div class="container">
         <div class="header">
-            <div style="display: flex; align-items: center; justify-content: center; width: 100%; margin: 0 auto; margin-bottom: 15px;">
-                <div style="display: flex; align-items: center; justify-content: center;">
-                    <img src="${process.env.LOGO_URL   || 'http://localhost:5173/Logo.png'}" alt="Text Adventure Logo" style="width: 60px; height: auto; margin-right: 10px;">
-                    <img src="${process.env.BANNER_URL || 'http://localhost:5173/Logo SageAI.png'}" alt="Text Adventure Logo Text" style="height: 40px; width: auto;">
-                </div>
+            <div style="display: flex; align-items: center; justify-content: center; width: 100%; text-align: center; margin: 0 auto; margin-bottom: 15px;">
+                <table align="center" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                    <tr>
+                        <td>
+                            <img src="${process.env.LOGO_URL || 'https://text-adventure-six.vercel.app/Logo.png'}" alt="Text Adventure Logo" style="width: 60px; height: auto; vertical-align: middle; display: inline-block;">
+                        </td>
+                        <td style="padding-left: 10px;">
+                            <img src="${process.env.BANNER_URL || 'https://text-adventure-six.vercel.app/Logo SageAI.png'}" alt="Text Adventure Logo Text" style="height: 60px; width: auto; vertical-align: middle; display: inline-block;">
+                        </td>
+                    </tr>
+                </table>
             </div>
             <h1 style="margin: 0; font-size: 26px; font-weight: 700;">Verify Your Email</h1>
             <p style="margin: 8px 0 0; opacity: 0.9; font-size: 16px;">One quick step to begin your adventure</p>
@@ -391,7 +397,18 @@ const generateResetPasswordEmailHtml = (toName: string, token: string): string =
 <body>
     <div class="container">
         <div class="header">
-            <img src="${process.env.LOGO_URL || 'https://placehold.co/120x120/6366F1/FFFFFF.png?text=TA'}" alt="Text Adventure Logo" class="logo">
+            <div style="display: flex; align-items: center; justify-content: center; width: 100%; text-align: center; margin: 0 auto; margin-bottom: 15px;">
+                <table align="center" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                    <tr>
+                        <td>
+                            <img src="${process.env.LOGO_URL || 'https://text-adventure-six.vercel.app/Logo.png'}" alt="Text Adventure Logo" style="width: 60px; height: auto; vertical-align: middle; display: inline-block;">
+                        </td>
+                        <td style="padding-left: 10px;">
+                            <img src="${process.env.BANNER_URL || 'https://text-adventure-six.vercel.app/Logo SageAI.png'}" alt="Text Adventure Logo Text" style="height: 40px; width: auto; vertical-align: middle; display: inline-block;">
+                        </td>
+                    </tr>
+                </table>
+            </div>
             <h1 style="margin: 0; font-size: 26px; font-weight: 700;">Reset Your Password</h1>
             <p style="margin: 8px 0 0; opacity: 0.9; font-size: 16px;">Secure your account in one simple step</p>
         </div>
