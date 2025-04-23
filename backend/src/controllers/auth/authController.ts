@@ -180,35 +180,38 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
 
 export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
     console.log('Received forgot password request:', req.body);
+  try {
     const { email } = req.body;
 
-    try {
-        if (!email || typeof email !== 'string' || !email.includes('@')) {
-            res.status(400).json({ message: 'Invalid email address' });
-            return;
-        }
+    // Find user with this email
+    const user = await User.findOne({ where: { email } });
 
-        const user = await User.findOne({ where: { email } });
-        if (!user) {
-            res.status(400).json({ message: 'If this email exists in our system, you will receive a password reset link' });
-            return;
-        }
-
-        const resetToken = crypto.randomBytes(32).toString('hex');
-        user.resetPasswordToken = resetToken;
-        user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour from now
-        await user.save();
-
-        const emailSent = await sendResetPasswordEmail(email, resetToken);
-        if (!emailSent) {
-            throw new Error('Email sending failed');
-        }
-
-        res.status(200).json({ message: 'If this email exists in our system, you will receive a password reset link' });
-    } catch (error) {
-        console.error('Error during forgot password:', error);
-        res.status(500).json({ message: 'An unexpected error occurred. Please try again later.' });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
     }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenHash = await bcrypt.hash(resetToken, 10);
+
+    // Save the hashed token in the database
+    user.resetPasswordToken = resetTokenHash;
+    user.resetPasswordExpires = new Date(Date.now() + 3600000); // Token expires in 1 hour
+    await user.save();
+
+    // Send reset email with the token
+    const emailSent = await sendResetPasswordEmail(email, resetToken, user.username);
+
+    if (emailSent) {
+      res.status(200).json({ message: 'Password reset email sent' });
+    } else {
+      res.status(500).json({ message: 'Failed to send password reset email' });
+    }
+  } catch (error) {
+    console.error('Error in forgotPassword:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
 };
 
 export const resetPassword = async (req: Request, res: Response): Promise<void> => {
