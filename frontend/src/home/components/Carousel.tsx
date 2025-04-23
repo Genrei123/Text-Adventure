@@ -80,7 +80,7 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
               {/* Radial Dark Overlay Behind Text */}
               <div className="absolute inset-0 z-30 pointer-events-none">
                 <div
-                  className="absolute bottom-12 right-12 w-[600px] h-[600px]"
+                  className="absolute bottom-[-10rem] right-[-10rem] w-[80rem] h-[80rem]"
                   style={{
                     background: 'radial-gradient(circle at bottom right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.0) 70%)',
                     borderRadius: '50%',
