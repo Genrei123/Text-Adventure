@@ -10,6 +10,7 @@ const ResetPassword: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
@@ -64,14 +65,19 @@ const ResetPassword: React.FC = () => {
     }
 
     setIsProcessing(true);
+    setIsSubmitting(true);
     toast.info('Resetting password...');
 
     try {
+      console.log('Sending reset request with token:', token);
+      
       const response = await axiosInstance.post('/auth/reset-password', { 
         token, 
         newPassword 
       });
 
+      console.log('Reset password response:', response.data);
+      
       toast.success('Password reset successfully! Redirecting to login...');
       setTimeout(() => {
         navigate('/login');
@@ -82,6 +88,7 @@ const ResetPassword: React.FC = () => {
       toast.error(errorMessage);
     } finally {
       setIsProcessing(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -148,7 +155,7 @@ const ResetPassword: React.FC = () => {
                 <button 
                   type="submit" 
                   className="w-full px-6 py-3 font-cinzel bg-[#2A2A2A] hover:bg-[#3D3D3D] text-white rounded transition duration-300"
-                  disabled={isProcessing}
+                  disabled={isProcessing || isSubmitting}
                 >
                   {isProcessing ? 'Resetting Password...' : 'Reset Password'}
                 </button>

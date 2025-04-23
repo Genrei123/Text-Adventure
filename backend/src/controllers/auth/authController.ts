@@ -234,19 +234,25 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
         });
 
         // Check if any user's stored hash matches the token from the request
-        let userFound = null;
+        let userFound: User | null = null;
         for (const user of users) {
             if (user.resetPasswordToken) {
-                // Compare the raw token with the stored hash
-                const isMatch = await bcrypt.compare(token, user.resetPasswordToken);
-                if (isMatch) {
-                    userFound = user;
-                    break;
+                try {
+                    // Compare the raw token with the stored hash
+                    const isMatch = await bcrypt.compare(token, user.resetPasswordToken);
+                    if (isMatch) {
+                        userFound = user;
+                        break;
+                    }
+                } catch (error) {
+                    console.error('Error comparing token:', error);
+                    // Continue to next user if comparison fails
                 }
             }
         }
 
         if (!userFound) {
+            console.log('No matching user found for the provided token');
             res.status(400).json({ message: 'Invalid or expired reset token' });
             return;
         }
@@ -258,8 +264,8 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         userFound.password = hashedPassword;
-        userFound.resetPasswordToken = undefined;
-        userFound.resetPasswordExpires = undefined;
+        userFound.resetPasswordToken = null;
+        userFound.resetPasswordExpires = null;
         await userFound.save();
 
         res.status(200).json({ message: 'Password reset successfully' });
@@ -273,6 +279,11 @@ export const validateResetToken = async (req: Request, res: Response): Promise<v
     const { token } = req.body;
 
     try {
+        if (!token) {
+            res.status(400).json({ message: 'Token is required' });
+            return;
+        }
+
         // Find users with tokens that haven't expired
         const users = await User.findAll({
             where: {
@@ -286,16 +297,22 @@ export const validateResetToken = async (req: Request, res: Response): Promise<v
         let tokenIsValid = false;
         for (const user of users) {
             if (user.resetPasswordToken) {
-                // Compare the raw token with the stored hash
-                const isMatch = await bcrypt.compare(token, user.resetPasswordToken);
-                if (isMatch) {
-                    tokenIsValid = true;
-                    break;
+                try {
+                    // Compare the raw token with the stored hash
+                    const isMatch = await bcrypt.compare(token, user.resetPasswordToken);
+                    if (isMatch) {
+                        tokenIsValid = true;
+                        break;
+                    }
+                } catch (error) {
+                    console.error('Error comparing token:', error);
+                    // Continue to next user if comparison fails
                 }
             }
         }
 
         if (!tokenIsValid) {
+            console.log('No valid token match found');
             res.status(400).json({ message: 'Invalid or expired reset token' });
             return;
         }
