@@ -64,18 +64,21 @@ const ResetPassword: React.FC = () => {
       return;
     }
 
+    // Prevent double submission
+    if (isProcessing || isSubmitting) {
+      return;
+    }
+
     setIsProcessing(true);
     setIsSubmitting(true);
     toast.info('Resetting password...');
 
     try {
-      console.log('Sending reset request with token:', token);
-      
       const response = await axiosInstance.post('/auth/reset-password', { 
         token, 
         newPassword 
       });
-
+      
       console.log('Reset password response:', response.data);
       
       toast.success('Password reset successfully! Redirecting to login...');
@@ -84,8 +87,17 @@ const ResetPassword: React.FC = () => {
       }, 3000);
     } catch (error: any) {
       console.error('Reset password error:', error);
+      
+      // Handle specific error messages from the server
       const errorMessage = error.response?.data?.message || 'Failed to reset password. The link may be expired or invalid.';
       toast.error(errorMessage);
+      
+      // If the token is invalid or expired, provide a clearer call to action
+      if (errorMessage.includes('Invalid or expired reset token')) {
+        setTimeout(() => {
+          toast.info('Please request a new password reset link');
+        }, 1000);
+      }
     } finally {
       setIsProcessing(false);
       setIsSubmitting(false);
@@ -173,7 +185,7 @@ const ResetPassword: React.FC = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );
 };

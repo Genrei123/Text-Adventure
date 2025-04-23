@@ -264,8 +264,8 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         userFound.password = hashedPassword;
-        userFound.resetPasswordToken = null;
-        userFound.resetPasswordExpires = null;
+        userFound.resetPasswordToken = undefined;  // Changed from null to undefined
+        userFound.resetPasswordExpires = undefined;  // Changed from null to undefined
         await userFound.save();
 
         res.status(200).json({ message: 'Password reset successfully' });
