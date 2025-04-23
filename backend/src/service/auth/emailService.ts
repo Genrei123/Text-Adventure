@@ -34,49 +34,206 @@ const generateVerificationEmailHtml = (toName: string, verificationLink: string)
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        .container { max-width: 600px; margin: 20px auto; padding: 30px; background: #f8f9fa; border-radius: 10px; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .logo { width: 150px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; }
-        .banner { width: 100%; height: auto; }
-        .button { 
-            display: inline-block; 
-            padding: 12px 24px; 
-            background: #2563eb; 
-            color: white !important; 
-            text-decoration: none; 
-            border-radius: 5px; 
-            margin: 20px 0; 
-            font-weight: bold;
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
         }
-        .footer { margin-top: 30px; color: #6b7280; font-size: 14px; text-align: center; }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+        .logo {
+            width: 120px;
+            height: auto;
+            margin: 0 auto 15px;
+            display: block;
+        }
+        .content {
+            padding: 40px 30px;
+            background-color: #ffffff;
+        }
+        .greeting {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1F2937;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: #4B5563;
+        }
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+            color: white !important;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+        }
+        .divider {
+            height: 1px;
+            background-color: #E5E7EB;
+            margin: 30px 0;
+        }
+        .footer {
+            padding: 20px 30px 40px;
+            text-align: center;
+            color: #6B7280;
+            font-size: 14px;
+            background-color: #ffffff;
+        }
+        .url-display {
+            background-color: #F3F4F6;
+            padding: 12px;
+            border-radius: 6px;
+            word-break: break-all;
+            margin: 20px 0;
+            font-size: 13px;
+            color: #4B5563;
+            border: 1px solid #E5E7EB;
+        }
+        .warning {
+            background-color: #FEF2F2;
+            color: #DC2626;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            font-size: 14px;
+            border-left: 4px solid #DC2626;
+        }
+        .warning a {
+            color: #DC2626;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        .social-links {
+            margin-top: 20px;
+        }
+        .social-icon {
+            display: inline-block;
+            margin: 0 8px;
+            width: 32px;
+            height: 32px;
+        }
+        .expiry-notice {
+            background-color: #FFFBEB;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #92400E;
+            border-left: 4px solid #F59E0B;
+        }
+        .text-highlight {
+            color: #4F46E5;
+            font-weight: 600;
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                border-radius: 0;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+            .greeting {
+                font-size: 20px;
+            }
+            .message {
+                font-size: 15px;
+            }
+            .button {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <img src="${process.env.BANNER_URL}" alt="Text Adventure Banner" class="banner">
-            <img src="${process.env.LOGO_URL}" alt="Text Adventure Logo" class="logo">
-            <h2>Welcome to Text Adventure!</h2>
+            <div style="display: flex; align-items: center; justify-content: center; width: 100%; margin: 0 auto; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <img src="${process.env.LOGO_URL   || 'http://localhost:5173/Logo.png'}" alt="Text Adventure Logo" style="width: 60px; height: auto; margin-right: 10px;">
+                    <img src="${process.env.BANNER_URL || 'http://localhost:5173/Logo SageAI.png'}" alt="Text Adventure Logo Text" style="height: 40px; width: auto;">
+                </div>
+            </div>
+            <h1 style="margin: 0; font-size: 26px; font-weight: 700;">Verify Your Email</h1>
+            <p style="margin: 8px 0 0; opacity: 0.9; font-size: 16px;">One quick step to begin your adventure</p>
         </div>
         
-        <p>Hi ${toName},</p>
-        
-        <p>Thank you for joining Text Adventure! Click below to verify your email and start your journey:</p>
-        
-        <div style="text-align: center;">
-            <a href="${verificationLink}" class="button">Verify Email Address</a>
+        <div class="content">
+            <p class="greeting">Hi ${toName},</p>
+            
+            <p class="message">Welcome to <span class="text-highlight">Text Adventure</span>! We're excited to have you join our community of storytellers and explorers. To activate your account and begin your journey, please verify your email address.</p>
+            
+            <div class="button-container">
+                <a href="${verificationLink}" class="button">Verify My Email</a>
+            </div>
+            
+            <div class="expiry-notice">
+                <strong>⏰ Important:</strong> This verification link will expire in 1 hour for security reasons.
+            </div>
+            
+            <div class="divider"></div>
+            
+            <p style="margin-bottom: 10px; font-size: 14px; color: #6B7280;">If the button above doesn't work, copy and paste the link below into your browser:</p>
+            
+            <div class="url-display">
+                ${verificationLink}
+            </div>
+            
+            <div class="warning">
+                <strong>Security Notice:</strong> If you didn't create this account, please <a href="mailto:support@textadventure.com">contact us</a> immediately.
+            </div>
         </div>
-
-        <p class="footer">
-            This link expires in 1 hour.<br>
-            Can't click the button? Copy this URL:<br>
-            <code>${verificationLink}</code>
-        </p>
-
-        <p style="margin-top: 25px; color: #ef4444;">
-            If you didn't create this account, please <a href="mailto:support@textadventure.com">contact us</a> immediately.
-        </p>
+        
+        <div class="footer">
+            <p style="margin-bottom: 15px;">© ${new Date().getFullYear()} Text Adventure. All rights reserved.</p>
+            
+            <div class="social-links">
+                <a href="#" class="social-icon"><img src="https://placehold.co/32x32/6366F1/FFFFFF.png?text=f" alt="Facebook"></a>
+                <a href="#" class="social-icon"><img src="https://placehold.co/32x32/6366F1/FFFFFF.png?text=t" alt="Twitter"></a>
+                <a href="#" class="social-icon"><img src="https://placehold.co/32x32/6366F1/FFFFFF.png?text=i" alt="Instagram"></a>
+            </div>
+            
+            <p style="margin-top: 20px; font-size: 13px;">
+                <a href="#" style="color: #6B7280; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
+                <a href="#" style="color: #6B7280; text-decoration: none; margin: 0 10px;">Terms of Service</a>
+                <a href="#" style="color: #6B7280; text-decoration: none; margin: 0 10px;">Unsubscribe</a>
+            </p>
+        </div>
     </div>
 </body>
 </html>
@@ -84,19 +241,201 @@ const generateVerificationEmailHtml = (toName: string, verificationLink: string)
 
 /**
  * Generates HTML for the reset password email.
+ * @param toName - The recipient's name.
  * @param token - The reset password token.
  * @returns Email HTML string.
  */
-const generateResetPasswordEmailHtml = (token: string): string => `
-  <div style="font-family: Arial, sans-serif; text-align: center;">
-    <h2>Reset Your Password</h2>
-    <p>Click the button below to reset your password:</p>
-    <a href="${process.env.FRONTEND_URL}/reset-password?token=${token}" 
-       style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;">
-       Reset Password
-    </a>
-    <p>If you didn't request this, you can safely ignore this email.</p>
-  </div>
+const generateResetPasswordEmailHtml = (toName: string, token: string): string => `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+        .logo {
+            width: 120px;
+            height: auto;
+            margin: 0 auto 15px;
+            display: block;
+        }
+        .content {
+            padding: 40px 30px;
+            background-color: #ffffff;
+        }
+        .greeting {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1F2937;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: #4B5563;
+        }
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+            color: white !important;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+        }
+        .divider {
+            height: 1px;
+            background-color: #E5E7EB;
+            margin: 30px 0;
+        }
+        .footer {
+            padding: 20px 30px 40px;
+            text-align: center;
+            color: #6B7280;
+            font-size: 14px;
+            background-color: #ffffff;
+        }
+        .url-display {
+            background-color: #F3F4F6;
+            padding: 12px;
+            border-radius: 6px;
+            word-break: break-all;
+            margin: 20px 0;
+            font-size: 13px;
+            color: #4B5563;
+            border: 1px solid #E5E7EB;
+        }
+        .warning {
+            background-color: #FEF2F2;
+            color: #DC2626;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            font-size: 14px;
+            border-left: 4px solid #DC2626;
+        }
+        .warning a {
+            color: #DC2626;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        .social-links {
+            margin-top: 20px;
+        }
+        .social-icon {
+            display: inline-block;
+            margin: 0 8px;
+            width: 32px;
+            height: 32px;
+        }
+        .security-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                border-radius: 0;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+            .greeting {
+                font-size: 20px;
+            }
+            .message {
+                font-size: 15px;
+            }
+            .button {
+                padding: 12px 24px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="${process.env.LOGO_URL || 'https://placehold.co/120x120/6366F1/FFFFFF.png?text=TA'}" alt="Text Adventure Logo" class="logo">
+            <h1 style="margin: 0; font-size: 26px; font-weight: 700;">Reset Your Password</h1>
+            <p style="margin: 8px 0 0; opacity: 0.9; font-size: 16px;">Secure your account in one simple step</p>
+        </div>
+        
+        <div class="content">
+            <p class="greeting">Hi ${toName},</p>
+            
+            <p class="message">We received a request to reset your password for your Text Adventure account. Click the button below to create a new password:</p>
+            
+            <div class="button-container">
+                <a href="${process.env.FRONTEND_URL}/reset-password?token=${token}" class="button">Reset My Password</a>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <p style="margin-bottom: 10px; font-size: 14px; color: #6B7280;">If the button above doesn't work, copy and paste the link below into your browser:</p>
+            
+            <div class="url-display">
+                ${process.env.FRONTEND_URL}/reset-password?token=${token}
+            </div>
+            
+            <div class="warning">
+                <strong>Important:</strong> If you didn't request a password reset, please <a href="mailto:support@textadventure.com">contact us</a> immediately to secure your account.
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p style="margin-bottom: 15px;">© ${new Date().getFullYear()} Text Adventure. All rights reserved.</p>
+            
+            <div class="social-links">
+                <a href="#" class="social-icon"><img src="https://placehold.co/32x32/6366F1/FFFFFF.png?text=f" alt="Facebook"></a>
+                <a href="#" class="social-icon"><img src="https://placehold.co/32x32/6366F1/FFFFFF.png?text=t" alt="Twitter"></a>
+                <a href="#" class="social-icon"><img src="https://placehold.co/32x32/6366F1/FFFFFF.png?text=i" alt="Instagram"></a>
+            </div>
+            
+            <p style="margin-top: 20px; font-size: 13px;">
+                <a href="#" style="color: #6B7280; text-decoration: none; margin: 0 10px;">Privacy Policy</a>
+                <a href="#" style="color: #6B7280; text-decoration: none; margin: 0 10px;">Terms of Service</a>
+                <a href="#" style="color: #6B7280; text-decoration: none; margin: 0 10px;">Unsubscribe</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
 `;
 
 /**
@@ -114,7 +453,7 @@ export const sendVerificationEmail = async (email: string, token: string, userna
       from: `"${fromName}" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: 'Verify Your Text Adventure Account',
-      html: generateVerificationEmailHtml(username, verificationLink), // Pass user's name
+      html: generateVerificationEmailHtml(username, verificationLink),
       headers: {
         'X-Mailer': 'TextAdventureMailer/1.0'
       }
@@ -140,17 +479,19 @@ export const generateVerificationCode = (): string => {
  * Sends a reset password email with a unique token.
  * @param to - Recipient's email.
  * @param token - Reset password token.
+ * @param username - The username of the recipient.
  * @returns Promise<boolean>
  */
-export const sendResetPasswordEmail = async (to: string, token: string): Promise<boolean> => {
+export const sendResetPasswordEmail = async (to: string, token: string, username: string): Promise<boolean> => {
   try {
-    const emailHtml = generateResetPasswordEmailHtml(token);
-
     const mailOptions = {
       from: `"${fromName}" <${process.env.EMAIL_USER}>`,
       to,
-      subject: 'Reset Your Password',
-      html: emailHtml,
+      subject: 'Reset Your Text Adventure Password',
+      html: generateResetPasswordEmailHtml(username, token),
+      headers: {
+        'X-Mailer': 'TextAdventureMailer/1.0'
+      }
     };
 
     await transporter.sendMail(mailOptions);
