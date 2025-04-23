@@ -138,11 +138,11 @@ function App() {
             <Route 
               path="/home" 
               element={
-                // <ProtectedRoute>
+                <ProtectedRoute>
                   <WebSocketProvider>
                       <Homepage onLogout={handleLogout} />
                   </WebSocketProvider>
-                // </ProtectedRoute>
+                </ProtectedRoute>
               } 
             />
             <Route 
