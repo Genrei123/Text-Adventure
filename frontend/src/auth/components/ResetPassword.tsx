@@ -5,14 +5,11 @@ import axiosInstance from '../../../config/axiosConfig';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PasswordInput from './PasswordInput';
-import { validatePassword } from '../utils/ValidationUtils';
 
 const ResetPassword: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  // Skip token validation and just show the form
-  const [showForm, setShowForm] = useState(true);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
@@ -21,7 +18,6 @@ const ResetPassword: React.FC = () => {
   useEffect(() => {
     if (!token) {
       toast.error('Invalid reset token');
-      setShowForm(false);
     }
   }, [token]);
 
@@ -82,7 +78,6 @@ const ResetPassword: React.FC = () => {
       }, 3000);
     } catch (error: any) {
       console.error('Reset password error:', error);
-      // Try to get the specific error message from the response if available
       const errorMessage = error.response?.data?.message || 'Failed to reset password. The link may be expired or invalid.';
       toast.error(errorMessage);
     } finally {

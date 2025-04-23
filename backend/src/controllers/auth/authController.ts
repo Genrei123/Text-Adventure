@@ -224,16 +224,29 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        const user = await User.findOne({
+        // Find users with tokens that haven't expired
+        const users = await User.findAll({
             where: {
-                resetPasswordToken: token,
                 resetPasswordExpires: {
                     [Op.gt]: new Date() // Token not expired
                 }
             }
         });
 
-        if (!user) {
+        // Check if any user's stored hash matches the token from the request
+        let userFound = null;
+        for (const user of users) {
+            if (user.resetPasswordToken) {
+                // Compare the raw token with the stored hash
+                const isMatch = await bcrypt.compare(token, user.resetPasswordToken);
+                if (isMatch) {
+                    userFound = user;
+                    break;
+                }
+            }
+        }
+
+        if (!userFound) {
             res.status(400).json({ message: 'Invalid or expired reset token' });
             return;
         }
@@ -244,10 +257,10 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        user.password = hashedPassword;
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpires = undefined;
-        await user.save();
+        userFound.password = hashedPassword;
+        userFound.resetPasswordToken = undefined;
+        userFound.resetPasswordExpires = undefined;
+        await userFound.save();
 
         res.status(200).json({ message: 'Password reset successfully' });
     } catch (error) {
@@ -260,16 +273,29 @@ export const validateResetToken = async (req: Request, res: Response): Promise<v
     const { token } = req.body;
 
     try {
-        const user = await User.findOne({
+        // Find users with tokens that haven't expired
+        const users = await User.findAll({
             where: {
-                resetPasswordToken: token,
                 resetPasswordExpires: {
                     [Op.gt]: new Date() // Token not expired
                 }
             }
         });
 
-        if (!user) {
+        // Check if any user's stored hash matches the token from the request
+        let tokenIsValid = false;
+        for (const user of users) {
+            if (user.resetPasswordToken) {
+                // Compare the raw token with the stored hash
+                const isMatch = await bcrypt.compare(token, user.resetPasswordToken);
+                if (isMatch) {
+                    tokenIsValid = true;
+                    break;
+                }
+            }
+        }
+
+        if (!tokenIsValid) {
             res.status(400).json({ message: 'Invalid or expired reset token' });
             return;
         }
