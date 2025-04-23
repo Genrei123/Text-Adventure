@@ -70,24 +70,21 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
                   className="absolute inset-0 w-full h-full object-cover filter blur-md brightness-50"
                 />
 
-                {/* Radial Dark Overlay in Bottom Right */}
-                  <div className="absolute bottom-0 right-0 w-full h-full z-20 pointer-events-none">
+              {/* Radial Dark Overlay in Bottom Right */}
+              <div className="absolute bottom-0 right-0 w-full h-full z-30 pointer-events-none">
                     <div
                       className="absolute bottom-0 right-0 w-[50rem] h-full rounded-lg"
                       style={{
                         background: 'radial-gradient(circle at bottom right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.0) 80%)'
                       }}
                     />
-                    
-                    <img
+                  </div>
+                {/* Main Image (Visible) */}
+                <img
                       src={slide.image_data}
                       alt={slide.title}
                       className="relative w-full h-full object-cover z-10"
                     />
-                  </div>
-
-                {/* Main Image (Visible) */}
-                
 
               {/* Text Content */}
               <div
@@ -101,11 +98,12 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
                 <p className="text-lg sm:text-2xl font-playfair font-bold text-[#FFFBEA] line-clamp-3">
                   {slide.description}
                 </p>
+
                 <button
                   onClick={() => handlePlayGame(slide.id)}
                   className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-base sm:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-transform duration-300 hover:scale-105"
                 >
-                  Play Games
+                  Play Game
                 </button>
               </div>
             </div>
