@@ -510,8 +510,17 @@ const GameDetails: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6">
-                  <h3 className="text-xl font-bold text-[#B39C7D] font-cinzel">Game Information</h3>
+                  {/* <h3 className="text-xl font-bold text-[#B39C7D] font-cinzel">Game Information</h3> */}
                   <div className="grid grid-cols-1 gap-4">
+                    
+                    <div className="flex items-start gap-3">
+                      <br></br>
+                      <br></br>
+                      <div className="ml-5">
+                        <h3 className="text-xl font-bold text-[#B39C7D] font-cinzel">Game Information</h3>
+                      </div>
+                    </div>
+
                     <div className="flex items-start gap-3">
                       <Tag className="w-5 h-5 text-[#B39C7D] mt-0.5" />
                       <div>
@@ -536,8 +545,19 @@ const GameDetails: React.FC = () => {
                   </div>
                 </div>
                 <div className="space-y-6">
-                  <h3 className="text-xl font-bold text-[#B39C7D] font-cinzel">Gameplay</h3>
+                  {/* <h3 className="text-xl font-bold text-[#B39C7D] font-cinzel">Gameplay</h3> */}
                   <div className="grid grid-cols-1 gap-4">
+
+                    <div className="flex items-start gap-3">
+                    <br></br>
+                    <br></br>
+                      <div>
+                        <div className="ml-5">
+                          <h3 className="text-xl font-bold text-[#B39C7D] font-cinzel">Gameplay</h3>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="flex items-start gap-3">
                       <Award className="w-5 h-5 text-[#B39C7D] mt-0.5" />
                       <div>
