@@ -78,13 +78,17 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
                         background: 'radial-gradient(circle at bottom right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.0) 80%)'
                       }}
                     />
+                    
+                    <img
+                      src={slide.image_data}
+                      alt={slide.title}
+                      className="relative w-full h-full object-cover z-10"
+                    />
                   </div>
+
                 {/* Main Image (Visible) */}
-                <img
-                  src={slide.image_data}
-                  alt={slide.title}
-                  className="relative w-full h-full object-cover z-10"
-                />
+                
+
               {/* Text Content */}
               <div
                 className={`absolute bottom-4 sm:bottom-16 right-4 sm:right-12 w-full sm:max-w-md text-right z-30 text-white drop-shadow-lg px-2 sm:px-0 transition-transform duration-700 ease-in-out ${
@@ -101,7 +105,7 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
                   onClick={() => handlePlayGame(slide.id)}
                   className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-base sm:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-transform duration-300 hover:scale-105"
                 >
-                  Play Game
+                  Play Games
                 </button>
               </div>
             </div>
