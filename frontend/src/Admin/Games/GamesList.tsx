@@ -354,6 +354,11 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
+  const backToGamesList = () => {
+    setIsViewingGameDetails(false)
+    setViewedGameDetails(null)
+  }
+
   const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
     <th
       className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center cursor-pointer hover:bg-[#534231] transition-colors group"
@@ -447,7 +452,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         </div>
       </div>
 
-      {/* Reset button - with improved styling and highlight color */}
+      {/* Reset button with highlight color */}
       <div className="flex justify-center">
         <button
           onClick={() => {
