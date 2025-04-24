@@ -65,7 +65,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     prompt: "",
   })
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
-  const [statusFilter, setStatusFilter] = useState("all")
   const [dateRange, setDateRange] = useState({ start: "", end: "" })
   const [titleFilter, setTitleFilter] = useState("")
   const [descriptionFilter, setDescriptionFilter] = useState("")
@@ -227,7 +226,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const filteredGames = sortedGames.filter((game) => {
     const matchesSearch = game.title.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesGenre = genreFilter === "all" || game.genre === genreFilter
-    const matchesStatus = statusFilter === "all" || game.status === statusFilter
     const createdDate = new Date(game.createdAt)
     const matchesStartDate = !dateRange.start || createdDate >= new Date(dateRange.start)
     const matchesEndDate = !dateRange.end || createdDate <= new Date(dateRange.end)
@@ -245,7 +243,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     return (
       matchesSearch &&
       matchesGenre &&
-      matchesStatus &&
       matchesStartDate &&
       matchesEndDate &&
       matchesTitle &&
@@ -451,19 +448,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         </div>
 
         <div>
-          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
-          <select
-            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="all">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-
-        <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
           <select
             className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
@@ -504,7 +488,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             setTitleFilter("")
             setDescriptionFilter("")
             setGenreFilter("all")
-            setStatusFilter("all")
             setDateRange({ start: "", end: "" })
             setCreatorFilter("")
             setPrivateFilter("all")
@@ -880,12 +863,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   <p className="text-[#F0E6DB]">{viewedGameDetails.subgenre || "None"}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#8B7355]">Status</p>
-                  <p className="text-[#F0E6DB]">
-                    <StatusBadge status={viewedGameDetails.status || "active"} />
-                  </p>
-                </div>
-                <div>
                   <p className="text-xs text-[#8B7355]">Visibility</p>
                   <p className="text-[#F0E6DB]">{viewedGameDetails.private ? "Private" : "Public"}</p>
                 </div>
@@ -1174,19 +1151,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   value={editForm.subgenre || ""}
                   onChange={handleChange}
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
-                <select
-                  name="status"
-                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                  value={editForm.status || "active"}
-                  onChange={handleChange}
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
               </div>
 
               <div>
@@ -1823,7 +1787,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                       <TableHeader label="Genre" sortKey="genre" />
                       <TableHeader label="Players" sortKey="creator" />
                       <TableHeader label="Created" sortKey="createdAt" />
-                      <TableHeader label="Status" sortKey="status" />
                       <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center">Actions</th>
                     </tr>
                   </thead>
@@ -1856,9 +1819,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                               month: "short",
                               day: "numeric",
                             })}
-                          </td>
-                          <td className="p-4">
-                            <StatusBadge status={game.status} />
                           </td>
                           <td className="p-4">
                             <div className="flex items-center justify-center gap-2">
