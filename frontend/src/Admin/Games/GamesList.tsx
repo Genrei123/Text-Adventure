@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders, Save, ChevronLeft } from "lucide-react"
+import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Sliders, Save, ChevronLeft } from "lucide-react"
 import axiosInstance from "../../../config/axiosConfig"
 import Modal from "react-modal"
 import StatusBadge from "./StatusBadge"
@@ -16,7 +16,6 @@ interface Game {
   genre: string
   description?: string
   createdAt: string
-  status: string
   UserId: number
   creator?: string
   private?: boolean
@@ -61,7 +60,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     title: "",
     genre: "RPG",
     description: "",
-    status: "active",
     prompt: "",
   })
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
@@ -77,8 +75,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const [selectedGameDetails, setSelectedGameDetails] = useState<Game | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editGameData, setEditGameData] = useState<Game | null>(null)
-  const [showStatusModal, setShowStatusModal] = useState(false)
-  const [gameToToggleStatus, setGameToToggleStatus] = useState<Game | null>(null)
   const [isViewingGameDetails, setIsViewingGameDetails] = useState(false)
   const [viewedGameDetails, setViewedGameDetails] = useState<Game | null>(null)
   const [showEnlargedImage, setShowEnlargedImage] = useState(false)
@@ -91,7 +87,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const isMounted = useRef(true)
 
   const safelySetModalState = (
-    modalToOpen: "view" | "edit" | "delete" | "bulkDelete" | "status" | "new" | null,
+    modalToOpen: "view" | "edit" | "delete" | "bulkDelete" | "new" | null,
     data: any = null,
   ) => {
     console.log(`Attempting to open modal: ${modalToOpen}`, data)
@@ -100,7 +96,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setShowEditModal(false)
     setShowDeleteConfirmation(false)
     setShowBulkDeleteConfirmation(false)
-    setShowStatusModal(false)
     setShowModal(false)
 
     console.log("All modals closed")
@@ -111,8 +106,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       setEditGameData(data)
     } else if (modalToOpen === "delete" && data) {
       setGameToDelete(data)
-    } else if (modalToOpen === "status" && data) {
-      setGameToToggleStatus(data)
     }
 
     switch (modalToOpen) {
@@ -131,10 +124,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       case "bulkDelete":
         setShowBulkDeleteConfirmation(true)
         console.log("Bulk delete confirmation modal opened")
-        break
-      case "status":
-        setShowStatusModal(true)
-        console.log("Status toggle modal opened")
         break
       case "new":
         setShowModal(true)
@@ -285,7 +274,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setShowEditModal(false)
     setShowDeleteConfirmation(false)
     setShowBulkDeleteConfirmation(false)
-    setShowStatusModal(false)
     setShowModal(false)
 
     setTimeout(() => {
@@ -322,7 +310,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setShowEditModal(false)
     setShowDeleteConfirmation(false)
     setShowBulkDeleteConfirmation(false)
-    setShowStatusModal(false)
     setShowModal(false)
 
     setGameToDelete(game)
@@ -547,19 +534,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </div>
 
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status *</label>
-              <select
-                name="status"
-                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                value={newGame.status}
-                onChange={handleNewGameChange}
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-
             <div>
               <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Primary Prompt</label>
               <textarea
@@ -985,13 +959,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           >
             <Edit className="w-4 h-4" />
             Edit Game
-          </button>
-          <button
-            onClick={() => confirmToggleStatus(viewedGameDetails)}
-            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
-          >
-            <Power className="w-4 h-4" />
-            {viewedGameDetails.status === "active" ? "Deactivate" : "Activate"} Game
           </button>
           <button
             onClick={handleDeleteClick}
@@ -1511,41 +1478,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  const confirmToggleStatus = (game: Game) => {
-    console.log(`Opening status toggle modal for game: ${game.title} (ID: ${game.id})`)
-    safelySetModalState("status", game)
-  }
-
-  const handleToggleStatusConfirm = async () => {
-    if (!gameToToggleStatus) {
-      console.log("No game selected for status toggle, aborting")
-      return
-    }
-
-    const newStatus = gameToToggleStatus.status === "active" ? "inactive" : "active"
-    console.log(
-      `Toggling status for game: ${gameToToggleStatus.title} (ID: ${gameToToggleStatus.id}) from ${gameToToggleStatus.status} to ${newStatus}`,
-    )
-
-    try {
-      const response = await axiosInstance.put(`/api/games/${gameToToggleStatus.id}`, {
-        ...gameToToggleStatus,
-        status: newStatus,
-      })
-      console.log("Status toggle API response:", response)
-
-      fetchGames()
-      toast.success(`Game "${gameToToggleStatus.title}" is now ${newStatus}`)
-    } catch (error) {
-      console.error("Error toggling status:", error)
-      toast.error("Failed to update game status")
-    } finally {
-      setShowStatusModal(false)
-      setGameToToggleStatus(null)
-      console.log("Status toggle operation completed, modal closed")
-    }
-  }
-
   const EditGameModal = () => {
     if (!editGameData) return null
 
@@ -1611,19 +1543,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                     <option value="Romance">Romance</option>
                   </select>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
-                  <select
-                    name="status"
-                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                    value={editGameData.status || "active"}
-                    onChange={(e) => setEditGameData({ ...editGameData, status: e.target.value })}
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
-                </div>
               </div>
 
               <div className="space-y-4">
@@ -1679,49 +1598,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
               </button>
             </div>
           </form>
-        </div>
-      </Modal>
-    )
-  }
-
-  const StatusToggleModal = () => {
-    if (!gameToToggleStatus) return null
-
-    return (
-      <Modal
-        isOpen={showStatusModal}
-        onRequestClose={() => setShowStatusModal(false)}
-        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
-        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
-        ariaHideApp={false}
-      >
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 text-[#C0A080]">
-            <Power className="w-6 h-6" />
-            <h2 className="text-xl font-cinzel">Confirm Status Change</h2>
-          </div>
-
-          <p className="text-[#F0E6DB]">
-            Are you sure you want to change the status of{" "}
-            <span className="font-semibold">{gameToToggleStatus.title}</span> from{" "}
-            <span className="font-semibold">{gameToToggleStatus.status}</span> to{" "}
-            <span className="font-semibold">{gameToToggleStatus.status === "active" ? "inactive" : "active"}</span>?
-          </p>
-
-          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
-            <button
-              onClick={() => setShowStatusModal(false)}
-              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleToggleStatusConfirm}
-              className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors"
-            >
-              {gameToToggleStatus.status === "active" ? "Deactivate" : "Activate"} Game
-            </button>
-          </div>
         </div>
       </Modal>
     )
@@ -1839,14 +1715,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                                 <Edit className="w-5 h-5" />
                               </button>
                               <button
-                                onClick={() => confirmToggleStatus(game)}
-                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                                title="Toggle Status"
-                                aria-label={`Toggle status of ${game.title}`}
-                              >
-                                <Power className="w-5 h-5" />
-                              </button>
-                              <button
                                 onClick={() => confirmDelete(game)}
                                 className="p-2 hover:bg-red-900/20 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none"
                                 title="Delete"
@@ -1872,7 +1740,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           <NewGameModal />
           <DeleteConfirmationModal />
           <BulkDeleteConfirmationModal />
-          <StatusToggleModal />
 
           {selectedGames.length > 0 && (
             <motion.div
