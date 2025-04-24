@@ -31,6 +31,13 @@ const AdminLogin: React.FC = () => {
     }
   }, [navigate]);
 
+  // Update the handleEmailChange function
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Force lowercase as user types for better visual feedback
+    e.target.value = e.target.value.toLowerCase();
+    setEmail(e.target.value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -38,8 +45,14 @@ const AdminLogin: React.FC = () => {
     toast.info('Logging in...');
 
     try {
-      // Use the configured axios instance
-      const response = await axiosInstance.post('/auth/login', { email, password });
+      // Convert email to lowercase before sending to the server
+      const normalizedEmail = email.toLowerCase().trim();
+      
+      // Use the configured axios instance with normalized email
+      const response = await axiosInstance.post('/auth/login', { 
+        email: normalizedEmail, 
+        password 
+      });
       const { token, user } = response.data;
 
       // Check if user exists and has admin privileges
@@ -99,7 +112,13 @@ const AdminLogin: React.FC = () => {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
+              onPaste={(e) => {
+                // Handle paste events to also force lowercase
+                e.preventDefault();
+                const text = e.clipboardData.getData('text').toLowerCase();
+                setEmail(text);
+              }}
               className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
               placeholder="Your email"
               required
