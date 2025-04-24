@@ -116,7 +116,7 @@ const AboutPage = () => {
           >
             <h1 className="text-4xl md:text-6xl font-bold text-[#F1DC68] font-cinzel mb-4">About SAGE AI</h1>
             <p className="text-xl md:text-2xl max-w-3xl mx-auto text-gray-200 font-cinzel">
-              A Final Year Project from University of Caloocan City
+              A Project from University of Caloocan City
             </p>
           </motion.div>
         </div>
@@ -139,12 +139,22 @@ const AboutPage = () => {
           </motion.h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            <motion.div variants={fadeIn}>
-              <div className="rounded-lg overflow-hidden shadow-xl">
-                <img 
-                  src="/AboutSAGE.png" 
+            <motion.div
+              variants={fadeIn}
+              initial={{ scale: 0.8, rotate: -10, opacity: 0 }}
+              animate={{ scale: 1, rotate: 0, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 120, damping: 10, duration: 1 }}
+              whileHover={{ scale: 1.08, rotate: 5, transition: { type: "spring", stiffness: 200 } }}
+              whileTap={{ scale: 0.95, rotate: -5 }}
+            >
+              <div className="rounded-lg overflow-hidden">
+                <motion.img 
+                  src="/Logo.png" 
                   alt="SAGE AI Origins" 
-                  className="w-full h-auto object-cover" 
+                  className="mx-auto w-40 h-40 md:w-64 md:h-64 object-cover"
+                  initial={false}
+                  animate={{ rotate: [0, 8, -8, 0] }}
+                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                 />
               </div>
             </motion.div>
@@ -158,7 +168,7 @@ const AboutPage = () => {
               </p>
               
               <p className="text-lg">
-                Developed in 2024 as a final year project at the University of Caloocan City, we set out to create a platform where the boundaries between reader and creator blur, where every choice shapes a unique narrative journey, and where AI serves as a sage guide through limitless worlds of adventure.
+                Developed in 2024 as a third year project at the University of Caloocan City, we set out to create a platform where the boundaries between reader and creator blur, where every choice shapes a unique narrative journey, and where AI serves as a sage guide through limitless worlds of adventure.
               </p>
               
               <p className="text-lg">
