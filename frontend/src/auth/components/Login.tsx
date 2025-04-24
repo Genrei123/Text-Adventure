@@ -203,6 +203,18 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           transition: "opacity 1s ease-in-out",
         }}
       >
+        {/* Sage AI Logo as Navigation to Landing Page */}
+        <Link 
+          to="/" 
+          className="absolute top-6 left-6 z-20 hover:opacity-80 transition-opacity duration-300"
+        >
+          <img 
+            src="/Logo SageAI.png" 
+            alt="Sage AI" 
+            className="w-24 h-auto" 
+          />
+        </Link>
+        
         <img
           src={"/fadeLogin.png"}
           className="absolute inset-0 w-full h-full object-cover z-0 hidden md:block"

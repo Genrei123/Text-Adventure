@@ -346,18 +346,20 @@ const HeroSection: React.FC<{
                 </motion.div>
             </motion.div>
             
-            {/* Add scroll indicator */}
-            <motion.div 
-                className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 cursor-pointer"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1, y: [0, 10, 0] }}
-                transition={{ delay: 2, duration: 1.5, repeat: Infinity }}
-                onClick={() => scrollToSection('intro-section')}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-            >
-                <FaAngleDown className="text-[#F1DC68] text-3xl" />
-            </motion.div>
+            {/* Fixed arrow centering */}
+            <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20">
+                <motion.div 
+                    className="cursor-pointer"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1, y: [0, 10, 0] }}
+                    transition={{ delay: 2, duration: 1.5, repeat: Infinity }}
+                    onClick={() => scrollToSection('intro-section')}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                >
+                    <FaAngleDown className="text-[#F1DC68] text-3xl" />
+                </motion.div>
+            </div>
         </section>
     );
 };
@@ -379,6 +381,21 @@ const IntroSection: React.FC = () => {
             >
                 SAGE.AI is an AI-driven interactive storytelling platform where you embark on infinite adventures shaped entirely by your imagination.
             </motion.h1>
+            
+            {/* Fixed arrow centering */}
+            <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20">
+                <motion.div 
+                    className="cursor-pointer"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.7, y: [0, 10, 0] }}
+                    transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
+                    onClick={() => scrollToSection('features-section')}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                >
+                    <FaAngleDown className="text-[#F1DC68] text-3xl" />
+                </motion.div>
+            </div>
         </section>
     );
 };
@@ -411,18 +428,20 @@ const FeatureSection: React.FC = () => {
                     />
                 </div>
                 
-                {/* Section navigation indicator */}
-                <motion.div 
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 cursor-pointer"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.7, y: [0, 10, 0] }}
-                    transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
-                    onClick={() => scrollToSection('testimonials-section')}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <FaAngleDown className="text-[#F1DC68] text-3xl" />
-                </motion.div>
+                {/* Fixed arrow centering */}
+                <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20">
+                    <motion.div 
+                        className="cursor-pointer"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.7, y: [0, 10, 0] }}
+                        transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
+                        onClick={() => scrollToSection('testimonials-section')}
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        <FaAngleDown className="text-[#F1DC68] text-3xl" />
+                    </motion.div>
+                </div>
             </div>
         </section>
     );
@@ -448,7 +467,7 @@ const FeatureItem: React.FC<{
             </h2>
             
             <p 
-                className={`text-white text-[100%] md:text-[120%] text-${alignment} ${alignment === 'right' ? 'md:w-[60%]' : 'md:w-[60%]'} font-cinzel leading-relaxed`}
+                className={`text-white text-[100%] md:text-[120%] text-${alignment} ${alignment === 'right' ? 'md:w-[60%]' : 'md:w-[60%]'} font-Medieval leading-relaxed`}
             >
                 {content}
             </p>
@@ -532,18 +551,20 @@ const TestimonialsSection: React.FC = () => {
                     </Button>
                 </motion.div>
                 
-                {/* Section navigation indicator */}
-                <motion.div 
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 cursor-pointer"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.7, y: [0, 10, 0] }}
-                    transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
-                    onClick={() => scrollToSection('stats-section')}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <FaAngleDown className="text-[#F1DC68] text-3xl" />
-                </motion.div>
+                {/* Testimonials Arrow */}
+                {/* <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20">
+                    <motion.div 
+                        className="cursor-pointer"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.7, y: [0, 10, 0] }}
+                        transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
+                        onClick={() => scrollToSection('stats-section')}
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        <FaAngleDown className="text-[#F1DC68] text-3xl" />
+                    </motion.div>
+                </div> */}
             </div>
         </section>
     );
@@ -608,18 +629,20 @@ const StatisticsSection: React.FC = () => {
                     ))}
                 </div>
                 
-                {/* Section navigation indicator */}
-                <motion.div 
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 cursor-pointer"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.7, y: [0, 10, 0] }}
-                    transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
-                    onClick={() => scrollToSection('how-it-works-section')}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <FaAngleDown className="text-[#F1DC68] text-3xl" />
-                </motion.div>
+                {/* Statistics Arrow */}
+                {/* <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20">
+                    <motion.div 
+                        className="cursor-pointer"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.7, y: [0, 10, 0] }}
+                        transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
+                        onClick={() => scrollToSection('how-it-works-section')}
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        <FaAngleDown className="text-[#F1DC68] text-3xl" />
+                    </motion.div>
+                </div> */}
             </div>
         </section>
     );
@@ -629,12 +652,12 @@ const HowItWorksSection: React.FC = () => {
     const steps = [
         {
             number: "01",
-            title: "Create Your Account",
+            title: "Enter the World",
             description: "Sign up for SAGE.AI to gain access to endless adventures and storytelling possibilities."
         },
         {
             number: "02",
-            title: "Choose a Story Path",
+            title: "Choose Your Adventure",
             description: "Select from various themes or start from scratch to begin your unique narrative journey."
         },
         {
@@ -700,24 +723,26 @@ const HowItWorksSection: React.FC = () => {
                     viewport={{ once: true }}
                     transition={{ delay: 0.6, duration: 0.5 }}
                 >
-                    <p className="text-lg text-gray-300">
+                    <p className="text-lg text-gray-300 font-Medieval">
                         Each adventure is unique and adapts to your decisions in real-time. Our advanced AI engine remembers your choices 
                         and builds upon them, creating a coherent and engaging narrative experience that's truly yours.
                     </p>
                 </motion.div>
                 
-                {/* Section navigation indicator */}
-                <motion.div 
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 cursor-pointer"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.7, y: [0, 10, 0] }}
-                    transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
-                    onClick={() => scrollToSection('tech-section')}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <FaAngleDown className="text-[#F1DC68] text-3xl" />
-                </motion.div>
+                {/* How It Works Arrow */}
+                {/* <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20">
+                    <motion.div 
+                        className="cursor-pointer"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.7, y: [0, 10, 0] }}
+                        transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
+                        onClick={() => scrollToSection('tech-section')}
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        <FaAngleDown className="text-[#F1DC68] text-3xl" />
+                    </motion.div>
+                </div> */}
             </div>
         </section>
     );
@@ -897,24 +922,24 @@ const TechnologiesSection: React.FC = () => {
                     
                     <div className="relative overflow-hidden rounded-lg bg-[#1A1A1A]/80 border border-[#3A3A3A] shadow-2xl" style={{ minHeight: '500px' }}>
                         {/* Mobile navigation arrows */}
-                        <div className="md:hidden absolute top-1/2 -translate-y-1/2 left-2 z-30">
+                        <div className="md:hidden absolute top-1/2 -translate-y-1/2 left-0 z-30">
                             <motion.button 
                                 onClick={prevPage}
-                                className="bg-[#111]/90 text-[#F1DC68] p-2 rounded-full hover:bg-[#B28F4C] hover:text-white shadow-lg"
+                                className="bg-[#111]/90 text-[#F1DC68] p-3 rounded-r-lg hover:bg-[#B28F4C] hover:text-white shadow-lg border-y border-r border-[#F1DC68]/30"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                             >
-                                <FaChevronLeft className="text-lg" />
+                                <FaChevronLeft className="text-xl" />
                             </motion.button>
                         </div>
-                        <div className="md:hidden absolute top-1/2 -translate-y-1/2 right-2 z-30">
+                        <div className="md:hidden absolute top-1/2 -translate-y-1/2 right-0 z-30">
                             <motion.button 
                                 onClick={nextPage}
-                                className="bg-[#111]/90 text-[#F1DC68] p-2 rounded-full hover:bg-[#B28F4C] hover:text-white shadow-lg"
+                                className="bg-[#111]/90 text-[#F1DC68] p-3 rounded-l-lg hover:bg-[#B28F4C] hover:text-white shadow-lg border-y border-l border-[#F1DC68]/30"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                             >
-                                <FaChevronRight className="text-lg" />
+                                <FaChevronRight className="text-xl" />
                             </motion.button>
                         </div>
                         
@@ -925,7 +950,7 @@ const TechnologiesSection: React.FC = () => {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -100 }}
                                 transition={{ duration: 0.5 }}
-                                className="p-8"
+                                className="p-8 px-12"
                             >
                                 <h3 className="text-2xl text-[#F1DC68] font-cinzel text-center mb-8">
                                     {techCategories[currentPage].title}
@@ -971,18 +996,20 @@ const TechnologiesSection: React.FC = () => {
                     </div>
                 </div>
                 
-                {/* Section navigation indicator */}
-                <motion.div 
-                    className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 cursor-pointer"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.7, y: [0, 10, 0] }}
-                    transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
-                    onClick={() => scrollToSection('cta-section')}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.9 }}
-                >
-                    <FaAngleDown className="text-[#F1DC68] text-3xl" />
-                </motion.div>
+                {/* Tech Section Arrow */}
+                {/* <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20">
+                    <motion.div 
+                        className="cursor-pointer"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.7, y: [0, 10, 0] }}
+                        transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
+                        onClick={() => scrollToSection('cta-section')}
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        <FaAngleDown className="text-[#F1DC68] text-3xl" />
+                    </motion.div>
+                </div> */}
             </div>
         </section>
     );

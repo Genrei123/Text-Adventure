@@ -92,6 +92,18 @@ const Register: React.FC<RegisterProps> = ({ }) => {
   return (
     // register design
     <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-[#1E1E1E] relative overflow-hidden">
+      {/* Sage AI Logo as Navigation to Landing Page */}
+      <Link 
+        to="/" 
+        className="absolute top-6 left-6 z-20 hover:opacity-80 transition-opacity duration-300"
+      >
+        <img 
+          src="/Logo SageAI.png" 
+          alt="Sage AI" 
+          className="w-24 h-auto" 
+        />
+      </Link>
+      
       {/* Background image - responsive handling */}
       <div className="absolute inset-0 w-full h-full">
         {/* Mobile background - solid color already set in parent */}

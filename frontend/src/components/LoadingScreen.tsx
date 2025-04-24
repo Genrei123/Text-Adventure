@@ -14,6 +14,7 @@ const loadingPhrases = [
   "Towards another timeline!",
   "Thou shall not avert thine eyes...",
   "ARgggggggh...",
+  "tum tum tum sahur..."
 ];
 
 interface LoadingScreenProps {
@@ -35,11 +36,22 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ fadeIn, fadeOut }) => {
         transition-all duration-500 ease-in-out
         ${fadeIn ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
         ${fadeOut ? 'opacity-0 scale-105' : 'opacity-100 scale-100'}`}
+      style={{
+        backgroundImage: 'url("/landingMain2.gif")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundBlendMode: 'overlay'
+      }}
     >
-      <div className={`flex flex-col items-center justify-center transform transition-all duration-500 delay-200
+      {/* Background overlay with opacity */}
+      <div className="absolute inset-0 bg-[#1E1E1E] opacity-25 z-0"></div>
+      
+      <div className={`flex flex-col items-center justify-center transform transition-all duration-500 delay-200 z-10
         ${fadeIn || fadeOut ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}
       >
-        <div className="w-64 h-64 relative">
+        {/* Responsive book size - smaller for mobile, slightly reduced for desktop */}
+        <div className="w-48 h-48 md:w-56 md:h-56 relative">
           <video
             autoPlay
             loop
@@ -51,7 +63,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ fadeIn, fadeOut }) => {
             Your browser does not support the video tag.
           </video>
         </div>
-        <p className="mt-4 text-[#C8A97E] font-cinzel text-xl animate-pulse text-center">
+        <p className="mt-4 text-[#C8A97E] font-cinzel text-base md:text-xl animate-pulse text-center px-4">
           {phrase}
         </p>
       </div>

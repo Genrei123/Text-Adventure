@@ -231,12 +231,12 @@ const Contact = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 + 0.5 }}
                   >
-                    <div className="bg-[#2A2A2A] p-3 rounded-full">
+                    <div className="bg-[#2A2A2A] p-3 rounded-full flex-shrink-0">
                       {info.icon}
                     </div>
-                    <div>
-                      <h3 className="text-[#F1DC68] font-semibold">{info.title}</h3>
-                      <p className="text-gray-300">{info.details}</p>
+                    <div className="flex-grow text-left">
+                      <h3 className="text-[#F1DC68] font-semibold text-left">{info.title}</h3>
+                      <p className="text-gray-300 text-left">{info.details}</p>
                     </div>
                   </motion.div>
                 ))}
