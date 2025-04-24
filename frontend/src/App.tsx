@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import LoadingProvider from './context/LoadingContext';
 import { NavbarProvider } from './context/NavbarContext';
 
@@ -33,8 +33,10 @@ import ImageGeneratorScreen from './game/separate-imgGen/chatImgGeneration';
 import ButtonExample from './components/ButtonExample';
 import Footer from './components/Footer';
 import AboutPage from './components/AboutUs';
-import TermsOfServicePage from './components/TermsOfService';
-import PrivacyPolicyPage from './components/PrivacyPolicy';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import TermsOfService from './components/TermsOfService';
+import Contact from './components/Contact';
+import FAQ from './components/FAQ';
 
 // Game Creation Components
 import GameCreation from './game-creation/GameCreation';
@@ -59,6 +61,17 @@ import GameForm from './Admin/Games/GameForm';
 import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
+
+// ScrollToTop component to handle scrolling to top on route change
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
 
 function App() {
   const [username, setUsername] = useState<string | null>(null);
@@ -114,6 +127,7 @@ function App() {
     <Router>
       <LoadingProvider>
         <NavbarProvider onLogout={handleLogout}>
+          <ScrollToTop />
           {username && (
             <SessionTracker
               email={username}
@@ -199,8 +213,14 @@ function App() {
             <Route path="/ban-test" element={<BanTestPage />} />
             <Route path="/shop" element={<Shop />} />
             
+            {/* Support Pages */}
+            <Route path="/AboutUs" element={<AboutPage />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/faq" element={<FAQ />} />
+            
             {/* Error Routes */}
-
             <Route path="/forbidden" element={<Forbidden />} />
             <Route path="/server-error" element={<ServerError />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
