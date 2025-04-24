@@ -90,9 +90,9 @@ const EmailValidator: React.FC<EmailValidatorProps> = ({
       }
 
       // Check provider
-      const domain = email.split('@')[1];
+      const domain = email.split('@')[1]?.toLowerCase();
       if (!domain || !EMAIL_PROVIDERS.includes(domain)) {
-        setValidationMessage('Email provider not available');
+        setValidationMessage('Please use a common email provider');
         setIsValid(false);
         onAvailabilityChange(false);
         toast.error('Email provider not available');
@@ -136,7 +136,7 @@ const EmailValidator: React.FC<EmailValidatorProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    onChange(value);
+    onChange(value.toLowerCase());
     setTouched(true);
     if (!value) {
       setValidationMessage('Email is required');
@@ -157,7 +157,7 @@ const EmailValidator: React.FC<EmailValidatorProps> = ({
           value={email}
           onChange={handleInputChange}
           onBlur={handleInputBlur}
-          className={`${className} w-full`}
+          className={`${className} w-full px-3 py-2 bg-[#3D2E22] text-sm text-white placeholder-[#8B7355]`}
           placeholder="username@email.com"
         />
         {/* Loading spinner */}

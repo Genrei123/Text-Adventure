@@ -33,6 +33,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [fadeOut, setFadeOut] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(false);
 
+  // Add this function to normalize email input as the user types
+  const handleEmailChange = (value: string) => {
+    // Convert email to lowercase as the user types
+    setEmail(value.toLowerCase());
+  };
+
   // Check if user is already logged in when component mounts
   useEffect(() => {
     // Clear any existing tokens
@@ -121,8 +127,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     toast.info("Logging in...");
 
     try {
+      // Normalize email to lowercase before sending to the server
+      const normalizedEmail = email.toLowerCase().trim();
+      
       const response = await axiosInstance.post<LoginResponse>("/auth/login", {
-        email,
+        email: normalizedEmail,
         password,
       });
 
@@ -130,12 +139,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
       // Store auth data
       localStorage.setItem("token", token);
-      localStorage.setItem("email", user.email);
+      localStorage.setItem("email", normalizedEmail); // Store normalized email
 
       // Store user data
       localStorage.setItem("userData", JSON.stringify(user));
 
-      onLogin(user.email); // Assuming onLogin expects email, adjust if it should be username
+      onLogin(user.email);
       toast.success("Login successful!");
       navigateWithLoading("/home");
     } catch (error) {
@@ -231,7 +240,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 <ValidatedInput
                   type="email"
                   value={email}
-                  onChange={(value) => setEmail(value)}
+                  onChange={handleEmailChange}
                   className="w-full px-3 py-2 bg-[#3D2E22] border rounded text-sm text-white placeholder-[#8B7355]"
                   placeholder="Your email"
                 />
