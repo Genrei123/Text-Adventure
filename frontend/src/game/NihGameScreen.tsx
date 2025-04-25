@@ -51,6 +51,8 @@ const NihGameScreen: React.FC = () => {
   const [gameSummary, setGameSummary] = useState('');
   const [moveCount, setMoveCount] = useState(0);
   const [movesLeft, setMovesLeft] = useState(30);
+  // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem('userData');
@@ -101,10 +103,42 @@ const NihGameScreen: React.FC = () => {
     }
   };
 
+  // End current game first, then start a new one
+  const cleanGameState = () => {
+    // Set game as completed
+    if (gameState) {
+      setGameState({
+        ...gameState,
+        gameCompleted: true,
+        movesLeft: 0
+      });
+    }
+    
+    // Reset messages and counters
+    setGameMessages([]);
+    setMoveCount(0);
+    setMovesLeft(30);
+    setError('');
+    setSuccess('');
+    setShowSummaryModal(false);
+    setGameSummary('');
+  };
+
   // New function to start a new game
   const startNewGame = async () => {
     try {
+      setIsLoading(true);
       if (!playerId || !gameId) return;
+      
+      // Clear the current game state before starting a new one
+      cleanGameState();
+      
+      // Add loading message
+      setGameMessages([{
+        content: `Starting new adventure...`,
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString(),
+      }]);
       
       const response = await axiosInstance.post(`/nih/game/${gameId}/player/${playerId}/start-new-game`);
       const { location, narration, moveCount: newMoveCount } = response.data;
@@ -120,29 +154,35 @@ const NihGameScreen: React.FC = () => {
       
       setMoveCount(newMoveCount || 0);
       setMovesLeft(30 - (newMoveCount || 0));
+      
+      // Replace loading message with game start narration
       setGameMessages([{
         content: narration.content,
         isUser: false,
         timestamp: new Date().toLocaleTimeString(),
       }]);
       
-      // Reset other state variables
-      setShowSummaryModal(false);
-      setGameSummary('');
-      setError('');
-      setSuccess('');
-      
       // Fetch inventory immediately after starting new game
       fetchInventory();
     } catch (error) {
       console.error('Error starting new game:', error);
       setError('Failed to start new game.');
+      
+      // Show error message if loading fails
+      setGameMessages([{
+        content: "Failed to start new game. Please try again.",
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString(),
+      }]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // New function to end game early
   const endGameEarly = async () => {
     try {
+      setIsLoading(true);
       if (!playerId || !gameId) {
         setError('Player ID or Game ID not found. Please log in again.');
         return;
@@ -184,6 +224,8 @@ const NihGameScreen: React.FC = () => {
     } catch (err: any) {
       console.error(`Error ending game:`, err);
       setError(err.response?.data?.message || `Failed to end game.`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -209,6 +251,16 @@ const NihGameScreen: React.FC = () => {
     };
     setGameMessages((prev) => [...prev, userMessage]);
 
+    // Add loading indicator message
+    const loadingMessage = {
+      content: `Thinking...`,
+      isUser: false,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+    setGameMessages((prev) => [...prev, loadingMessage]);
+    
+    setIsLoading(true);
+
     try {
       if (action === 'Move' && option) {
         const response = await axiosInstance.post(`/nih/game/${gameId}/player/${playerId}/change-location`, {
@@ -228,10 +280,14 @@ const NihGameScreen: React.FC = () => {
           gameCompleted: gameCompleted || false
         } : null);
         
-        setGameMessages((prev) => [
-          ...prev,
-          { content: narration.content, isUser: false, timestamp: new Date().toLocaleTimeString() },
-        ]);
+        // Remove loading message and add the response
+        setGameMessages((prev) => {
+          const messages = prev.filter(msg => msg.content !== 'Thinking...');
+          return [
+            ...messages,
+            { content: narration.content, isUser: false, timestamp: new Date().toLocaleTimeString() },
+          ];
+        });
         
         // Check if game is completed and show summary modal
         if (gameCompleted && gameSummary) {
@@ -263,10 +319,14 @@ const NihGameScreen: React.FC = () => {
           gameCompleted: gameCompleted || false
         } : null);
         
-        setGameMessages((prev) => [
-          ...prev,
-          { content: narration.content, isUser: false, timestamp: new Date().toLocaleTimeString() },
-        ]);
+        // Remove loading message and add the response
+        setGameMessages((prev) => {
+          const messages = prev.filter(msg => msg.content !== 'Thinking...');
+          return [
+            ...messages,
+            { content: narration.content, isUser: false, timestamp: new Date().toLocaleTimeString() },
+          ];
+        });
         
         // Check if game is completed and show summary modal
         if (gameCompleted && gameSummary) {
@@ -290,10 +350,14 @@ const NihGameScreen: React.FC = () => {
         
         const content = `You look around ${locationDetails.name}: ${locationDetails.description}. Exits: ${Object.keys(locationDetails.exits).join(', ')}. Inventory: ${inventory.map((i: Item) => i.name).join(', ') || 'empty'}. Moves made: ${newMoveCount}, Moves left: ${newMovesLeft}.`;
         
-        setGameMessages((prev) => [
-          ...prev,
-          { content, isUser: false, timestamp: new Date().toLocaleTimeString() },
-        ]);
+        // Remove loading message and add the response
+        setGameMessages((prev) => {
+          const messages = prev.filter(msg => msg.content !== 'Thinking...');
+          return [
+            ...messages,
+            { content, isUser: false, timestamp: new Date().toLocaleTimeString() },
+          ];
+        });
       } else if (action === 'StartNew') {
         await startNewGame();
         setSuccess('New game started!');
@@ -302,10 +366,14 @@ const NihGameScreen: React.FC = () => {
       } else if (action === 'Exit') {
         // Keep the original Exit logic
         if (gameState?.locationId === 'real_world') {
-          setGameMessages((prev) => [
-            ...prev,
-            { content: "You've escaped to the real world. Game Over!", isUser: false, timestamp: new Date().toLocaleTimeString() },
-          ]);
+          // Remove loading message and add the response
+          setGameMessages((prev) => {
+            const messages = prev.filter(msg => msg.content !== 'Thinking...');
+            return [
+              ...messages,
+              { content: "You've escaped to the real world. Game Over!", isUser: false, timestamp: new Date().toLocaleTimeString() },
+            ];
+          });
         } else {
           throw new Error('You can only exit from the Real World!');
         }
@@ -315,6 +383,13 @@ const NihGameScreen: React.FC = () => {
     } catch (err: any) {
       console.error(`Error performing ${action}:`, err);
       setError(err.response?.data?.message || `Failed to perform ${action.toLowerCase()}.`);
+      
+      // Remove loading message when there's an error
+      setGameMessages((prev) => {
+        return prev.filter(msg => msg.content !== 'Thinking...');
+      });
+    } finally {
+      setIsLoading(false);
     }
 
     setSelectedAction(null);
@@ -341,7 +416,17 @@ const NihGameScreen: React.FC = () => {
       timestamp: new Date().toLocaleTimeString(),
     };
     setGameMessages((prev) => [...prev, userMessage]);
+    
+    // Add loading indicator message
+    const loadingMessage = {
+      content: `Thinking...`,
+      isUser: false,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+    setGameMessages((prev) => [...prev, loadingMessage]);
+    
     setChatInput(''); // Clear input field
+    setIsLoading(true);
 
     try {
       // Call the chat API endpoint
@@ -351,13 +436,18 @@ const NihGameScreen: React.FC = () => {
         message: messageText
       });
 
-      // Add AI response to chat display
-      const aiMessage = {
-        content: response.data.ai_response.content,
-        isUser: false,
-        timestamp: new Date().toLocaleTimeString(),
-      };
-      setGameMessages((prev) => [...prev, aiMessage]);
+      // Remove loading message and add AI response to chat display
+      setGameMessages((prev) => {
+        const messages = prev.filter(msg => msg.content !== 'Thinking...');
+        return [
+          ...messages,
+          {
+            content: response.data.ai_response.content,
+            isUser: false,
+            timestamp: new Date().toLocaleTimeString(),
+          }
+        ];
+      });
       
       // Fetch inventory after chat to ensure it's up to date
       // (in case AI response affects the game state)
@@ -366,6 +456,13 @@ const NihGameScreen: React.FC = () => {
     } catch (err: any) {
       console.error('Error sending chat message:', err);
       setError(err.response?.data?.message || 'Failed to send message.');
+      
+      // Remove loading message when there's an error
+      setGameMessages((prev) => {
+        return prev.filter(msg => msg.content !== 'Thinking...');
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -389,8 +486,9 @@ const NihGameScreen: React.FC = () => {
               startNewGame();
             }}
             className="px-4 py-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17] mr-2"
+            disabled={isLoading}
           >
-            Start New Game
+            {isLoading ? 'Starting...' : 'Start New Game'}
           </button>
           <button 
             onClick={() => setShowSummaryModal(false)}
@@ -400,6 +498,13 @@ const NihGameScreen: React.FC = () => {
           </button>
         </div>
       </div>
+    </div>
+  );
+
+  // Loading spinner component
+  const LoadingSpinner = () => (
+    <div className="flex justify-center items-center py-2">
+      <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#E5D4B3]"></div>
     </div>
   );
 
@@ -424,7 +529,27 @@ const NihGameScreen: React.FC = () => {
           {gameMessages.map((msg, index) => (
             <div key={index} className={`mb-4 ${msg.isUser ? 'text-right' : 'text-left'}`}>
               <p className={`inline-block p-2 rounded-lg ${msg.isUser ? 'bg-[#311F17] text-white' : 'bg-[#634630] text-[#E5D4B3]'}`}>
-                {msg.content}
+                {msg.content === 'Thinking...' ? (
+                  <span className="flex items-center">
+                    Thinking
+                    <span className="inline-block ml-1">
+                      <span className="animate-pulse">.</span>
+                      <span className="animate-pulse delay-100">.</span>
+                      <span className="animate-pulse delay-200">.</span>
+                    </span>
+                  </span>
+                ) : msg.content === 'Starting new adventure...' ? (
+                  <span className="flex items-center">
+                    Starting new adventure
+                    <span className="inline-block ml-1">
+                      <span className="animate-pulse">.</span>
+                      <span className="animate-pulse delay-100">.</span>
+                      <span className="animate-pulse delay-200">.</span>
+                    </span>
+                  </span>
+                ) : (
+                  msg.content
+                )}
               </p>
               <p className="text-xs text-gray-500 mt-1">{msg.timestamp}</p>
 
@@ -440,7 +565,42 @@ const NihGameScreen: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-full md:w-1/2 mx-auto mt-[0%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
+      {/* Moved up chat input area with less bottom margin and higher position */}
+      <div className="w-full md:w-1/2 mx-auto flex flex-col items-center md:items-start space-y-4 fixed bottom-16 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0">
+        {/* Chatbox Input - Moved before other elements to be higher */}
+        <div className="w-full flex flex-col items-center md:items-start mb-2">
+          <div className="flex w-full gap-2">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !isLoading) handleChatSubmit();
+              }}
+              className={`flex-grow p-2 rounded bg-[#2A2A2A] text-white border border-[#634630] focus:outline-none ${
+                (gameState?.gameCompleted || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              placeholder="Type your message..."
+              disabled={gameState?.gameCompleted || isLoading}
+            />
+            <button
+              onClick={handleChatSubmit}
+              className={`px-4 py-2 bg-[#634630] text-[#E5D4B3] rounded hover:bg-[#311F17] ${
+                (gameState?.gameCompleted || isLoading) ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              disabled={gameState?.gameCompleted || isLoading}
+            >
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin h-4 w-4 border-2 border-t-transparent border-[#E5D4B3] rounded-full mr-2"></div>
+                  <span>Sending...</span>
+                </div>
+              ) : (
+                'Send'
+              )}
+            </button>
+          </div>
+        </div>
 
         {/* Inventory Display */}
         <div className="w-full text-center md:text-left">
@@ -459,35 +619,36 @@ const NihGameScreen: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap gap-3 w-full justify-center md:justify-start mb-4">
+        <div className="flex flex-wrap gap-3 w-full justify-center md:justify-start mb-2">
           <ActionButton
             action="Navigate"
             isSelected={selectedAction === 'Move'}
             onClick={() => setSelectedAction(selectedAction === 'Move' ? null : 'Move')}
-            disabled={gameState?.gameCompleted}
+            disabled={gameState?.gameCompleted || isLoading}
           />
           <ActionButton
             action="Use"
             isSelected={selectedAction === 'Use'}
             onClick={() => setSelectedAction(selectedAction === 'Use' ? null : 'Use')}
-            disabled={gameState?.gameCompleted}
+            disabled={gameState?.gameCompleted || isLoading}
           />
           <ActionButton
             action="Check"
             isSelected={selectedAction === 'Look'}
             onClick={() => handleAction('Look')}
-            disabled={gameState?.gameCompleted}
+            disabled={gameState?.gameCompleted || isLoading}
           />
           <ActionButton
             action="End Game"
             isSelected={selectedAction === 'EndGame'}
             onClick={() => handleAction('EndGame')}
-            disabled={gameState?.gameCompleted}
+            disabled={gameState?.gameCompleted || isLoading}
           />
           <ActionButton
             action="New Game"
             isSelected={selectedAction === 'StartNew'}
             onClick={() => handleAction('StartNew')}
+            disabled={isLoading}
           />
         </div>
 
@@ -506,8 +667,9 @@ const NihGameScreen: React.FC = () => {
             {Object.keys(gameState.locationDetails.exits).map((direction) => (
               <button
                 key={direction}
-                className="p-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17] m-1"
+                className={`p-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17] m-1 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => handleAction('Move', direction)}
+                disabled={isLoading}
               >
                 Go {direction}
               </button>
@@ -520,39 +682,26 @@ const NihGameScreen: React.FC = () => {
             {gameState.inventory.map((item) => (
               <button
                 key={item.id}
-                className="p-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17] m-1"
+                className={`p-2 bg-[#634630] text-[#E5D4B3] rounded-lg hover:bg-[#311F17] m-1 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => handleAction('Use', item.name)}
+                disabled={isLoading}
               >
                 Use {item.name}
               </button>
             ))}
           </div>
         )}
+      </div>
 
-        {/* Chatbox Input */}
-        <div className="w-full flex flex-col items-center md:items-start">
-          <div className="flex w-full gap-2">
-            <input
-              type="text"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleChatSubmit();
-              }}
-              className="flex-grow p-2 rounded bg-[#2A2A2A] text-white border border-[#634630] focus:outline-none"
-              placeholder="Type your message..."
-              disabled={gameState?.gameCompleted}
-            />
-            <button
-              onClick={handleChatSubmit}
-              className={`px-4 py-2 bg-[#634630] text-[#E5D4B3] rounded hover:bg-[#311F17] ${gameState?.gameCompleted ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={gameState?.gameCompleted}
-            >
-              Send
-            </button>
+      {/* Global Loading Indicator */}
+      {isLoading && (
+        <div className="fixed bottom-4 right-4 bg-[#311F17] p-2 rounded-lg shadow-lg z-50">
+          <div className="flex items-center">
+            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-[#E5D4B3] mr-2"></div>
+            <span className="text-sm text-[#E5D4B3]">Processing...</span>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Summary Modal */}
       {showSummaryModal && <SummaryModal />}
