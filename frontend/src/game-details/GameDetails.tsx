@@ -427,10 +427,10 @@ const GameDetails: React.FC = () => {
               </div>
               <div className="flex flex-col items-end gap-4">
                 <div className="flex items-center gap-6 bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm">
-                  <div className="flex items-center gap-1">
+                  {/* <div className="flex items-center gap-1">
                     <Star className="w-5 h-5 text-yellow-400" />
                     <span className="text-white">{game.rating ? game.rating.toFixed(1) : 0}</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center gap-1">
                     <MessageSquare className="w-5 h-5 text-blue-400" />
                     <span>{game.commentsCount || 0}</span>
@@ -442,14 +442,14 @@ const GameDetails: React.FC = () => {
                 </div>
                 <div className="flex flex-row items-center gap-4 relative">
                   <div className="relative" ref={popupRef}>
-                    <button
+                    {/* <button
                       className="bg-[#B39C7D] hover:bg-[#8C7A5B] text-white px-4 py-2 rounded-lg transition-all duration-200 font-medium flex items-center gap-2 shadow-lg md:order-1 order-1"
                       onClick={toggleRatingPopup}
                     >
-                      {/* <Star className="w-5 h-5 text-yellow-400" /> */}
+                      
                       <span className="hidden md:inline">Rate Game</span>
                       <span className="md:hidden">Rate</span>
-                    </button>
+                    </button> */}
                     {!hasRated && isRatingPopupOpen && (
                       <div className="absolute bottom-full mb-2 right-0 bg-black/90 p-4 rounded-lg shadow-lg flex items-center gap-2 z-10">
                         <p className="text-white">You rated this game {userRating} stars.</p>
