@@ -1333,49 +1333,151 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   }
 
   const BulkDeleteConfirmationModal = () => {
+    const [adminEmail, setAdminEmail] = useState("");
+    const [adminPassword, setAdminPassword] = useState("");
+    const [loginError, setLoginError] = useState("");
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
+    const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
+    const [bulkDeleteEnabled, setBulkDeleteEnabled] = useState(false);
+
+    useEffect(() => {
+      const requiredText = `DELETE ${selectedGames.length} GAMES`;
+      setBulkDeleteEnabled(bulkDeleteConfirmText === requiredText);
+    }, [bulkDeleteConfirmText, selectedGames.length]);
+
+    const handleAdminLogin = async () => {
+      setIsAuthenticating(true);
+      setLoginError("");
+
+      try {
+        const response = await axiosInstance.post("/auth/login", {
+          email: adminEmail,
+          password: adminPassword,
+        });
+
+        if (response.status === 200 && response.data.user.admin === true) {
+          // Admin authentication successful, proceed with bulk delete
+          setLoginError("");
+          handleBulkDelete();
+        } else {
+          // Authentication failed
+          setLoginError("Invalid admin credentials");
+        }
+      } catch (error: any) {
+        console.error("Admin login failed:", error);
+        setLoginError(error.response?.data?.message || "Failed to authenticate admin");
+      } finally {
+        setIsAuthenticating(false);
+      }
+    };
+
     return (
       <Modal
         isOpen={showBulkDeleteConfirmation}
         onRequestClose={() => setShowBulkDeleteConfirmation(false)}
-        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+        className="modal-content bg-[#2F2118] p-8 rounded-xl max-w-xl mx-4"
         overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
         ariaHideApp={false}
       >
         <div className="space-y-6">
           <div className="flex items-center gap-3 text-red-400">
-            <Trash className="w-6 h-6" />
-            <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
+            <Trash className="w-8 h-8" />
+            <h2 className="text-2xl font-cinzel">Confirm Bulk Deletion</h2>
           </div>
 
-          <p className="text-[#F0E6DB]">
-            Are you sure you want to delete {selectedGames.length} selected games?
-          </p>
+          <div className="bg-red-900/20 p-6 rounded-xl border border-red-800/30 space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <h3 className="font-cinzel font-bold text-xl mb-2">Dangerous Operation</h3>
+                <p className="text-[#F0E6DB]">
+                  You're about to delete {selectedGames.length} games permanently. This action cannot be undone.
+                </p>
+              </div>
+            </div>
 
-          <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
-            <p className="text-red-300 text-sm">
-              <strong>Warning:</strong> This action cannot be undone.
-            </p>
+            <div className="bg-red-900/30 p-4 rounded-lg border border-red-800/40">
+              <p className="text-red-300 text-sm flex items-start gap-2">
+                <span className="text-red-400 mt-1">⚠️</span>
+                <span>
+                  <strong>Warning:</strong> All selected game data including images, prompts, and user progress will be
+                  permanently removed. This may affect active users.
+                </span>
+              </p>
+            </div>
+
+            <div className="mt-4 space-y-4">
+              <label className="block text-base font-cinzel text-white mb-3">
+                Admin Email:
+              </label>
+              <input
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-4 py-3 rounded-lg border-2 border-red-800/50 focus:ring-2 focus:ring-red-500 focus:outline-none text-lg"
+                placeholder="Admin Email"
+                autoComplete="email"
+              />
+
+              <label className="block text-base font-cinzel text-white mb-3">
+                Admin Password:
+              </label>
+              <input
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-4 py-3 rounded-lg border-2 border-red-800/50 focus:ring-2 focus:ring-red-500 focus:outline-none text-lg"
+                placeholder="Admin Password"
+                autoComplete="current-password"
+              />
+
+              {loginError && <p className="text-red-400">{loginError}</p>}
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-base font-cinzel text-white mb-3">
+                Type <span className="font-semibold text-red-300">DELETE {selectedGames.length} GAMES</span> to confirm:
+              </label>
+              <input
+                type="text"
+                value={bulkDeleteConfirmText}
+                onChange={(e) => setBulkDeleteConfirmText(e.target.value)}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-4 py-3 rounded-lg border-2 border-red-800/50 focus:ring-2 focus:ring-red-500 focus:outline-none text-lg"
+                placeholder={`Type "DELETE ${selectedGames.length} GAMES" here`}
+                autoComplete="off"
+              />
+            </div>
           </div>
 
           <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
             <button
-              onClick={() => setShowBulkDeleteConfirmation(false)}
-              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg"
+              onClick={() => {
+                setShowBulkDeleteConfirmation(false);
+                setBulkDeleteConfirmText("");
+                setLoginError("");
+                setAdminEmail("");
+                setAdminPassword("");
+              }}
+              className="px-5 py-3 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors text-lg"
             >
               Cancel
             </button>
             <button
-              onClick={handleBulkDelete}
-              className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg flex items-center gap-2"
+              onClick={handleAdminLogin}
+              disabled={!bulkDeleteEnabled || isAuthenticating}
+              className={`px-5 py-3 rounded-lg transition-colors text-lg font-medium flex items-center gap-2 ${
+                bulkDeleteEnabled && !isAuthenticating
+                  ? "bg-red-700 hover:bg-red-800 text-white"
+                  : "bg-gray-700 text-gray-400 cursor-not-allowed"
+              }`}
             >
-              <Trash className="w-4 h-4" />
-              Delete {selectedGames.length} Games
+              <Trash className="w-5 h-5" />
+              {isAuthenticating ? "Authenticating..." : "Confirm Bulk Delete"}
             </button>
           </div>
         </div>
       </Modal>
-    )
-  }
+    );
+  };
 
   const openEditModal = async (game: Game) => {
     console.log(`Opening edit page for game: ${game.title} (ID: ${game.id})`)
