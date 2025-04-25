@@ -2,9 +2,9 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
+import Modal from "react-modal"
 import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Sliders, Save, ChevronLeft } from "lucide-react"
 import axiosInstance from "../../../config/axiosConfig"
-import Modal from "react-modal"
 import Loader from "./Loader"
 import { motion, AnimatePresence } from "framer-motion"
 import { ToastContainer, toast } from "react-toastify"
@@ -65,67 +65,23 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
   const [titleFilter, setTitleFilter] = useState("")
   const [creatorFilter, setCreatorFilter] = useState("")
   const [showBulkDeleteConfirmation, setShowBulkDeleteConfirmation] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [editGameData, setEditGameData] = useState<Game | null>(null)
   const [isViewingGameDetails, setIsViewingGameDetails] = useState(false)
   const [viewedGameDetails, setViewedGameDetails] = useState<Game | null>(null)
   const [showEnlargedImage, setShowEnlargedImage] = useState(false)
   const [isEditingDetails, setIsEditingDetails] = useState(false)
-  const [isDeletingDetails, setIsDeletingDetails] = useState(false)
-  const [deleteConfirmText, setDeleteConfirmText] = useState("")
-  const [deleteEnabled, setDeleteEnabled] = useState(false)
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false)
+  const [gameToDelete, setGameToDelete] = useState<Game | null>(null)
 
   const isMounted = useRef(true)
-
-  const safelySetModalState = (
-    modalToOpen: "edit" | "bulkDelete" | "new" | null,
-    data: any = null,
-  ) => {
-    console.log(`Attempting to open modal: ${modalToOpen}`, data)
-
-    setShowEditModal(false)
-    setShowBulkDeleteConfirmation(false)
-    setShowModal(false)
-
-    console.log("All modals closed")
-
-    if (modalToOpen === "edit" && data) {
-      setEditGameData(data)
-    }
-
-    switch (modalToOpen) {
-      case "edit":
-        setShowEditModal(true)
-        console.log("Edit modal opened")
-        break
-      case "bulkDelete":
-        setShowBulkDeleteConfirmation(true)
-        console.log("Bulk delete confirmation modal opened")
-        break
-      case "new":
-        setShowModal(true)
-        console.log("New game modal opened")
-        break
-    }
-  }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       Modal.setAppElement("#root")
-      console.log("Modal app element set to #root")
     }
-
     return () => {
       isMounted.current = false
-      console.log("Component unmounting, isMounted set to false")
     }
   }, [])
-
-  const allSelected = games.length > 0 && selectedGames.length === games.length
-
-  const toggleSelectAll = () => {
-    setSelectedGames(allSelected ? [] : games.map((game) => game.id))
-  }
 
   useEffect(() => {
     if (refreshTrigger > 0) {
@@ -138,17 +94,12 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
   }, [])
 
   const fetchGames = async () => {
-    console.log("Fetching games data")
     setIsLoading(true)
-
     try {
       const [gamesResponse, usersResponse] = await Promise.all([
         axiosInstance.get("/api/games/all"),
         axiosInstance.get("/admin/users"),
       ])
-
-      console.log("Games data fetched:", gamesResponse.data)
-      console.log("Users data fetched:", usersResponse.data)
 
       const userMap = new Map<number, string>()
       ;(usersResponse.data || []).forEach((user: User) => {
@@ -160,18 +111,15 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
         creator: userMap.get(game.UserId) || "Unknown",
       }))
 
-      console.log("Enriched games data:", enrichedGames)
       if (isMounted.current) {
         setGames(enrichedGames)
       }
     } catch (error) {
-      console.error("Error fetching data:", error)
       toast.error("Failed to load game data")
     } finally {
       if (isMounted.current) {
         setIsLoading(false)
       }
-      console.log("Games fetch operation completed")
     }
   }
 
@@ -215,18 +163,13 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
 
   const handleNewGameSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Submitting new game:", newGame)
-
     try {
-      const response = await axiosInstance.post("/api/games", newGame)
-      console.log("New game API response:", response)
-
+      await axiosInstance.post("/api/games", newGame)
       setShowModal(false)
       fetchGames()
       toast.success(`Game "${newGame.title}" created successfully`)
       setNewGame({ title: "", genre: "RPG", description: "", prompt: "" })
     } catch (error) {
-      console.error("Error creating game:", error)
       toast.error("Failed to create game")
     }
   }
@@ -236,66 +179,45 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
   }
 
   const confirmBulkDelete = () => {
-    console.log(`Confirming bulk deletion for ${selectedGames.length} games`)
-    safelySetModalState("bulkDelete")
+    setShowBulkDeleteConfirmation(true)
   }
 
   const handleBulkDelete = async () => {
-    console.log(`Bulk deleting ${selectedGames.length} games with IDs:`, selectedGames)
-
     try {
-      const response = await axiosInstance.delete("/api/games/bulk-delete", { data: { ids: selectedGames } })
-      console.log("Bulk delete API response:", response)
-
+      await axiosInstance.delete("/api/games/bulk-delete", { data: { ids: selectedGames } })
       setSelectedGames([])
       fetchGames()
       toast.success(`${selectedGames.length} games deleted successfully`)
     } catch (error) {
-      console.error("Error deleting games:", error)
       toast.error("Failed to delete games")
     } finally {
       setShowBulkDeleteConfirmation(false)
-      console.log("Bulk delete operation completed, modal closed")
     }
   }
 
-  const confirmDelete = async (game: Game) => {
-    console.log(`Initiating delete process for game: ${game.title} (ID: ${game.id})`)
-    await viewGameDetails(game.id)
-    if (isMounted.current) {
-      setIsDeletingDetails(true)
-      setDeleteConfirmText("")
-      setDeleteEnabled(false)
-    }
+  const initiateSingleDelete = (game: Game) => {
+    setGameToDelete(game)
+    setShowDeleteConfirmModal(true)
   }
 
-  const handleDelete = async () => {
-    if (!viewedGameDetails) {
-      console.log("No viewed game details to delete, aborting")
+  const executeSingleDelete = async () => {
+    if (!gameToDelete) {
+      toast.error("Could not delete game. Please try again.")
       return
     }
 
-    console.log(`Deleting game: ${viewedGameDetails.title} (ID: ${viewedGameDetails.id})`)
-
     try {
-      const response = await axiosInstance.delete(`/api/games/${viewedGameDetails.id}`)
-      console.log("Delete API response:", response)
-
-      setGames((prevGames) => prevGames.filter((g) => g.id !== viewedGameDetails.id))
-
-      toast.success(`Game "${viewedGameDetails.title}" deleted successfully`)
-
-      setIsViewingGameDetails(false)
-      setViewedGameDetails(null)
-      setIsDeletingDetails(false)
-      setDeleteConfirmText("")
-      setDeleteEnabled(false)
+      await axiosInstance.delete(`/api/games/${gameToDelete.id}`)
+      toast.success(`Game "${gameToDelete.title}" deleted successfully`)
+      setGames((prevGames) => prevGames.filter((g) => g.id !== gameToDelete.id))
+      setShowDeleteConfirmModal(false)
+      setGameToDelete(null)
+      if (isViewingGameDetails && viewedGameDetails?.id === gameToDelete.id) {
+        backToGamesList()
+      }
     } catch (error: any) {
-      console.error("Error deleting game:", error)
       const errorMessage = error.response?.data?.message || "Failed to delete game"
       toast.error(errorMessage)
-    } finally {
-      console.log("Delete operation completed")
     }
   }
 
@@ -344,7 +266,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
             onChange={(e) => setTitleFilter(e.target.value)}
           />
         </div>
-
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre</label>
           <select
@@ -361,7 +282,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
             <option value="Romance">Romance</option>
           </select>
         </div>
-
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Creator</label>
           <input
@@ -373,7 +293,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
           />
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Start Date</label>
@@ -394,7 +313,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
           />
         </div>
       </div>
-
       <div className="flex justify-end mt-4">
         <button
           onClick={() => {
@@ -426,7 +344,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
             ✕
           </button>
         </div>
-
         <form onSubmit={handleNewGameSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
@@ -440,7 +357,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                 onChange={handleNewGameChange}
               />
             </div>
-
             <div>
               <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre *</label>
               <select
@@ -459,7 +375,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
               </select>
             </div>
           </div>
-
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Primary Prompt</label>
@@ -472,7 +387,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
               />
             </div>
           </div>
-
           <div className="md:col-span-2 flex justify-end space-x-4 border-t border-[#6A4E32]/50 pt-6">
             <button
               type="button"
@@ -494,135 +408,143 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
     </Modal>
   )
 
-  const DeleteGameConfirmationView = () => {
-    const [isDeletingConfirm, setIsDeletingConfirm] = useState(false)
+  const DeleteConfirmationModal = () => {
+    const [confirmInputText, setConfirmInputText] = useState("")
+    const [isConfirmEnabled, setIsConfirmEnabled] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-      if (inputRef.current) {
-        inputRef.current.focus()
+      setConfirmInputText("")
+      setIsConfirmEnabled(false)
+      setIsDeleting(false)
+      if (showDeleteConfirmModal && inputRef.current) {
+        setTimeout(() => inputRef.current?.focus(), 100)
       }
-      setDeleteEnabled(false)
-    }, [])
+    }, [showDeleteConfirmModal, gameToDelete])
 
-    useEffect(() => {
-      if (viewedGameDetails && deleteConfirmText === viewedGameDetails.title) {
-        setDeleteEnabled(true)
-      } else {
-        setDeleteEnabled(false)
-      }
-    }, [deleteConfirmText, viewedGameDetails])
-
-    const handleDeleteConfirm = async () => {
-      setIsDeletingConfirm(true)
-      await handleDelete()
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const currentText = e.target.value
+      setConfirmInputText(currentText)
+      setIsConfirmEnabled(currentText === gameToDelete?.title)
     }
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" && deleteEnabled) {
-        handleDeleteConfirm()
+    const handleConfirmClick = async () => {
+      if (!isConfirmEnabled || !gameToDelete) return
+      setIsDeleting(true)
+      await executeSingleDelete()
+      setIsDeleting(false)
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" && isConfirmEnabled) {
+        handleConfirmClick()
       }
     }
 
-    if (!viewedGameDetails) return null
+    const handleClose = () => {
+      if (!isDeleting) {
+        setShowDeleteConfirmModal(false)
+        setGameToDelete(null)
+      }
+    }
+
+    if (!gameToDelete) return null
 
     return (
-      <div className="mt-8 border-t-2 border-red-800/50 pt-8 space-y-6">
-        <div className="flex items-center gap-4">
-          <h1 className="text-3xl font-cinzel font-bold text-red-500">Delete Game</h1>
-        </div>
-
-        <div className="bg-red-900/20 p-6 rounded-xl border border-red-800/30 space-y-6">
-          <div className="flex items-center gap-3 text-red-400">
-            <Trash className="w-6 h-6" />
-            <h2 className="text-xl font-cinzel">Confirm Deletion</h2>
+      <Modal
+        isOpen={showDeleteConfirmModal}
+        onRequestClose={handleClose}
+        className="modal-content bg-[#2F2118] p-8 rounded-xl max-w-2xl mx-4 my-8 outline-none border-2 border-red-800/50 shadow-2xl"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-[60]"
+        ariaHideApp={false}
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Trash className="w-8 h-8 text-red-500" />
+            <h1 className="text-3xl font-cinzel font-bold text-red-500">Delete Game</h1>
           </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="w-24 h-24 bg-[#1E1512] rounded-lg overflow-hidden border border-[#6A4E32]">
-                {viewedGameDetails?.image_data ? (
-                  <img
-                    src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
-                    alt={viewedGameDetails?.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      console.error("Error loading image thumbnail")
-                      ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-[#2F2118]">
-                    <Trash className="w-14 h-14 text-red-500/50" />
-                  </div>
-                )}
+          <div className="bg-red-900/20 p-6 rounded-xl border border-red-800/30 space-y-6">
+            <div className="flex items-center gap-3 text-red-400">
+              <h2 className="text-xl font-cinzel">Confirm Deletion</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-24 h-24 bg-[#1E1512] rounded-lg overflow-hidden border border-[#6A4E32] flex-shrink-0">
+                  {gameToDelete.image_data ? (
+                    <img
+                      src={`${import.meta.env.VITE_BACKEND_URL || ""}${gameToDelete.image_data}`}
+                      alt={gameToDelete.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-[#2F2118]">
+                      <Trash className="w-14 h-14 text-red-500/50" />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-cinzel font-bold text-2xl text-white">{gameToDelete.title}</h3>
+                  <p className="text-[#8B7355] text-lg">
+                    {gameToDelete.genre} • Created by {gameToDelete.creator || "Unknown"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-cinzel font-bold text-2xl">{viewedGameDetails?.title}</h3>
-                <p className="text-[#8B7355] text-lg">
-                  {viewedGameDetails?.genre} • Created by {viewedGameDetails?.creator || "Unknown"}
+              <div className="mt-6">
+                <p className="text-[#F0E6DB] text-xl mb-2">Are you sure you want to permanently delete this game?</p>
+                <p className="text-red-300 text-lg font-semibold">This action cannot be undone.</p>
+              </div>
+              <div className="bg-red-900/30 p-5 rounded-lg border border-red-800/40">
+                <p className="text-red-300 text-base flex items-start gap-2">
+                  <span className="text-red-400 mt-1">⚠️</span>
+                  <span>
+                    <strong className="text-red-200">Warning:</strong> All game data, including prompts, images, and user
+                    progress will be permanently deleted. Users who have played this game will lose their progress and
+                    history.
+                  </span>
                 </p>
               </div>
-            </div>
-
-            <div className="mt-6">
-              <p className="text-[#F0E6DB] text-xl mb-2">Are you sure you want to permanently delete this game?</p>
-              <p className="text-red-300 text-lg font-semibold">This action cannot be undone.</p>
-            </div>
-
-            <div className="bg-red-900/30 p-5 rounded-lg border border-red-800/40">
-              <p className="text-red-300 text-base flex items-start gap-2">
-                <span className="text-red-400 mt-1">⚠️</span>
-                <span>
-                  <strong className="text-red-200">Warning:</strong> All game data, including prompts, images, and user
-                  progress will be permanently deleted. Users who have played this game will lose their progress and
-                  history.
-                </span>
-              </p>
-            </div>
-
-            <div className="mt-4">
-              <label htmlFor="deleteConfirmInput" className="block text-base font-cinzel text-white mb-3">
-                Type <span className="font-semibold text-red-300">{viewedGameDetails?.title}</span> to confirm:
-              </label>
-              <input
-                id="deleteConfirmInput"
-                ref={inputRef}
-                type="text"
-                value={deleteConfirmText}
-                onChange={(e) => setDeleteConfirmText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="w-full bg-[#1E1512] text-[#F0E6DB] px-4 py-3 rounded-lg border-2 border-red-800/50 focus:ring-2 focus:ring-red-500 focus:outline-none text-lg"
-                placeholder={`Type "${viewedGameDetails?.title}" here`}
-                disabled={isDeletingConfirm}
-                autoComplete="off"
-              />
+              <div className="mt-4">
+                <label htmlFor="deleteConfirmInputModal" className="block text-base font-cinzel text-white mb-3">
+                  Type <span className="font-semibold text-red-300">{gameToDelete.title}</span> to confirm:
+                </label>
+                <input
+                  id="deleteConfirmInputModal"
+                  ref={inputRef}
+                  type="text"
+                  value={confirmInputText}
+                  onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-4 py-3 rounded-lg border-2 border-red-800/50 focus:ring-2 focus:ring-red-500 focus:outline-none text-lg"
+                  placeholder={`Type "${gameToDelete.title}" here`}
+                  disabled={isDeleting}
+                  autoComplete="off"
+                />
+              </div>
             </div>
           </div>
-
           <div className="flex justify-end space-x-4 pt-6 border-t border-red-800/40">
             <button
               type="button"
-              onClick={() => {
-                setIsDeletingDetails(false)
-                setDeleteConfirmText("")
-                setDeleteEnabled(false)
-              }}
+              onClick={handleClose}
               className="px-5 py-3 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors text-lg font-medium"
-              disabled={isDeletingConfirm}
+              disabled={isDeleting}
             >
               Cancel
             </button>
             <button
-              onClick={handleDeleteConfirm}
-              disabled={!deleteEnabled || isDeletingConfirm}
+              onClick={handleConfirmClick}
+              disabled={!isConfirmEnabled || isDeleting}
               className={`px-5 py-3 rounded-lg transition-colors text-lg font-medium flex items-center gap-2 ${
-                deleteEnabled && !isDeletingConfirm
+                isConfirmEnabled && !isDeleting
                   ? "bg-red-700 hover:bg-red-800 text-white"
                   : "bg-gray-700 text-gray-400 cursor-not-allowed"
               }`}
             >
-              {isDeletingConfirm ? (
+              {isDeleting ? (
                 <>
                   <svg
                     className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
@@ -648,7 +570,7 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
             </button>
           </div>
         </div>
-      </div>
+      </Modal>
     )
   }
 
@@ -661,58 +583,50 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
           <button
             onClick={backToGamesList}
             className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
-            disabled={isDeletingDetails}
           >
             <ChevronLeft className="w-5 h-5" />
             Back to Game List
           </button>
           <h1 className="text-3xl font-cinzel font-bold">Game Details: {viewedGameDetails.title}</h1>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             {viewedGameDetails.image_data && (
               <div className="mb-4">
                 <div
-                  className={`w-full aspect-[16/9] bg-[#1E1512] rounded-lg overflow-hidden border-2 border-[#6A4E32] relative transition-all duration-200 ${
-                    !isDeletingDetails ? "cursor-zoom-in hover:opacity-95 hover:shadow-lg" : "opacity-70"
-                  }`}
-                  onClick={() => !isDeletingDetails && setShowEnlargedImage(true)}
+                  className={`w-full aspect-[16/9] bg-[#1E1512] rounded-lg overflow-hidden border-2 border-[#6A4E32] relative transition-all duration-200 cursor-zoom-in hover:opacity-95 hover:shadow-lg`}
+                  onClick={() => setShowEnlargedImage(true)}
                 >
                   <img
                     src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
                     alt={viewedGameDetails.title}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      console.error("Error loading image, using custom fallback")
                       ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
                     }}
                   />
-                  {!isDeletingDetails && (
-                    <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity flex items-center justify-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="48"
-                        height="48"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="white"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="opacity-100"
-                      >
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        <line x1="11" y1="8" x2="11" y2="14"></line>
-                        <line x1="8" y1="11" x2="14" y2="11"></line>
-                      </svg>
-                    </div>
-                  )}
+                  <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity flex items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="48"
+                      height="48"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="opacity-100"
+                    >
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      <line x1="11" y1="8" x2="11" y2="14"></line>
+                      <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                  </div>
                 </div>
               </div>
             )}
-
             <div className="bg-[#1E1512] p-4 rounded-lg">
               <h3 className="font-cinzel text-[#C0A080] mb-2">Basic Information</h3>
               <div className="grid grid-cols-2 gap-4">
@@ -768,14 +682,12 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                 )}
               </div>
             </div>
-
             <div className="bg-[#1E1512] p-4 rounded-lg">
               <h3 className="font-cinzel text-[#C0A080] mb-2">Description</h3>
               <p className="text-[#F0E6DB] whitespace-pre-wrap">
                 {viewedGameDetails.description || "No description available"}
               </p>
             </div>
-
             {viewedGameDetails.tagline && (
               <div className="bg-[#1E1512] p-4 rounded-lg">
                 <h3 className="font-cinzel text-[#C0A080] mb-2">Tagline</h3>
@@ -783,7 +695,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
               </div>
             )}
           </div>
-
           <div className="space-y-4">
             <div className="bg-[#1E1512] p-4 rounded-lg">
               <h3 className="font-cinzel text-[#C0A080] mb-2">Prompt Information</h3>
@@ -806,7 +717,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                 </div>
               </div>
             </div>
-
             <div className="bg-[#1E1512] p-4 rounded-lg">
               <h3 className="font-cinzel text-[#C0A080] mb-2">Image Prompt Information</h3>
               <div className="space-y-3">
@@ -828,7 +738,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                 </div>
               </div>
             </div>
-
             <div className="bg-[#1E1512] p-4 rounded-lg">
               <h3 className="font-cinzel text-[#C0A080] mb-2">Music Information</h3>
               <div className="space-y-3">
@@ -844,35 +753,22 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
             </div>
           </div>
         </div>
-
-        {!isDeletingDetails && (
-          <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
-            <button
-              onClick={() => {
-                console.log("Activating edit mode for game:", viewedGameDetails.title)
-                setIsEditingDetails(true)
-              }}
-              className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Edit className="w-4 h-4" />
-              Edit Game
-            </button>
-            <button
-              onClick={() => {
-                console.log("Opening delete confirmation view for:", viewedGameDetails.title)
-                setDeleteConfirmText("")
-                setDeleteEnabled(false)
-                setIsDeletingDetails(true)
-              }}
-              className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Trash className="w-4 h-4" />
-              Delete Game
-            </button>
-          </div>
-        )}
-
-        {isDeletingDetails && <DeleteGameConfirmationView />}
+        <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
+          <button
+            onClick={() => setIsEditingDetails(true)}
+            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Edit className="w-4 h-4" />
+            Edit Game
+          </button>
+          <button
+            onClick={() => initiateSingleDelete(viewedGameDetails)}
+            className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Trash className="w-4 h-4" />
+            Delete Game
+          </button>
+        </div>
       </div>
     )
   }
@@ -883,36 +779,25 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
 
     useEffect(() => {
       if (viewedGameDetails) {
-        console.log("Initializing edit form with data:", viewedGameDetails)
         setEditForm(JSON.parse(JSON.stringify(viewedGameDetails)))
       } else {
-        console.error("Cannot edit: viewedGameDetails is null.")
         backToGamesList()
       }
     }, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target
-      console.log(`Field changed: ${name} = ${value}`)
       setEditForm((prev) => (prev ? { ...prev, [name]: value } : null))
     }
 
     const handleBooleanChange = (name: string, value: boolean) => {
-      console.log(`Boolean field changed: ${name} = ${value}`)
       setEditForm((prev) => (prev ? { ...prev, [name]: value } : null))
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
-      if (!editForm) {
-        console.error("No edit form data available")
-        toast.error("Cannot save: No game data loaded.")
-        return
-      }
-
+      if (!editForm) return
       setIsSaving(true)
-      console.log("Submitting edited game data:", editForm)
-
       try {
         const updatePayload: Partial<Game> = {
           title: editForm.title,
@@ -931,40 +816,26 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
           music_prompt_text: editForm.music_prompt_text,
           tagline: editForm.tagline,
         }
-
         const response = await axiosInstance.put(`/api/games/${editForm.id}`, updatePayload)
-        console.log("Edit API response:", response)
-
         setViewedGameDetails(response.data)
-
+        setGames((prevGames) => prevGames.map((g) => (g.id === response.data.id ? response.data : g)))
         setIsEditingDetails(false)
-
-        setGames((prevGames) =>
-          prevGames.map((g) => (g.id === response.data.id ? { ...g, ...response.data } : g)),
-        )
-
         toast.success(`Game "${response.data.title}" updated successfully`)
       } catch (error) {
-        console.error("Error updating game:", error)
         toast.error("Failed to update game")
       } finally {
         setIsSaving(false)
       }
     }
 
-    if (!editForm) {
-      return <Loader message="Loading editor..." />
-    }
+    if (!editForm) return <Loader message="Loading editor..." />
 
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4 mb-6">
           <button
             type="button"
-            onClick={() => {
-              console.log("Canceling edit mode, returning to detail view")
-              setIsEditingDetails(false)
-            }}
+            onClick={() => setIsEditingDetails(false)}
             className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
             disabled={isSaving}
           >
@@ -973,7 +844,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
           </button>
           <h1 className="text-3xl font-cinzel font-bold">Edit Game: {editForm.title}</h1>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
@@ -985,7 +855,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                       alt={editForm.title}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        console.error("Error loading image, using custom fallback")
                         ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
                       }}
                     />
@@ -993,7 +862,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   <p className="text-xs text-[#8B7355] mt-2">Image preview (cannot be changed here)</p>
                 </div>
               )}
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title *</label>
                 <input
@@ -1006,7 +874,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   disabled={isSaving}
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Slug</label>
                 <input
@@ -1018,7 +885,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   disabled={isSaving}
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre *</label>
                 <select
@@ -1037,7 +903,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   <option value="Romance">Romance</option>
                 </select>
               </div>
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Subgenre</label>
                 <input
@@ -1049,7 +914,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   disabled={isSaving}
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
                 <select
@@ -1064,7 +928,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                 </select>
               </div>
             </div>
-
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
@@ -1076,7 +939,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   disabled={isSaving}
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Tagline</label>
                 <input
@@ -1088,7 +950,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   disabled={isSaving}
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Prompt Model</label>
                 <select
@@ -1102,7 +963,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   <option value="gpt-4">GPT-4</option>
                 </select>
               </div>
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Prompt Text</label>
                 <textarea
@@ -1113,7 +973,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   disabled={isSaving}
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Image Prompt Text</label>
                 <textarea
@@ -1124,7 +983,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                   disabled={isSaving}
                 />
               </div>
-
               <div>
                 <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Music Prompt Text</label>
                 <textarea
@@ -1137,14 +995,10 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
               </div>
             </div>
           </div>
-
           <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
             <button
               type="button"
-              onClick={() => {
-                console.log("Canceling edit mode, returning to detail view")
-                setIsEditingDetails(false)
-              }}
+              onClick={() => setIsEditingDetails(false)}
               className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
               disabled={isSaving}
             >
@@ -1193,39 +1047,30 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
     setIsViewingGameDetails(false)
     setViewedGameDetails(null)
     setIsEditingDetails(false)
-    setIsDeletingDetails(false)
   }
 
   const viewGameDetails = async (gameId: number) => {
-    console.log(`Fetching details for game ID: ${gameId}`)
     setIsLoading(true)
     setIsViewingGameDetails(true)
     setViewedGameDetails(null)
     setIsEditingDetails(false)
-    setIsDeletingDetails(false)
-
     try {
       const response = await axiosInstance.get(`/api/games/${gameId}`)
-      console.log("Game details fetched:", response.data)
-
       let gameData = response.data
-
       if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
         try {
           const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`)
-          if (userResponse.data && userResponse.data.username) {
+          if (userResponse.data?.username) {
             gameData = { ...gameData, creator: userResponse.data.username }
           }
         } catch (userError) {
-          console.warn("Could not fetch creator information:", userError)
+          console.warn("Could not fetch creator info:", userError)
         }
       }
-
       if (isMounted.current) {
         setViewedGameDetails(gameData)
       }
     } catch (error) {
-      console.error("Error fetching game details:", error)
       toast.error("Failed to load game details")
       if (isMounted.current) {
         setIsViewingGameDetails(false)
@@ -1239,7 +1084,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
 
   const EnlargedImageModal = () => {
     if (!viewedGameDetails?.image_data || !showEnlargedImage) return null
-
     return (
       <div
         className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
@@ -1271,7 +1115,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
             alt={`Enlarged view of ${viewedGameDetails.title}`}
             className="max-w-full max-h-[90vh] object-contain mx-auto shadow-2xl rounded-lg"
             onError={(e) => {
-              console.error("Error loading enlarged image")
               ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
             }}
           />
@@ -1294,17 +1137,12 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
             <Trash className="w-6 h-6" />
             <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
           </div>
-
-          <p className="text-[#F0E6DB]">
-            Are you sure you want to delete {selectedGames.length} selected games?
-          </p>
-
+          <p className="text-[#F0E6DB]">Are you sure you want to delete {selectedGames.length} selected games?</p>
           <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
             <p className="text-red-300 text-sm">
               <strong>Warning:</strong> This action cannot be undone.
             </p>
           </div>
-
           <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
             <button
               onClick={() => setShowBulkDeleteConfirmation(false)}
@@ -1326,7 +1164,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
   }
 
   const openEditView = async (game: Game) => {
-    console.log(`Opening edit view for game: ${game.title} (ID: ${game.id})`)
     await viewGameDetails(game.id)
     if (isMounted.current) {
       setIsEditingDetails(true)
@@ -1357,7 +1194,7 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
             </div>
             <div className="flex flex-wrap gap-2 w-full md:w-auto">
               <button
-                onClick={() => safelySetModalState("new")}
+                onClick={() => setShowModal(true)}
                 className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
               >
                 <Plus className="w-5 h-5" />
@@ -1373,9 +1210,7 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
               </button>
             </div>
           </div>
-
           <AnimatePresence>{showAdvancedFilters && <AdvancedFilters />}</AnimatePresence>
-
           {isLoading ? (
             <Loader message="Loading games..." />
           ) : (
@@ -1389,7 +1224,7 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                           type="checkbox"
                           className="w-5 h-5 cursor-pointer accent-[#C0A080]"
                           onChange={toggleSelectAll}
-                          checked={allSelected}
+                          checked={games.length > 0 && selectedGames.length === games.length}
                           aria-label="Select all games"
                         />
                       </th>
@@ -1453,7 +1288,7 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
                                   <Edit className="w-5 h-5" />
                                 </button>
                                 <button
-                                  onClick={() => confirmDelete(game)}
+                                  onClick={() => initiateSingleDelete(game)}
                                   className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none transition-colors"
                                   title="Delete"
                                   aria-label={`Delete ${game.title}`}
@@ -1477,7 +1312,6 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
               </div>
             </div>
           )}
-
           {selectedGames.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -1499,9 +1333,9 @@ const GamesList: React.FC<GamesListProps> = ({ refreshTrigger = 0 }) => {
               </div>
             </motion.div>
           )}
-
           <NewGameModal />
           <BulkDeleteConfirmationModal />
+          <DeleteConfirmationModal />
         </>
       )}
       <ToastContainer
