@@ -50,11 +50,6 @@ const Banned: React.FC = () => {
       : `${diffHours} hour${diffHours !== 1 ? 's' : ''} remaining`;
   };
 
-  const handleAppeal = () => {
-    // Placeholder for appeal functionality
-    alert('Appeal functionality will be available soon.');
-  };
-
   if (isInitialLoading) {
     return (
       <div className="fixed inset-0 bg-[#1E1E1E] flex items-center justify-center">
@@ -109,12 +104,9 @@ const Banned: React.FC = () => {
         
         <div className="text-center space-y-4">
           {banInfo.banType === 'temporary' && (
-            <button
-              onClick={handleAppeal}
-              className="px-6 py-3 bg-[#6A4E32] text-[#C8A97E] rounded-lg hover:bg-[#7A5E42] transition-colors font-cinzel text-lg"
-            >
-              Appeal This Decision
-            </button>
+            <div className="px-6 py-3 bg-[#6A4E32] text-[#C8A97E] rounded-lg font-cinzel text-lg">
+              To appeal, email us at <a href="mailto:bscs3ase@gmail.com" className="underline hover:text-[#FFD700]">bscs3ase@gmail.com</a>
+            </div>
           )}
           
           <div>
