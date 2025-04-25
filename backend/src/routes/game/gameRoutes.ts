@@ -8,7 +8,7 @@ import {
   addComment, 
   addRating, 
   getGameByUsername, 
-  getGameByTitle 
+  getGameByTitle,
 } from '../../controllers/game/game-creation/gameController';
 import { reportComment } from '../../controllers/game/commentController';
 

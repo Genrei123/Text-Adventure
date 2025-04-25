@@ -8,9 +8,10 @@ interface CommentAttributes {
     updatedAt: Date;
     UserId: number;
     GameId: number;
+    likes: boolean;
 }
 
-interface CommentCreationAttributes extends Optional<CommentAttributes, "id" | "createdAt" | "updatedAt"> {}
+interface CommentCreationAttributes extends Optional<CommentAttributes, "id" | "createdAt" | "updatedAt" | "likes"> {} // Included 'likes' in Optional
 
 class Comment extends Model<CommentAttributes, CommentCreationAttributes> implements CommentAttributes {
     public id!: number;
@@ -19,6 +20,7 @@ class Comment extends Model<CommentAttributes, CommentCreationAttributes> implem
     public updatedAt!: Date;
     public UserId!: number;
     public GameId!: number;
+    public likes!: boolean;
 }
 
 Comment.init({
@@ -28,6 +30,7 @@ Comment.init({
     updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     UserId: { type: DataTypes.INTEGER, allowNull: false },
     GameId: { type: DataTypes.INTEGER, allowNull: false },
+    likes: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 }, {
     sequelize,
     modelName: "Comment",

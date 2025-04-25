@@ -7,7 +7,7 @@ import {
   getGameComments,
   getGameRatings,
   addGameComments,
-  addGameRatings
+  addGameRatings,
 } from "../../../service/game-details/gameDetailsService";
 import User from "../../../model/user/user";
 import { Op } from "sequelize";
