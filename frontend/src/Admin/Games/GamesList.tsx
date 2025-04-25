@@ -1662,7 +1662,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         <>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
-              <h1 className="text-3xl font-cinzel font-bold mb-2">Game Management</h1>
+              <h1 className="text-3xl font-cinzel font-bold mb-2">Game List</h1>
               <p className="text-[#8B7355]">Manage all game content and configurations</p>
             </div>
             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -1686,13 +1686,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
               >
                 <Sliders className="w-5 h-5" />
                 Filters {showAdvancedFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-              </button>
-              <button
-                onClick={() => safelySetModalState("new")}
-                className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
-              >
-                <Plus className="w-5 h-5" />
-                New Game
               </button>
             </div>
           </div>
