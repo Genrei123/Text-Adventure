@@ -807,10 +807,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   <p className="text-[#F0E6DB]">{viewedGameDetails.subgenre || "None"}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#8B7355]">Visibility</p>
-                  <p className="text-[#F0E6DB]">{viewedGameDetails.private ? "Private" : "Public"}</p>
-                </div>
-                <div>
                   <p className="text-xs text-[#8B7355]">Created</p>
                   <p className="text-[#F0E6DB]">{new Date(viewedGameDetails.createdAt).toLocaleString()}</p>
                 </div>
@@ -1088,19 +1084,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   value={editForm.subgenre || ""}
                   onChange={handleChange}
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
-                <select
-                  name="private"
-                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                  value={editForm.private ? "true" : "false"}
-                  onChange={(e) => handleBooleanChange("private", e.target.value === "true")}
-                >
-                  <option value="false">Public</option>
-                  <option value="true">Private</option>
-                </select>
               </div>
             </div>
 
@@ -1484,7 +1467,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                     onChange={(e) => setEditGameData({ ...editGameData, title: e.target.value })}
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Slug</label>
                   <input
@@ -1495,7 +1477,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                     onChange={(e) => setEditGameData({ ...editGameData, slug: e.target.value })}
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre *</label>
                   <select
@@ -1514,7 +1495,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   </select>
                 </div>
               </div>
-
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
@@ -1525,20 +1505,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                     onChange={(e) => setEditGameData({ ...editGameData, description: e.target.value })}
                   />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
-                  <select
-                    name="private"
-                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                    value={editGameData.private ? "true" : "false"}
-                    onChange={(e) => setEditGameData({ ...editGameData, private: e.target.value === "true" })}
-                  >
-                    <option value="false">Public</option>
-                    <option value="true">Private</option>
-                  </select>
-                </div>
-
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Prompt Text</label>
                   <textarea
@@ -1550,7 +1516,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 </div>
               </div>
             </div>
-
             <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
               <button
                 type="button"
@@ -1660,9 +1625,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                       <TableHeader label="Title" sortKey="title" />
                       <TableHeader label="Genre" sortKey="genre" />
                       <TableHeader label="Creator" sortKey="creator" />
-                      <TableHeader label="Visibility" sortKey="private" />
                       <TableHeader label="Created" sortKey="createdAt" />
-                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center w-40">Actions</th>
+                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center w-32">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#4D3E32]">
@@ -1706,17 +1670,9 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                           <td className="p-4 font-playfair text-sm text-[#C0A080]">{game.genre}</td>
                           <td className="p-4 font-playfair text-sm text-[#A89070] flex items-center gap-2 justify-center">
                             <Users className="w-4 h-4 text-[#8B7355]" />
-                            {game.creator || 'Unknown'}
-                          </td>
-                          <td className="p-4 text-center">
-                            {game.private ? (
-                              <span title="Private" className="inline-flex items-center justify-center p-1.5 bg-red-900/30 rounded-full border border-red-700/50">
-                                <EyeOff className="w-4 h-4 text-red-400" />
-                              </span>
-                            ) : (
-                              <span title="Public" className="inline-flex items-center justify-center p-1.5 bg-green-900/30 rounded-full border border-green-700/50">
-                                <Eye className="w-4 h-4 text-green-400" />
-                              </span>
+                            <span className="max-w-[120px] truncate">{game.creator || 'Unknown'}</span>
+                            {game.private && (
+                              <EyeOff className="w-4 h-4 text-red-400" title="Private" />
                             )}
                           </td>
                           <td className="p-4 font-playfair text-sm text-[#A89070] text-center">
@@ -1730,30 +1686,27 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                             </div>
                           </td>
                           <td className="p-4">
-                            <div className="flex items-center justify-center gap-1.5">
+                            <div className="flex items-center justify-center gap-2">
                               <button
                                 onClick={() => viewGameDetails(game.id)}
-                                className="p-1.5 hover:bg-[#6A4E32]/50 rounded-md text-[#C0A080] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#C0A080] focus:ring-offset-2 focus:ring-offset-[#2F2118]"
-                                title="View Details"
-                                aria-label={`View ${game.title}`}
+                                className="p-2 hover:bg-[#6A4E32]/30 rounded-md transition-colors"
+                                title="View details"
                               >
-                                <Eye className="w-5 h-5" />
+                                <Eye className="w-5 h-5 text-[#C0A080]" />
                               </button>
                               <button
                                 onClick={() => openEditModal(game)}
-                                className="p-1.5 hover:bg-[#6A4E32]/50 rounded-md text-[#C0A080] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#C0A080] focus:ring-offset-2 focus:ring-offset-[#2F2118]"
-                                title="Edit Game"
-                                aria-label={`Edit ${game.title}`}
+                                className="p-2 hover:bg-[#6A4E32]/30 rounded-md transition-colors"
+                                title="Edit game"
                               >
-                                <Edit className="w-5 h-5" />
+                                <Edit className="w-5 h-5 text-[#C0A080]" />
                               </button>
                               <button
                                 onClick={() => confirmDelete(game)}
-                                className="p-1.5 hover:bg-red-900/30 rounded-md text-red-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#2F2118]"
-                                title="Delete Game"
-                                aria-label={`Delete ${game.title}`}
+                                className="p-2 hover:bg-red-900/30 rounded-md transition-colors"
+                                title="Delete game"
                               >
-                                <Trash className="w-5 h-5" />
+                                <Trash className="w-5 h-5 text-red-400" />
                               </button>
                             </div>
                           </td>
