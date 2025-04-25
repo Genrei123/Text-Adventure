@@ -919,7 +919,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             </div>
           </div>
         </div>
-
       </div>
     )
   }
@@ -1693,15 +1692,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 <table className="w-full min-w-[800px]">
                   <thead className="bg-[#3D2E22]">
                     <tr>
-                      <th className="sticky top-0 p-4 w-12 bg-[#3D2E22]">
-                        <input
-                          type="checkbox"
-                          className="w-5 h-5 cursor-pointer accent-[#C0A080] bg-[#1E1512] border-[#6A4E32] rounded"
-                          onChange={toggleSelectAll}
-                          checked={!isLoading && games.length > 0 && allSelected}
-                          disabled={isLoading || games.length === 0}
-                        />
-                      </th>
                       <TableHeader label="Image" className="w-20" />
                       <TableHeader label="Title" sortKey="title" />
                       <TableHeader label="Genre" sortKey="genre" />
@@ -1722,14 +1712,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                           transition={{ duration: 0.2 }}
                           className="group odd:bg-[#2F2118] even:bg-[#35261c] hover:bg-[#534231] transition-colors duration-150"
                         >
-                          <td className="p-4 text-center">
-                            <input
-                              type="checkbox"
-                              checked={selectedGames.includes(game.id)}
-                              onChange={() => handleSelectGame(game.id)}
-                              className="w-5 h-5 cursor-pointer accent-[#C0A080] bg-[#1E1512] border-[#6A4E32] rounded"
-                            />
-                          </td>
                           <td className="p-2 text-center">
                             <div className="w-16 h-10 bg-[#1E1512] rounded overflow-hidden mx-auto border border-[#6A4E32]/50 flex items-center justify-center">
                               {game.image_data ? (
