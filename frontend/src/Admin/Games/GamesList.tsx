@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders, Save, ChevronLeft, Search } from "lucide-react"
+import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders, Save, ChevronLeft, Search, Image as ImageIcon, EyeOff, Users, Calendar } from "lucide-react"
 import axiosInstance from "../../../config/axiosConfig"
 import Modal from "react-modal"
 import StatusBadge from "./StatusBadge"
@@ -347,29 +347,31 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
+  const TableHeader = ({ label, sortKey, className = "" }: { label: string; sortKey?: string; className?: string }) => (
     <th
-      className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center cursor-pointer hover:bg-[#534231] transition-colors group"
-      onClick={() => handleSort(sortKey)}
-      aria-sort={sortConfig.key === sortKey ? (sortConfig.direction === "asc" ? "ascending" : "descending") : "none"}
+      className={`sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center transition-colors group ${sortKey ? 'cursor-pointer hover:bg-[#534231]' : ''} ${className}`}
+      onClick={sortKey ? () => handleSort(sortKey) : undefined}
+      aria-sort={sortKey && sortConfig.key === sortKey ? (sortConfig.direction === "asc" ? "ascending" : "descending") : "none"}
     >
       <div className="flex items-center justify-center gap-2">
         <span className="text-[#F0E6DB]">{label}</span>
-        <span
-          className={`text-[#C0A080] transition-opacity ${
-            sortConfig.key === sortKey ? "opacity-100" : "opacity-0 group-hover:opacity-50"
-          }`}
-        >
-          {sortConfig.key === sortKey ? (
-            sortConfig.direction === "asc" ? (
-              <ChevronUp className="w-4 h-4" />
+        {sortKey && (
+          <span
+            className={`text-[#C0A080] transition-opacity ${
+              sortConfig.key === sortKey ? "opacity-100" : "opacity-0 group-hover:opacity-50"
+            }`}
+          >
+            {sortConfig.key === sortKey ? (
+              sortConfig.direction === "asc" ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )
             ) : (
-              <ChevronDown className="w-4 h-4" />
-            )
-          ) : (
-            <ChevronUp className="w-4 h-4 opacity-0" />
-          )}
-        </span>
+              <ChevronUp className="w-4 h-4 opacity-0" />
+            )}
+          </span>
+        )}
       </div>
     </th>
   )
@@ -377,7 +379,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const AdvancedFilters = () => (
     <div className="bg-[#2F2118] rounded-lg border border-[#6A4E32]/50 mb-6 p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        {/* Title Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title</label>
           <input
@@ -389,7 +390,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           />
         </div>
 
-        {/* Genre Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre</label>
           <select
@@ -407,7 +407,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </select>
         </div>
 
-        {/* Creator Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Creator</label>
           <input
@@ -419,7 +418,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           />
         </div>
 
-        {/* Date Range Filters */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Start Date</label>
@@ -442,7 +440,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         </div>
       </div>
 
-      {/* Reset Button */}
       <div className="flex justify-end mt-4">
         <button
           onClick={() => {
@@ -450,7 +447,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             setGenreFilter("all")
             setCreatorFilter("")
             setDateRange({ start: "", end: "" })
-            setSearchTerm("") // Also reset the main search term
+            setSearchTerm("")
           }}
           className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors font-cinzel"
         >
@@ -1596,9 +1593,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
               <h1 className="text-3xl font-cinzel font-bold mb-2">Game Management</h1>
               <p className="text-[#8B7355]">Manage all game content and configurations</p>
             </div>
-            {/* Combined Search, Filter Toggle, and New Game Button */}
             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-              {/* Search Input - Ensure onChange updates state directly */}
               <div className="relative flex-grow md:flex-grow-0">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <Search className="w-5 h-5 text-gray-400" />
@@ -1607,11 +1602,10 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   type="text"
                   placeholder="Search games..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)} // This updates state on every keystroke
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full md:w-64 bg-[#1E1512] text-white pl-10 pr-4 py-2 rounded-lg border border-[#6A4E32] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                 />
               </div>
-              {/* Filter Toggle Button */}
               <button
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
@@ -1621,7 +1615,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 <Sliders className="w-5 h-5" />
                 Filters {showAdvancedFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
-              {/* New Game Button */}
               <button
                 onClick={() => safelySetModalState("new")}
                 className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
@@ -1632,7 +1625,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             </div>
           </div>
 
-          {/* Advanced Filters Panel */}
           <AnimatePresence>
             {showAdvancedFilters && (
               <motion.div
@@ -1647,81 +1639,118 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             )}
           </AnimatePresence>
 
-          {/* Game List Table */}
           {isLoading ? (
             <Loader message="Loading games..." />
           ) : (
-            <div className="rounded-xl overflow-hidden border border-[#6A4E32]/50 shadow-lg">
+            <div className="rounded-xl overflow-hidden border border-[#6A4E32]/50 shadow-lg bg-[#2F2118]">
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[800px]">
                   <thead className="bg-[#3D2E22]">
                     <tr>
-                      <th className="p-4 w-12">
+                      <th className="sticky top-0 p-4 w-12 bg-[#3D2E22]">
                         <input
                           type="checkbox"
-                          className="w-5 h-5 cursor-pointer accent-[#C0A080]"
+                          className="w-5 h-5 cursor-pointer accent-[#C0A080] bg-[#1E1512] border-[#6A4E32] rounded"
                           onChange={toggleSelectAll}
-                          checked={allSelected}
+                          checked={!isLoading && games.length > 0 && allSelected}
+                          disabled={isLoading || games.length === 0}
                         />
                       </th>
+                      <TableHeader label="Image" className="w-20" />
                       <TableHeader label="Title" sortKey="title" />
                       <TableHeader label="Genre" sortKey="genre" />
-                      <TableHeader label="Players" sortKey="creator" />
+                      <TableHeader label="Creator" sortKey="creator" />
+                      <TableHeader label="Visibility" sortKey="private" />
                       <TableHeader label="Created" sortKey="createdAt" />
-                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center">Actions</th>
+                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center w-40">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-[#4D3E32]">
                     <AnimatePresence>
                       {filteredGames.map((game) => (
                         <motion.tr
                           key={game.id}
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
+                          layout
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className="group even:bg-[#2F2118] odd:bg-[#3D2E22]/80 hover:bg-[#534231] transition-colors"
+                          transition={{ duration: 0.2 }}
+                          className="group odd:bg-[#2F2118] even:bg-[#35261c] hover:bg-[#534231] transition-colors duration-150"
                         >
-                          <td className="p-4">
+                          <td className="p-4 text-center">
                             <input
                               type="checkbox"
                               checked={selectedGames.includes(game.id)}
                               onChange={() => handleSelectGame(game.id)}
-                              className="w-5 h-5 cursor-pointer accent-[#C0A080]"
+                              className="w-5 h-5 cursor-pointer accent-[#C0A080] bg-[#1E1512] border-[#6A4E32] rounded"
                             />
                           </td>
-                          <td className="p-4 font-playfair max-w-xs truncate group-hover:text-[#C0A080] transition-colors">
+                          <td className="p-2 text-center">
+                            <div className="w-16 h-10 bg-[#1E1512] rounded overflow-hidden mx-auto border border-[#6A4E32]/50 flex items-center justify-center">
+                              {game.image_data ? (
+                                <img
+                                  src={`${import.meta.env.VITE_BACKEND_URL || ""}${game.image_data}`}
+                                  alt={game.title}
+                                  className="w-full h-full object-cover"
+                                  loading="lazy"
+                                  onError={(e) => { (e.target as HTMLImageElement).src = "/technical-difficulties.jpg"; }}
+                                />
+                              ) : (
+                                <ImageIcon className="w-6 h-6 text-[#6A4E32]" />
+                              )}
+                            </div>
+                          </td>
+                          <td className="p-4 font-playfair text-base text-[#F0E6DB] max-w-xs truncate" title={game.title}>
                             {game.title}
                           </td>
-                          <td className="p-4 font-playfair">{game.genre}</td>
-                          <td className="p-4 font-playfair text-center">{game.creator}</td>
-                          <td className="p-4 font-playfair">
-                            {new Date(game.createdAt).toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
+                          <td className="p-4 font-playfair text-sm text-[#C0A080]">{game.genre}</td>
+                          <td className="p-4 font-playfair text-sm text-[#A89070] flex items-center gap-2 justify-center">
+                            <Users className="w-4 h-4 text-[#8B7355]" />
+                            {game.creator || 'Unknown'}
+                          </td>
+                          <td className="p-4 text-center">
+                            {game.private ? (
+                              <span title="Private" className="inline-flex items-center justify-center p-1.5 bg-red-900/30 rounded-full border border-red-700/50">
+                                <EyeOff className="w-4 h-4 text-red-400" />
+                              </span>
+                            ) : (
+                              <span title="Public" className="inline-flex items-center justify-center p-1.5 bg-green-900/30 rounded-full border border-green-700/50">
+                                <Eye className="w-4 h-4 text-green-400" />
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-4 font-playfair text-sm text-[#A89070] text-center">
+                            <div className="flex items-center gap-1 justify-center" title={new Date(game.createdAt).toLocaleString()}>
+                              <Calendar className="w-4 h-4 text-[#8B7355]" />
+                              {new Date(game.createdAt).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </div>
                           </td>
                           <td className="p-4">
-                            <div className="flex items-center justify-center gap-2">
+                            <div className="flex items-center justify-center gap-1.5">
                               <button
                                 onClick={() => viewGameDetails(game.id)}
-                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                                title="View"
+                                className="p-1.5 hover:bg-[#6A4E32]/50 rounded-md text-[#C0A080] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#C0A080] focus:ring-offset-2 focus:ring-offset-[#2F2118]"
+                                title="View Details"
                                 aria-label={`View ${game.title}`}
-                              ><Eye className="w-5 h-5" />
+                              >
+                                <Eye className="w-5 h-5" />
                               </button>
                               <button
                                 onClick={() => openEditModal(game)}
-                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                                title="Edit"
+                                className="p-1.5 hover:bg-[#6A4E32]/50 rounded-md text-[#C0A080] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#C0A080] focus:ring-offset-2 focus:ring-offset-[#2F2118]"
+                                title="Edit Game"
                                 aria-label={`Edit ${game.title}`}
                               >
                                 <Edit className="w-5 h-5" />
                               </button>
                               <button
                                 onClick={() => confirmDelete(game)}
-                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none"
-                                title="Delete"
+                                className="p-1.5 hover:bg-red-900/30 rounded-md text-red-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-[#2F2118]"
+                                title="Delete Game"
                                 aria-label={`Delete ${game.title}`}
                               >
                                 <Trash className="w-5 h-5" />
@@ -1734,9 +1763,11 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   </tbody>
                 </table>
               </div>
-              {filteredGames.length === 0 && (
-                <div className="p-6 text-center text-[#8B7355]">
-                  No games found. Try adjusting your filters.
+              {filteredGames.length === 0 && !isLoading && (
+                <div className="p-10 text-center text-[#8B7355] font-playfair">
+                  <Search className="w-12 h-12 mx-auto mb-4 text-[#6A4E32]" />
+                  <p className="text-lg">No games found matching your criteria.</p>
+                  <p className="text-sm">Try adjusting your search or filters.</p>
                 </div>
               )}
             </div>
