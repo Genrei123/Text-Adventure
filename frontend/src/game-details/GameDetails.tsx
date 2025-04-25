@@ -426,10 +426,10 @@ const GameDetails: React.FC = () => {
               </div>
               <div className="flex flex-col items-end gap-4">
                 <div className="flex items-center gap-6 bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm">
-                  <div className="flex items-center gap-1">
+                  {/* <div className="flex items-center gap-1">
                     <Star className="w-5 h-5 text-yellow-400" />
                     <span className="text-white">{game.rating ? game.rating.toFixed(1) : 0}</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center gap-1">
                     <MessageSquare className="w-5 h-5 text-blue-400" />
                     <span>{game.commentsCount || 0}</span>
