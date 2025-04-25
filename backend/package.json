@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "@google/generative-ai": "^0.24.0",
     "@react-email/components": "^0.0.32",
     "@types/nodemailer": "^6.4.17",
     "@types/passport": "^1.0.17",

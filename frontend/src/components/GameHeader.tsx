@@ -87,7 +87,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
 
         <div className="flex items-center">
           <div className="absolute left-[40%] transform -translate-x-1/2 text-s font-cinzel text-[#ffffff] font-bold sm:text-base truncate max-w-[20ch]">
-            {title || "Untitled Game"}
+            {title || "Lihim Sanduguan"}
           </div>
         </div>
         <div className="flex items-center">
