@@ -2,10 +2,9 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders, Save, ChevronLeft } from "lucide-react"
+import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Sliders, Save, ChevronLeft, Search, Image as ImageIcon, EyeOff, Users, Calendar } from "lucide-react"
 import axiosInstance from "../../../config/axiosConfig"
 import Modal from "react-modal"
-import StatusBadge from "./StatusBadge"
 import Loader from "./Loader"
 import { motion, AnimatePresence } from "framer-motion"
 import { ToastContainer, toast } from "react-toastify"
@@ -16,7 +15,6 @@ interface Game {
   genre: string
   description?: string
   createdAt: string
-  status: string
   UserId: number
   creator?: string
   private?: boolean
@@ -33,7 +31,7 @@ interface Game {
   image_prompt_text?: string
   music_prompt_text?: string
   tagline?: string
-  [key: string]: any // Add index signature to allow string indexing
+  [key: string]: any
 }
 
 interface User {
@@ -61,16 +59,12 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     title: "",
     genre: "RPG",
     description: "",
-    status: "active",
     prompt: "",
   })
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
-  const [statusFilter, setStatusFilter] = useState("all")
   const [dateRange, setDateRange] = useState({ start: "", end: "" })
   const [titleFilter, setTitleFilter] = useState("")
-  const [descriptionFilter, setDescriptionFilter] = useState("")
   const [creatorFilter, setCreatorFilter] = useState("")
-  const [privateFilter, setPrivateFilter] = useState("all")
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [gameToDelete, setGameToDelete] = useState<Game | null>(null)
   const [showBulkDeleteConfirmation, setShowBulkDeleteConfirmation] = useState(false)
@@ -227,32 +221,14 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const filteredGames = sortedGames.filter((game) => {
     const matchesSearch = game.title.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesGenre = genreFilter === "all" || game.genre === genreFilter
-    const matchesStatus = statusFilter === "all" || game.status === statusFilter
     const createdDate = new Date(game.createdAt)
     const matchesStartDate = !dateRange.start || createdDate >= new Date(dateRange.start)
     const matchesEndDate = !dateRange.end || createdDate <= new Date(dateRange.end)
     const matchesTitle = !titleFilter || game.title.toLowerCase().includes(titleFilter.toLowerCase())
-    const matchesDescription =
-      !descriptionFilter ||
-      (game.description && game.description.toLowerCase().includes(descriptionFilter.toLowerCase()))
     const matchesCreator =
       !creatorFilter || (game.creator && game.creator.toLowerCase().includes(creatorFilter.toLowerCase()))
-    const matchesPrivate =
-      privateFilter === "all" ||
-      (privateFilter === "private" && game.private === true) ||
-      (privateFilter === "public" && game.private === false)
 
-    return (
-      matchesSearch &&
-      matchesGenre &&
-      matchesStatus &&
-      matchesStartDate &&
-      matchesEndDate &&
-      matchesTitle &&
-      matchesDescription &&
-      matchesCreator &&
-      matchesPrivate
-    )
+    return matchesSearch && matchesGenre && matchesStartDate && matchesEndDate && matchesTitle && matchesCreator
   })
 
   const handleNewGameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -370,36 +346,39 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
+  const TableHeader = ({ label, sortKey, className = "" }: { label: string; sortKey?: string; className?: string }) => (
     <th
-      className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center cursor-pointer hover:bg-[#534231] transition-colors group"
-      onClick={() => handleSort(sortKey)}
-      aria-sort={sortConfig.key === sortKey ? (sortConfig.direction === "asc" ? "ascending" : "descending") : "none"}
+      className={`sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center transition-colors group ${sortKey ? 'cursor-pointer hover:bg-[#534231]' : ''} ${className}`}
+      onClick={sortKey ? () => handleSort(sortKey) : undefined}
+      aria-sort={sortKey && sortConfig.key === sortKey ? (sortConfig.direction === "asc" ? "ascending" : "descending") : "none"}
     >
       <div className="flex items-center justify-center gap-2">
         <span className="text-[#F0E6DB]">{label}</span>
-        <span
-          className={`text-[#C0A080] transition-opacity ${
-            sortConfig.key === sortKey ? "opacity-100" : "opacity-0 group-hover:opacity-50"
-          }`}
-        >
-          {sortConfig.key === sortKey ? (
-            sortConfig.direction === "asc" ? (
-              <ChevronUp className="w-4 h-4" />
+        {sortKey && (
+          <span
+            className={`text-[#C0A080] transition-opacity ${
+              sortConfig.key === sortKey ? "opacity-100" : "opacity-0 group-hover:opacity-50"
+            }`}
+          >
+            {sortConfig.key === sortKey ? (
+              sortConfig.direction === "asc" ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )
             ) : (
-              <ChevronDown className="w-4 h-4" />
-            )
-          ) : (
-            <ChevronUp className="w-4 h-4 opacity-0" />
-          )}
-        </span>
+              <ChevronUp className="w-4 h-4 opacity-0" />
+            )}
+          </span>
+        )}
       </div>
     </th>
   )
 
   const AdvancedFilters = () => (
-    <div className="bg-[#2F2118] rounded-lg border border-[#6A4E32]/50 mb-6 p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+    <div className="bg-[#2F2118] rounded-lg border border-[#6A4E32]/50 mb-6 p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        {/* Title Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title</label>
           <input
@@ -411,17 +390,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
-          <input
-            type="text"
-            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-            placeholder="Filter by description..."
-            value={descriptionFilter}
-            onChange={(e) => setDescriptionFilter(e.target.value)}
-          />
-        </div>
-
+        {/* Genre Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre</label>
           <select
@@ -439,6 +408,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </select>
         </div>
 
+        {/* Creator Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Creator</label>
           <input
@@ -449,35 +419,10 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             onChange={(e) => setCreatorFilter(e.target.value)}
           />
         </div>
-
-        <div>
-          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
-          <select
-            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="all">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
-          <select
-            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-            value={privateFilter}
-            onChange={(e) => setPrivateFilter(e.target.value)}
-          >
-            <option value="all">All</option>
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-          </select>
-        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
+        {/* Start Date Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Start Date</label>
           <input
@@ -487,6 +432,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
           />
         </div>
+
+        {/* End Date Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">End Date</label>
           <input
@@ -501,17 +448,15 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       <div className="flex justify-end mt-4">
         <button
           onClick={() => {
-            setTitleFilter("")
-            setDescriptionFilter("")
-            setGenreFilter("all")
-            setStatusFilter("all")
-            setDateRange({ start: "", end: "" })
-            setCreatorFilter("")
-            setPrivateFilter("all")
+            setTitleFilter("");
+            setGenreFilter("all");
+            setCreatorFilter("");
+            setDateRange({ start: "", end: "" });
+            setSearchTerm("");
           }}
-          className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+          className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors font-cinzel shadow-lg"
         >
-          Reset Filters
+          Reset All Filters
         </button>
       </div>
     </div>
@@ -564,19 +509,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </div>
 
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status *</label>
-              <select
-                name="status"
-                className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                value={newGame.status}
-                onChange={handleNewGameChange}
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-
             <div>
               <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Primary Prompt</label>
               <textarea
@@ -880,16 +812,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   <p className="text-[#F0E6DB]">{viewedGameDetails.subgenre || "None"}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#8B7355]">Status</p>
-                  <p className="text-[#F0E6DB]">
-                    <StatusBadge status={viewedGameDetails.status || "active"} />
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-[#8B7355]">Visibility</p>
-                  <p className="text-[#F0E6DB]">{viewedGameDetails.private ? "Private" : "Public"}</p>
-                </div>
-                <div>
                   <p className="text-xs text-[#8B7355]">Created</p>
                   <p className="text-[#F0E6DB]">{new Date(viewedGameDetails.createdAt).toLocaleString()}</p>
                 </div>
@@ -996,33 +918,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
-          <button
-            onClick={() => {
-              console.log("Activating edit mode for game:", viewedGameDetails.title)
-              setIsEditingDetails(true)
-            }}
-            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
-          >
-            <Edit className="w-4 h-4" />
-            Edit Game
-          </button>
-          <button
-            onClick={() => confirmToggleStatus(viewedGameDetails)}
-            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
-          >
-            <Power className="w-4 h-4" />
-            {viewedGameDetails.status === "active" ? "Deactivate" : "Activate"} Game
-          </button>
-          <button
-            onClick={handleDeleteClick}
-            className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors flex items-center gap-2"
-          >
-            <Trash className="w-4 h-4" />
-            Delete Game
-          </button>
         </div>
       </div>
     )
@@ -1174,32 +1069,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   value={editForm.subgenre || ""}
                   onChange={handleChange}
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
-                <select
-                  name="status"
-                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                  value={editForm.status || "active"}
-                  onChange={handleChange}
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
-                <select
-                  name="private"
-                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                  value={editForm.private ? "true" : "false"}
-                  onChange={(e) => handleBooleanChange("private", e.target.value === "true")}
-                >
-                  <option value="false">Public</option>
-                  <option value="true">Private</option>
-                </select>
               </div>
             </div>
 
@@ -1444,49 +1313,151 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   }
 
   const BulkDeleteConfirmationModal = () => {
+    const [adminEmail, setAdminEmail] = useState("");
+    const [adminPassword, setAdminPassword] = useState("");
+    const [loginError, setLoginError] = useState("");
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
+    const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
+    const [bulkDeleteEnabled, setBulkDeleteEnabled] = useState(false);
+
+    useEffect(() => {
+      const requiredText = `DELETE ${selectedGames.length} GAMES`;
+      setBulkDeleteEnabled(bulkDeleteConfirmText === requiredText);
+    }, [bulkDeleteConfirmText, selectedGames.length]);
+
+    const handleAdminLogin = async () => {
+      setIsAuthenticating(true);
+      setLoginError("");
+
+      try {
+        const response = await axiosInstance.post("/auth/login", {
+          email: adminEmail,
+          password: adminPassword,
+        });
+
+        if (response.status === 200 && response.data.user.admin === true) {
+          // Admin authentication successful, proceed with bulk delete
+          setLoginError("");
+          handleBulkDelete();
+        } else {
+          // Authentication failed
+          setLoginError("Invalid admin credentials");
+        }
+      } catch (error: any) {
+        console.error("Admin login failed:", error);
+        setLoginError(error.response?.data?.message || "Failed to authenticate admin");
+      } finally {
+        setIsAuthenticating(false);
+      }
+    };
+
     return (
       <Modal
         isOpen={showBulkDeleteConfirmation}
         onRequestClose={() => setShowBulkDeleteConfirmation(false)}
-        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+        className="modal-content bg-[#2F2118] p-8 rounded-xl max-w-xl mx-4"
         overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
         ariaHideApp={false}
       >
         <div className="space-y-6">
           <div className="flex items-center gap-3 text-red-400">
-            <Trash className="w-6 h-6" />
-            <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
+            <Trash className="w-8 h-8" />
+            <h2 className="text-2xl font-cinzel">Confirm Bulk Deletion</h2>
           </div>
 
-          <p className="text-[#F0E6DB]">
-            Are you sure you want to delete {selectedGames.length} selected games?
-          </p>
+          <div className="bg-red-900/20 p-6 rounded-xl border border-red-800/30 space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <h3 className="font-cinzel font-bold text-xl mb-2">Dangerous Operation</h3>
+                <p className="text-[#F0E6DB]">
+                  You're about to delete {selectedGames.length} games permanently. This action cannot be undone.
+                </p>
+              </div>
+            </div>
 
-          <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
-            <p className="text-red-300 text-sm">
-              <strong>Warning:</strong> This action cannot be undone.
-            </p>
+            <div className="bg-red-900/30 p-4 rounded-lg border border-red-800/40">
+              <p className="text-red-300 text-sm flex items-start gap-2">
+                <span className="text-red-400 mt-1">⚠️</span>
+                <span>
+                  <strong>Warning:</strong> All selected game data including images, prompts, and user progress will be
+                  permanently removed. This may affect active users.
+                </span>
+              </p>
+            </div>
+
+            <div className="mt-4 space-y-4">
+              <label className="block text-base font-cinzel text-white mb-3">
+                Admin Email:
+              </label>
+              <input
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-4 py-3 rounded-lg border-2 border-red-800/50 focus:ring-2 focus:ring-red-500 focus:outline-none text-lg"
+                placeholder="Admin Email"
+                autoComplete="email"
+              />
+
+              <label className="block text-base font-cinzel text-white mb-3">
+                Admin Password:
+              </label>
+              <input
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-4 py-3 rounded-lg border-2 border-red-800/50 focus:ring-2 focus:ring-red-500 focus:outline-none text-lg"
+                placeholder="Admin Password"
+                autoComplete="current-password"
+              />
+
+              {loginError && <p className="text-red-400">{loginError}</p>}
+            </div>
+
+            <div className="mt-4">
+              <label className="block text-base font-cinzel text-white mb-3">
+                Type <span className="font-semibold text-red-300">DELETE {selectedGames.length} GAMES</span> to confirm:
+              </label>
+              <input
+                type="text"
+                value={bulkDeleteConfirmText}
+                onChange={(e) => setBulkDeleteConfirmText(e.target.value)}
+                className="w-full bg-[#1E1512] text-[#F0E6DB] px-4 py-3 rounded-lg border-2 border-red-800/50 focus:ring-2 focus:ring-red-500 focus:outline-none text-lg"
+                placeholder={`Type "DELETE ${selectedGames.length} GAMES" here`}
+                autoComplete="off"
+              />
+            </div>
           </div>
 
           <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
             <button
-              onClick={() => setShowBulkDeleteConfirmation(false)}
-              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg"
+              onClick={() => {
+                setShowBulkDeleteConfirmation(false);
+                setBulkDeleteConfirmText("");
+                setLoginError("");
+                setAdminEmail("");
+                setAdminPassword("");
+              }}
+              className="px-5 py-3 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors text-lg"
             >
               Cancel
             </button>
             <button
-              onClick={handleBulkDelete}
-              className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg flex items-center gap-2"
+              onClick={handleAdminLogin}
+              disabled={!bulkDeleteEnabled || isAuthenticating}
+              className={`px-5 py-3 rounded-lg transition-colors text-lg font-medium flex items-center gap-2 ${
+                bulkDeleteEnabled && !isAuthenticating
+                  ? "bg-red-700 hover:bg-red-800 text-white"
+                  : "bg-gray-700 text-gray-400 cursor-not-allowed"
+              }`}
             >
-              <Trash className="w-4 h-4" />
-              Delete {selectedGames.length} Games
+              <Trash className="w-5 h-5" />
+              {isAuthenticating ? "Authenticating..." : "Confirm Bulk Delete"}
             </button>
           </div>
         </div>
       </Modal>
-    )
-  }
+    );
+  };
 
   const openEditModal = async (game: Game) => {
     console.log(`Opening edit page for game: ${game.title} (ID: ${game.id})`)
@@ -1547,41 +1518,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  const confirmToggleStatus = (game: Game) => {
-    console.log(`Opening status toggle modal for game: ${game.title} (ID: ${game.id})`)
-    safelySetModalState("status", game)
-  }
-
-  const handleToggleStatusConfirm = async () => {
-    if (!gameToToggleStatus) {
-      console.log("No game selected for status toggle, aborting")
-      return
-    }
-
-    const newStatus = gameToToggleStatus.status === "active" ? "inactive" : "active"
-    console.log(
-      `Toggling status for game: ${gameToToggleStatus.title} (ID: ${gameToToggleStatus.id}) from ${gameToToggleStatus.status} to ${newStatus}`,
-    )
-
-    try {
-      const response = await axiosInstance.put(`/api/games/${gameToToggleStatus.id}`, {
-        ...gameToToggleStatus,
-        status: newStatus,
-      })
-      console.log("Status toggle API response:", response)
-
-      fetchGames()
-      toast.success(`Game "${gameToToggleStatus.title}" is now ${newStatus}`)
-    } catch (error) {
-      console.error("Error toggling status:", error)
-      toast.error("Failed to update game status")
-    } finally {
-      setShowStatusModal(false)
-      setGameToToggleStatus(null)
-      console.log("Status toggle operation completed, modal closed")
-    }
-  }
-
   const EditGameModal = () => {
     if (!editGameData) return null
 
@@ -1618,7 +1554,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                     onChange={(e) => setEditGameData({ ...editGameData, title: e.target.value })}
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Slug</label>
                   <input
@@ -1629,7 +1564,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                     onChange={(e) => setEditGameData({ ...editGameData, slug: e.target.value })}
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre *</label>
                   <select
@@ -1647,21 +1581,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                     <option value="Romance">Romance</option>
                   </select>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Status</label>
-                  <select
-                    name="status"
-                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                    value={editGameData.status || "active"}
-                    onChange={(e) => setEditGameData({ ...editGameData, status: e.target.value })}
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
-                </div>
               </div>
-
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
@@ -1672,20 +1592,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                     onChange={(e) => setEditGameData({ ...editGameData, description: e.target.value })}
                   />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
-                  <select
-                    name="private"
-                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                    value={editGameData.private ? "true" : "false"}
-                    onChange={(e) => setEditGameData({ ...editGameData, private: e.target.value === "true" })}
-                  >
-                    <option value="false">Public</option>
-                    <option value="true">Private</option>
-                  </select>
-                </div>
-
                 <div>
                   <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Prompt Text</label>
                   <textarea
@@ -1697,7 +1603,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 </div>
               </div>
             </div>
-
             <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
               <button
                 type="button"
@@ -1720,49 +1625,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     )
   }
 
-  const StatusToggleModal = () => {
-    if (!gameToToggleStatus) return null
-
-    return (
-      <Modal
-        isOpen={showStatusModal}
-        onRequestClose={() => setShowStatusModal(false)}
-        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
-        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
-        ariaHideApp={false}
-      >
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 text-[#C0A080]">
-            <Power className="w-6 h-6" />
-            <h2 className="text-xl font-cinzel">Confirm Status Change</h2>
-          </div>
-
-          <p className="text-[#F0E6DB]">
-            Are you sure you want to change the status of{" "}
-            <span className="font-semibold">{gameToToggleStatus.title}</span> from{" "}
-            <span className="font-semibold">{gameToToggleStatus.status}</span> to{" "}
-            <span className="font-semibold">{gameToToggleStatus.status === "active" ? "inactive" : "active"}</span>?
-          </p>
-
-          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
-            <button
-              onClick={() => setShowStatusModal(false)}
-              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleToggleStatusConfirm}
-              className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors"
-            >
-              {gameToToggleStatus.status === "active" ? "Deactivate" : "Activate"} Game
-            </button>
-          </div>
-        </div>
-      </Modal>
-    )
-  }
-
   return (
     <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen" id="root">
       {isViewingGameDetails ? (
@@ -1778,161 +1640,178 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         )
       ) : (
         <>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <div>
-              <h1 className="text-3xl font-cinzel font-bold mb-2">Game Management</h1>
-              <p className="text-[#8B7355]">Manage all game content and configurations</p>
+          <div className="flex flex-col md:flex-row items-start gap-4 mb-6">
+            <div className="flex-1">
+              <h1 className="text-3xl font-cinzel font-bold mb-2 text-left">Game List</h1>
+              <p className="text-[#8B7355] text-left">Manage all game content and configurations</p>
             </div>
-            <div className="flex flex-wrap gap-2 w-full md:w-auto">
-              <button
-                onClick={() => safelySetModalState("new")}
-                className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
-              >
-                <Plus className="w-5 h-5" />
-                New Game
-              </button>
+            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+              <div className="relative flex-grow md:flex-grow-0">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Search className="w-5 h-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search games..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full md:w-64 bg-[#1E1512] text-white pl-10 pr-4 py-2 rounded-lg border border-[#6A4E32] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                />
+              </div>
               <button
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg flex items-center gap-2"
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                  showAdvancedFilters ? 'bg-[#6A4E32] text-white' : 'bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB]'
+                }`}
               >
                 <Sliders className="w-5 h-5" />
-                Filters
+                Filters {showAdvancedFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
-          {showAdvancedFilters && <AdvancedFilters />}
+          <AnimatePresence>
+            {showAdvancedFilters && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <AdvancedFilters />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {isLoading ? (
             <Loader message="Loading games..." />
           ) : (
-            <div className="rounded-xl overflow-hidden border border-[#6A4E32]/50 shadow-lg">
+            <div className="rounded-xl overflow-hidden border border-[#6A4E32]/50 shadow-lg bg-[#2F2118]">
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[800px]">
                   <thead className="bg-[#3D2E22]">
                     <tr>
-                      <th className="p-4 w-12">
-                        <input
-                          type="checkbox"
-                          className="w-5 h-5 cursor-pointer accent-[#C0A080]"
-                          onChange={toggleSelectAll}
-                          checked={allSelected}
-                        />
-                      </th>
+                      <TableHeader label="Image" className="w-20" />
                       <TableHeader label="Title" sortKey="title" />
                       <TableHeader label="Genre" sortKey="genre" />
-                      <TableHeader label="Players" sortKey="creator" />
+                      <TableHeader label="Creator" sortKey="creator" />
                       <TableHeader label="Created" sortKey="createdAt" />
-                      <TableHeader label="Status" sortKey="status" />
-                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center">Actions</th>
+                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center w-32">View</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-[#4D3E32]">
                     <AnimatePresence>
                       {filteredGames.map((game) => (
                         <motion.tr
                           key={game.id}
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
+                          layout
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className="group even:bg-[#2F2118] odd:bg-[#3D2E22]/80 hover:bg-[#534231] transition-colors"
+                          transition={{ duration: 0.2 }}
+                          className="group odd:bg-[#2F2118] even:bg-[#35261c] hover:bg-[#534231] transition-colors duration-150"
                         >
-                          <td className="p-4">
-                            <input
-                              type="checkbox"
-                              checked={selectedGames.includes(game.id)}
-                              onChange={() => handleSelectGame(game.id)}
-                              className="w-5 h-5 cursor-pointer accent-[#C0A080]"
-                            />
-                          </td>
-                          <td className="p-4 font-playfair max-w-xs truncate group-hover:text-[#C0A080] transition-colors">
-                            {game.title}
-                          </td>
-                          <td className="p-4 font-playfair">{game.genre}</td>
-                          <td className="p-4 font-playfair text-center">{game.creator}</td>
-                          <td className="p-4 font-playfair">
-                            {new Date(game.createdAt).toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </td>
-                          <td className="p-4">
-                            <StatusBadge status={game.status} />
-                          </td>
-                          <td className="p-4">
-                            <div className="flex items-center justify-center gap-2">
-                              <button
-                                onClick={() => viewGameDetails(game.id)}
-                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                                title="View"
-                                aria-label={`View ${game.title}`}
-                              >
-                                <Eye className="w-5 h-5" />
-                              </button>
-                              <button
-                                onClick={() => openEditModal(game)}
-                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                                title="Edit"
-                                aria-label={`Edit ${game.title}`}
-                              >
-                                <Edit className="w-5 h-5" />
-                              </button>
-                              <button
-                                onClick={() => confirmToggleStatus(game)}
-                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-                                title="Toggle Status"
-                                aria-label={`Toggle status of ${game.title}`}
-                              >
-                                <Power className="w-5 h-5" />
-                              </button>
-                              <button
-                                onClick={() => confirmDelete(game)}
-                                className="p-2 hover:bg-red-900/20 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none"
-                                title="Delete"
-                                aria-label={`Delete ${game.title}`}
-                              >
-                                <Trash className="w-5 h-5" />
-                              </button>
+                          <td className="p-2 text-center">
+                            <div className="w-16 h-10 bg-[#1E1512] rounded overflow-hidden mx-auto border border-[#6A4E32]/50 flex items-center justify-center">
+                              {game.image_data ? (
+                                <img
+                                  src={`${import.meta.env.VITE_BACKEND_URL || ""}${game.image_data}`}
+                                  alt={game.title}
+                                  className="w-full h-full object-cover"
+                                  loading="lazy"
+                                  onError={(e) => { (e.target as HTMLImageElement).src = "/technical-difficulties.jpg"; }}
+                                />
+                              ) : (
+                                <ImageIcon className="w-6 h-6 text-[#6A4E32]" />
+                              )}
                             </div>
                           </td>
+                          <td className="p-4 font-playfair text-base text-[#F0E6DB] max-w-xs truncate" title={game.title}>
+                            {game.title}
+                          </td>
+                          <td className="p-4 font-playfair text-sm text-[#C0A080]">{game.genre}</td>
+                          <td className="p-4 font-playfair text-sm text-[#A89070] flex items-center gap-2 justify-center">
+                            <Users className="w-4 h-4 text-[#8B7355]" />
+                            <span className="max-w-[120px] truncate">{game.creator || 'Unknown'}</span>
+                            {game.private && (
+                              <span title="Private">
+                                <EyeOff className="w-4 h-4 text-red-400" />
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-4 font-playfair text-sm text-[#A89070] text-center">
+                            <div className="flex items-center gap-1 justify-center" title={new Date(game.createdAt).toLocaleString()}>
+                              <Calendar className="w-4 h-4 text-[#8B7355]" />
+                              {new Date(game.createdAt).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </div>
+                          </td>
+                          <td className="p-4">
+  <div className="flex items-center justify-center gap-2">
+    <button
+      onClick={() => viewGameDetails(game.id)}
+      className="p-2 hover:bg-[#6A4E32]/30 rounded-md transition-colors"
+      title="View details"
+    >
+      <Eye className="w-5 h-5 text-[#C0A080]" />
+    </button>
+  </div>
+</td>
                         </motion.tr>
                       ))}
                     </AnimatePresence>
                   </tbody>
                 </table>
               </div>
-
-              {filteredGames.length === 0 && (
-                <div className="p-8 text-center text-[#8B7355]">No games found matching your criteria</div>
+              {filteredGames.length === 0 && !isLoading && (
+                <div className="p-10 text-center text-[#8B7355] font-playfair">
+                  <Search className="w-12 h-12 mx-auto mb-4 text-[#6A4E32]" />
+                  <p className="text-lg">No games found matching your criteria.</p>
+                  <p className="text-sm">Try adjusting your search or filters.</p>
+                </div>
               )}
+            </div>
+          )}
+
+          {selectedGames.length > 0 && (
+            <div className="fixed bottom-4 right-4 bg-[#3D2E22] p-4 rounded-lg shadow-lg border border-[#6A4E32]/50">
+              <div className="flex items-center gap-4">
+                <span className="text-[#F0E6DB]">
+                  {selectedGames.length} {selectedGames.length === 1 ? "game" : "games"} selected
+                </span>
+                <button
+                  onClick={confirmBulkDelete}
+                  className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg flex items-center gap-2"
+                >
+                  <Trash className="w-4 h-4" />
+                  Delete Selected
+                </button>
+              </div>
             </div>
           )}
 
           <NewGameModal />
           <DeleteConfirmationModal />
           <BulkDeleteConfirmationModal />
-          <StatusToggleModal />
-
-          {selectedGames.length > 0 && (
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="fixed bottom-4 right-4 bg-[#3D2E22] p-4 rounded-lg shadow-xl flex gap-2 items-center"
-            >
-              <span className="text-sm text-[#C0A080]">{selectedGames.length} selected</span>
-              <button
-                onClick={confirmBulkDelete}
-                className="px-3 py-1 bg-red-700/20 hover:bg-red-800/30 text-red-400 rounded flex items-center gap-1"
-              >
-                <Trash className="w-4 h-4" />
-                Delete
-              </button>
-            </motion.div>
-          )}
+          <EditGameModal />
         </>
       )}
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   )
 }
