@@ -920,25 +920,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </div>
         </div>
 
-        <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
-          <button
-            onClick={() => {
-              console.log("Activating edit mode for game:", viewedGameDetails.title)
-              setIsEditingDetails(true)
-            }}
-            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
-          >
-            <Edit className="w-4 h-4" />
-            Edit Game
-          </button>
-          <button
-            onClick={handleDeleteClick}
-            className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors flex items-center gap-2"
-          >
-            <Trash className="w-4 h-4" />
-            Delete Game
-          </button>
-        </div>
       </div>
     )
   }
