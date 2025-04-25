@@ -1726,7 +1726,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                       <TableHeader label="Genre" sortKey="genre" />
                       <TableHeader label="Creator" sortKey="creator" />
                       <TableHeader label="Created" sortKey="createdAt" />
-                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center w-32">Actions</th>
+                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center w-32">View</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#4D3E32]">
@@ -1788,30 +1788,16 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                             </div>
                           </td>
                           <td className="p-4">
-                            <div className="flex items-center justify-center gap-2">
-                              <button
-                                onClick={() => viewGameDetails(game.id)}
-                                className="p-2 hover:bg-[#6A4E32]/30 rounded-md transition-colors"
-                                title="View details"
-                              >
-                                <Eye className="w-5 h-5 text-[#C0A080]" />
-                              </button>
-                              <button
-                                onClick={() => openEditModal(game)}
-                                className="p-2 hover:bg-[#6A4E32]/30 rounded-md transition-colors"
-                                title="Edit game"
-                              >
-                                <Edit className="w-5 h-5 text-[#C0A080]" />
-                              </button>
-                              <button
-                                onClick={() => confirmDelete(game)}
-                                className="p-2 hover:bg-red-900/30 rounded-md transition-colors"
-                                title="Delete game"
-                              >
-                                <Trash className="w-5 h-5 text-red-400" />
-                              </button>
-                            </div>
-                          </td>
+  <div className="flex items-center justify-center gap-2">
+    <button
+      onClick={() => viewGameDetails(game.id)}
+      className="p-2 hover:bg-[#6A4E32]/30 rounded-md transition-colors"
+      title="View details"
+    >
+      <Eye className="w-5 h-5 text-[#C0A080]" />
+    </button>
+  </div>
+</td>
                         </motion.tr>
                       ))}
                     </AnimatePresence>
