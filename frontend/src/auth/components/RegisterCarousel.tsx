@@ -4,6 +4,7 @@ import ValidatedInput from './ValidatedInput';
 import { toast } from 'react-toastify';
 import UsernameValidator from './UsernameValidator';
 import EmailValidator from './EmailValidator';
+import TermsOfService from '../../components/TermsOfService';
 
 interface RegisterCarouselProps {
   onSubmit: (formData: {
@@ -274,6 +275,16 @@ const RegisterCarousel: React.FC<RegisterCarouselProps> = ({ onSubmit }) => {
             <label htmlFor="terms" className="text-sm text-[#8B7355]">
               I agree to abide by the rules of this realm
             </label>
+
+            <a
+              href="/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-[#C8A97E] underline hover:text-[#E0C9A6] ml-2"
+            >
+              Click here
+            </a>
+
           </div>
         </div>
       )}
