@@ -2,10 +2,9 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders, Save, ChevronLeft, Search, Image as ImageIcon, EyeOff, Users, Calendar } from "lucide-react"
+import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Sliders, Save, ChevronLeft, Search, Image as ImageIcon, EyeOff, Users, Calendar } from "lucide-react"
 import axiosInstance from "../../../config/axiosConfig"
 import Modal from "react-modal"
-import StatusBadge from "./StatusBadge"
 import Loader from "./Loader"
 import { motion, AnimatePresence } from "framer-motion"
 import { ToastContainer, toast } from "react-toastify"
@@ -1672,7 +1671,9 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                             <Users className="w-4 h-4 text-[#8B7355]" />
                             <span className="max-w-[120px] truncate">{game.creator || 'Unknown'}</span>
                             {game.private && (
-                              <EyeOff className="w-4 h-4 text-red-400" title="Private" />
+                              <span title="Private">
+                                <EyeOff className="w-4 h-4 text-red-400" />
+                              </span>
                             )}
                           </td>
                           <td className="p-4 font-playfair text-sm text-[#A89070] text-center">
