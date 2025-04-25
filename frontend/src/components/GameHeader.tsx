@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import CoinStore from "../shop/CoinStore";
 import { useNavigate } from "react-router-dom";
+import DelayedTooltip from "../game/components/DelayedToolTip";
 
 interface GameHeaderProps {
   title?: string; // Optional title prop from Game model
@@ -95,6 +96,11 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
           <span className="text-x1 font-cinzel text-[#ffffff] font-bold ml-2">
             {new Intl.NumberFormat().format(coins)}
           </span>
+          <DelayedTooltip
+            text = "This is your currency for prompting"
+            delay = {800}
+            position = "left"
+            >
           <button 
             className="mr-1 relative group" 
             onClick={handleOpenStore}
@@ -102,6 +108,7 @@ const GameHeader: React.FC<GameHeaderProps> = ({ title }) => {
             <img src="/add.svg" alt="Button" className="w-7 h-6 mr-[10%]" />
             <img src="/add-after.svg" alt="Hover Button" className="w-7 h-6 mr-[10%] absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
+          </DelayedTooltip>
           {showModal && <CoinStore onClose={handleCloseStore} />}
         </div>
       </div>

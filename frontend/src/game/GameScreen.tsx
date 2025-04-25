@@ -8,6 +8,7 @@ import GameHeader from "../components/GameHeader";
 import ActionButton from "./components/ActionButton";
 import { motion } from "framer-motion";
 import axios from "axios";
+import DelayedTooltip from "./components/DelayedToolTip";
 
 interface GameDetails {
   title: string;
@@ -774,8 +775,22 @@ const GameScreen: React.FC = () => {
         {/* Input area */}
         <div className="w-full md:w-1/2 mx-auto mt-[-10%] flex flex-col items-center md:items-start space-y-4 fixed bottom-0 md:relative md:bottom-auto bg-[#1E1E1E] md:bg-transparent p-4 md:p-0 pb-6">
           <div className="flex space-x-4 w-full justify-center md:justify-start mb-2">
-            <ActionButton action="Do" isSelected={selectedAction === "Do"} onClick={() => setSelectedAction("Do")} />
-            <ActionButton action="Say" isSelected={selectedAction === "Say"} onClick={() => setSelectedAction("Say")} />
+            <DelayedTooltip
+              text = "This dicattes your actions for the game! Make sure to use action words"
+              delay={800}
+              position="top"
+              >
+                <ActionButton action="Do" isSelected={selectedAction === "Do"} onClick={() => setSelectedAction("Do")} />
+            </DelayedTooltip>
+
+            <DelayedTooltip
+              text = "This dictates your interactions for the game! Make sure to say somethings"
+              delay = {800}
+              position = "top"
+              >
+              <ActionButton action="Say" isSelected={selectedAction === "Say"} onClick={() => setSelectedAction("Say")} />
+            </DelayedTooltip>
+            
 
             {/* Visualize Scene button with settings */}
             <div className="flex rounded-full overflow-hidden">
