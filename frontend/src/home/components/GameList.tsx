@@ -79,7 +79,6 @@ const GameList: React.FC = () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center w-full">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#C8A97E] to-[#C8A97E]" />
-
           <h2 className="text-3xl font-cinzel text-[#C8A97E] whitespace-nowrap mr-6 ml-6">
             Available Games
           </h2>

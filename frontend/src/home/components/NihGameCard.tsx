@@ -53,12 +53,12 @@ const NihGameCard: React.FC<NihGameCardProps> = ({ userId: propUserId }) => {
   }
 
   return (
-    <div className="w-full max-w-8xl mx-auto px-4 md:px-8 my-17 relative mb-0">
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-[80%] max-w-8xl mx-auto px-4 md:px-8 my-17 relative mb-0">
+     <div className="flex items-center justify-between mb-6">
         <div className="flex items-center w-full">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#C8A97E] to-[#C8A97E]" />
           <h2 className="text-3xl font-cinzel text-[#C8A97E] whitespace-nowrap mr-6 ml-6">
-            Story mode
+            Story Mode
           </h2>
           <div className="flex-1 h-px bg-gradient-to-r from-[#C8A97E] via-[#C8A97E] to-transparent" />
         </div>
@@ -67,7 +67,7 @@ const NihGameCard: React.FC<NihGameCardProps> = ({ userId: propUserId }) => {
 
       {/* Main Content */}
       <div className="px-2">
-        <div className="relative w-[80%] h-[400px] rounded-lg overflow-hidden mb-8 mx-auto group">
+        <div className="relative w-[100%] h-[400px] rounded-lg overflow-hidden mb-8 mx-auto group">
           {/* Default Background Image */}
           <div
             className="absolute inset-0 w-full h-full bg-cover transition-all duration-300"
@@ -113,7 +113,7 @@ const NihGameCard: React.FC<NihGameCardProps> = ({ userId: propUserId }) => {
       </div>
 
       {/* Bottom Divider */}
-      <div className="mt-4 w-[80%] mx-auto relative top-[.85rem]">
+      <div className="mt-4 w-[100%] mx-auto relative top-[.85rem]">
         <div className="flex items-center gap-4">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#C8A97E] to-[#C8A97E]" />
           <div className="w-2 h-2 rotate-45 bg-[#C8A97E]" />
