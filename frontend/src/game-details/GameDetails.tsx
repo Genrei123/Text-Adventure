@@ -234,7 +234,7 @@ const GameDetails: React.FC = () => {
     }
   };
 
-  const handleLikeComment = async (commentId: number) => {
+  const handleLikeComment = async (commentId: string | number) => {
     try {
       const userData = localStorage.getItem("userData");
       if (!userData) {
@@ -245,7 +245,8 @@ const GameDetails: React.FC = () => {
       const parsedData = JSON.parse(userData);
       const userId = parsedData.id;
       
-      await axiosInstance.post(`/game/comments/${commentId}/like`, { userId });
+      // Use the updated endpoint format that matches your API structure
+      await axiosInstance.post(`/game/${id}/comments/${commentId}/likes`, { userId });
       toast.success("You liked this comment!");
       
       // Update the UI optimistically
@@ -703,7 +704,7 @@ const GameDetails: React.FC = () => {
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                                <button 
+                                {/* <button 
                                   onClick={() => handleLikeComment(comment.id)}
                                   className="text-gray-400 hover:text-[#C8A97E] transition-colors p-1 rounded-full hover:bg-[#C8A97E]/10"
                                   title="Like this comment"
@@ -712,7 +713,7 @@ const GameDetails: React.FC = () => {
                                   {(comment.likes && comment.likes > 0) && (
                                     <span className="text-xs ml-1">{comment.likes}</span>
                                   )}
-                                </button>
+                                </button> */}
                                 <button
                                   onClick={() => handleReportComment(comment.id)}
                                   className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-500/10"
