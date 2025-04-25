@@ -377,7 +377,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
 
   const AdvancedFilters = () => (
     <div className="bg-[#2F2118] rounded-lg border border-[#6A4E32]/50 mb-6 p-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        {/* Title Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title</label>
           <input
@@ -389,6 +390,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           />
         </div>
 
+        {/* Genre Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre</label>
           <select
@@ -406,6 +408,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
           </select>
         </div>
 
+        {/* Creator Filter */}
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Creator</label>
           <input
@@ -416,39 +419,42 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             onChange={(e) => setCreatorFilter(e.target.value)}
           />
         </div>
+      </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Start Date</label>
-            <input
-              type="date"
-              className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-              value={dateRange.start}
-              onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-cinzel text-[#C0A080] mb-2">End Date</label>
-            <input
-              type="date"
-              className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
-              value={dateRange.end}
-              onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-            />
-          </div>
+      <div className="grid grid-cols-2 gap-4">
+        {/* Start Date Filter */}
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Start Date</label>
+          <input
+            type="date"
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            value={dateRange.start}
+            onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+          />
+        </div>
+
+        {/* End Date Filter */}
+        <div>
+          <label className="block text-sm font-cinzel text-[#C0A080] mb-2">End Date</label>
+          <input
+            type="date"
+            className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+            value={dateRange.end}
+            onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+          />
         </div>
       </div>
 
       <div className="flex justify-end mt-4">
         <button
           onClick={() => {
-            setTitleFilter("")
-            setGenreFilter("all")
-            setCreatorFilter("")
-            setDateRange({ start: "", end: "" })
-            setSearchTerm("")
+            setTitleFilter("");
+            setGenreFilter("all");
+            setCreatorFilter("");
+            setDateRange({ start: "", end: "" });
+            setSearchTerm("");
           }}
-          className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors font-cinzel"
+          className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors font-cinzel shadow-lg"
         >
           Reset All Filters
         </button>
