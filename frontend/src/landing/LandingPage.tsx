@@ -435,7 +435,7 @@ const FeatureSection: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 0.7, y: [0, 10, 0] }}
                         transition={{ delay: 1, duration: 1.5, repeat: Infinity }}
-                        onClick={() => scrollToSection('testimonials-section')}
+                        onClick={() => scrollToSection('how-it-works-section')}
                         whileHover={{ scale: 1.2 }}
                         whileTap={{ scale: 0.9 }}
                     >

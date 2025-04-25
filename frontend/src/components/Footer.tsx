@@ -63,7 +63,9 @@ const Footer = () => {
             className="flex flex-col items-center md:items-start space-y-4"
             variants={itemVariants}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-[#B28F4C] font-playfair">SAGE AI.</h2>
+            <Link to="/" className="focus:outline-none">
+              <h2 className="text-4xl md:text-5xl font-bold text-[#B28F4C] font-playfair hover:text-[#F1DC68] transition-colors duration-300">SAGE AI.</h2>
+            </Link>
             <div className="text-lg text-white font-cinzel mt-3 space-y-1 text-center md:text-left">
               <p>Where stories are guided by</p>
               <p>One's intuition and knowledge</p>

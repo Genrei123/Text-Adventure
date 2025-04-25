@@ -118,7 +118,7 @@ const TermsOfService = () => {
     },
     {
       title: "Contact Us",
-      content: "If you have any questions about these Terms, please contact us at legal@sageai.com."
+      content: "If you have any questions about these Terms, please contact us at bscs3ase@gmail.com."
     }
   ];
 
@@ -136,7 +136,7 @@ const TermsOfService = () => {
         >
           <h1 className="text-4xl md:text-5xl font-bold text-[#F1DC68] font-cinzel mb-4">Terms of Service</h1>
           <p className="text-xl max-w-3xl mx-auto text-gray-300">
-            Last Updated: June 14, 2024
+            Last Updated: April 21, 2025
           </p>
           <p className="mt-6 max-w-3xl mx-auto text-gray-300">
             Please read these Terms of Service carefully before using SAGE.AI. By accessing or using our service, you agree to be bound by these terms.
