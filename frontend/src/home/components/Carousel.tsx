@@ -151,7 +151,7 @@ const Carousel: React.FC<CarouselProps> = ({ isLoading, slides }) => {
 
                   <button
                     onClick={() => handlePlayGame(slide.id)}
-                    className="mt-2 sm:mt-4 px-4 sm:px-6 py-2 sm:py-3 bg-[#C8A97E] hover:bg-[#D8B98E] text-white text-base sm:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-transform duration-300 hover:scale-105 border-2 border-black shadow-[2px_2px_0px_#000,-2px_-2px_0px_#000]"
+                    className="mt-4 px-6 py-3 border border-[#C8A97E] text-[#C8A97E] bg-transparent hover:bg-[#C8A97E] hover:text-[#1E1E1E] text-sm md:text-lg font-bold uppercase rounded font-cinzel drop-shadow-lg transition-all duration-300"
                   >
                     Play Game
                   </button>
