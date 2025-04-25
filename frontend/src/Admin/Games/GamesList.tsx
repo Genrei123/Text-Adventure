@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Sliders, Save, ChevronLeft } from "lucide-react"
+import { Plus, Edit, Trash, ChevronUp, ChevronDown, Eye, Power, Sliders, Save, ChevronLeft } from "lucide-react"
 import axiosInstance from "../../../config/axiosConfig"
 import Modal from "react-modal"
 import StatusBadge from "./StatusBadge"
@@ -32,7 +32,7 @@ interface Game {
   image_prompt_text?: string
   music_prompt_text?: string
   tagline?: string
-  [key: string]: any // Add index signature to allow string indexing
+  [key: string]: any
 }
 
 interface User {
@@ -65,9 +65,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false)
   const [dateRange, setDateRange] = useState({ start: "", end: "" })
   const [titleFilter, setTitleFilter] = useState("")
-  const [descriptionFilter, setDescriptionFilter] = useState("")
   const [creatorFilter, setCreatorFilter] = useState("")
-  const [privateFilter, setPrivateFilter] = useState("all")
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [gameToDelete, setGameToDelete] = useState<Game | null>(null)
   const [showBulkDeleteConfirmation, setShowBulkDeleteConfirmation] = useState(false)
@@ -75,6 +73,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const [selectedGameDetails, setSelectedGameDetails] = useState<Game | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editGameData, setEditGameData] = useState<Game | null>(null)
+  const [showStatusModal, setShowStatusModal] = useState(false)
+  const [gameToToggleStatus, setGameToToggleStatus] = useState<Game | null>(null)
   const [isViewingGameDetails, setIsViewingGameDetails] = useState(false)
   const [viewedGameDetails, setViewedGameDetails] = useState<Game | null>(null)
   const [showEnlargedImage, setShowEnlargedImage] = useState(false)
@@ -87,7 +87,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
   const isMounted = useRef(true)
 
   const safelySetModalState = (
-    modalToOpen: "view" | "edit" | "delete" | "bulkDelete" | "new" | null,
+    modalToOpen: "view" | "edit" | "delete" | "bulkDelete" | "status" | "new" | null,
     data: any = null,
   ) => {
     console.log(`Attempting to open modal: ${modalToOpen}`, data)
@@ -96,6 +96,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setShowEditModal(false)
     setShowDeleteConfirmation(false)
     setShowBulkDeleteConfirmation(false)
+    setShowStatusModal(false)
     setShowModal(false)
 
     console.log("All modals closed")
@@ -106,6 +107,8 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       setEditGameData(data)
     } else if (modalToOpen === "delete" && data) {
       setGameToDelete(data)
+    } else if (modalToOpen === "status" && data) {
+      setGameToToggleStatus(data)
     }
 
     switch (modalToOpen) {
@@ -124,6 +127,10 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
       case "bulkDelete":
         setShowBulkDeleteConfirmation(true)
         console.log("Bulk delete confirmation modal opened")
+        break
+      case "status":
+        setShowStatusModal(true)
+        console.log("Status toggle modal opened")
         break
       case "new":
         setShowModal(true)
@@ -219,26 +226,10 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     const matchesStartDate = !dateRange.start || createdDate >= new Date(dateRange.start)
     const matchesEndDate = !dateRange.end || createdDate <= new Date(dateRange.end)
     const matchesTitle = !titleFilter || game.title.toLowerCase().includes(titleFilter.toLowerCase())
-    const matchesDescription =
-      !descriptionFilter ||
-      (game.description && game.description.toLowerCase().includes(descriptionFilter.toLowerCase()))
     const matchesCreator =
       !creatorFilter || (game.creator && game.creator.toLowerCase().includes(creatorFilter.toLowerCase()))
-    const matchesPrivate =
-      privateFilter === "all" ||
-      (privateFilter === "private" && game.private === true) ||
-      (privateFilter === "public" && game.private === false)
 
-    return (
-      matchesSearch &&
-      matchesGenre &&
-      matchesStartDate &&
-      matchesEndDate &&
-      matchesTitle &&
-      matchesDescription &&
-      matchesCreator &&
-      matchesPrivate
-    )
+    return matchesSearch && matchesGenre && matchesStartDate && matchesEndDate && matchesTitle && matchesCreator
   })
 
   const handleNewGameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -274,6 +265,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setShowEditModal(false)
     setShowDeleteConfirmation(false)
     setShowBulkDeleteConfirmation(false)
+    setShowStatusModal(false)
     setShowModal(false)
 
     setTimeout(() => {
@@ -310,6 +302,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     setShowEditModal(false)
     setShowDeleteConfirmation(false)
     setShowBulkDeleteConfirmation(false)
+    setShowStatusModal(false)
     setShowModal(false)
 
     setGameToDelete(game)
@@ -354,11 +347,6 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
     }
   }
 
-  const backToGamesList = () => {
-    setIsViewingGameDetails(false)
-    setViewedGameDetails(null)
-  }
-
   const TableHeader = ({ label, sortKey }: { label: string; sortKey: string }) => (
     <th
       className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center cursor-pointer hover:bg-[#534231] transition-colors group"
@@ -388,8 +376,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
 
   const AdvancedFilters = () => (
     <div className="bg-[#2F2118] rounded-lg border border-[#6A4E32]/50 mb-6 p-6">
-      {/* Top row - 3 filters: Title, Genre, Creator */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title</label>
           <input
@@ -430,8 +417,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         </div>
       </div>
 
-      {/* Bottom row - 2 date filters */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Start Date</label>
           <input
@@ -452,22 +438,16 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         </div>
       </div>
 
-      {/* Reset button with highlight color */}
-      <div className="flex justify-center">
+      <div className="flex justify-end mt-4">
         <button
           onClick={() => {
-            setTitleFilter("");
-            setGenreFilter("all");
-            setDateRange({ start: "", end: "" });
-            setCreatorFilter("");
-            setPrivateFilter("all");
+            setTitleFilter("")
+            setGenreFilter("all")
+            setCreatorFilter("")
+            setDateRange({ start: "", end: "" })
           }}
-          className="px-6 py-2.5 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] font-medium rounded-lg transition-colors shadow-md flex items-center gap-2"
+          className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors font-cinzel"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-            <path d="M3 3v5h5"></path>
-          </svg>
           Reset Filters
         </button>
       </div>
@@ -889,4 +869,878 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 </div>
                 <div>
                   <p className="text-xs text-[#8B7355]">Prompt Text</p>
-                  <div className="bg-[#3D2E22] p-3 rounded-md mt-1 max-h-40 overflow
+                  <div className="bg-[#3D2E22] p-3 rounded-md mt-1 max-h-40 overflow-y-auto">
+                    <p className="text-[#F0E6DB] text-sm whitespace-pre-wrap">
+                      {viewedGameDetails.prompt_text || "No prompt text available"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#1E1512] p-4 rounded-lg">
+              <h3 className="font-cinzel text-[#C0A080] mb-2">Image Prompt Information</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-[#8B7355]">Image Prompt Name</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.image_prompt_name || "Not specified"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Image Prompt Model</p>
+                  <p className="text-[#F0E6DB]">{viewedGameDetails.image_prompt_model || "Not specified"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#8B7355]">Image Prompt Text</p>
+                  <div className="bg-[#3D2E22] p-3 rounded-md mt-1">
+                    <p className="text-[#F0E6DB] text-sm">
+                      {viewedGameDetails.image_prompt_text || "No image prompt available"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#1E1512] p-4 rounded-lg">
+              <h3 className="font-cinzel text-[#C0A080] mb-2">Music Information</h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-[#8B7355]">Music Prompt Text</p>
+                  <div className="bg-[#3D2E22] p-3 rounded-md mt-1">
+                    <p className="text-[#F0E6DB] text-sm">
+                      {viewedGameDetails.music_prompt_text || "No music prompt available"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
+          <button
+            onClick={() => {
+              console.log("Activating edit mode for game:", viewedGameDetails.title)
+              setIsEditingDetails(true)
+            }}
+            className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Edit className="w-4 h-4" />
+            Edit Game
+          </button>
+          <button
+            onClick={handleDeleteClick}
+            className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors flex items-center gap-2"
+          >
+            <Trash className="w-4 h-4" />
+            Delete Game
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const EditGameDetailView = () => {
+    const [editForm, setEditForm] = useState<Game>(viewedGameDetails!)
+    const [isSaving, setIsSaving] = useState(false)
+
+    useEffect(() => {
+      if (viewedGameDetails) {
+        console.log("Initializing edit form with data:", viewedGameDetails)
+        setEditForm({ ...viewedGameDetails })
+      }
+    }, [])
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target
+      console.log(`Field changed: ${name} = ${value}`)
+      setEditForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }))
+    }
+
+    const handleBooleanChange = (name: string, value: boolean) => {
+      console.log(`Boolean field changed: ${name} = ${value}`)
+      setEditForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }))
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault()
+      if (!editForm) {
+        console.error("No edit form data available")
+        return
+      }
+
+      setIsSaving(true)
+      console.log("Submitting edited game data:", editForm)
+
+      try {
+        const response = await axiosInstance.put(`/api/games/${editForm.id}`, editForm)
+        console.log("Edit API response:", response)
+
+        setViewedGameDetails(editForm)
+
+        setIsEditingDetails(false)
+
+        fetchGames()
+
+        toast.success(`Game "${editForm.title}" updated successfully`)
+      } catch (error) {
+        console.error("Error updating game:", error)
+        toast.error("Failed to update game")
+      } finally {
+        setIsSaving(false)
+      }
+    }
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            type="button"
+            onClick={() => {
+              console.log("Canceling edit mode, returning to game list")
+              setIsEditingDetails(false)
+              setIsViewingGameDetails(false)
+              setViewedGameDetails(null)
+            }}
+            className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors flex items-center gap-2"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            Back to Game List
+          </button>
+          <h1 className="text-3xl font-cinzel font-bold">Edit Game: {editForm.title}</h1>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              {editForm.image_data && (
+                <div className="mb-4">
+                  <div className="w-full aspect-[16/9] bg-[#1E1512] rounded-lg overflow-hidden border-2 border-[#6A4E32]">
+                    <img
+                      src={`${import.meta.env.VITE_BACKEND_URL || ""}${editForm.image_data}`}
+                      alt={editForm.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error("Error loading image, using custom fallback")
+                        ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
+                      }}
+                    />
+                  </div>
+                  <p className="text-xs text-[#8B7355] mt-2">Image preview (cannot be changed here)</p>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title *</label>
+                <input
+                  type="text"
+                  name="title"
+                  required
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                  value={editForm.title}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Slug</label>
+                <input
+                  type="text"
+                  name="slug"
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                  value={editForm.slug || ""}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre *</label>
+                <select
+                  name="genre"
+                  required
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                  value={editForm.genre}
+                  onChange={handleChange}
+                >
+                  <option value="RPG">RPG</option>
+                  <option value="Adventure">Adventure</option>
+                  <option value="Horror">Horror</option>
+                  <option value="Sci-Fi">Sci-Fi</option>
+                  <option value="Fantasy">Fantasy</option>
+                  <option value="Romance">Romance</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Subgenre</label>
+                <input
+                  type="text"
+                  name="subgenre"
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                  value={editForm.subgenre || ""}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
+                <select
+                  name="private"
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                  value={editForm.private ? "true" : "false"}
+                  onChange={(e) => handleBooleanChange("private", e.target.value === "true")}
+                >
+                  <option value="false">Public</option>
+                  <option value="true">Private</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
+                <textarea
+                  name="description"
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none h-32"
+                  value={editForm.description || ""}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Tagline</label>
+                <input
+                  type="text"
+                  name="tagline"
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                  value={editForm.tagline || ""}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Prompt Model</label>
+                <select
+                  name="prompt_model"
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                  value={editForm.prompt_model || "gpt-3.5-turbo"}
+                  onChange={handleChange}
+                >
+                  <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                  <option value="gpt-4">GPT-4</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Prompt Text</label>
+                <textarea
+                  name="prompt_text"
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none h-32"
+                  value={editForm.prompt_text || ""}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Image Prompt Text</label>
+                <textarea
+                  name="image_prompt_text"
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none h-24"
+                  value={editForm.image_prompt_text || ""}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Music Prompt Text</label>
+                <textarea
+                  name="music_prompt_text"
+                  className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none h-24"
+                  value={editForm.music_prompt_text || ""}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-4 pt-6 border-t border-[#6A4E32]/50">
+            <button
+              type="button"
+              onClick={() => {
+                console.log("Canceling edit mode, returning to game list")
+                setIsEditingDetails(false)
+                setIsViewingGameDetails(false)
+                setViewedGameDetails(null)
+              }}
+              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
+            >
+              {isSaving ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-[#2F2118]"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Save Changes
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
+    )
+  }
+
+  const backToGamesList = () => {
+    setIsViewingGameDetails(false)
+    setViewedGameDetails(null)
+  }
+
+  const viewGameDetails = async (gameId: number) => {
+    console.log(`Fetching details for game ID: ${gameId}`)
+    setIsLoading(true)
+
+    try {
+      const response = await axiosInstance.get(`/api/games/${gameId}`)
+      console.log("Game details fetched:", response.data)
+
+      let gameData = response.data
+
+      if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
+        try {
+          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`)
+          if (userResponse.data && userResponse.data.username) {
+            gameData = { ...gameData, creator: userResponse.data.username }
+          }
+        } catch (error) {
+          console.log("Could not fetch creator information:", error)
+        }
+      }
+
+      setViewedGameDetails(gameData)
+      setIsViewingGameDetails(true)
+    } catch (error) {
+      console.error("Error fetching game details:", error)
+      toast.error("Failed to load game details")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const EnlargedImageModal = () => {
+    if (!viewedGameDetails?.image_data || !showEnlargedImage) return null
+
+    return (
+      <div
+        className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4"
+        onClick={() => setShowEnlargedImage(false)}
+      >
+        <div className="relative max-w-7xl max-h-[95vh] w-full">
+          <button
+            onClick={() => setShowEnlargedImage(false)}
+            className="absolute top-4 right-4 text-white bg-black/60 hover:bg-black/80 rounded-full p-3"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <img
+            src={`${import.meta.env.VITE_BACKEND_URL || ""}${viewedGameDetails.image_data}`}
+            alt={viewedGameDetails.title}
+            className="max-w-full max-h-[90vh] object-contain mx-auto shadow-2xl"
+            onError={(e) => {
+              console.error("Error loading enlarged image")
+              ;(e.target as HTMLImageElement).src = "/technical-difficulties.jpg"
+            }}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  const DeleteConfirmationModal = () => {
+    if (!gameToDelete) return null
+
+    return (
+      <Modal
+        isOpen={showDeleteConfirmation}
+        onRequestClose={() => setShowDeleteConfirmation(false)}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false}
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 text-red-400">
+            <Trash className="w-6 h-6" />
+            <h2 className="text-xl font-cinzel">Confirm Deletion</h2>
+          </div>
+
+          <p className="text-[#F0E6DB]">
+            Are you sure you want to delete <span className="font-semibold">{gameToDelete.title}</span>?
+          </p>
+
+          <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
+            <p className="text-red-300 text-sm">
+              <strong>Warning:</strong> This action cannot be undone. All data will be permanently deleted.
+            </p>
+          </div>
+
+          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+            <button
+              onClick={() => setShowDeleteConfirmation(false)}
+              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg flex items-center gap-2"
+            >
+              <Trash className="w-4 h-4" />
+              Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
+    )
+  }
+
+  const BulkDeleteConfirmationModal = () => {
+    return (
+      <Modal
+        isOpen={showBulkDeleteConfirmation}
+        onRequestClose={() => setShowBulkDeleteConfirmation(false)}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-md mx-4"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false}
+      >
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 text-red-400">
+            <Trash className="w-6 h-6" />
+            <h2 className="text-xl font-cinzel">Confirm Bulk Deletion</h2>
+          </div>
+
+          <p className="text-[#F0E6DB]">
+            Are you sure you want to delete {selectedGames.length} selected games?
+          </p>
+
+          <div className="bg-red-900/20 p-3 rounded-lg border border-red-800/30">
+            <p className="text-red-300 text-sm">
+              <strong>Warning:</strong> This action cannot be undone.
+            </p>
+          </div>
+
+          <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+            <button
+              onClick={() => setShowBulkDeleteConfirmation(false)}
+              className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg flex items-center gap-2"
+            >
+              <Trash className="w-4 h-4" />
+              Delete {selectedGames.length} Games
+            </button>
+          </div>
+        </div>
+      </Modal>
+    )
+  }
+
+  const openEditModal = async (game: Game) => {
+    console.log(`Opening edit page for game: ${game.title} (ID: ${game.id})`)
+
+    setIsLoading(true)
+
+    try {
+      const response = await axiosInstance.get(`/api/games/${game.id}`)
+      console.log("Game details fetched for editing:", response.data)
+
+      let gameData = response.data
+
+      if (gameData.UserId && (!gameData.creator || gameData.creator === "Unknown")) {
+        try {
+          const userResponse = await axiosInstance.get(`/admin/users/${gameData.UserId}`)
+          if (userResponse.data && userResponse.data.username) {
+            gameData = {
+              ...gameData,
+              creator: userResponse.data.username,
+            }
+          }
+        } catch (error) {
+          console.log("Could not fetch creator information:", error)
+        }
+      }
+
+      setViewedGameDetails(gameData)
+
+      setIsViewingGameDetails(true)
+      setIsEditingDetails(true)
+    } catch (error) {
+      console.error("Error fetching game details for editing:", error)
+      toast.error("Failed to load game for editing")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editGameData) {
+      console.log("No edit data available, aborting submission")
+      return
+    }
+
+    console.log(`Submitting edit for game: ${editGameData.title} (ID: ${editGameData.id})`, editGameData)
+
+    try {
+      const response = await axiosInstance.put(`/api/games/${editGameData.id}`, editGameData)
+      console.log("Edit API response:", response)
+
+      fetchGames()
+      toast.success(`Game "${editGameData.title}" updated successfully`)
+      setShowEditModal(false)
+    } catch (error) {
+      console.error("Error updating game:", error)
+      toast.error("Failed to update game")
+    }
+  }
+
+  const EditGameModal = () => {
+    if (!editGameData) return null
+
+    return (
+      <Modal
+        isOpen={showEditModal}
+        onRequestClose={() => setShowEditModal(false)}
+        className="modal-content bg-[#2F2118] p-6 rounded-xl max-w-2xl mx-4"
+        overlayClassName="modal-overlay fixed inset-0 bg-black/75 flex items-center justify-center"
+        ariaHideApp={false}
+      >
+        <div className="space-y-6">
+          <div className="flex justify-between items-center border-b border-[#6A4E32]/50 pb-4">
+            <h2 className="text-2xl font-cinzel text-[#F0E6DB]">Edit Game: {editGameData.title}</h2>
+            <button
+              onClick={() => setShowEditModal(false)}
+              className="text-[#8B7355] hover:text-[#C0A080] transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+
+          <form onSubmit={handleEditSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Title *</label>
+                  <input
+                    type="text"
+                    name="title"
+                    required
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                    value={editGameData.title}
+                    onChange={(e) => setEditGameData({ ...editGameData, title: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Slug</label>
+                  <input
+                    type="text"
+                    name="slug"
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                    value={editGameData.slug || ""}
+                    onChange={(e) => setEditGameData({ ...editGameData, slug: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Genre *</label>
+                  <select
+                    name="genre"
+                    required
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                    value={editGameData.genre}
+                    onChange={(e) => setEditGameData({ ...editGameData, genre: e.target.value })}
+                  >
+                    <option value="RPG">RPG</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Horror">Horror</option>
+                    <option value="Sci-Fi">Sci-Fi</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Romance">Romance</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Description</label>
+                  <textarea
+                    name="description"
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none h-24"
+                    value={editGameData.description || ""}
+                    onChange={(e) => setEditGameData({ ...editGameData, description: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Visibility</label>
+                  <select
+                    name="private"
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                    value={editGameData.private ? "true" : "false"}
+                    onChange={(e) => setEditGameData({ ...editGameData, private: e.target.value === "true" })}
+                  >
+                    <option value="false">Public</option>
+                    <option value="true">Private</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-cinzel text-[#C0A080] mb-2">Prompt Text</label>
+                  <textarea
+                    name="prompt_text"
+                    className="w-full bg-[#1E1512] text-[#F0E6DB] px-3 py-2 rounded border border-[#6A4E32]/50 focus:ring-2 focus:ring-[#C0A080] focus:outline-none h-24"
+                    value={editGameData.prompt_text || ""}
+                    onChange={(e) => setEditGameData({ ...editGameData, prompt_text: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-4 pt-4 border-t border-[#6A4E32]/50">
+              <button
+                type="button"
+                onClick={() => setShowEditModal(false)}
+                className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
+    )
+  }
+
+  return (
+    <div className="p-6 bg-[#2F2118] text-[#F0E6DB] min-h-screen" id="root">
+      {isViewingGameDetails ? (
+        isEditingDetails ? (
+          <EditGameDetailView />
+        ) : isDeletingDetails ? (
+          <DeleteGameConfirmationView />
+        ) : (
+          <>
+            <GameDetailView />
+            {showEnlargedImage && <EnlargedImageModal />}
+          </>
+        )
+      ) : (
+        <>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div>
+              <h1 className="text-3xl font-cinzel font-bold mb-2">Game Management</h1>
+              <p className="text-[#8B7355]">Manage all game content and configurations</p>
+            </div>
+            <div className="flex flex-wrap gap-2 w-full md:w-auto">
+              <button
+                onClick={() => safelySetModalState("new")}
+                className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
+              >
+                <Plus className="w-5 h-5" />
+                New Game
+              </button>
+              <button
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                className="px-4 py-2 bg-[#3D2E22] hover:bg-[#4D3E32] text-[#F0E6DB] rounded-lg flex items-center gap-2"
+              >
+                <Sliders className="w-5 h-5" />
+                Filters
+              </button>
+            </div>
+          </div>
+
+          {showAdvancedFilters && <AdvancedFilters />}
+
+          {isLoading ? (
+            <Loader message="Loading games..." />
+          ) : (
+            <div className="rounded-xl overflow-hidden border border-[#6A4E32]/50 shadow-lg">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-[#3D2E22]">
+                    <tr>
+                      <th className="p-4 w-12">
+                        <input
+                          type="checkbox"
+                          className="w-5 h-5 cursor-pointer accent-[#C0A080]"
+                          onChange={toggleSelectAll}
+                          checked={allSelected}
+                        />
+                      </th>
+                      <TableHeader label="Title" sortKey="title" />
+                      <TableHeader label="Genre" sortKey="genre" />
+                      <TableHeader label="Players" sortKey="creator" />
+                      <TableHeader label="Created" sortKey="createdAt" />
+                      <th className="sticky top-0 p-4 bg-[#3D2E22] font-cinzel text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <AnimatePresence>
+                      {filteredGames.map((game) => (
+                        <motion.tr
+                          key={game.id}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          className="group even:bg-[#2F2118] odd:bg-[#3D2E22]/80 hover:bg-[#534231] transition-colors"
+                        >
+                          <td className="p-4">
+                            <input
+                              type="checkbox"
+                              checked={selectedGames.includes(game.id)}
+                              onChange={() => handleSelectGame(game.id)}
+                              className="w-5 h-5 cursor-pointer accent-[#C0A080]"
+                            />
+                          </td>
+                          <td className="p-4 font-playfair max-w-xs truncate group-hover:text-[#C0A080] transition-colors">
+                            {game.title}
+                          </td>
+                          <td className="p-4 font-playfair">{game.genre}</td>
+                          <td className="p-4 font-playfair text-center">{game.creator}</td>
+                          <td className="p-4 font-playfair">
+                            {new Date(game.createdAt).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => viewGameDetails(game.id)}
+                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                                title="View"
+                                aria-label={`View ${game.title}`}
+                              ><Eye className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => openEditModal(game)}
+                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-[#C0A080] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
+                                title="Edit"
+                                aria-label={`Edit ${game.title}`}
+                              >
+                                <Edit className="w-5 h-5" />
+                              </button>
+                              <button
+                                onClick={() => confirmDelete(game)}
+                                className="p-2 hover:bg-[#6A4E32]/50 rounded-lg text-red-400 focus:ring-2 focus:ring-red-400 focus:outline-none"
+                                title="Delete"
+                                aria-label={`Delete ${game.title}`}
+                              >
+                                <Trash className="w-5 h-5" />
+                              </button>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                  </tbody>
+                </table>
+              </div>
+              {filteredGames.length === 0 && (
+                <div className="p-6 text-center text-[#8B7355]">
+                  No games found. Try adjusting your filters.
+                </div>
+              )}
+            </div>
+          )}
+
+          {selectedGames.length > 0 && (
+            <div className="fixed bottom-4 right-4 bg-[#3D2E22] p-4 rounded-lg shadow-lg border border-[#6A4E32]/50">
+              <div className="flex items-center gap-4">
+                <span className="text-[#F0E6DB]">
+                  {selectedGames.length} {selectedGames.length === 1 ? "game" : "games"} selected
+                </span>
+                <button
+                  onClick={confirmBulkDelete}
+                  className="px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg flex items-center gap-2"
+                >
+                  <Trash className="w-4 h-4" />
+                  Delete Selected
+                </button>
+              </div>
+            </div>
+          )}
+
+          <NewGameModal />
+          <DeleteConfirmationModal />
+          <BulkDeleteConfirmationModal />
+          <EditGameModal />
+        </>
+      )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+    </div>
+  )
+}
+
+export default GamesList
