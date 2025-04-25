@@ -234,9 +234,9 @@ const LandingPage: React.FC = () => {
 
                 <FeatureSection />
 
-                <TestimonialsSection />
+                {/* <TestimonialsSection /> */}
 
-                <StatisticsSection />
+                {/* <StatisticsSection /> */}
 
                 <HowItWorksSection />
 
@@ -871,7 +871,7 @@ const TechnologiesSection: React.FC = () => {
     
     return (
         <section id="tech-section" className="min-h-screen flex flex-col justify-center bg-black relative overflow-hidden py-10">
-            <div className="absolute inset-0 bg-[url('/torch_before.png')] bg-repeat-x bg-top opacity-20"></div>
+            <div className="absolute inset-0"></div>
             
             <div className="container mx-auto px-6 md:px-10">
                 <motion.h2 
@@ -1020,7 +1020,7 @@ const CallToActionSection: React.FC<{
 }> = ({ navigateWithLoading }) => {
     return (
         <section id="cta-section" className="min-h-screen flex flex-col justify-center bg-black relative overflow-hidden py-10">
-            <div className="absolute inset-0 bg-[url('/torch_after.png')] bg-repeat-x bg-bottom opacity-30"></div>
+            <div className="absolute inset-0 bg-[url('/torch_before.png')] bg-repeat-x bg-top opacity-20"></div>
             
             <div className="container mx-auto px-6 md:px-10 flex flex-col items-center text-center relative z-10">
                 <motion.h2 

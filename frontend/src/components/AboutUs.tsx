@@ -23,55 +23,55 @@ const AboutPage = () => {
     {
       name: "Genrey Cristobal",
       role: "Project Development Lead",
-      image: "/Placeholder.png", // Using an existing image
+      image: "/genrey.png", 
       bio: "Leads the overall development and technical direction of the SAGE.AI platform.",
     },
     {
       name: "Jhon Keneth Ryan Namias",
       role: "System Analyst and Database Administrator",
-      image: "/Placeholder.png", // Using an existing image
+      image: "/kenn.jpg", 
       bio: "Designs and optimizes the database architecture that powers our complex narrative systems.",
     },
     {
       name: "Emannuel Pabua",
       role: "Game Director",
-      image: "/Placeholder.png", // Using an existing image
+      image: "/eman.jpg", 
       bio: "Oversees the creative vision of our interactive storytelling experiences and gameplay mechanics.",
     },
     {
       name: "Ervhyne Dalugdog",
       role: "Business Analyst",
-      image: "/Placeholder.png", // Using an existing image
+      image: "/Placeholder.png", 
       bio: "Analyzes user data and market trends to guide platform improvements and business strategy.",
     },
     {
       name: "Kevin Llanes",
       role: "Lead Frontend Developer",
-      image: "/Placeholder.png", // Using an existing image
+      image: "/keb.png", 
       bio: "Architects the user interface design and oversees frontend implementation for seamless user experiences.",
     },
     {
       name: "Gian Higino Fungo",
       role: "Frontend Developer",
-      image: "/Placeholder.png", // Using an existing image
+      image: "/gia.jpg", 
       bio: "Specializes in creating immersive and responsive UI components for the platform.",
     },
     {
       name: "Garvy Ren Capalac",
       role: "Frontend Developer",
-      image: "/Placeholder.png", // Using an existing image
+      image: "/garvs.jpg", 
       bio: "Focuses on optimizing performance and accessibility in the user interface.",
     },
     {
       name: "Ronan Renz Valencia",
-      role: "Backend Developer",
-      image: "/Placeholder.png", // Using an existing image
+      role: "Frontend Developer",
+      image: "/nan.jpg", 
       bio: "Develops robust APIs and services that power the AI storytelling engine.",
     },
     {
       name: "Mark Relan Gercee Acedo",
       role: "Backend Developer",
-      image: "/Placeholder.png", // Using an existing image
+      image: "/mark.png", 
       bio: "Implements complex algorithms and data processing for the narrative generation system.",
     }
   ];
@@ -286,7 +286,7 @@ const AboutPage = () => {
         >
           <h2 className="text-3xl md:text-4xl font-bold text-[#F1DC68] font-cinzel mb-6">Academic Project</h2>
           <p className="text-xl max-w-3xl mx-auto mb-8">
-            SAGE.AI was developed as a final year project by BS Computer Science students at the University of Caloocan City. We welcome feedback and are proud to showcase this as part of our academic portfolio.
+            SAGE.AI was developed as a third year project by BS Computer Science students at the University of Caloocan City. We welcome feedback and are proud to showcase this as part of our academic portfolio.
           </p>
           <button className="bg-[#B28F4C] hover:bg-[#9D7B3A] text-white font-bold py-3 px-8 rounded-full text-lg transition-colors duration-300"
                   onClick={() => window.location.href = '/contact'}>

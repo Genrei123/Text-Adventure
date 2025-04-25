@@ -128,7 +128,7 @@ const Footer = () => {
         </div>
         
         {/* Newsletter */}
-        <motion.div 
+        {/* <motion.div 
           className="bg-[#3F2B1F] p-8 rounded-lg shadow-lg max-w-2xl mx-auto mb-10 relative z-10"
           variants={itemVariants}
         >
@@ -146,10 +146,10 @@ const Footer = () => {
               Subscribe
             </button>
           </div>
-        </motion.div>
+        </motion.div> */}
       </motion.div>
       
-      <FooterLine className="z-10" />
+      {/* <FooterLine className="z-10" /> */}
       
       {/* Copyright */}
       <motion.div 
