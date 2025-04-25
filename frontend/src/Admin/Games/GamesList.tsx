@@ -1640,10 +1640,10 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
         )
       ) : (
         <>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <div>
-              <h1 className="text-3xl font-cinzel font-bold mb-2">Game List</h1>
-              <p className="text-[#8B7355]">Manage all game content and configurations</p>
+          <div className="flex flex-col md:flex-row items-start gap-4 mb-6">
+            <div className="flex-1">
+              <h1 className="text-3xl font-cinzel font-bold mb-2 text-left">Game List</h1>
+              <p className="text-[#8B7355] text-left">Manage all game content and configurations</p>
             </div>
             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
               <div className="relative flex-grow md:flex-grow-0">
