@@ -1598,6 +1598,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             </div>
             {/* Combined Search, Filter Toggle, and New Game Button */}
             <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+              {/* Search Input - Ensure onChange updates state directly */}
               <div className="relative flex-grow md:flex-grow-0">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <Search className="w-5 h-5 text-gray-400" />
@@ -1606,10 +1607,11 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                   type="text"
                   placeholder="Search games..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => setSearchTerm(e.target.value)} // This updates state on every keystroke
                   className="w-full md:w-64 bg-[#1E1512] text-white pl-10 pr-4 py-2 rounded-lg border border-[#6A4E32] focus:ring-2 focus:ring-[#C0A080] focus:outline-none"
                 />
               </div>
+              {/* Filter Toggle Button */}
               <button
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
@@ -1619,6 +1621,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
                 <Sliders className="w-5 h-5" />
                 Filters {showAdvancedFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
+              {/* New Game Button */}
               <button
                 onClick={() => safelySetModalState("new")}
                 className="px-4 py-2 bg-[#C0A080] hover:bg-[#D5B591] text-[#2F2118] rounded-lg font-cinzel flex items-center gap-2 transition-all"
@@ -1644,6 +1647,7 @@ const GamesList: React.FC<GamesListProps> = ({ onViewGame, refreshTrigger = 0 })
             )}
           </AnimatePresence>
 
+          {/* Game List Table */}
           {isLoading ? (
             <Loader message="Loading games..." />
           ) : (
