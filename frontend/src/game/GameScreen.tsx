@@ -9,6 +9,7 @@ import ActionButton from "./components/ActionButton";
 import { motion } from "framer-motion";
 import axios from "axios";
 import DelayedTooltip from "./components/DelayedToolTip";
+import ErrorModal from "./components/ErrorModal";
 
 interface GameDetails {
   title: string;
@@ -907,6 +908,12 @@ const GameScreen: React.FC = () => {
           {error && <p className="text-red-500 mt-2">{error}</p>}
           {success && <p className="text-green-500 mt-2">{success}</p>}
         </div>
+
+        <ErrorModal
+          isOpen={!!error}
+          errorMessage={error}
+          onClose={() => setError("")}
+        />
       </div>
 
       {/* Show Description Modal */}
