@@ -57,9 +57,9 @@ const AboutPage = () => {
       bio: "Specializes in creating immersive and responsive UI components for the platform.",
     },
     {
-      name: "Garvy Ren Capalac",
+      name: "Mark Relan Gercee Acedo",
       role: "Frontend Developer",
-      image: "/garvs.jpg", 
+      image: "/mark.png", 
       bio: "Focuses on optimizing performance and accessibility in the user interface.",
     },
     {
@@ -69,9 +69,9 @@ const AboutPage = () => {
       bio: "Develops robust APIs and services that power the AI storytelling engine.",
     },
     {
-      name: "Mark Relan Gercee Acedo",
+      name: "Garvy Ren Capalac",
       role: "Backend Developer",
-      image: "/mark.png", 
+      image: "/garvs.jpg", 
       bio: "Implements complex algorithms and data processing for the narrative generation system.",
     }
   ];
