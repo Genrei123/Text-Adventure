@@ -16,4 +16,4 @@ This web application is aimed at the general public but is focused on games who 
 The main struggle in this system is the deployment of the trained model. We have to learn and understand how we can use NGROK or CLOUDFLARE TUNNELING to expose the server's model to effectively use in the website.
 
 ## Solution
-We utilized NGROK to expose the server's port so that the website can utilize the image generation capabilities.
+We utilized NGROK to expose the server's port so that the website can utilize the image generation capabilities..
