@@ -105,8 +105,9 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-const server = createServer(app);
-server.listen(PORT, async () => { 
+// const server = createServer(app);
+
+app.listen(PORT, async () => { 
   try {
     await initializeModels();
     console.log('Connection to the database has been established successfully.');
