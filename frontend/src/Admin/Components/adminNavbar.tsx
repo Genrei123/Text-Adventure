@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Moon, Sun, User } from "lucide-react";
 import socketIOClient from "socket.io-client";
 
-const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
+// const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
 const AdminNavbar = () => {
   const [username, setUsername] = useState<string | null>(null);

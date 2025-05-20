@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import includedRoutes from '../../../../backend/src/config/websocketConfig';
 import { trackPageVisit, createSession } from '../../sessions/api-calls/visitedPagesSession'; // Import your session tracking functions
 
-const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000');
+// const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000');
 
 interface LastPlayedGame {
   route: string;

@@ -9,7 +9,7 @@ import LogoutModal from "./LogoutModal";
 import Button from "./Button";
 
 
-const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
+// const socket = socketIOClient(import.meta.env.VITE_BACKEND_URL);
 
 // Game Interface
 interface Game {

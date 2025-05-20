@@ -41,8 +41,8 @@ import FAQ from './components/FAQ';
 // Game Creation Components
 import GameCreation from './game-creation/GameCreation';
 import AdventureEditor from './game-creation/Editing Page/Editor';
-import { WebSocketProvider } from './websocket/context/WebSocketContext';
-import ActivePlayerCount from './websocket/components/ActivePlayerCount';
+// import { WebSocketProvider } from './websocket/context/WebSocketContext';
+// import ActivePlayerCount from './websocket/components/ActivePlayerCount';
 import NihGameScreen from './game/NihGameScreen';
 import BanTestPage from './pages/BanTestPage';
 
@@ -175,9 +175,9 @@ function App() {
               path="/game/:id" 
               element={
                 <ProtectedRoute>
-                  <WebSocketProvider>
+                  {/* <WebSocketProvider> */}
                     <GameScreen />
-                  </WebSocketProvider>
+                  {/* </WebSocketProvider> */}
                 </ProtectedRoute>
               } 
             />
@@ -209,7 +209,7 @@ function App() {
             
             {/* Utility Routes */}
             <Route path="/subscription" element={<Subscription />} />
-            <Route path="/active-players" element={<ActivePlayerCount />} />
+            {/* <Route path="/active-players" element={<ActivePlayerCount />} /> */}
             <Route path="/ban-test" element={<BanTestPage />} />
             <Route path="/shop" element={<Shop />} />
             
