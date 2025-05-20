@@ -13,7 +13,7 @@ import createAuthRouter from './routes/auth/authRoutes';
 import chatRoutes from './routes/chat/chatRoutes';
 import User from './model/user/user';
 import coinRoutes from './routes/coins/coinRoutes';
-import { createServer } from './websocket/socket';
+// import { createServer } from './websocket/socket';
 import statsRoutes from './routes/statistics/statsRoutes';
 import playerActivityRoutes from './routes/statistics/playerActivityRoutes';
 import gameRoutes from './routes/game/gameRoutes';
