@@ -119,9 +119,9 @@ function App() {
   }, [sessionId, visitedPages]);
 
   // WebSocket wrapper component
-  const WebSocketRoutes = ({ children }: { children: React.ReactNode }) => (
-    <WebSocketProvider>{children}</WebSocketProvider>
-  );
+  // const WebSocketRoutes = ({ children }: { children: React.ReactNode }) => (
+  //   <WebSocketProvider>{children}</WebSocketProvider>
+  // );
 
   return (
     <Router>
@@ -153,9 +153,9 @@ function App() {
               path="/home" 
               element={
                 <ProtectedRoute>
-                  <WebSocketProvider>
+                  {/* <WebSocketProvider> */}
                       <Homepage onLogout={handleLogout} />
-                  </WebSocketProvider>
+                  {/* </WebSocketProvider> */}
                 </ProtectedRoute>
               } 
             />
@@ -163,9 +163,9 @@ function App() {
               path="/:username" 
               element={
                 <ProtectedRoute>
-                  <WebSocketProvider>
+                  {/* <WebSocketProvider> */}
                     <UserProfile />
-                  </WebSocketProvider>
+                  {/* </WebSocketProvider> */}
                 </ProtectedRoute>
               } 
             />
@@ -195,9 +195,9 @@ function App() {
               path="/game-details/:id" 
               element={
                 <ProtectedRoute>
-                  <WebSocketRoutes>
+                  {/* <WebSocketRoutes> */}
                     <GameDetails />
-                  </WebSocketRoutes>
+                  {/* </WebSocketRoutes> */}
                 </ProtectedRoute>
               } 
             />
