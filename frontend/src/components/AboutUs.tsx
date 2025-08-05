@@ -259,14 +259,14 @@ const AboutPage = () => {
                 variants={fadeIn}
                 whileHover={{ y: -10, transition: { duration: 0.3 } }}
               >
-                <div className="h-48 overflow-hidden">
+                <div className="overflow-hidden">
                   <img 
                     src={member.image} 
                     alt={member.name} 
                     className="w-full h-full object-cover object-center" 
                   />
                 </div>
-                <div className="p-6">
+                <div className="hover:visible hidden p-6">
                   <h3 className="text-xl font-bold text-[#F1DC68] mb-1">{member.name}</h3>
                   <p className="text-[#B28F4C] mb-3">{member.role}</p>
                   <p className="text-gray-300">{member.bio}</p>
