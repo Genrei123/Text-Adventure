@@ -41,7 +41,7 @@ const AboutPage = () => {
     {
       name: "Ervhyne Dalugdog",
       role: "Business Analyst",
-      image: "/Placeholder.png", 
+      image: "/ervs.jpg", 
       bio: "Analyzes user data and market trends to guide platform improvements and business strategy.",
     },
     {
