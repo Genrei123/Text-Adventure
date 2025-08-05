@@ -257,9 +257,9 @@ const AboutPage = () => {
                 key={index}
                 className="bg-[#2A2A2A] rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 border border-[#444]"
                 variants={fadeIn}
-                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                whileHover={{ y: -10, transition: { duration: 0.8 } }}
               >
-                <div className="hover:h-80 h-full overflow-hidden">
+                <div className="hover:h-96 h-full overflow-hidden">
                   <img 
                     src={member.image} 
                     alt={member.name} 
