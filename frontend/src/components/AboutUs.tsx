@@ -259,7 +259,7 @@ const AboutPage = () => {
                 variants={fadeIn}
                 whileHover={{ y: -10, transition: { duration: 0.3 } }}
               >
-                <div className="hover:h-48 h-full overflow-hidden">
+                <div className="hover:h-12 h-full overflow-hidden">
                   <img 
                     src={member.image} 
                     alt={member.name} 
