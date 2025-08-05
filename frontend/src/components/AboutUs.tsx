@@ -5,8 +5,8 @@ import { FaUsers, FaLightbulb, FaMagic, FaBookOpen } from 'react-icons/fa';
 
 const AboutPage = () => {
   const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+    hidden: { opacity: 0, y: 40 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.9 } }
   };
 
   const staggerContainer = {
